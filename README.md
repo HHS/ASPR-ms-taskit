@@ -11,6 +11,8 @@ Taskit is a library that was created to faciliate converting from various input 
 Currently there is only 1 supported serialzation format, and that is protobuf. Other formats such as binary will follow in the future.
 
 ## Overview
+Currently Taskit is composed of a Core library and a Protobuf library.
+
 ### Core
 [Core](core) is the base taskit engine and contains the root level functionality that drives the translation and serialization.
 This library contains the base TranslationController class, the base TranslationSpec class and the base TranslationEngine class.
@@ -52,7 +54,6 @@ Then go into the ```protobuf``` directory and run the command ```mvn clean insta
 Documentation has yet to be created. In the interim, the code is mostly commented and the javadocs do provide good detail with regards to method and class expectations. 
 
 ## License
-
 Distributed under the GPLv3 License. See [LICENSE](LICENSE) for more information.
 
 
