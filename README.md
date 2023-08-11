@@ -51,6 +51,11 @@ Then go into the ```protobuf``` directory and run the command ```mvn clean insta
 ## Documentation
 Documentation has yet to be created. In the interim, the code is mostly commented and the javadocs do provide good detail with regards to method and class expectations. 
 
+## License
+
+Distributed under the GPLv3 License. See [LICENSE](LICENSE) for more information.
+
+
 <!-- MARKDOWN LINKS & IMAGES -->
 [contributors-shield]: https://img.shields.io/github/contributors/HHS/ASPR-ms-taskit
 [contributors-url]: https://github.com/HHS/ASPR-ms-taskit/graphs/contributors
