@@ -52,9 +52,9 @@ Then go into the ```protobuf``` directory and run the command ```mvn clean insta
 Documentation has yet to be created. In the interim, the code is mostly commented and the javadocs do provide good detail with regards to method and class expectations. 
 
 <!-- MARKDOWN LINKS & IMAGES -->
-[contributors-shield]: https://img.shields.io/github/contributors/HHS/ASPR-ms-util
-[contributors-url]: https://github.com/HHS/ASPR-ms-util/graphs/contributors
+[contributors-shield]: https://img.shields.io/github/contributors/ASPR-ms-taskit
+[contributors-url]: https://github.com/HHS/ASPR-ms-taskit/graphs/contributors
 <!-- [tag-shield]: https://img.shields.io/github/v/tag/HHS/ASPR-ms-util -->
 <!-- [tag-url]: https://github.com/HHS/ASPR-8/releases/tag/v4.0.0-RC1 -->
-[license-shield]: https://img.shields.io/github/license/HHS/ASPR-ms-util
+[license-shield]: https://img.shields.io/github/license/HHS/ASPR-ms-taskit
 [license-url]: LICENSE
