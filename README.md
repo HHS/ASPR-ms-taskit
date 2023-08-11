@@ -2,8 +2,7 @@
 [![GitHub contributors][contributors-shield]][contributors-url]
 
 # Translation And Serialization Toolkit
-
-A toolkit made to help with converting between input files and Java Objects. This will herein be reffered to as taskit.
+A toolkit made to help with converting between input files and Java Objects. This will herein be reffered to as Taskit.
 
 ## What is Taskit?
 Taskit is a library that was created to faciliate converting from various input files into Java Objects. This is espcially useful for Simulation Models such as [GCM](https://github.com/HHS/ASPR-8).
