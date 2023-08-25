@@ -9,9 +9,8 @@ import util.errors.ContractException;
 
 /**
  * The Translator class serves as a wrapper around one or more
- * {@link BaseTranslationSpec}(s)
- * 
- * and assists in adding those translationSpecs to the {@link TranslationEngine}
+ * {@link BaseTranslationSpec}(s) and assists in adding those translationSpecs
+ * to the {@link TranslationEngine}
  */
 public final class Translator {
     private final Data data;
@@ -70,10 +69,12 @@ public final class Translator {
          * Builds the Translator
          * 
          * @throws ContractException
+         *                           <ul>
          *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATOR_ID}
          *                           if the translatorId was not set</li>
          *                           <li>{@linkplain CoreTranslationError#NULL_INIT_CONSUMER}
          *                           if the initConsumer was not set</li>
+         *                           </ul>
          */
         public Translator build() {
             validate();
@@ -84,9 +85,8 @@ public final class Translator {
         /**
          * Sets the translatorId
          * 
-         * @throws ContractException
-         *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATOR_ID}
-         *                           if the translatorId is null</li>
+         * @throws ContractException {@linkplain CoreTranslationError#NULL_TRANSLATOR_ID}
+         *                           if the translatorId is null
          */
         public Builder setTranslatorId(TranslatorId translatorId) {
             if (translatorId == null) {
@@ -101,9 +101,8 @@ public final class Translator {
         /**
          * Sets the initialization callback for the translator
          * 
-         * @throws ContractException
-         *                           <li>{@linkplain CoreTranslationError#NULL_INIT_CONSUMER}
-         *                           if the initConsumer is null</li>
+         * @throws ContractException {@linkplain CoreTranslationError#NULL_INIT_CONSUMER}
+         *                           if the initConsumer is null
          */
         public Builder setInitializer(Consumer<TranslatorContext> initConsumer) {
             if (initConsumer == null) {
@@ -119,10 +118,12 @@ public final class Translator {
          * Adds the given TranslatorId as a dependency for this Translator
          * 
          * @throws ContractException
+         *                           <ul>
          *                           <li>{@linkplain CoreTranslationError#NULL_DEPENDENCY}
          *                           if the dependecy is null</li>
          *                           <li>{@linkplain CoreTranslationError#DUPLICATE_DEPENDENCY}
          *                           if the dependecy has already been added</li>
+         *                           </ul>
          */
         public Builder addDependency(TranslatorId dependency) {
             if (dependency == null) {
