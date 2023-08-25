@@ -25,10 +25,8 @@ public class AT_TestProtobufObjectTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertInputObject() {
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
-                .builder()
-                .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec())
-                .build();
+        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder()
+                .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
         protobufTranslationEngine.init();
 
         TestProtobufObjectTranslationSpec objectTranslationSpec = new TestProtobufObjectTranslationSpec();
@@ -45,10 +43,8 @@ public class AT_TestProtobufObjectTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertAppObject() {
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
-                .builder()
-                .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec())
-                .build();
+        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder()
+                .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
         protobufTranslationEngine.init();
 
         TestProtobufObjectTranslationSpec objectTranslationSpec = new TestProtobufObjectTranslationSpec();

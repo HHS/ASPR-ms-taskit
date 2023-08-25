@@ -23,9 +23,7 @@ public class AT_BooleanTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertInputObject() {
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
-                .builder()
-                .build();
+        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder().build();
 
         BooleanTranslationSpec booleanTranslationSpec = new BooleanTranslationSpec();
         booleanTranslationSpec.init(protobufTranslationEngine);
@@ -41,9 +39,7 @@ public class AT_BooleanTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertAppObject() {
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
-                .builder()
-                .build();
+        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder().build();
 
         BooleanTranslationSpec booleanTranslationSpec = new BooleanTranslationSpec();
         booleanTranslationSpec.init(protobufTranslationEngine);

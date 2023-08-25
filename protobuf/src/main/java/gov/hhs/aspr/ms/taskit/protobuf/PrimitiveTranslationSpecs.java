@@ -54,10 +54,8 @@ class PrimitiveTranslationSpecs {
          * Returns a set of Protobuf Message {@link Descriptor}s for each of the
          * Primitive TranslationSpecs. A Descriptor is to a Protobuf Message as Class is
          * to a Java Object.
-         * 
          * <li>Note: as metioned in the Class javadoc, these Primitive TranslationSpecs
-         * and
-         * their Descriptors are exclusively used to falicitate converting to/from a
+         * and their Descriptors are exclusively used to falicitate converting to/from a
          * Protobuf {@link Any} type
          */
         protected static Set<Descriptor> getPrimitiveDescriptors() {
@@ -80,10 +78,9 @@ class PrimitiveTranslationSpecs {
         /**
          * Returns a set of {@link ProtobufTranslationSpec}s that includes each of the
          * Primitive TranslationSpecs.
-         * 
          * <li>Note: as metioned in the Class javadoc, these Primitive TranslationSpecs
-         * are exclusively used to falicitate converting to/from a
-         * Protobuf {@link Any} type
+         * are exclusively used to falicitate converting to/from a Protobuf {@link Any}
+         * type
          */
         protected static Set<ProtobufTranslationSpec<?, ?>> getPrimitiveTranslatorSpecs() {
                 Set<ProtobufTranslationSpec<?, ?>> set = new LinkedHashSet<>();
@@ -97,7 +94,6 @@ class PrimitiveTranslationSpecs {
         /**
          * Returns a map of typeUrl to Class that includes each of the Primitive
          * TranslationSpecs.
-         * 
          * <li>Note: as metioned in the Class javadoc, these Primitive TranslationSpecs
          * and their typeUrls are exclusively used to falicitate converting to/from a
          * Protobuf {@link Any} type
@@ -131,13 +127,11 @@ class PrimitiveTranslationSpecs {
 
         /**
          * Returns a map of {@link Class} to {@link ProtobufTranslationSpec} that
-         * includes each of the Primitive TranslationSpecs.
-         * This map is exclusively a map of the inputObjectClass to the TranslationSpec.
-         * 
+         * includes each of the Primitive TranslationSpecs. This map is exclusively a
+         * map of the inputObjectClass to the TranslationSpec.
          * <li>Note: as metioned in the Class javadoc, these Primitive TranslationSpecs
          * and their inputObjectClasses are exclusively used to falicitate converting
-         * to/from a
-         * Protobuf {@link Any} type
+         * to/from a Protobuf {@link Any} type
          */
         protected static Map<Class<?>, ProtobufTranslationSpec<?, ?>> getPrimitiveInputTranslatorSpecMap() {
                 Map<Class<?>, ProtobufTranslationSpec<?, ?>> map = new LinkedHashMap<>();
@@ -159,13 +153,11 @@ class PrimitiveTranslationSpecs {
 
         /**
          * Returns a map of {@link Class} to {@link ProtobufTranslationSpec} that
-         * includes each of the Primitive TranslationSpecs.
-         * This map is exclusively a map of the appObjectClass to the TranslationSpec.
-         * 
+         * includes each of the Primitive TranslationSpecs. This map is exclusively a
+         * map of the appObjectClass to the TranslationSpec.
          * <li>Note: as metioned in the Class javadoc, these Primitive TranslationSpecs
          * and their appObjectClasses are exclusively used to falicitate converting
-         * to/from a
-         * Protobuf {@link Any} type
+         * to/from a Protobuf {@link Any} type
          */
         protected static Map<Class<?>, ProtobufTranslationSpec<?, ?>> getPrimitiveObjectTranslatorSpecMap() {
                 Map<Class<?>, ProtobufTranslationSpec<?, ?>> map = new LinkedHashMap<>();

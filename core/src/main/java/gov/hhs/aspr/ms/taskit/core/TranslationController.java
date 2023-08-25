@@ -27,9 +27,8 @@ import util.graph.MutableGraph;
 
 /**
  * The TranslatorController serves as the master of cerimonies for translating
- * between two
- * types of objects. Additionally, it has the ability to distribute Input/Output
- * files for reading and writing.
+ * between two types of objects. Additionally, it has the ability to distribute
+ * Input/Output files for reading and writing.
  */
 public class TranslationController {
     protected final Data data;
@@ -94,9 +93,8 @@ public class TranslationController {
         }
 
         /**
-         * Builds the TranslatorController.
-         * 
-         * Calls the initializer on each added {@link Translator}
+         * Builds the TranslatorController. Calls the initializer on each added
+         * {@link Translator}
          * 
          * @throws ContractException
          *                           <ul>
@@ -123,8 +121,8 @@ public class TranslationController {
          * 
          * @throws ContractException
          *                           <ul>
-         *                           <li>{@linkplain CoreTranslationError#NULL_PATH}
-         *                           if filePath is null</li>
+         *                           <li>{@linkplain CoreTranslationError#NULL_PATH} if
+         *                           filePath is null</li>
          *                           <li>{@linkplain CoreTranslationError#NULL_CLASS_REF}
          *                           if classRef is null</li>
          *                           <li>{@linkplain CoreTranslationError#DUPLICATE_INPUT_PATH}
@@ -152,8 +150,8 @@ public class TranslationController {
          * 
          * @throws ContractException
          *                           <ul>
-         *                           <li>{@linkplain CoreTranslationError#NULL_PATH}
-         *                           if filePath is null</li>
+         *                           <li>{@linkplain CoreTranslationError#NULL_PATH} if
+         *                           filePath is null</li>
          *                           <li>{@linkplain CoreTranslationError#NULL_CLASS_REF}
          *                           if classRef is null</li>
          *                           <li>{@linkplain CoreTranslationError#DUPLICATE_OUTPUT_PATH}
@@ -175,8 +173,8 @@ public class TranslationController {
          * 
          * @throws ContractException
          *                           <ul>
-         *                           <li>{@linkplain CoreTranslationError#NULL_PATH}
-         *                           if filePath is null</li>
+         *                           <li>{@linkplain CoreTranslationError#NULL_PATH} if
+         *                           filePath is null</li>
          *                           <li>{@linkplain CoreTranslationError#NULL_CLASS_REF}
          *                           if classRef is null</li>
          *                           <li>{@linkplain CoreTranslationError#DUPLICATE_OUTPUT_PATH}
@@ -209,15 +207,13 @@ public class TranslationController {
 
         /**
          * Adds the given classRef markerInterace mapping.
-         * 
-         * <li>explicitly used when calling
-         * {@link TranslationController#writeOutput} with a class for which a classRef
-         * ScenarioId pair does not exist and/or the need to output the given class as
-         * the markerInterface instead of the concrete class
+         * <p>
+         * explicitly used when calling {@link TranslationController#writeOutput} with a
+         * class for which a classRef ScenarioId pair does not exist and/or the need to
+         * output the given class as the markerInterface instead of the concrete class
          * 
          * @param <M> the childClass
          * @param <U> the parentClass/MarkerInterfaceClass
-         * 
          * @throws ContractException
          *                           <ul>
          *                           <li>{@linkplain CoreTranslationError#NULL_CLASS_REF}
@@ -227,7 +223,6 @@ public class TranslationController {
          *                           if child parent relationship has already been
          *                           added</li>
          *                           </ul>
-         * 
          */
         public <M extends U, U> Builder addParentChildClassRelationship(Class<M> classRef, Class<U> markerInterface) {
             validateClassRefNotNull(classRef);
@@ -299,13 +294,11 @@ public class TranslationController {
      * type as the given classRef
      * 
      * @param <T> the class type of the TranslationEngine.Builder
-     * 
      * @throws ContractException
      *                           <ul>
      *                           <li>{@linkplain CoreTranslationError#INVALID_TRANSLATION_ENGINE_BUILDER}
      *                           if the given classRef does not match the class or
-     *                           the translationEngineBuilder is
-     *                           null</li>
+     *                           the translationEngineBuilder is null</li>
      *                           </ul>
      */
     protected <T extends TranslationEngine.Builder> T getTranslationEngineBuilder(Class<T> classRef) {
@@ -320,8 +313,7 @@ public class TranslationController {
         }
         // This should never happen, therefore it is an actual runtime exception and not
         // a contract exception
-        throw new RuntimeException(
-                "Trying to get TranslatorCoreBuilder after it was built and/or initialized");
+        throw new RuntimeException("Trying to get TranslatorCoreBuilder after it was built and/or initialized");
 
     }
 
@@ -349,9 +341,9 @@ public class TranslationController {
     }
 
     /**
-     * Adds the given child parent class relationship
-     * Only callable through a {@link TranslatorContext} via the
-     * {@link Translator#getInitializer()} consumer
+     * Adds the given child parent class relationship Only callable through a
+     * {@link TranslatorContext} via the {@link Translator#getInitializer()}
+     * consumer
      * 
      * @param <M> the childClass
      * @param <U> the parentClass
@@ -369,8 +361,7 @@ public class TranslationController {
 
     /**
      * Passes the given reader and inputClassRef to the built
-     * {@link TranslationEngine}
-     * to read, parse and translate the inputData.
+     * {@link TranslationEngine} to read, parse and translate the inputData.
      * 
      * @param <U> the classType associated with the reader
      */
@@ -382,8 +373,7 @@ public class TranslationController {
 
     /**
      * Passes the given writer object and optional superClass to the built
-     * {@link TranslationEngine}
-     * to translate and write to the outputFile
+     * {@link TranslationEngine} to translate and write to the outputFile
      * 
      * @param <M> the class of the object to write to the outputFile
      * @param <U> the optional parent class of the object to write to the outputFile
@@ -412,10 +402,9 @@ public class TranslationController {
     }
 
     /*
-     * First gets an ordered list of translators based on their dependencies
-     * Then calls each translator's init callback method
-     * Then builds the translationEngine
-     * Then calls the init method on the translationEngine
+     * First gets an ordered list of translators based on their dependencies Then
+     * calls each translator's init callback method Then builds the
+     * translationEngine Then calls the init method on the translationEngine
      * Verifies that all translationSpecs have been initialized
      */
     private TranslationController initTranslators() {
@@ -470,12 +459,10 @@ public class TranslationController {
     }
 
     /**
-     * Given the classRef and scenarioId, find the given outputFilePath.
-     * If the classRef Scenario pair has been added, that is returned.
-     * 
-     * Otherwise, checks to see if the classRef exists in the
-     * markerInterfaceClassMap and if so, returns the resulting classRef scenarioId
-     * pair
+     * Given the classRef and scenarioId, find the given outputFilePath. If the
+     * classRef Scenario pair has been added, that is returned. Otherwise, checks to
+     * see if the classRef exists in the markerInterfaceClassMap and if so, returns
+     * the resulting classRef scenarioId pair
      * 
      * @param <M> the childClass
      * @param <U> the optional parentClass/MarkerInterfaceClass
@@ -507,11 +494,10 @@ public class TranslationController {
     /**
      * takes the list of objects and writes each object out to it's corresponding
      * outputFilePath, if it exists
-     * 
-     * <li>internally calls {@link TranslationController#writeOutput(Object)}
+     * <p>
+     * internally calls {@link TranslationController#writeOutput(Object)}
      * 
      * @param <T> the type of the list of obects to write to output
-     * 
      * @throws ContractException
      *                           <ul>
      *                           <li>{@linkplain CoreTranslationError#INVALID_OUTPUT_CLASSREF}
@@ -530,14 +516,11 @@ public class TranslationController {
 
     /**
      * takes the list of objects with the specified scenarioId and writes each
-     * object out to it's corresponding
-     * outputFilePath, if it exists
-     * 
-     * <li>internally calls
-     * {@link TranslationController#writeOutput(Object, Integer)}
+     * object out to it's corresponding outputFilePath, if it exists
+     * <p>
+     * internally calls {@link TranslationController#writeOutput(Object, Integer)}
      * 
      * @param <T> the type of the list of obects to write to output
-     * 
      * @throws ContractException
      *                           <ul>
      *                           <li>{@linkplain CoreTranslationError#INVALID_OUTPUT_CLASSREF}
@@ -557,12 +540,11 @@ public class TranslationController {
     /**
      * takes the given object and writes it out to it's corresponding
      * outputFilePath, if it exists
-     * <li>internally calls
-     * {@link TranslationController#writeOutput(Object, Integer)}
+     * <p>
+     * internally calls {@link TranslationController#writeOutput(Object, Integer)}
      * with a scenarioId of 0
      * 
      * @param <T> the type of the list of obects to write to output
-     * 
      * @throws ContractException
      *                           <ul>
      *                           <li>{@linkplain CoreTranslationError#INVALID_OUTPUT_CLASSREF}
@@ -579,12 +561,10 @@ public class TranslationController {
 
     /**
      * takes the given object and scenarioId pair and writes it out to it's
-     * corresponding
-     * outputFilePath, if it exists
+     * corresponding outputFilePath, if it exists
      * 
      * @param <M> the classType of the object
      * @param <U> the optional type of the parent class of the object
-     * 
      * @throws ContractException
      *                           <ul>
      *                           <li>{@linkplain CoreTranslationError#INVALID_OUTPUT_CLASSREF}
@@ -621,7 +601,6 @@ public class TranslationController {
      * the given classRef
      * 
      * @param <T> the type of the obect to get
-     * 
      * @throws ContractException
      *                           <ul>
      *                           <li>{@linkplain CoreTranslationError#UNKNOWN_CLASSREF}
@@ -678,8 +657,8 @@ public class TranslationController {
             Map<TranslatorId, Translator> translatorMap) {
 
         /*
-         * Add the nodes to the graph, check for duplicate ids, build the
-         * mapping from plugin id back to plugin
+         * Add the nodes to the graph, check for duplicate ids, build the mapping from
+         * plugin id back to plugin
          */
         this.addNodes(mutableGraph, translatorMap);
 
@@ -687,15 +666,14 @@ public class TranslationController {
         this.addEdges(mutableGraph);
 
         /*
-         * Check for missing plugins from the plugin dependencies that were
-         * collected from the known plugins.
+         * Check for missing plugins from the plugin dependencies that were collected
+         * from the known plugins.
          */
         checkForMissingTranslators(mutableGraph, translatorMap);
 
         /*
-         * Determine whether the graph is acyclic and generate a graph depth
-         * evaluator for the graph so that we can determine the order of
-         * initialization.
+         * Determine whether the graph is acyclic and generate a graph depth evaluator
+         * for the graph so that we can determine the order of initialization.
          */
         checkForCyclicGraph(mutableGraph);
 

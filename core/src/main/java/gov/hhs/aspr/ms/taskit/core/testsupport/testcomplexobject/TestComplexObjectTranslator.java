@@ -9,12 +9,10 @@ public class TestComplexObjectTranslator {
     }
 
     public static Translator getTranslator() {
-        return Translator.builder()
-                .setTranslatorId(TestComplexObjectTranslatorId.TRANSLATOR_ID)
+        return Translator.builder().setTranslatorId(TestComplexObjectTranslatorId.TRANSLATOR_ID)
                 .setInitializer(translatorContext -> {
                     translatorContext.getTranslationEngineBuilder(TestTranslationEngine.Builder.class)
                             .addTranslationSpec(new TestComplexObjectTranslationSpec());
-                })
-                .build();
+                }).build();
     }
 }

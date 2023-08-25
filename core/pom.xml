@@ -3,14 +3,46 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <!-- Artifact -->
     <groupId>gov.hhs.aspr.ms.taskit</groupId>
     <artifactId>core</artifactId>
     <version>${revision}</version>
     <packaging>jar</packaging>
-    <name>taskit :: core</name>
 
+    <name>Translation and Serialization Toolkit: Core</name>
+    <description>The core components of a toolkit that aids in the conversion between two Java objects, primiarly for use with coverting between an input Java object and a application Java object.</description>
+    <url>https://github.com/HHS/aspr-ms-taskit</url>
+
+    <!-- License Information -->
+    <licenses>
+        <license>
+            <name>GNU GENERAL PUBLIC LICENSE v3</name>
+            <url>https://www.gnu.org/licenses/gpl-3.0.en.html</url>
+        </license>
+    </licenses>
+
+    <!-- Developers -->
+    <developers>
+        <developer>
+            <name>Zachary Bischoff</name>
+            <organization>Leidos</organization>
+            <email>zachary.bischoff@leidos.com</email>
+            <organizationUrl>https://www.leidos.com</organizationUrl>
+        </developer>
+    </developers>
+
+    <!-- SCM Information -->
+    <scm>
+        <connection>scm:git:git://github.com/HHS/aspr-ms-taskit.git</connection>
+        <developerConnection>scm:git:ssh://github.com:HHS/aspr-ms-taskit.git</developerConnection>
+        <url>https://github.com/HHS/aspr-ms-taskit/tree/main</url>
+    </scm>
+
+    <!-- Properties -->
     <properties>
+        <!-- Revision -->
         <revision>2.4.0-SNAPSHOT</revision>
+
         <!-- basic project properties -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>17</maven.compiler.source>
@@ -19,8 +51,8 @@
         <!-- plugin versions -->
         <flatten-maven-plugin.version>1.3.0</flatten-maven-plugin.version>
         <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
-        <maven-failsafe-plugin.version>3.0.0-M5</maven-failsafe-plugin.version>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
+        <maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
 
         <!-- dependency versions -->
         <util.version>4.0.0-SNAPSHOT</util.version>
@@ -28,6 +60,7 @@
         <jacoco-maven-plugin.version>0.8.9</jacoco-maven-plugin.version>
     </properties>
 
+    <!-- Dependencies -->
     <dependencies>
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -35,23 +68,18 @@
             <version>2.10.1</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>gov.hhs.aspr.ms</groupId>
             <artifactId>util</artifactId>
             <version>${util.version}</version>
             <scope>provided</scope>
         </dependency>
-
-        <!-- unit test dependencies -->
         <dependency>
             <groupId>org.jacoco</groupId>
             <artifactId>jacoco-maven-plugin</artifactId>
             <version>${jacoco-maven-plugin.version}</version>
             <scope>test</scope>
         </dependency>
-
-        <!-- Junit dependencies -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
@@ -66,6 +94,7 @@
         </dependency>
     </dependencies>
 
+    <!-- Configure Build -->
     <build>
         <plugins>
             <!-- used with the ${revision} for versioning, creates a pom that has the version replaced with the value of ${revision} -->
@@ -96,7 +125,7 @@
                 </executions>
             </plugin>
 
-            <!-- runs unit tests -->
+            <!-- Runs unit tests -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -108,28 +137,7 @@
                 </configuration>
             </plugin>
 
-            <!-- runs integration tests -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>${maven-failsafe-plugin.version}</version>
-            </plugin>
-
-            <!-- attaches the source jar -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>${maven-source-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>jar-no-fork</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+            <!-- Jacoco Coverage Check -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -179,7 +187,70 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- Attachs source jar to project -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>${maven-source-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <!--Attaches javadoc jar to project -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>${maven-javadoc-plugin.version}</version>
+                        <configuration>
+                            <doclint>all,-missing</doclint>
+                            <additionalDependencies>
+                                <additionalDependency>
+                                    <groupId>gov.hhs.aspr.ms</groupId>
+                                    <artifactId>util</artifactId>
+                                    <version>${util.version}</version>
+                                </additionalDependency>
+                                <additionalDependency>
+                                    <groupId>org.junit.jupiter</groupId>
+                                    <artifactId>junit-jupiter-api</artifactId>
+                                    <version>${junit-jupiter-engine.version}</version>
+                                </additionalDependency>
+                            </additionalDependencies>
+                            <author>false</author>
+                            <additionalJOptions>
+                                <additionalJOption>-Xmaxerrs</additionalJOption>
+                                <additionalJOption>65536</additionalJOption>
+                                <additionalJOption>-Xmaxwarns</additionalJOption>
+                                <additionalJOption>65536</additionalJOption>
+                            </additionalJOptions>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

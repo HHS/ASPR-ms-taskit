@@ -25,9 +25,7 @@ public class AT_DateTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertInputObject() {
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
-                .builder()
-                .build();
+        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder().build();
 
         DateTranslationSpec dateTranslationSpec = new DateTranslationSpec();
         dateTranslationSpec.init(protobufTranslationEngine);
@@ -44,9 +42,7 @@ public class AT_DateTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertAppObject() {
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
-                .builder()
-                .build();
+        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder().build();
 
         DateTranslationSpec dateTranslationSpec = new DateTranslationSpec();
         dateTranslationSpec.init(protobufTranslationEngine);

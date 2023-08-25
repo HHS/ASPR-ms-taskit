@@ -38,11 +38,9 @@ public class AT_TestTranslationEngine {
 
                 TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
                 TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
-                TestTranslationEngine testTranslationEngine = TestTranslationEngine
-                                .builder()
+                TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder()
                                 .addTranslationSpec(testObjectTranslationSpec)
-                                .addTranslationSpec(complexObjectTranslationSpec)
-                                .build();
+                                .addTranslationSpec(complexObjectTranslationSpec).build();
 
                 testTranslationEngine.init();
 
@@ -89,11 +87,9 @@ public class AT_TestTranslationEngine {
 
                 TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
                 TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
-                TestTranslationEngine testTranslationEngine = TestTranslationEngine
-                                .builder()
+                TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder()
                                 .addTranslationSpec(testObjectTranslationSpec)
-                                .addTranslationSpec(complexObjectTranslationSpec)
-                                .build();
+                                .addTranslationSpec(complexObjectTranslationSpec).build();
 
                 testTranslationEngine.init();
 
@@ -119,15 +115,13 @@ public class AT_TestTranslationEngine {
         @Test
         @UnitTestMethod(target = TestTranslationEngine.class, name = "builder", args = {})
         public void testBuilder() {
-                assertNotNull(TestTranslationEngine
-                                .builder());
+                assertNotNull(TestTranslationEngine.builder());
         }
 
         @Test
         @UnitTestMethod(target = TestTranslationEngine.Builder.class, name = "build", args = {})
         public void testBuild() {
-                assertNotNull(TestTranslationEngine
-                                .builder().build());
+                assertNotNull(TestTranslationEngine.builder().build());
         }
 
         @Test

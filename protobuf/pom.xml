@@ -3,28 +3,60 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <!-- Artifact -->
     <groupId>gov.hhs.aspr.ms.taskit</groupId>
     <artifactId>protobuf</artifactId>
-    <name>taskit :: protobuf :: core</name>
     <version>${revision}</version>
     <packaging>jar</packaging>
 
+    <name>Translation and Serialization Toolkit: Protobuf</name>
+    <description>A toolkit that aids in the conversion between Protobuf Java objects and application Java objects.</description>
+    <url>https://github.com/HHS/aspr-ms-taskit</url>
+
+    <!-- License Information -->
+    <licenses>
+        <license>
+            <name>GNU GENERAL PUBLIC LICENSE v3</name>
+            <url>https://www.gnu.org/licenses/gpl-3.0.en.html</url>
+        </license>
+    </licenses>
+
+    <!-- Developers -->
+    <developers>
+        <developer>
+            <name>Zachary Bischoff</name>
+            <organization>Leidos</organization>
+            <email>zachary.bischoff@leidos.com</email>
+            <organizationUrl>https://www.leidos.com</organizationUrl>
+        </developer>
+    </developers>
+
+    <!-- SCM Information -->
+    <scm>
+        <connection>scm:git:git://github.com/HHS/aspr-ms-taskit.git</connection>
+        <developerConnection>scm:git:ssh://github.com:HHS/aspr-ms-taskit.git</developerConnection>
+        <url>https://github.com/HHS/aspr-ms-taskit/tree/main</url>
+    </scm>
+
+    <!-- Properties -->
     <properties>
+        <!-- Revision -->
         <revision>2.4.0-SNAPSHOT</revision>
+
+        <!-- basic project properties -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
 
         <!-- plugin versions -->
         <os-maven-plugin.version>1.7.0</os-maven-plugin.version>
-        <maven-dependency-plugin.version>3.1.1</maven-dependency-plugin.version>
-        <build-helper-maven-plugin.version>3.3.0</build-helper-maven-plugin.version>
-        <flatten-maven-plugin.version>1.3.0</flatten-maven-plugin.version>
         <protobuf-maven-plugin.version>0.6.1</protobuf-maven-plugin.version>
-        <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
-        <maven-failsafe-plugin.version>3.0.0-M5</maven-failsafe-plugin.version>
-        <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
+        <build-helper-maven-plugin.version>3.3.0</build-helper-maven-plugin.version>
         <maven-replacer-plugin.version>1.3.2</maven-replacer-plugin.version>
+        <flatten-maven-plugin.version>1.3.0</flatten-maven-plugin.version>
+        <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
+        <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
+        <maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
 
         <!-- dependency versions -->
         <taskit-core.version>2.4.0-SNAPSHOT</taskit-core.version>
@@ -35,15 +67,13 @@
         <junit-jupiter-engine.version>5.8.2</junit-jupiter-engine.version>
     </properties>
 
+    <!-- Dependencies -->
     <dependencies>
-        <!-- core translation dependency -->
         <dependency>
             <groupId>gov.hhs.aspr.ms.taskit</groupId>
             <artifactId>core</artifactId>
             <version>${taskit-core.version}</version>
         </dependency>
-
-        <!-- protobuf dependencies -->
         <dependency>
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>
@@ -54,15 +84,12 @@
             <artifactId>protobuf-java-util</artifactId>
             <version>${protobuf.version}</version>
         </dependency>
-
         <dependency>
             <groupId>gov.hhs.aspr.ms</groupId>
             <artifactId>util</artifactId>
             <version>${util.version}</version>
             <scope>provided</scope>
         </dependency>
-
-        <!-- Junit dependencies -->
         <dependency>
             <groupId>org.jacoco</groupId>
             <artifactId>jacoco-maven-plugin</artifactId>
@@ -104,7 +131,27 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- attaches generated proto sources to classpath -->
+
+            <!-- Compiles proto files -->
+            <plugin>
+                <groupId>org.xolstice.maven.plugins</groupId>
+                <artifactId>protobuf-maven-plugin</artifactId>
+                <version>${protobuf-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>test-compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <protocArtifact>com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
+                    <protoSourceRoot>${basedir}/src/main/proto/gov/hhs/aspr/ms/taskit/protobuf</protoSourceRoot>
+                </configuration>
+            </plugin>
+
+            <!-- Attaches generated proto sources to classpath -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
@@ -112,7 +159,7 @@
                 <executions>
                     <execution>
                         <id>add-sources</id>
-                        <phase>generate-sources</phase>
+                        <phase>process-sources</phase>
                         <goals>
                             <goal>add-source</goal>
                         </goals>
@@ -124,7 +171,8 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- some of the generated proto files have warnings that clutter the 'problems' id the IDE. This adds a SuppressWarnings("all") to each generated file to clear up the warnings. -->
+
+            <!-- Some of the generated proto files have warnings that clutter the 'problems' id the IDE. This adds a SuppressWarnings("all") to each generated file to clear up the warnings. -->
             <plugin>
                 <groupId>com.google.code.maven-replacer-plugin</groupId>
                 <artifactId>maven-replacer-plugin</artifactId>
@@ -182,25 +230,8 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- compiles proto files -->
-            <plugin>
-                <groupId>org.xolstice.maven.plugins</groupId>
-                <artifactId>protobuf-maven-plugin</artifactId>
-                <version>${protobuf-maven-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>compile</goal>
-                            <goal>test-compile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <protocArtifact>com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
-                    <protoSourceRoot>${basedir}/src/main/proto/gov/hhs/aspr/ms/taskit/protobuf</protoSourceRoot>
-                </configuration>
-            </plugin>
-            <!-- runs unit tests -->
+
+            <!-- Runs unit tests -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -211,13 +242,8 @@
                     </includes>
                 </configuration>
             </plugin>
-            <!-- runs integration tests -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>${maven-failsafe-plugin.version}</version>
-            </plugin>
-            <!-- jacoco report generator -->
+
+            <!-- Jacoco Coverage Check -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -225,9 +251,7 @@
                 <configuration>
                     <excludes>
                         <exclude>com/google/type/*.class</exclude>
-                        <exclude>**/test/**/*.class</exclude>
                         <exclude>**/input/**/*.class</exclude>
-                        <exclude>**/testsupport/**/input/**/*.class</exclude>
                     </excludes>
                 </configuration>
                 <executions>
@@ -275,7 +299,8 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- attaches the source jar -->
+
+            <!-- Attachs source jar to project -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
@@ -292,5 +317,52 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <!--Attaches javadoc jar to project -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>${maven-javadoc-plugin.version}</version>
+                        <configuration>
+                            <doclint>all,-missing</doclint>
+                            <additionalDependencies>
+                                <additionalDependency>
+                                    <groupId>gov.hhs.aspr.ms</groupId>
+                                    <artifactId>util</artifactId>
+                                    <version>${util.version}</version>
+                                </additionalDependency>
+                                <additionalDependency>
+                                    <groupId>org.junit.jupiter</groupId>
+                                    <artifactId>junit-jupiter-api</artifactId>
+                                    <version>${junit-jupiter-engine.version}</version>
+                                </additionalDependency>
+                            </additionalDependencies>
+                            <author>false</author>
+                            <additionalJOptions>
+                                <additionalJOption>-Xmaxerrs</additionalJOption>
+                                <additionalJOption>65536</additionalJOption>
+                                <additionalJOption>-Xmaxwarns</additionalJOption>
+                                <additionalJOption>65536</additionalJOption>
+                            </additionalJOptions>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

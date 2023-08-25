@@ -21,10 +21,8 @@ public class TestProtobufObjectTranslationSpec extends ProtobufTranslationSpec<T
 
     @Override
     protected TestInputObject convertAppObject(TestAppObject appObject) {
-        TestInputObject testInputObject = TestInputObject.newBuilder()
-                .setBool(appObject.isBool())
-                .setInteger(appObject.getInteger())
-                .setString(appObject.getString())
+        TestInputObject testInputObject = TestInputObject.newBuilder().setBool(appObject.isBool())
+                .setInteger(appObject.getInteger()).setString(appObject.getString())
                 .setTestComplexInputObject((TestComplexInputObject) this.translationEngine
                         .convertObject(appObject.getTestComplexAppObject()))
                 .build();
