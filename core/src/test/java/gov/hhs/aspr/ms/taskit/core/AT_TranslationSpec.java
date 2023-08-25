@@ -58,10 +58,8 @@ public class AT_TranslationSpec {
     @UnitTestMethod(target = TranslationSpec.class, name = "init", args = { TranslationEngine.class })
     public void testInit() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
-        TestTranslationEngine testTranslationEngine = TestTranslationEngine
-                .builder()
-                .addTranslationSpec(testObjectTranslationSpec)
-                .build();
+        TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder()
+                .addTranslationSpec(testObjectTranslationSpec).build();
 
         testObjectTranslationSpec.init(testTranslationEngine);
 
@@ -73,10 +71,8 @@ public class AT_TranslationSpec {
     @UnitTestMethod(target = TranslationSpec.class, name = "isInitialized", args = {})
     public void testIsInitialized() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
-        TestTranslationEngine testTranslationEngine = TestTranslationEngine
-                .builder()
-                .addTranslationSpec(testObjectTranslationSpec)
-                .build();
+        TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder()
+                .addTranslationSpec(testObjectTranslationSpec).build();
 
         testObjectTranslationSpec.init(testTranslationEngine);
 
@@ -90,11 +86,8 @@ public class AT_TranslationSpec {
     public void testConvert() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
-        TestTranslationEngine testTranslationEngine = TestTranslationEngine
-                .builder()
-                .addTranslationSpec(testObjectTranslationSpec)
-                .addTranslationSpec(complexObjectTranslationSpec)
-                .build();
+        TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder()
+                .addTranslationSpec(testObjectTranslationSpec).addTranslationSpec(complexObjectTranslationSpec).build();
 
         testObjectTranslationSpec.init(testTranslationEngine);
         complexObjectTranslationSpec.init(testTranslationEngine);
@@ -139,9 +132,7 @@ public class AT_TranslationSpec {
     @Test
     @UnitTestMethod(target = TranslationSpec.class, name = "hashCode", args = {})
     public void testHashCode() {
-        TestTranslationEngine testTranslationEngine = TestTranslationEngine
-                .builder()
-                .build();
+        TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder().build();
         // base
         TranslationSpec<TestInputObject, TestAppObject> translationSpecA = new TranslationSpec<>() {
 
@@ -298,9 +289,7 @@ public class AT_TranslationSpec {
     @Test
     @UnitTestMethod(target = TranslationSpec.class, name = "equals", args = { Object.class })
     public void testEquals() {
-        TestTranslationEngine testTranslationEngine = TestTranslationEngine
-                .builder()
-                .build();
+        TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder().build();
         // base
         TranslationSpec<TestInputObject, TestAppObject> translationSpecA = new TranslationSpec<>() {
 

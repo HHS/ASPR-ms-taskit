@@ -1,9 +1,8 @@
 package gov.hhs.aspr.ms.taskit.core;
 
 /**
- * Base interface for TranslationSpecifications (TranslationSpecs)
- * 
- * Package level access
+ * Base interface for TranslationSpecifications (TranslationSpecs) Package level
+ * access
  */
 interface BaseTranslationSpec {
     <T extends TranslationEngine> void init(T translationEngine);

@@ -30,11 +30,8 @@ public class AT_TestObjectTranslationSpec {
 
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
-        TestTranslationEngine testTranslationEngine = TestTranslationEngine
-                .builder()
-                .addTranslationSpec(testObjectTranslationSpec)
-                .addTranslationSpec(complexObjectTranslationSpec)
-                .build();
+        TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder()
+                .addTranslationSpec(testObjectTranslationSpec).addTranslationSpec(complexObjectTranslationSpec).build();
 
         testTranslationEngine.init();
 
@@ -51,11 +48,8 @@ public class AT_TestObjectTranslationSpec {
 
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
-        TestTranslationEngine testTranslationEngine = TestTranslationEngine
-                .builder()
-                .addTranslationSpec(testObjectTranslationSpec)
-                .addTranslationSpec(complexObjectTranslationSpec)
-                .build();
+        TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder()
+                .addTranslationSpec(testObjectTranslationSpec).addTranslationSpec(complexObjectTranslationSpec).build();
 
         testTranslationEngine.init();
 
