@@ -37,9 +37,9 @@ jobs:
     - name: Build Util
       run: mvn clean install -DskipTests --file util/pom.xml
     - name: Build TASKit Core
-      run: mvn clean package --file taskit-core/pom.xml
+      run: mvn clean package --file core/pom.xml
     - name: Build TASKit Protobuf
-      run: mvn clean package --file taskit-protobuf/pom.xml
+      run: mvn clean package --file protobuf/pom.xml
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
    # - name: Update dependency graph
