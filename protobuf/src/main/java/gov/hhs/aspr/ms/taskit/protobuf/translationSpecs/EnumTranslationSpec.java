@@ -9,12 +9,11 @@ import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
 import gov.hhs.aspr.ms.taskit.protobuf.input.WrapperEnumValue;
 
 /**
- * TranslationSpec that defines how to convert from any Java Enum to a
- * Protobuf {@link WrapperEnumValue} type and vice versa
- * 
- * <li>Note: A {@link WrapperEnumValue} is specifically used to wrap a Enum
- * into a Protobuf {@link Any} type, since a Protobuf {@link Any} type does
- * not natively support enums, only primitives and other Protobuf Messages
+ * TranslationSpec that defines how to convert from any Java Enum to a Protobuf
+ * {@link WrapperEnumValue} type and vice versa
+ * <li>Note: A {@link WrapperEnumValue} is specifically used to wrap a Enum into
+ * a Protobuf {@link Any} type, since a Protobuf {@link Any} type does not
+ * natively support enums, only primitives and other Protobuf Messages
  */
 @SuppressWarnings("rawtypes")
 public class EnumTranslationSpec extends ProtobufTranslationSpec<WrapperEnumValue, Enum> {
@@ -29,8 +28,8 @@ public class EnumTranslationSpec extends ProtobufTranslationSpec<WrapperEnumValu
         try {
             Enum inputInput = (Enum<?>) classRef.getMethod("valueOf", String.class).invoke(null, value);
             return this.translationEngine.convertObject(inputInput);
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
-                | NoSuchMethodException | SecurityException e) {
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+                | SecurityException e) {
             throw new RuntimeException(e);
         }
 

@@ -57,14 +57,11 @@ public class ProtobufTranslationEngine extends TranslationEngine {
         private Data() {
             super();
             /**
-             * automatically include all Primitive TranslationSpecs
-             * 
-             * Note that these TranslationSpecs are specifically used for converting
-             * primitive types that are packed inside an Any Message
-             * 
-             * for example, a boolean wrapped in an Any Message is of type BoolValue, and so
-             * there is a translationSpec to convert from a BoolValue to a boolean and vice
-             * versa
+             * automatically include all Primitive TranslationSpecs Note that these
+             * TranslationSpecs are specifically used for converting primitive types that
+             * are packed inside an Any Message for example, a boolean wrapped in an Any
+             * Message is of type BoolValue, and so there is a translationSpec to convert
+             * from a BoolValue to a boolean and vice versa
              */
             this.typeUrlToClassMap.putAll(PrimitiveTranslationSpecs.getPrimitiveTypeUrlToClassMap());
             this.classToTranslationSpecMap.putAll(PrimitiveTranslationSpecs.getPrimitiveInputTranslatorSpecMap());
@@ -86,9 +83,9 @@ public class ProtobufTranslationEngine extends TranslationEngine {
         }
 
         /**
-         * returns a new instance of a ProtobufTranslationEngine
-         * that has a jsonParser and jsonWriter that include all the typeUrls for all
-         * added TranslationSpecs and their respective Protobuf Message types
+         * returns a new instance of a ProtobufTranslationEngine that has a jsonParser
+         * and jsonWriter that include all the typeUrls for all added TranslationSpecs
+         * and their respective Protobuf Message types
          */
         @Override
         public ProtobufTranslationEngine build() {
@@ -123,8 +120,7 @@ public class ProtobufTranslationEngine extends TranslationEngine {
 
         /**
          * Whether the jsonParser should ignore fields in the JSON that don't exist in
-         * the Protobuf Message.
-         * defaults to true
+         * the Protobuf Message. defaults to true
          */
         public Builder setIgnoringUnknownFields(boolean ignoringUnknownFields) {
             this.ignoringUnknownFields = ignoringUnknownFields;
@@ -134,9 +130,8 @@ public class ProtobufTranslationEngine extends TranslationEngine {
         /**
          * Whether the jsonWriter should blanket print all values that are default. The
          * default values can be found here:
-         * {@linkplain https://protobuf.dev/programming-guides/proto3/#default}
-         * 
-         * defaults to false
+         * {@linkplain https://protobuf.dev/programming-guides/proto3/#default} defaults
+         * to false
          */
         public Builder setIncludingDefaultValueFields(boolean includingDefaultValueFields) {
             this.includingDefaultValueFields = includingDefaultValueFields;
@@ -145,8 +140,8 @@ public class ProtobufTranslationEngine extends TranslationEngine {
 
         /**
          * Contrary to {@link Builder#setIncludingDefaultValueFields(boolean)} which
-         * will either print all default values or not,
-         * this will set a specific field to print the default value for
+         * will either print all default values or not, this will set a specific field
+         * to print the default value for
          */
         public Builder addFieldToIncludeDefaultValue(FieldDescriptor fieldDescriptor) {
             this.defaultValueFieldsToPrint.add(fieldDescriptor);
@@ -156,22 +151,19 @@ public class ProtobufTranslationEngine extends TranslationEngine {
 
         /**
          * Overriden implementation of
-         * {@link TranslationEngine.Builder#addTranslationSpec(TranslationSpec)}
-         * 
-         * that also populates the type urls for all Protobuf Message types that exist
-         * within the translationSpec
+         * {@link TranslationEngine.Builder#addTranslationSpec(TranslationSpec)} that
+         * also populates the type urls for all Protobuf Message types that exist within
+         * the translationSpec
          * 
          * @throws ContractException
          *                           <ul>
          *                           <li>{@link ProtobufCoreTranslationError#INVALID_INPUT_CLASS}
          *                           <li>if the given inputClassRef is not assingable
-         *                           from
-         *                           {@linkplain Message} nor
+         *                           from {@linkplain Message} nor
          *                           {@linkplain ProtocolMessageEnum}</li>
          *                           <li>{@link ProtobufCoreTranslationError#INVALID_TRANSLATION_SPEC}
          *                           <li>if the given translation spec is not assignable
-         *                           from
-         *                           {@linkplain ProtobufTranslationSpec}</li>
+         *                           from {@linkplain ProtobufTranslationSpec}</li>
          *                           </ul>
          */
         @Override
@@ -195,8 +187,7 @@ public class ProtobufTranslationEngine extends TranslationEngine {
          *                           <ul>
          *                           <li>{@link ProtobufCoreTranslationError#INVALID_INPUT_CLASS}
          *                           <li>if the given inputClassRef is not assingable
-         *                           from
-         *                           {@linkplain Message} nor
+         *                           from {@linkplain Message} nor
          *                           {@linkplain ProtocolMessageEnum}</li>
          *                           </ul>
          */
@@ -272,17 +263,13 @@ public class ProtobufTranslationEngine extends TranslationEngine {
 
     /**
      * <li>write output implementation
-     * 
-     * <li>Will first convert the object, if needed
-     * and then use the jsonPrinter to take the the converted object and write it
-     * to a JSON string
-     * and then pass that string to the writer to writer the JSON to an output file
+     * <li>Will first convert the object, if needed and then use the jsonPrinter to
+     * take the the converted object and write it to a JSON string and then pass
+     * that string to the writer to writer the JSON to an output file
      * 
      * @param <U> the type of the optional parent class of the appObject
      * @param <M> the type of the appObject
-     * 
-     * @throws RuntimeException
-     *                          if there is an IOException during writing
+     * @throws RuntimeException if there is an IOException during writing
      */
     protected <U, M extends U> void writeOutput(Writer writer, M appObject, Optional<Class<U>> superClass) {
         Message message;
@@ -299,15 +286,11 @@ public class ProtobufTranslationEngine extends TranslationEngine {
     /**
      * takes a protobuf message, parses it into a JSON string and then writes the
      * JSON string to the output file for which the writer is defined.
-     * 
      * <li>if debug is enabled in this class, it will also print the resulting
-     * output to the
-     * console</li>
+     * output to the console</li>
      * 
      * @param <U> the type of the Message
-     * 
-     * @throws RuntimeException
-     *                          if there is an IOException during writing
+     * @throws RuntimeException if there is an IOException during writing
      */
     private <U extends Message> void writeOutput(Writer writer, U message) {
         try {
@@ -330,28 +313,22 @@ public class ProtobufTranslationEngine extends TranslationEngine {
 
     /**
      * Given a reader and a classRef, will read the JSON from the reader, parse it
-     * into a JSON Object,
-     * merge the resulting JSON Object into the equivalent Protobuf Message and then
-     * convert
-     * that Protobuf Message to the equivalent AppObject
-     * 
+     * into a JSON Object, merge the resulting JSON Object into the equivalent
+     * Protobuf Message and then convert that Protobuf Message to the equivalent
+     * AppObject
      * <li>if debug is set on this class, will also print the resulting read in
      * Protobuf Message to console
      * 
      * @param <U> the type of the inputClass
      * @param <T> the return type
-     * 
      * @throws RuntimeException
      *                           <ul>
      *                           <li>if there is an issue getting the builder method
-     *                           from
-     *                           the inputClassRef
-     *                           </li>
+     *                           from the inputClassRef</li>
      *                           <li>if there is an issue merging the read in JSON
      *                           object into the resulting Protobuf Message builder
      *                           </li>
      *                           </ul>
-     * 
      * @throws ContractException
      *                           <ul>
      *                           <li>{@linkplain ProtobufCoreTranslationError#INVALID_READ_INPUT_CLASS_REF}
@@ -371,19 +348,15 @@ public class ProtobufTranslationEngine extends TranslationEngine {
     /**
      * Given a jsonObject and a inputClassRef, creates a builder for the inputClass
      * type and then merges the JSON object into the resulting builder
-     * 
      * <li>if debug is set on this class, will also print the resulting read in
      * Protobuf Message to console
      * 
      * @param <T> the return type
      * @param <U> the type of the inputClass, that is a child of {@link Message}
-     * 
      * @throws RuntimeException
      *                          <ul>
      *                          <li>if there is an issue getting the builder method
-     *                          from
-     *                          the inputClassRef
-     *                          </li>
+     *                          from the inputClassRef</li>
      *                          <li>if there is an issue merging the read in JSON
      *                          object into the resulting Protobuf Message builder
      *                          </li>
@@ -439,7 +412,6 @@ public class ProtobufTranslationEngine extends TranslationEngine {
 
     /**
      * Given an object of type {@link Any}, will convert it to the resulting object
-     * 
      * <li>Will ultimately use the {@link AnyTranslationSpec} to accomplish this
      * 
      * @param <T> the return type
@@ -450,7 +422,6 @@ public class ProtobufTranslationEngine extends TranslationEngine {
 
     /**
      * Given an object , will convert it to an {@link Any} type
-     * 
      * <li>Will use the {@link AnyTranslationSpec} to accomplish this
      */
     public Any getAnyFromObject(Object object) {
@@ -459,16 +430,14 @@ public class ProtobufTranslationEngine extends TranslationEngine {
 
     /**
      * Given an object , will convert it to an {@link Any} type
-     * 
      * <li>This method call differs from {@link #getAnyFromObject(Object)} in that
      * it will first convert the object using the safe parent class by calling
-     * {@link #convertObjectAsSafeClass(Object, Class)}
-     * and will then use the {@link AnyTranslationSpec} to wrap the resulting
-     * converted object in an {@link Any}
+     * {@link #convertObjectAsSafeClass(Object, Class)} and will then use the
+     * {@link AnyTranslationSpec} to wrap the resulting converted object in an
+     * {@link Any}
      * 
      * @param <U> the parent Class
      * @param <M> the object class
-     * 
      * @throws ContractException
      *                           <ul>
      *                           <li>{@linkplain CoreTranslationError#UNKNOWN_TRANSLATION_SPEC}
