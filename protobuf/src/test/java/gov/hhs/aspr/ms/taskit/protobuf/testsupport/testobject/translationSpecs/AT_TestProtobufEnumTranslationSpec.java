@@ -23,9 +23,7 @@ public class AT_TestProtobufEnumTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertInputObject() {
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
-                .builder()
-                .build();
+        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder().build();
         protobufTranslationEngine.init();
 
         TestProtobufEnumTranslationSpec enumTranslationSpec = new TestProtobufEnumTranslationSpec();
@@ -42,9 +40,7 @@ public class AT_TestProtobufEnumTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertAppObject() {
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
-                .builder()
-                .build();
+        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder().build();
         protobufTranslationEngine.init();
 
         TestProtobufEnumTranslationSpec enumTranslationSpec = new TestProtobufEnumTranslationSpec();

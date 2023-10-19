@@ -23,9 +23,7 @@ public class AT_StringTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertInputObject() {
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
-                .builder()
-                .build();
+        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder().build();
 
         StringTranslationSpec stringTranslationSpec = new StringTranslationSpec();
         stringTranslationSpec.init(protobufTranslationEngine);
@@ -41,9 +39,7 @@ public class AT_StringTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertAppObject() {
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
-                .builder()
-                .build();
+        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder().build();
 
         StringTranslationSpec stringTranslationSpec = new StringTranslationSpec();
         stringTranslationSpec.init(protobufTranslationEngine);

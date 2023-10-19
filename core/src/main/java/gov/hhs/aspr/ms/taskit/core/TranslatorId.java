@@ -12,8 +12,7 @@ public interface TranslatorId {
 
     /**
      * Two Translator ids are equal if and only if they represent the same
-     * Translator.
-     * Translator ids are generally implemented as static instances.
+     * Translator. Translator ids are generally implemented as static instances.
      */
     @Override
     public boolean equals(Object obj);

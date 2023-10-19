@@ -14,14 +14,10 @@ import java.util.Set;
 import util.errors.ContractException;
 
 /**
- * Main Translator Class
- * 
- * Initializes all {@link TranslationSpec}s and maintains a mapping between the
- * translationSpec and it's respective classes
- * 
- * This is an Abstract class, meaning that for a given translation library
- * (Fasterxml, Protobuf, etc) must have a custom implemented TranslationEngine
- * 
+ * Main Translator Class Initializes all {@link TranslationSpec}s and maintains
+ * a mapping between the translationSpec and it's respective classes This is an
+ * Abstract class, meaning that for a given translation library (Fasterxml,
+ * Protobuf, etc) must have a custom implemented TranslationEngine
  */
 public abstract class TranslationEngine {
 
@@ -99,11 +95,11 @@ public abstract class TranslationEngine {
 
         /**
          * Builder for the TranslationEngine
+         * <p>
+         * <b>Note: Calling this specific method will result in a RuntimeException</b>
+         * </p>
          * 
-         * <li>Note: Calling this specific method will result in a RuntimeException
-         * 
-         * @throws RuntimeException
-         *                          If this method is called directly. You should
+         * @throws RuntimeException If this method is called directly. You should
          *                          instead be calling the child method in the child
          *                          TranslationEngine that extends this class
          */
@@ -115,6 +111,8 @@ public abstract class TranslationEngine {
          * Adds the given {@link TranslationSpec} to the internal
          * classToTranslationSpecMap
          * 
+         * @param <I> the input object type
+         * @param <A> the app object type
          * @throws ContractException
          *                           <ul>
          *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATION_SPEC}
@@ -127,15 +125,12 @@ public abstract class TranslationEngine {
          *                           returns null</li>
          *                           <li>{@linkplain CoreTranslationError#DUPLICATE_TRANSLATION_SPEC}
          *                           if the given translationSpec is already known</li>
-         * 
-         * @param <I> the input object type
-         * @param <A> the app object type
+         *                           </ul>
          */
         public <I, A> Builder addTranslationSpec(TranslationSpec<I, A> translationSpec) {
             validateTranslationSpec(translationSpec);
 
-            this.data.classToTranslationSpecMap.put(translationSpec.getInputObjectClass(),
-                    translationSpec);
+            this.data.classToTranslationSpecMap.put(translationSpec.getInputObjectClass(), translationSpec);
             this.data.classToTranslationSpecMap.put(translationSpec.getAppObjectClass(), translationSpec);
 
             this.data.translationSpecs.add(translationSpec);
@@ -153,17 +148,14 @@ public abstract class TranslationEngine {
 
     /**
      * Initializes the translationEngine by calling init on each translationSpec
-     * added
-     * in the builder
+     * added in the builder
      */
     public void init() {
         /*
          * Calling init on a translationSpec causes the hashCode of the translationSpec
-         * to change.
-         * Because of this, before calling init, we need to remove them from the
-         * translationSpecs Set
-         * then initialize them, then add them back to the set. Set's aren't happy when
-         * the hash code of the objects in them change
+         * to change. Because of this, before calling init, we need to remove them from
+         * the translationSpecs Set then initialize them, then add them back to the set.
+         * Set's aren't happy when the hash code of the objects in them change
          */
         List<BaseTranslationSpec> copyOfTranslationSpecs = new ArrayList<>(this.data.translationSpecs);
 
@@ -184,13 +176,10 @@ public abstract class TranslationEngine {
         return this.isInitialized;
     }
 
-    //
-
     /**
      * checks to verify all the translationSpecs have been initialized.
      * 
-     * @throws RuntimeException
-     *                          There should not be a case where all
+     * @throws RuntimeException There should not be a case where all
      *                          translationSpecs are initialized, so if one of them
      *                          isn't, something went very wrong.
      */
@@ -224,18 +213,19 @@ public abstract class TranslationEngine {
     /**
      * Given an object, uses the class of the object to obtain the translationSpec
      * and then calls {@link TranslationSpec#convert(Object)}
-     * <li>this conversion method will be used approx ~90% of the
-     * time
+     * <p>
+     * this conversion method will be used approx ~90% of the time
+     * </p>
      * 
      * @param <T> the return type after converting
-     * 
      * @throws ContractException
      *                           <ul>
      *                           <li>{@linkplain CoreTranslationError#NULL_OBJECT_FOR_TRANSLATION}
-     *                           if the passed in object is null
+     *                           if the passed in object is null</li>
      *                           <li>{@linkplain CoreTranslationError#UNKNOWN_TRANSLATION_SPEC}
      *                           if no translationSpec was provided for the given
-     *                           objects class
+     *                           objects class</li>
+     *                           </ul>
      */
     public <T> T convertObject(Object object) {
         if (object == null) {
@@ -246,27 +236,29 @@ public abstract class TranslationEngine {
 
     /**
      * Given an object, uses the parent class of the object to obtain the
-     * translationSpec
-     * and then calls {@link TranslationSpec#convert(Object)}
-     * <li>This method call is safe in the sense that the type parameters ensure
-     * that the passed in object is actually a child of the passed in parentClassRef
-     * <li>this conversion method will be used approx ~7% of the
-     * time
+     * translationSpec and then calls {@link TranslationSpec#convert(Object)}
+     * <p>
+     * This method call is safe in the sense that the type parameters ensure that
+     * the passed in object is actually a child of the passed in parentClassRef
+     * </p>
+     * <p>
+     * this conversion method will be used approx ~7% of the time
+     * </p>
      * 
      * @param <T> the return type after converting
      * @param <M> the type of the object; extends U
      * @param <U> the parent type of the object and the class for which
      *            translationSpec you want to use
-     * 
      * @throws ContractException
      *                           <ul>
      *                           <li>{@linkplain CoreTranslationError#NULL_OBJECT_FOR_TRANSLATION}
-     *                           if the passed in object is null
+     *                           if the passed in object is null</li>
      *                           <li>{@linkplain CoreTranslationError#NULL_CLASS_REF}
-     *                           if the passed in parentClassRef is null
+     *                           if the passed in parentClassRef is null</li>
      *                           <li>{@linkplain CoreTranslationError#UNKNOWN_TRANSLATION_SPEC}
      *                           if no translationSpec was provided for the given
-     *                           objects class
+     *                           objects class</li>
+     *                           </ul>
      */
     public <T, M extends U, U> T convertObjectAsSafeClass(M object, Class<U> parentClassRef) {
         if (object == null) {
@@ -281,31 +273,34 @@ public abstract class TranslationEngine {
     }
 
     /**
-     * Given an object, uses the passed in class to obtain the
-     * translationSpec
-     * and then calls {@link TranslationSpec#convert(Object)}
-     * <li>This method call is unsafe in the sense that the type parameters do not
-     * ensure
-     * any relationship between the passed in object and the passed in classRef.
-     * <li>A common use case for using this conversion method would be to call a
+     * Given an object, uses the passed in class to obtain the translationSpec and
+     * then calls {@link TranslationSpec#convert(Object)}
+     * <p>
+     * This method call is unsafe in the sense that the type parameters do not
+     * ensure any relationship between the passed in object and the passed in
+     * classRef.
+     * </p>
+     * <p>
+     * A common use case for using this conversion method would be to call a
      * translationSpec that will wrap the given object in another object.
-     * 
-     * <li>this conversion method will be used approx ~3% of the
-     * time
+     * </p>
+     * <p>
+     * this conversion method will be used approx ~3% of the time
+     * </p>
      * 
      * @param <T> the return type after converting
      * @param <M> the type of the object
      * @param <U> the type of the class for which translationSpec you want to use
-     * 
      * @throws ContractException
      *                           <ul>
      *                           <li>{@linkplain CoreTranslationError#NULL_OBJECT_FOR_TRANSLATION}
-     *                           if the passed in object is null
+     *                           if the passed in object is null</li>
      *                           <li>{@linkplain CoreTranslationError#NULL_CLASS_REF}
-     *                           if the passed in objectClassRef is null
+     *                           if the passed in objectClassRef is null</li>
      *                           <li>{@linkplain CoreTranslationError#UNKNOWN_TRANSLATION_SPEC}
      *                           if no translationSpec was provided for the given
-     *                           objects class
+     *                           objects class</li>
+     *                           </ul>
      */
     public <T, M, U> T convertObjectAsUnsafeClass(M object, Class<U> objectClassRef) {
         if (object == null) {
@@ -323,9 +318,7 @@ public abstract class TranslationEngine {
      * Given a classRef, returns the translationSpec associated with that class, if
      * it is known
      * 
-     * @throws ContractException
-     *                           <ul>
-     *                           <li>{@linkplain CoreTranslationError#UNKNOWN_TRANSLATION_SPEC}
+     * @throws ContractException {@linkplain CoreTranslationError#UNKNOWN_TRANSLATION_SPEC}
      *                           if no translationSpec for the given class was found
      */
     protected BaseTranslationSpec getTranslationSpecForClass(Class<?> classRef) {

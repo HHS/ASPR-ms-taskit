@@ -23,9 +23,7 @@ public class AT_ULongTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertInputObject() {
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
-                .builder()
-                .build();
+        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder().build();
 
         ULongTranslationSpec booleanTranslationSpec = new ULongTranslationSpec();
         booleanTranslationSpec.init(protobufTranslationEngine);
@@ -41,9 +39,7 @@ public class AT_ULongTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertAppObject() {
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
-                .builder()
-                .build();
+        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder().build();
 
         ULongTranslationSpec booleanTranslationSpec = new ULongTranslationSpec();
         booleanTranslationSpec.init(protobufTranslationEngine);

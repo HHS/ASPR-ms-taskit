@@ -37,12 +37,10 @@ public class AT_AnyTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertInputObject() {
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
-                .builder()
+        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder()
                 .addTranslationSpec(new TestProtobufEnumTranslationSpec())
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
-                .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec())
-                .build();
+                .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
 
         protobufTranslationEngine.init();
         AnyTranslationSpec anyTranslationSpec = new AnyTranslationSpec();
@@ -82,12 +80,10 @@ public class AT_AnyTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testUnpackMessage() {
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
-                .builder()
+        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder()
                 .addTranslationSpec(new TestProtobufEnumTranslationSpec())
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
-                .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec())
-                .build();
+                .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
 
         protobufTranslationEngine.init();
         AnyTranslationSpec anyTranslationSpec = new AnyTranslationSpec();
@@ -109,10 +105,8 @@ public class AT_AnyTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertAppObject() {
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
-                .builder()
-                .addTranslationSpec(new TestProtobufEnumTranslationSpec())
-                .build();
+        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder()
+                .addTranslationSpec(new TestProtobufEnumTranslationSpec()).build();
 
         protobufTranslationEngine.init();
         AnyTranslationSpec anyTranslationSpec = new AnyTranslationSpec();
@@ -133,9 +127,7 @@ public class AT_AnyTranslationSpec {
         TestInputEnum expecetedValue = TestInputEnum.TEST1;
 
         WrapperEnumValue wrapperEnumValue = WrapperEnumValue.newBuilder()
-                .setEnumTypeUrl(TestInputEnum.getDescriptor().getFullName())
-                .setValue(expecetedValue.name())
-                .build();
+                .setEnumTypeUrl(TestInputEnum.getDescriptor().getFullName()).setValue(expecetedValue.name()).build();
 
         expectedAny = Any.pack(wrapperEnumValue);
 

@@ -7,18 +7,16 @@ import util.errors.ContractException;
 /**
  * Core implementation of the {@link BaseTranslationSpec} that must be
  * implemented by each needed translationSpec.
- * 
- * <li>Note: No reference to a {@link TranslationEngine} exists in this class,
- * and must be implemented by the implementing class.
+ * <p>
+ * Note: No reference to a {@link TranslationEngine} exists in this class, and
+ * must be implemented by the implementing class.
  */
 public abstract class TranslationSpec<I, A> implements BaseTranslationSpec {
     private boolean initialized = false;
 
     /**
-     * Initializes this translationSpec.
-     * 
-     * All child TranslationSpecs must call super() otherwise there will be an
-     * exception throw in the TranslationEngine
+     * Initializes this translationSpec. All child TranslationSpecs must call
+     * super() otherwise there will be an exception throw in the TranslationEngine
      */
     public <T extends TranslationEngine> void init(T translationEngine) {
         this.initialized = true;
@@ -39,22 +37,23 @@ public abstract class TranslationSpec<I, A> implements BaseTranslationSpec {
 
     /**
      * The implementation of the {@link BaseTranslationSpec#convert(Object)} method
-     * 
      * Given the object, determines which method should be called.
-     * 
-     * <li>It first checks if the object class is exactly equal to either the App or
+     * <p>
+     * It first checks if the object class is exactly equal to either the App or
      * Input Class and if so, calls the related method
-     * <li>It then checks if the the object class is assinable from either the App
-     * or Input Class and if so, calls the related method
-     * <li>If no match can be found, an exception is throw
+     * </p>
+     * <p>
+     * It then checks if the the object class is assinable from either the App or
+     * Input Class and if so, calls the related method
+     * </p>
+     * <p>
+     * If no match can be found, an exception is thrown
+     * </p>
      * 
      * @param <T> the expected return type after translation/coversion
-     * 
-     * @throws ContractException
-     *                           <ul>
-     *                           <li>{@linkplain CoreTranslationError#UNKNOWN_OBJECT}
-     *                           if no match can be found between the passed in
-     *                           object and the given appClass and InputClass
+     * @throws ContractException {@linkplain CoreTranslationError#UNKNOWN_OBJECT} if
+     *                           no match can be found between the passed in object
+     *                           and the given appClass and InputClass
      */
     @SuppressWarnings("unchecked")
     public <T> T convert(Object obj) {
@@ -76,9 +75,8 @@ public abstract class TranslationSpec<I, A> implements BaseTranslationSpec {
             return (T) this.convertInputObject((I) obj);
         }
 
-        throw new ContractException(CoreTranslationError.UNKNOWN_OBJECT,
-                "Object is not a " + this.getAppObjectClass().getName() + " and it is not a "
-                        + this.getInputObjectClass().getName());
+        throw new ContractException(CoreTranslationError.UNKNOWN_OBJECT, "Object is not a "
+                + this.getAppObjectClass().getName() + " and it is not a " + this.getInputObjectClass().getName());
 
     }
 

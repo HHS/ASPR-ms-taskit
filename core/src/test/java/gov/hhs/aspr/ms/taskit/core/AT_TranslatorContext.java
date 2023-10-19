@@ -19,10 +19,8 @@ public class AT_TranslatorContext {
     @UnitTestConstructor(target = TranslatorContext.class, args = { TranslationController.class })
     public void testConstructor() {
         TestTranslationEngine.Builder expectedBuilder = TestTranslationEngine.builder();
-        TranslationController translationController = TranslationController
-                .builder()
-                .setTranslationEngineBuilder(expectedBuilder)
-                .build();
+        TranslationController translationController = TranslationController.builder()
+                .setTranslationEngineBuilder(expectedBuilder).build();
 
         TranslatorContext translatorContext = new TranslatorContext(translationController);
 
@@ -33,10 +31,8 @@ public class AT_TranslatorContext {
     @UnitTestMethod(target = TranslatorContext.class, name = "getTranslationEngineBuilder", args = { Class.class })
     public void testGetTranslationEngineBuilder() {
         TestTranslationEngine.Builder expectedBuilder = TestTranslationEngine.builder();
-        TranslationController translationController = TranslationController
-                .builder()
-                .setTranslationEngineBuilder(expectedBuilder)
-                .buildWithoutInitAndChecks();
+        TranslationController translationController = TranslationController.builder()
+                .setTranslationEngineBuilder(expectedBuilder).buildWithoutInitAndChecks();
 
         TestTranslationEngine.Builder actualBuilder = translationController
                 .getTranslationEngineBuilder(TestTranslationEngine.Builder.class);
@@ -52,10 +48,8 @@ public class AT_TranslatorContext {
         assertEquals(CoreTranslationError.INVALID_TRANSLATION_ENGINE_BUILDER, contractException.getErrorType());
 
         assertThrows(RuntimeException.class, () -> {
-            TranslationController translationController2 = TranslationController
-                    .builder()
-                    .setTranslationEngineBuilder(expectedBuilder)
-                    .build();
+            TranslationController translationController2 = TranslationController.builder()
+                    .setTranslationEngineBuilder(expectedBuilder).build();
 
             translationController2.getTranslationEngineBuilder(TranslationEngine.Builder.class);
         });
@@ -66,10 +60,8 @@ public class AT_TranslatorContext {
             Class.class })
     public void testAddParentChildClassRelationship() {
         TestTranslationEngine.Builder expectedBuilder = TestTranslationEngine.builder();
-        TranslationController translationController = TranslationController
-                .builder()
-                .setTranslationEngineBuilder(expectedBuilder)
-                .build();
+        TranslationController translationController = TranslationController.builder()
+                .setTranslationEngineBuilder(expectedBuilder).build();
 
         TranslatorContext translatorContext = new TranslatorContext(translationController);
 
@@ -77,22 +69,19 @@ public class AT_TranslatorContext {
 
         // preconditions
         ContractException contractException = assertThrows(ContractException.class, () -> {
-            translatorContext
-                    .addParentChildClassRelationship(null, Object.class);
+            translatorContext.addParentChildClassRelationship(null, Object.class);
         });
 
         assertEquals(CoreTranslationError.NULL_CLASS_REF, contractException.getErrorType());
 
         contractException = assertThrows(ContractException.class, () -> {
-            translatorContext
-                    .addParentChildClassRelationship(TestAppObject.class, null);
+            translatorContext.addParentChildClassRelationship(TestAppObject.class, null);
         });
 
         assertEquals(CoreTranslationError.NULL_CLASS_REF, contractException.getErrorType());
 
         contractException = assertThrows(ContractException.class, () -> {
-            translatorContext
-                    .addParentChildClassRelationship(TestAppObject.class, Object.class);
+            translatorContext.addParentChildClassRelationship(TestAppObject.class, Object.class);
             translatorContext.addParentChildClassRelationship(TestAppObject.class, Object.class);
         });
 

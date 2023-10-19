@@ -8,8 +8,7 @@ import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
 
 /**
  * TranslationSpec that defines how to convert from any Java {@link LocalDate}
- * to a
- * Protobuf {@link Date} type and vice versa
+ * to a Protobuf {@link Date} type and vice versa
  */
 public class DateTranslationSpec extends ProtobufTranslationSpec<Date, LocalDate> {
 
@@ -20,12 +19,8 @@ public class DateTranslationSpec extends ProtobufTranslationSpec<Date, LocalDate
 
     @Override
     protected Date convertAppObject(LocalDate appObject) {
-        return Date
-                .newBuilder()
-                .setYear(appObject.getYear())
-                .setMonth(appObject.getMonth().getValue())
-                .setDay(appObject.getDayOfMonth())
-                .build();
+        return Date.newBuilder().setYear(appObject.getYear()).setMonth(appObject.getMonth().getValue())
+                .setDay(appObject.getDayOfMonth()).build();
     }
 
     @Override

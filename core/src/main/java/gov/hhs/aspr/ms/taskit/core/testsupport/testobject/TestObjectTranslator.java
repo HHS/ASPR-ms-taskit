@@ -10,13 +10,10 @@ public class TestObjectTranslator {
     }
 
     public static Translator getTranslator() {
-        return Translator.builder()
-                .setTranslatorId(TestObjectTranslatorId.TRANSLATOR_ID)
-                .addDependency(TestComplexObjectTranslatorId.TRANSLATOR_ID)
-                .setInitializer(translatorContext -> {
+        return Translator.builder().setTranslatorId(TestObjectTranslatorId.TRANSLATOR_ID)
+                .addDependency(TestComplexObjectTranslatorId.TRANSLATOR_ID).setInitializer(translatorContext -> {
                     translatorContext.getTranslationEngineBuilder(TestTranslationEngine.Builder.class)
                             .addTranslationSpec(new TestObjectTranslationSpec());
-                })
-                .build();
+                }).build();
     }
 }
