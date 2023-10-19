@@ -21,7 +21,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout TASKit
+    - name: Checkout Taskit
       uses: actions/checkout@v3
     - name: Checkout Util
       uses: actions/checkout@v3
@@ -36,10 +36,8 @@ jobs:
         cache: maven
     - name: Build Util
       run: mvn clean install -DskipTests --file util/pom.xml
-    - name: Build TASKit Core
-      run: mvn clean install --file core/pom.xml
-    - name: Build TASKit Protobuf
-      run: mvn clean install --file protobuf/pom.xml
+    - name: Build Taskit
+      run: mvn clean install --file pom.xml
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
    # - name: Update dependency graph

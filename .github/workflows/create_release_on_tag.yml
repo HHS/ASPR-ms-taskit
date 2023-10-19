@@ -6,16 +6,13 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Create TASKit Core Release
+name: Create Taskit Release
 
 on: 
   push:
     tags:
-    - 'TASKit: Core v*'
+    - 'v*'
     branches: ["main"]
-    paths:
-    - 'core/**.xml'
-    - 'core/**.java'
 
 jobs:
   create-release:
@@ -23,7 +20,7 @@ jobs:
     permissions:
       contents: write
     steps:
-    - name: Checkout TASKit
+    - name: Checkout Taskit
       uses: actions/checkout@v3
     - name: Checkout Util
       uses: actions/checkout@v3
@@ -38,16 +35,18 @@ jobs:
         cache: maven
     - name: Build Util
       run: mvn clean install -DskipTests --file util/pom.xml
-    - name: Build TASKit Core
-      run: mvn clean install -Prelease --file core/pom.xml
+    - name: Build Taskit
+      run: mvn clean install -Prelease --file pom.xml
     - name: Get Version
       run: |
-        echo "version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout --file core/pom.xml)" >> "$GITHUB_ENV"
+        echo "version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout --file pom.xml)" >> "$GITHUB_ENV"
     - name: Make Release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: "core/target/core-${{ env.version }}.jar,core/target/core-${{ env.version }}-sources.jar,core/target/core-${{ env.version }}-javadoc.jar"
+        artifacts: "core/target/core-${{ env.version }}.jar,core/target/core-${{ env.version }}-sources.jar,core/target/core-${{ env.version }}-javadoc.jar,
+          protobuf/target/protobuf-${{ env.version }}.jar,protobuf/target/protobuf-${{ env.version }}-sources.jar,protobuf/target/protobuf-${{ env.version }}-javadoc.jar"
         prerelease: ${{ endsWith(env.version, '-SNAPSHOT') || contains(env.version, '-RC') }}
-        name: "TASKit: Core v${{ env.version }}"
-        tag: "TASKit: Core v${{ env.version }}"
+        name: "v${{ env.version }}"
+        tag: "v${{ env.version }}"
         generateReleaseNotes: true
+        skipIfReleaseExists: true
