@@ -130,8 +130,7 @@ public class ProtobufTranslationEngine extends TranslationEngine {
         /**
          * Whether the jsonWriter should blanket print all values that are default. The
          * default values can be found here:
-         * https://protobuf.dev/programming-guides/proto3/#default defaults to
-         * false
+         * https://protobuf.dev/programming-guides/proto3/#default defaults to false
          */
         public Builder setIncludingDefaultValueFields(boolean includingDefaultValueFields) {
             this.includingDefaultValueFields = includingDefaultValueFields;
