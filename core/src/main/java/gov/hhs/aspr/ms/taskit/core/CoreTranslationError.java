@@ -36,7 +36,9 @@ public enum CoreTranslationError implements ContractError {
     DUPLICATE_TRANSLATION_SPEC("Duplicate TranslationSpec"),
     UNKNOWN_TRANSLATION_SPEC("No translation spec was provided for the given class"),
     UNITIALIZED_TRANSLATION_SPEC("TranslationSpec not initialized"),
-    UNKNOWN_OBJECT("Object is not Translatable by this TranslationSpec");
+    UNKNOWN_OBJECT("Object is not Translatable by this TranslationSpec"),
+    UNKNWON_TRANSLATION_ENGINE_TYPE("Translation Engine Type was not set"),
+    NO_TRANSLATION_ENGINES("There are no translation engines added to this controller.");
 
     private final String description;
 

@@ -20,7 +20,7 @@ public class AT_TranslatorContext {
     public void testConstructor() {
         TestTranslationEngine.Builder expectedBuilder = TestTranslationEngine.builder();
         TranslationController translationController = TranslationController.builder()
-                .setTranslationEngineBuilder(expectedBuilder).build();
+                .addTranslationEngineBuilder(expectedBuilder).build();
 
         TranslatorContext translatorContext = new TranslatorContext(translationController);
 
@@ -32,7 +32,7 @@ public class AT_TranslatorContext {
     public void testGetTranslationEngineBuilder() {
         TestTranslationEngine.Builder expectedBuilder = TestTranslationEngine.builder();
         TranslationController translationController = TranslationController.builder()
-                .setTranslationEngineBuilder(expectedBuilder).buildWithoutInitAndChecks();
+                .addTranslationEngineBuilder(expectedBuilder).buildWithoutInitAndChecks();
 
         TestTranslationEngine.Builder actualBuilder = translationController
                 .getTranslationEngineBuilder(TestTranslationEngine.Builder.class);
@@ -49,7 +49,7 @@ public class AT_TranslatorContext {
 
         assertThrows(RuntimeException.class, () -> {
             TranslationController translationController2 = TranslationController.builder()
-                    .setTranslationEngineBuilder(expectedBuilder).build();
+                    .addTranslationEngineBuilder(expectedBuilder).build();
 
             translationController2.getTranslationEngineBuilder(TranslationEngine.Builder.class);
         });
@@ -61,7 +61,7 @@ public class AT_TranslatorContext {
     public void testAddParentChildClassRelationship() {
         TestTranslationEngine.Builder expectedBuilder = TestTranslationEngine.builder();
         TranslationController translationController = TranslationController.builder()
-                .setTranslationEngineBuilder(expectedBuilder).build();
+                .addTranslationEngineBuilder(expectedBuilder).build();
 
         TranslatorContext translatorContext = new TranslatorContext(translationController);
 

@@ -29,6 +29,7 @@ import com.google.protobuf.util.JsonFormat.TypeRegistry;
 
 import gov.hhs.aspr.ms.taskit.core.CoreTranslationError;
 import gov.hhs.aspr.ms.taskit.core.TranslationEngine;
+import gov.hhs.aspr.ms.taskit.core.TranslationEngineType;
 import gov.hhs.aspr.ms.taskit.core.TranslationSpec;
 import gov.hhs.aspr.ms.taskit.protobuf.translationSpecs.AnyTranslationSpec;
 import util.errors.ContractException;
@@ -67,6 +68,7 @@ public class ProtobufTranslationEngine extends TranslationEngine {
             this.classToTranslationSpecMap.putAll(PrimitiveTranslationSpecs.getPrimitiveInputTranslatorSpecMap());
             this.classToTranslationSpecMap.putAll(PrimitiveTranslationSpecs.getPrimitiveObjectTranslatorSpecMap());
             this.translationSpecs.addAll(PrimitiveTranslationSpecs.getPrimitiveTranslatorSpecs());
+            this.translationEngineType = TranslationEngineType.PROTOBUF;
         }
     }
 

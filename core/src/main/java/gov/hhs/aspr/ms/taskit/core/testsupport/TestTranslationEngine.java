@@ -11,6 +11,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 
 import gov.hhs.aspr.ms.taskit.core.TranslationEngine;
+import gov.hhs.aspr.ms.taskit.core.TranslationEngineType;
 import gov.hhs.aspr.ms.taskit.core.TranslationSpec;
 
 public class TestTranslationEngine extends TranslationEngine {
@@ -22,10 +23,15 @@ public class TestTranslationEngine extends TranslationEngine {
     }
 
     protected static class Data extends TranslationEngine.Data {
-        Gson gson = new Gson();
+        protected Gson gson = new Gson();
 
         protected Data() {
             super();
+            this.translationEngineType = TranslationEngineType.CUSTOM;
+        }
+
+        private void setUnknownEngineType() {
+            this.translationEngineType = TranslationEngineType.UNKNOWN;
         }
 
         @Override
@@ -51,6 +57,12 @@ public class TestTranslationEngine extends TranslationEngine {
         @Override
         public TestTranslationEngine build() {
             return new TestTranslationEngine(this.data);
+        }
+
+        public TestTranslationEngine buildWithoutType() {
+            this.data.setUnknownEngineType();
+
+            return this.build();
         }
 
         @Override

@@ -59,6 +59,19 @@ public class AT_TranslationEngine {
 
     @Test
     @UnitTestForCoverage
+    public void testValidateTranslationEngineType() {
+        // preconditions
+        // TranslationEngineType is set to UNKNOWN
+        ContractException contractException = assertThrows(ContractException.class, () -> {
+            TestTranslationEngine engine = TestTranslationEngine.builder().buildWithoutType();
+            engine.init();
+        });
+
+        assertEquals(CoreTranslationError.UNKNWON_TRANSLATION_ENGINE_TYPE, contractException.getErrorType());
+    }
+
+    @Test
+    @UnitTestForCoverage
     public void testTranslationSpecsAreInitialized() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();

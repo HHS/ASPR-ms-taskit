@@ -32,6 +32,7 @@ public abstract class TranslationEngine {
     protected static class Data {
         protected final Map<Class<?>, BaseTranslationSpec> classToTranslationSpecMap = new LinkedHashMap<>();
         protected final Set<BaseTranslationSpec> translationSpecs = new LinkedHashSet<>();
+        protected TranslationEngineType translationEngineType = TranslationEngineType.UNKNOWN;
 
         protected Data() {
         }
@@ -146,11 +147,27 @@ public abstract class TranslationEngine {
         return new Builder(new Data());
     }
 
+    private void validateTranslationEngineType() {
+        if (this.data.translationEngineType == TranslationEngineType.UNKNOWN) {
+            throw new ContractException(CoreTranslationError.UNKNWON_TRANSLATION_ENGINE_TYPE);
+        }
+    }
+
+    /**
+     * returns the {@link TranslationEngineType} of this TranslationEngine
+     * 
+     * guarenteed to NOT be {@link TranslationEngineType#UNKNOWN}
+     */
+    public TranslationEngineType getTranslationEngineType() {
+        return this.data.translationEngineType;
+    }
+
     /**
      * Initializes the translationEngine by calling init on each translationSpec
      * added in the builder
      */
     public void init() {
+        validateTranslationEngineType();
         /*
          * Calling init on a translationSpec causes the hashCode of the translationSpec
          * to change. Because of this, before calling init, we need to remove them from
@@ -194,6 +211,10 @@ public abstract class TranslationEngine {
 
     }
 
+    /**
+     * Returns a set of all {@link TranslationSpec}s associated with this
+     * TranslationEngine
+     */
     public Set<BaseTranslationSpec> getTranslationSpecs() {
         return this.data.translationSpecs;
     }
