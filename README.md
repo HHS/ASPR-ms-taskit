@@ -1,5 +1,8 @@
 [![GPL LICENSE][license-shield]][license-url]
+[![GitHub tag (with filter)][tag-shield]][tag-url]
 [![GitHub contributors][contributors-shield]][contributors-url]
+[![GitHub Workflow Status (with event)][dev-build-shield]][dev-build-url]
+[![GitHub Workflow Status (with event)][build-shield]][build-url]
 
 # Translation And Serialization Toolkit
 A toolkit made to help with converting between input files and Java Objects. This will herein be reffered to as Taskit.
@@ -58,7 +61,12 @@ Distributed under the GPLv3 License. See [LICENSE](LICENSE) for more information
 <!-- MARKDOWN LINKS & IMAGES -->
 [contributors-shield]: https://img.shields.io/github/contributors/HHS/ASPR-ms-taskit
 [contributors-url]: https://github.com/HHS/ASPR-ms-taskit/graphs/contributors
-[tag-shield]: https://img.shields.io/github/v/tag/HHS/ASPR-ms-util
+[tag-shield]: https://img.shields.io/github/v/tag/HHS/ASPR-ms-taskit
 [tag-url]: https://github.com/HHS/ASPR-ms-taskit/releases/latest
 [license-shield]: https://img.shields.io/github/license/HHS/ASPR-ms-taskit
 [license-url]: LICENSE
+[dev-build-shield]: https://img.shields.io/github/actions/workflow/status/HHS/ASPR-ms-taskit/dev-pre-mavencentral.yml?label=dev-build
+[dev-build-url]: https://github.com/HHS/ASPR-ms-taskit/actions/workflows/dev-pre-mavencentral.yml
+[build-shield]: https://img.shields.io/github/actions/workflow/status/HHS/ASPR-ms-taskit/create_release_on_tag.yml?label=release-build
+[build-url]: https://github.com/HHS/ASPR-ms-taskit/actions/workflows/create_release_on_tag.yml
+
