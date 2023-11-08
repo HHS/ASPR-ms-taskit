@@ -46,8 +46,7 @@ See [TestObject](protobuf/src/main/proto/gov/hhs/aspr/ms/taskit/protobuf/testobj
 - Modeling Util located [here](https://github.com/HHS/ASPR-ms-util)
 
 ## Building
-To build, first navigate into the ```core``` directory and run the command ```mvn clean install```  
-Then go into the ```protobuf``` directory and run the command ```mvn clean install```
+To build, navigate into the root directory and run the command ```mvn clean install```
 
 ## Documentation
 Documentation has yet to be created. In the interim, the code is mostly commented and the javadocs do provide good detail with regards to method and class expectations. 
@@ -59,7 +58,7 @@ Distributed under the GPLv3 License. See [LICENSE](LICENSE) for more information
 <!-- MARKDOWN LINKS & IMAGES -->
 [contributors-shield]: https://img.shields.io/github/contributors/HHS/ASPR-ms-taskit
 [contributors-url]: https://github.com/HHS/ASPR-ms-taskit/graphs/contributors
-<!-- [tag-shield]: https://img.shields.io/github/v/tag/HHS/ASPR-ms-util -->
-<!-- [tag-url]: https://github.com/HHS/ASPR-8/releases/tag/v4.0.0-RC1 -->
+[tag-shield]: https://img.shields.io/github/v/tag/HHS/ASPR-ms-util
+[tag-url]: https://github.com/HHS/ASPR-ms-taskit/releases/latest
 [license-shield]: https://img.shields.io/github/license/HHS/ASPR-ms-taskit
 [license-url]: LICENSE
