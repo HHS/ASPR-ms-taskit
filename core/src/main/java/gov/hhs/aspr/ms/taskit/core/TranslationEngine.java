@@ -37,6 +37,7 @@ public abstract class TranslationEngine {
     protected static class Data {
         protected final Map<Class<?>, BaseTranslationSpec> classToTranslationSpecMap = new LinkedHashMap<>();
         protected final Set<BaseTranslationSpec> translationSpecs = new LinkedHashSet<>();
+        protected Map<Class<?>, Class<?>> childToParentClassMap = new LinkedHashMap<>();
         protected TranslationEngineType translationEngineType = TranslationEngineType.UNKNOWN;
         protected boolean translatorsInitialized = false;
 
@@ -107,6 +108,12 @@ public abstract class TranslationEngine {
             }
         }
 
+        private void validateClassRefNotNull(Class<?> classRef) {
+            if (classRef == null) {
+                throw new ContractException(CoreTranslationError.NULL_CLASS_REF);
+            }
+        }
+
         /**
          * Builder for the TranslationEngine
          * <p>
@@ -165,13 +172,56 @@ public abstract class TranslationEngine {
             return this;
         }
 
+        /**
+         * Add a {@link Translator}
+         * 
+         * @throws ContractException
+         *                           <ul>
+         *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATOR}
+         *                           if translator is null</li>
+         *                           <li>{@linkplain CoreTranslationError#DUPLICATE_TRANSLATOR}
+         *                           if translator has alaready been added</li>
+         *                           </ul>
+         */
         public Builder addTranslator(Translator translator) {
             validateTranslatorNotNull(translator);
-            // TODO: test
-            // TODO: javadocs
+
+            if (this.translators.contains(translator)) {
+                throw new ContractException(CoreTranslationError.DUPLICATE_TRANSLATOR);
+            }
 
             this.translators.add(translator);
+            return this;
+        }
 
+        /**
+         * Adds the given classRef markerInterace mapping.
+         * <p>
+         * explicitly used when calling {@link TranslationController#writeOutput} with a
+         * class for which a classRef ScenarioId pair does not exist and/or the need to
+         * output the given class as the markerInterface instead of the concrete class
+         * 
+         * @param <M> the childClass
+         * @param <U> the parentClass/MarkerInterfaceClass
+         * @throws ContractException
+         *                           <ul>
+         *                           <li>{@linkplain CoreTranslationError#NULL_CLASS_REF}
+         *                           if classRef is null or if markerInterface is
+         *                           null</li>
+         *                           <li>{@linkplain CoreTranslationError#DUPLICATE_CLASSREF}
+         *                           if child parent relationship has already been
+         *                           added</li>
+         *                           </ul>
+         */
+        public <M extends U, U> Builder addParentChildClassRelationship(Class<M> classRef, Class<U> markerInterface) {
+            validateClassRefNotNull(classRef);
+            validateClassRefNotNull(markerInterface);
+
+            if (this.data.childToParentClassMap.containsKey(classRef)) {
+                throw new ContractException(CoreTranslationError.DUPLICATE_CLASSREF);
+            }
+
+            this.data.childToParentClassMap.put(classRef, markerInterface);
             return this;
         }
 
@@ -339,9 +389,17 @@ public abstract class TranslationEngine {
 
     private void validateTranslatorsInitialized() {
         if (!this.data.translatorsInitialized) {
-            throw new RuntimeException(
-                    "Translators were added to the builder but were not initialized. Make sure to call super.initTranslators() during your custom engine build method");
+            throw new ContractException(CoreTranslationError.UNINITIALIZED_TRANSLATORS);
         }
+    }
+
+    // This is package access so the TranslationController can access it but nothing else.
+    Map<Class<?>, Class<?>> getChildParentClassMap() {
+        Map<Class<?>, Class<?>> copyMap = new LinkedHashMap<>(this.data.childToParentClassMap);
+
+        this.data.childToParentClassMap = null;
+
+        return copyMap;
     }
 
     /**

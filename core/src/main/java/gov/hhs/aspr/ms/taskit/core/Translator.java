@@ -1,8 +1,6 @@
 package gov.hhs.aspr.ms.taskit.core;
 
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -25,7 +23,6 @@ public final class Translator {
         private TranslatorId translatorId;
         private Consumer<TranslatorContext> initializer;
         private final Set<TranslatorId> dependencies = new LinkedHashSet<>();
-        private final List<BaseTranslationSpec> translationSpecs = new ArrayList<>();
 
         protected Data() {
         }
@@ -142,23 +139,6 @@ public final class Translator {
             return this;
         }
 
-        public Builder addTranslationSpec(BaseTranslationSpec translationSpec) {
-            // TODO: validation
-            // TODO: javadoc
-            // TODO: test
-            this.data.translationSpecs.add(translationSpec);
-
-            return this;
-        }
-
-        public Builder addTranslationSpecs(List<BaseTranslationSpec> translationSpecs) {
-            // TODO: validation
-            // TODO: javadoc
-            // TODO: test
-            this.data.translationSpecs.addAll(translationSpecs);
-
-            return this;
-        }
     }
 
     /**

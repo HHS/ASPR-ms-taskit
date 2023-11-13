@@ -8,7 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.taskit.core.testsupport.TestTranslationEngine;
-import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppObject;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -44,34 +43,4 @@ public class AT_TranslatorContext {
         assertEquals(CoreTranslationError.INVALID_TRANSLATION_ENGINE_BUILDER, contractException.getErrorType());
     }
 
-    @Test
-    @UnitTestMethod(target = TranslatorContext.class, name = "addParentChildClassRelationship", args = { Class.class,
-            Class.class })
-    public void testAddParentChildClassRelationship() {
-        TestTranslationEngine.Builder expectedBuilder = TestTranslationEngine.builder();
-
-        TranslatorContext translatorContext = new TranslatorContext(expectedBuilder);
-
-        translatorContext.addParentChildClassRelationship(TestAppObject.class, Object.class);
-
-        // preconditions
-        // ContractException contractException = assertThrows(ContractException.class, () -> {
-        //     translatorContext.addParentChildClassRelationship(null, Object.class);
-        // });
-
-        // assertEquals(CoreTranslationError.NULL_CLASS_REF, contractException.getErrorType());
-
-        // contractException = assertThrows(ContractException.class, () -> {
-        //     translatorContext.addParentChildClassRelationship(TestAppObject.class, null);
-        // });
-
-        // assertEquals(CoreTranslationError.NULL_CLASS_REF, contractException.getErrorType());
-
-        // contractException = assertThrows(ContractException.class, () -> {
-        //     translatorContext.addParentChildClassRelationship(TestAppObject.class, Object.class);
-        //     translatorContext.addParentChildClassRelationship(TestAppObject.class, Object.class);
-        // });
-
-        // assertEquals(CoreTranslationError.DUPLICATE_CLASSREF, contractException.getErrorType());
-    }
 }

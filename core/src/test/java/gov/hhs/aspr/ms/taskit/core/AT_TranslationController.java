@@ -56,10 +56,11 @@ public class AT_TranslationController {
         });
 
         assertEquals(CoreTranslationError.NULL_TRANSLATION_ENGINE, contractException.getErrorType());
-        
+
         RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> {
             for (TranslationEngine translationEngine : translationController.data.translationEngines.values()) {
-                translationController.translationEngines.put(translationEngine.getTranslationEngineType(), translationEngine);
+                translationController.translationEngines.put(translationEngine.getTranslationEngineType(),
+                        translationEngine);
             }
             translationController.validateTranslationEngines();
         });
@@ -69,23 +70,29 @@ public class AT_TranslationController {
         runtimeException = assertThrows(RuntimeException.class, () -> {
             for (TranslationEngine translationEngine : translationController.data.translationEngines.values()) {
                 translationEngine.init();
-                translationController.translationEngines.put(translationEngine.getTranslationEngineType(), translationEngine);
+                translationController.translationEngines.put(translationEngine.getTranslationEngineType(),
+                        translationEngine);
                 translationController.translationEngineClassToTypeMap.put(translationEngine.getClass(), null);
             }
             translationController.validateTranslationEngines();
         });
 
-        assertEquals("Not all Translation Engines have an associated Class -> Type -> Engine Mapping. Something went very wrong.", runtimeException.getMessage());
+        assertEquals(
+                "Not all Translation Engines have an associated Class -> Type -> Engine Mapping. Something went very wrong.",
+                runtimeException.getMessage());
 
         runtimeException = assertThrows(RuntimeException.class, () -> {
             for (TranslationEngine translationEngine : translationController.data.translationEngines.values()) {
                 translationEngine.init();
-                translationController.translationEngines.put(translationEngine.getTranslationEngineType(), translationEngine);
+                translationController.translationEngines.put(translationEngine.getTranslationEngineType(),
+                        translationEngine);
             }
             translationController.validateTranslationEngines();
         });
 
-        assertEquals("Not all Translation Engines have an associated Class -> Type -> Engine Mapping. Something went very wrong.", runtimeException.getMessage());
+        assertEquals(
+                "Not all Translation Engines have an associated Class -> Type -> Engine Mapping. Something went very wrong.",
+                runtimeException.getMessage());
     }
 
     @Test
@@ -504,8 +511,6 @@ public class AT_TranslationController {
         assertTrue(actualObjects.containsAll(expectedObjects));
     }
 
-    
-
     @Test
     @UnitTestMethod(target = TranslationController.class, name = "builder", args = {})
     public void testBuilder() {
@@ -661,7 +666,12 @@ public class AT_TranslationController {
     @UnitTestMethod(target = TranslationController.Builder.class, name = "addTranslationEngineBuilder", args = {
             TranslationEngine.Builder.class })
     public void testAddTransationEngineBuilder() {
-        TranslationController.builder().addTranslationEngine(TestTranslationEngine.builder().build());
+        TestTranslationEngine translationEngine = TestTranslationEngine.builder()
+                .addTranslator(TestObjectTranslator.getTranslator())
+                .addTranslator(TestComplexObjectTranslator.getTranslator())
+                .addParentChildClassRelationship(TestAppObject.class, Object.class).build();
+
+        TranslationController.builder().addTranslationEngine(translationEngine).build();
 
         // preconditions
         ContractException contractException = assertThrows(ContractException.class, () -> {
@@ -669,5 +679,17 @@ public class AT_TranslationController {
         });
 
         assertEquals(CoreTranslationError.NULL_TRANSLATION_ENGINE, contractException.getErrorType());
+
+        contractException = assertThrows(ContractException.class, () -> {
+            TestTranslationEngine translationEngine2 = TestTranslationEngine.builder()
+                    .addTranslator(TestObjectTranslator.getTranslator())
+                    .addTranslator(TestComplexObjectTranslator.getTranslator())
+                    .addParentChildClassRelationship(TestAppObject.class, Object.class).build();
+
+            TranslationController.builder().addParentChildClassRelationship(TestAppObject.class, Object.class)
+                    .addTranslationEngine(translationEngine2);
+        });
+
+        assertEquals(CoreTranslationError.DUPLICATE_CLASSREF, contractException.getErrorType());
     }
 }

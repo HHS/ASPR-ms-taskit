@@ -61,6 +61,10 @@ public class TestTranslationEngine extends TranslationEngine {
             return new TestTranslationEngine(this.data);
         }
 
+        public TestTranslationEngine buildWithoutInit() {
+            return new TestTranslationEngine(this.data);
+        }
+
         public TestTranslationEngine buildWithoutType() {
             this.data.setUnknownEngineType();
 
@@ -77,6 +81,13 @@ public class TestTranslationEngine extends TranslationEngine {
         @Override
         public Builder addTranslator(Translator translator) {
             super.addTranslator(translator);
+
+            return this;
+        }
+
+        @Override
+        public <M extends U, U> Builder addParentChildClassRelationship(Class<M> classRef, Class<U> markerInterface) {
+            super.addParentChildClassRelationship(classRef, markerInterface);
 
             return this;
         }

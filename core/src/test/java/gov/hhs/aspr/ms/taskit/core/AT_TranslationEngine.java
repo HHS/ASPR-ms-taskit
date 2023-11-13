@@ -119,6 +119,29 @@ public class AT_TranslationEngine {
     }
 
     @Test
+    @UnitTestForCoverage
+    public void testValidateTranslatorsInitialized() {
+
+        assertDoesNotThrow(() -> {
+            TranslationEngine engine = TestTranslationEngine.builder()
+                    .addTranslator(TestObjectTranslator.getTranslator())
+                    .addTranslator(TestComplexObjectTranslator.getTranslator()).build();
+
+            engine.init();
+        });
+
+        // preconditions
+        ContractException contractException = assertThrows(ContractException.class, () -> {
+            TranslationEngine engine = TestTranslationEngine.builder()
+                    .addTranslator(TestObjectTranslator.getTranslator())
+                    .addTranslator(TestComplexObjectTranslator.getTranslator()).buildWithoutInit();
+
+            engine.init();
+        });
+        assertEquals(CoreTranslationError.UNINITIALIZED_TRANSLATORS, contractException.getErrorType());
+    }
+
+    @Test
     @UnitTestMethod(target = TranslationEngine.class, name = "convertObject", args = { Object.class })
     public void testConvertObject() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
@@ -440,6 +463,53 @@ public class AT_TranslationEngine {
         });
 
         assertEquals(CoreTranslationError.DUPLICATE_TRANSLATION_SPEC, contractException.getErrorType());
+    }
+
+    @Test
+    @UnitTestMethod(target = TranslationEngine.Builder.class, name = "addTranslator", args = { Translator.class })
+    public void testAddTranslator() {
+        TranslationEngine.builder().addTranslator(TestObjectTranslator.getTranslator());
+
+        // preconditions
+        ContractException contractException = assertThrows(ContractException.class, () -> {
+            TranslationEngine.builder().addTranslator(null);
+        });
+
+        assertEquals(CoreTranslationError.NULL_TRANSLATOR, contractException.getErrorType());
+
+        contractException = assertThrows(ContractException.class, () -> {
+            TranslationEngine.builder().addTranslator(TestObjectTranslator.getTranslator())
+                    .addTranslator(TestObjectTranslator.getTranslator());
+        });
+
+        assertEquals(CoreTranslationError.DUPLICATE_TRANSLATOR, contractException.getErrorType());
+    }
+
+    @Test
+    @UnitTestMethod(target = TranslationEngine.Builder.class, name = "addParentChildClassRelationship", args = {
+            Class.class, Class.class })
+    public void testAddParentChildClassRelationship() {
+        TranslationEngine.builder().addParentChildClassRelationship(TestAppObject.class, Object.class);
+
+        // preconditions
+        ContractException contractException = assertThrows(ContractException.class, () -> {
+            TranslationEngine.builder().addParentChildClassRelationship(null, Object.class);
+        });
+
+        assertEquals(CoreTranslationError.NULL_CLASS_REF, contractException.getErrorType());
+
+        contractException = assertThrows(ContractException.class, () -> {
+            TranslationEngine.builder().addParentChildClassRelationship(TestAppObject.class, null);
+        });
+
+        assertEquals(CoreTranslationError.NULL_CLASS_REF, contractException.getErrorType());
+
+        contractException = assertThrows(ContractException.class, () -> {
+            TranslationEngine.builder().addParentChildClassRelationship(TestAppObject.class, Object.class)
+                    .addParentChildClassRelationship(TestAppObject.class, Object.class);
+        });
+
+        assertEquals(CoreTranslationError.DUPLICATE_CLASSREF, contractException.getErrorType());
     }
 
     @Test

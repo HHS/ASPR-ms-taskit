@@ -38,7 +38,8 @@ public enum CoreTranslationError implements ContractError {
     UNITIALIZED_TRANSLATION_SPEC("TranslationSpec not initialized"),
     UNKNOWN_OBJECT("Object is not Translatable by this TranslationSpec"),
     UNKNWON_TRANSLATION_ENGINE_TYPE("Translation Engine Type was not set"),
-    NO_TRANSLATION_ENGINES("There are no translation engines added to this controller.");
+    NO_TRANSLATION_ENGINES("There are no translation engines added to this controller."),
+    UNINITIALIZED_TRANSLATORS("Translators were added to the builder but were not initialized. Make sure to call super.initTranslators() during your custom engine build method");
 
     private final String description;
 

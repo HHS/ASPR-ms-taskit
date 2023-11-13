@@ -3,8 +3,12 @@ package gov.hhs.aspr.ms.taskit.core;
 import util.errors.ContractException;
 
 /**
- * Context that is used by {@link Translator}s to get the instance of
- * {@link TranslationEngine.Builder} from the {@link TranslationController}
+ * Context that is used by {@link Translator}s
+ * 
+ * Note: This class exists because the subclassed TranslationEngine may have
+ * different build methods than the abstract one, preventing the associated
+ * consumer that this context is used in from just being a consumer of a
+ * TranslationEngine.Builder
  */
 public class TranslatorContext {
 
@@ -30,15 +34,5 @@ public class TranslatorContext {
         throw new ContractException(CoreTranslationError.INVALID_TRANSLATION_ENGINE_BUILDER,
                 "No Translation Engine Builder was found for the type: " + classRef.getName());
 
-    }
-
-    /**
-     * Adds the child class parent class relationship to the TranslatorController
-     * 
-     * @param <M> the type of the child
-     * @param <U> the type of the parent
-     */
-    public <M extends U, U> void addParentChildClassRelationship(Class<M> classRef, Class<U> parentClassRef) {
-        // this.translationController.addParentChildClassRelationship(classRef, parentClassRef);
     }
 }
