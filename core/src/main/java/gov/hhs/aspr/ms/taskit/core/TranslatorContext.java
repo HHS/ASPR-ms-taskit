@@ -8,10 +8,10 @@ import util.errors.ContractException;
  */
 public class TranslatorContext {
 
-    private final TranslationController translationController;
+    private final TranslationEngine.Builder builder;
 
-    public TranslatorContext(TranslationController translationController) {
-        this.translationController = translationController;
+    public TranslatorContext(TranslationEngine.Builder builder) {
+        this.builder = builder;
     }
 
     /**
@@ -23,7 +23,13 @@ public class TranslatorContext {
      *                           the translatorCoreBuilder is null
      */
     public <T extends TranslationEngine.Builder> T getTranslationEngineBuilder(Class<T> classRef) {
-        return this.translationController.getTranslationEngineBuilder(classRef);
+        if (this.builder.getClass().isAssignableFrom(classRef)) {
+            return classRef.cast(this.builder);
+        }
+
+        throw new ContractException(CoreTranslationError.INVALID_TRANSLATION_ENGINE_BUILDER,
+                "No Translation Engine Builder was found for the type: " + classRef.getName());
+
     }
 
     /**
@@ -33,6 +39,6 @@ public class TranslatorContext {
      * @param <U> the type of the parent
      */
     public <M extends U, U> void addParentChildClassRelationship(Class<M> classRef, Class<U> parentClassRef) {
-        this.translationController.addParentChildClassRelationship(classRef, parentClassRef);
+        // this.translationController.addParentChildClassRelationship(classRef, parentClassRef);
     }
 }

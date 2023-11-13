@@ -8,6 +8,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
@@ -15,10 +19,14 @@ import org.junit.jupiter.api.Test;
 import gov.hhs.aspr.ms.taskit.core.testsupport.TestObjectUtil;
 import gov.hhs.aspr.ms.taskit.core.testsupport.TestTranslationEngine;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testcomplexobject.TestComplexAppObject;
+import gov.hhs.aspr.ms.taskit.core.testsupport.testcomplexobject.TestComplexObjectTranslator;
+import gov.hhs.aspr.ms.taskit.core.testsupport.testcomplexobject.TestComplexObjectTranslatorId;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testcomplexobject.input.TestComplexInputObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testcomplexobject.translationSpecs.TestComplexObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppChildObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppObject;
+import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestObjectTranslator;
+import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestObjectTranslatorId;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestObjectWrapper;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.input.TestInputChildObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.input.TestInputObject;
@@ -26,6 +34,7 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.translationSpecs.TestO
 import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
+import util.graph.MutableGraph;
 
 public class AT_TranslationEngine {
 
@@ -431,6 +440,76 @@ public class AT_TranslationEngine {
         });
 
         assertEquals(CoreTranslationError.DUPLICATE_TRANSLATION_SPEC, contractException.getErrorType());
+    }
+
+    @Test
+    @UnitTestForCoverage
+    public void testGetOrderedTranslators() {
+
+        TranslationEngine.Builder translationEngineBuilder = TestTranslationEngine.builder()
+                .addTranslator(TestObjectTranslator.getTranslator())
+                .addTranslator(TestComplexObjectTranslator.getTranslator());
+
+        List<Translator> expectedList = new ArrayList<>();
+        expectedList.add(TestComplexObjectTranslator.getTranslator());
+        expectedList.add(TestObjectTranslator.getTranslator());
+
+        List<Translator> actualList = translationEngineBuilder.getOrderedTranslators();
+
+        assertEquals(expectedList, actualList);
+
+        // preconditions
+
+        // duplicate translator in the graph
+
+        ContractException contractException = assertThrows(ContractException.class, () -> {
+            MutableGraph<TranslatorId, Object> mutableGraph = new MutableGraph<>();
+            Map<TranslatorId, Translator> translatorMap = new LinkedHashMap<>();
+            mutableGraph.addNode(TestObjectTranslatorId.TRANSLATOR_ID);
+            translationEngineBuilder.addNodes(mutableGraph, translatorMap);
+        });
+
+        assertEquals(CoreTranslationError.DUPLICATE_TRANSLATOR, contractException.getErrorType());
+
+        // missing translator
+        contractException = assertThrows(ContractException.class, () -> {
+            MutableGraph<TranslatorId, Object> mutableGraph = new MutableGraph<>();
+            Map<TranslatorId, Translator> translatorMap = new LinkedHashMap<>();
+
+            // call normally
+            translationEngineBuilder.getOrderedTranslators(mutableGraph, translatorMap);
+            // remove a mapping
+            translatorMap.remove(TestComplexObjectTranslatorId.TRANSLATOR_ID);
+            TranslatorId thirdId = new TranslatorId() {
+            };
+            mutableGraph.addNode(thirdId);
+            mutableGraph.addEdge(new Object(), thirdId, TestComplexObjectTranslatorId.TRANSLATOR_ID);
+            translationEngineBuilder.checkForMissingTranslators(mutableGraph, translatorMap);
+        });
+
+        assertEquals(CoreTranslationError.MISSING_TRANSLATOR, contractException.getErrorType());
+
+        // cyclic graph
+        contractException = assertThrows(ContractException.class, () -> {
+            MutableGraph<TranslatorId, Object> mutableGraph = new MutableGraph<>();
+            Map<TranslatorId, Translator> translatorMap = new LinkedHashMap<>();
+
+            // call normally
+            translationEngineBuilder.getOrderedTranslators(mutableGraph, translatorMap);
+            mutableGraph.addEdge(new Object(), TestComplexObjectTranslatorId.TRANSLATOR_ID,
+                    TestObjectTranslatorId.TRANSLATOR_ID);
+            TranslatorId thirdId = new TranslatorId() {
+            };
+            TranslatorId fourthId = new TranslatorId() {
+            };
+            mutableGraph.addNode(thirdId);
+            mutableGraph.addNode(fourthId);
+            mutableGraph.addEdge(new Object(), thirdId, fourthId);
+            mutableGraph.addEdge(new Object(), fourthId, thirdId);
+            translationEngineBuilder.checkForCyclicGraph(mutableGraph);
+        });
+
+        assertEquals(CoreTranslationError.CIRCULAR_TRANSLATOR_DEPENDENCIES, contractException.getErrorType());
     }
 
     @Test

@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.StringReader;
 import java.nio.file.Path;
 import java.util.Optional;
 
@@ -197,7 +198,7 @@ public class AT_ProtobufTranslationEngine {
         jsonObject.addProperty("unknownProperty", "unknownValue");
 
         RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> {
-            protobufTranslationEngine.parseJson(jsonObject, TestInputObject.class);
+            protobufTranslationEngine.parseJson(new StringReader(jsonObject.toString()), TestInputObject.class);
         });
 
         assertEquals(InvalidProtocolBufferException.class, runtimeException.getCause().getClass());

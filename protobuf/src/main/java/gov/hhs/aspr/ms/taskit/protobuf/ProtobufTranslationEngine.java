@@ -13,13 +13,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.stream.JsonReader;
 import com.google.protobuf.Any;
 import com.google.protobuf.Descriptors.Descriptor;
 import com.google.protobuf.Descriptors.FieldDescriptor;
-import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
 import com.google.protobuf.ProtocolMessageEnum;
 import com.google.protobuf.util.JsonFormat;
@@ -91,6 +87,8 @@ public class ProtobufTranslationEngine extends TranslationEngine {
          */
         @Override
         public ProtobufTranslationEngine build() {
+            super.initTranslators();
+            
             TypeRegistry.Builder typeRegistryBuilder = TypeRegistry.newBuilder();
             this.descriptorSet.addAll(PrimitiveTranslationSpecs.getPrimitiveDescriptors());
 
@@ -295,13 +293,13 @@ public class ProtobufTranslationEngine extends TranslationEngine {
      */
     private <U extends Message> void writeOutput(Writer writer, U message) {
         try {
-            String messageToWrite = this.data.jsonPrinter.print(message);
+            this.data.jsonPrinter.appendTo(message, writer);
 
             if (debug) {
+                String messageToWrite = this.data.jsonPrinter.print(message);
                 printJsonToConsole(messageToWrite);
             }
 
-            writer.write(messageToWrite);
             writer.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -341,8 +339,8 @@ public class ProtobufTranslationEngine extends TranslationEngine {
             throw new ContractException(ProtobufCoreTranslationError.INVALID_READ_INPUT_CLASS_REF);
         }
 
-        JsonObject jsonObject = JsonParser.parseReader(new JsonReader(reader)).getAsJsonObject();
-        return parseJson(jsonObject, inputClassRef.asSubclass(Message.class));
+        // JsonObject jsonObject = JsonParser.parseReader().getAsJsonObject();
+        return parseJson(reader, inputClassRef.asSubclass(Message.class));
     }
 
     /**
@@ -364,13 +362,12 @@ public class ProtobufTranslationEngine extends TranslationEngine {
      *                          </li>
      *                          </ul>
      */
-    protected <T, U extends Message> T parseJson(JsonObject inputJson, Class<U> inputClassRef) {
-        JsonObject jsonObject = inputJson.deepCopy();
+    protected <T, U extends Message> T parseJson(Reader reader, Class<U> inputClassRef) {
 
         Message.Builder builder = getBuilderForMessage(inputClassRef);
 
         try {
-            this.data.jsonParser.merge(jsonObject.toString(), builder);
+            this.data.jsonParser.merge(reader, builder);
 
             Message message = builder.build();
             if (debug) {
@@ -378,7 +375,7 @@ public class ProtobufTranslationEngine extends TranslationEngine {
             }
 
             return convertObject(message);
-        } catch (InvalidProtocolBufferException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

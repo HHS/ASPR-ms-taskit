@@ -13,6 +13,7 @@ import com.google.gson.stream.JsonReader;
 import gov.hhs.aspr.ms.taskit.core.TranslationEngine;
 import gov.hhs.aspr.ms.taskit.core.TranslationEngineType;
 import gov.hhs.aspr.ms.taskit.core.TranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.Translator;
 
 public class TestTranslationEngine extends TranslationEngine {
     private final Data data;
@@ -56,6 +57,7 @@ public class TestTranslationEngine extends TranslationEngine {
 
         @Override
         public TestTranslationEngine build() {
+            super.initTranslators();
             return new TestTranslationEngine(this.data);
         }
 
@@ -72,6 +74,12 @@ public class TestTranslationEngine extends TranslationEngine {
             return this;
         }
 
+        @Override
+        public Builder addTranslator(Translator translator) {
+            super.addTranslator(translator);
+
+            return this;
+        }
     }
 
     public static Builder builder() {
