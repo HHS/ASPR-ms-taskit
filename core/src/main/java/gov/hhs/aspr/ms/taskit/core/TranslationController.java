@@ -283,17 +283,6 @@ public final class TranslationController {
         return new Builder(new Data());
     }
 
-    <T extends TranslationEngine> T getTranslationEngine(Class<T> classRef) {
-
-        if (this.translationEngineClassToTypeMap.keySet().contains(classRef)) {
-            TranslationEngineType type = this.translationEngineClassToTypeMap.get(classRef);
-
-            return classRef.cast(this.translationEngines.get(type));
-        }
-
-        throw new ContractException(CoreTranslationError.INVALID_TRANSLATION_ENGINE);
-    }
-
     /**
      * Passes the given reader and inputClassRef to the built
      * {@link TranslationEngine} to read, parse and translate the inputData.
@@ -320,7 +309,6 @@ public final class TranslationController {
 
     void initTranslationEngines() {
         for (TranslationEngine translationEngine : this.data.translationEngines.values()) {
-            translationEngine.init();
             translationEngine.translationSpecsAreInitialized();
 
             this.translationEngines.put(translationEngine.getTranslationEngineType(), translationEngine);

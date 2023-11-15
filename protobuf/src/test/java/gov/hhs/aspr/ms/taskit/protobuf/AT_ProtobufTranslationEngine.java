@@ -26,7 +26,9 @@ import com.google.protobuf.Message;
 import com.google.protobuf.ProtocolMessageEnum;
 
 import gov.hhs.aspr.ms.taskit.core.CoreTranslationError;
+import gov.hhs.aspr.ms.taskit.core.ProtobufTranslationEngineTestHelper;
 import gov.hhs.aspr.ms.taskit.core.TranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.Translator;
 import gov.hhs.aspr.ms.taskit.core.testsupport.TestResourceHelper;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppChildObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppObject;
@@ -54,8 +56,6 @@ public class AT_ProtobufTranslationEngine {
     public void testGetAnyFromObject() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder().build();
 
-        protobufTranslationEngine.init();
-
         Integer integer = 1500;
         Int32Value int32Value = Int32Value.of(integer);
         Any expectedAny = Any.pack(int32Value);
@@ -72,8 +72,6 @@ public class AT_ProtobufTranslationEngine {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder()
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
                 .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
-
-        protobufTranslationEngine.init();
 
         TestAppObject testAppObject = TestObjectUtil.generateTestAppObject();
         TestAppChildObject testAppChildObject = TestObjectUtil.getChildAppFromApp(testAppObject);
@@ -92,8 +90,6 @@ public class AT_ProtobufTranslationEngine {
             ProtobufTranslationEngine protobufTranslationEngine2 = ProtobufTranslationEngine.builder()
                     .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
 
-            protobufTranslationEngine2.init();
-
             TestAppObject testAppObject2 = TestObjectUtil.generateTestAppObject();
             TestAppChildObject testAppChildObject2 = TestObjectUtil.getChildAppFromApp(testAppObject2);
 
@@ -109,8 +105,6 @@ public class AT_ProtobufTranslationEngine {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder()
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
                 .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
-
-        protobufTranslationEngine.init();
 
         TestAppObject expectedObject = TestObjectUtil.generateTestAppObject();
 
@@ -130,8 +124,6 @@ public class AT_ProtobufTranslationEngine {
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
                 .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
 
-        protobufTranslationEngine.init();
-
         Class<TestInputObject> testInputObjectClass = TestInputObject.class;
         Class<TestComplexInputObject> testComplexInputObjectClass = TestComplexInputObject.class;
 
@@ -147,8 +139,6 @@ public class AT_ProtobufTranslationEngine {
         ContractException contractException = assertThrows(ContractException.class, () -> {
             ProtobufTranslationEngine protobufTranslationEngine2 = ProtobufTranslationEngine.builder()
                     .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
-
-            protobufTranslationEngine2.init();
 
             protobufTranslationEngine2.getClassFromTypeUrl("badUrl");
         });
@@ -167,7 +157,6 @@ public class AT_ProtobufTranslationEngine {
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
                 .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
 
-        protobufTranslationEngine.init();
         protobufTranslationEngine.setDebug(true);
 
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
@@ -187,8 +176,6 @@ public class AT_ProtobufTranslationEngine {
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
                 .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).setIgnoringUnknownFields(false)
                 .build();
-
-        protobufTranslationEngine.init();
 
         // preconditions
         // json has unknown property and the ignoringUnknownFields property is set to
@@ -211,8 +198,6 @@ public class AT_ProtobufTranslationEngine {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder()
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
                 .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
-
-        protobufTranslationEngine.init();
 
         // preconditions
         /*
@@ -256,8 +241,6 @@ public class AT_ProtobufTranslationEngine {
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
                 .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
 
-        protobufTranslationEngine.init();
-
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
 
         FileWriter fileWriter = new FileWriter(filePath.resolve(fileName).toFile());
@@ -299,8 +282,6 @@ public class AT_ProtobufTranslationEngine {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder()
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
                 .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
-
-        protobufTranslationEngine.init();
 
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
 
@@ -452,16 +433,11 @@ public class AT_ProtobufTranslationEngine {
     @UnitTestMethod(target = ProtobufTranslationEngine.Builder.class, name = "addTranslationSpec", args = {
             TranslationSpec.class })
     public void testAddTranslationSpec() {
-        /*
-         * this test will only test the difference between the ProtobufTranslationEngine
-         * and the TranslationEngine, which is only the populateMethod
-         */
+        ProtobufTranslationEngineTestHelper.testAddTranslationSpec(ProtobufTranslationEngine.builder());
 
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder()
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
                 .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
-
-        protobufTranslationEngine.init();
 
         assertDoesNotThrow(() -> {
             protobufTranslationEngine.getClassFromTypeUrl(TestInputObject.getDescriptor().getFullName());
@@ -478,6 +454,20 @@ public class AT_ProtobufTranslationEngine {
         assertEquals(ProtobufCoreTranslationError.INVALID_TRANSLATION_SPEC, contractException.getErrorType());
         // that the inputClass is not a Message nor a
         // ProtocolMessageEnum, and is tested in the testPopulate() test
+    }
+
+    @Test
+    @UnitTestMethod(target = ProtobufTranslationEngine.Builder.class, name = "addTranslator", args = {
+            Translator.class })
+    public void testAddTranslator() {
+        ProtobufTranslationEngineTestHelper.testAddTranslator(ProtobufTranslationEngine.builder());
+    }
+
+    @Test
+    @UnitTestMethod(target = ProtobufTranslationEngine.Builder.class, name = "addParentChildClassRelationship", args = {
+            Class.class, Class.class })
+    public void testAddParentChildClassRelationship() {
+        ProtobufTranslationEngineTestHelper.testAddParentChildClassRelationship(ProtobufTranslationEngine.builder());
     }
 
     @Test

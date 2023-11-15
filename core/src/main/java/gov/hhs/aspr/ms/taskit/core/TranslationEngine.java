@@ -76,7 +76,11 @@ public abstract class TranslationEngine {
 
     }
 
-    public static class Builder {
+    /**
+     * This class contains protected final methods for all of its abstract methods.
+     * All descendant classes of this class MUST call these if you want it to function properly.
+     */
+    public abstract static class Builder {
         protected Data data;
         protected final List<Translator> translators = new ArrayList<>();
 
@@ -114,19 +118,13 @@ public abstract class TranslationEngine {
             }
         }
 
+        void clearBuilder() {
+            this.data = new Data();
+        }
         /**
          * Builder for the TranslationEngine
-         * <p>
-         * <b>Note: Calling this specific method will result in a RuntimeException</b>
-         * </p>
-         * 
-         * @throws RuntimeException If this method is called directly. You should
-         *                          instead be calling the child method in the child
-         *                          TranslationEngine that extends this class
          */
-        public TranslationEngine build() {
-            throw new RuntimeException("Tried to call build on abstract Translation Engine");
-        }
+        public abstract TranslationEngine build();
 
         protected void initTranslators() {
             TranslatorContext translatorContext = new TranslatorContext(this);
@@ -161,15 +159,15 @@ public abstract class TranslationEngine {
          *                           if the given translationSpec is already known</li>
          *                           </ul>
          */
-        public <I, A> Builder addTranslationSpec(TranslationSpec<I, A> translationSpec) {
+        public abstract <I, A> Builder addTranslationSpec(TranslationSpec<I, A> translationSpec);
+
+        protected final <I, A> void _addTranslationSpec(TranslationSpec<I, A> translationSpec) {
             validateTranslationSpec(translationSpec);
 
             this.data.classToTranslationSpecMap.put(translationSpec.getInputObjectClass(), translationSpec);
             this.data.classToTranslationSpecMap.put(translationSpec.getAppObjectClass(), translationSpec);
 
             this.data.translationSpecs.add(translationSpec);
-
-            return this;
         }
 
         /**
@@ -183,7 +181,9 @@ public abstract class TranslationEngine {
          *                           if translator has alaready been added</li>
          *                           </ul>
          */
-        public Builder addTranslator(Translator translator) {
+        public abstract Builder addTranslator(Translator translator);
+
+        protected final void _addTranslator(Translator translator) {
             validateTranslatorNotNull(translator);
 
             if (this.translators.contains(translator)) {
@@ -191,7 +191,6 @@ public abstract class TranslationEngine {
             }
 
             this.translators.add(translator);
-            return this;
         }
 
         /**
@@ -213,7 +212,9 @@ public abstract class TranslationEngine {
          *                           added</li>
          *                           </ul>
          */
-        public <M extends U, U> Builder addParentChildClassRelationship(Class<M> classRef, Class<U> markerInterface) {
+        public abstract <M extends U, U> Builder addParentChildClassRelationship(Class<M> classRef, Class<U> markerInterface);
+
+        protected final <M extends U, U> void _addParentChildClassRelationship(Class<M> classRef, Class<U> markerInterface) {
             validateClassRefNotNull(classRef);
             validateClassRefNotNull(markerInterface);
 
@@ -222,7 +223,6 @@ public abstract class TranslationEngine {
             }
 
             this.data.childToParentClassMap.put(classRef, markerInterface);
-            return this;
         }
 
         /*
@@ -374,13 +374,6 @@ public abstract class TranslationEngine {
         }
     }
 
-    /**
-     * Returns a new instance of Builder
-     */
-    public static Builder builder() {
-        return new Builder(new Data());
-    }
-
     private void validateTranslationEngineType() {
         if (this.data.translationEngineType == TranslationEngineType.UNKNOWN) {
             throw new ContractException(CoreTranslationError.UNKNWON_TRANSLATION_ENGINE_TYPE);
@@ -393,7 +386,8 @@ public abstract class TranslationEngine {
         }
     }
 
-    // This is package access so the TranslationController can access it but nothing else.
+    // This is package access so the TranslationController can access it but nothing
+    // else.
     Map<Class<?>, Class<?>> getChildParentClassMap() {
         Map<Class<?>, Class<?>> copyMap = new LinkedHashMap<>(this.data.childToParentClassMap);
 
@@ -415,10 +409,7 @@ public abstract class TranslationEngine {
      * Initializes the translationEngine by calling init on each translationSpec
      * added in the builder
      */
-    public void init() {
-        validateTranslationEngineType();
-        validateTranslatorsInitialized();
-
+    protected void initTranslationSpecs() {
         /*
          * Calling init on a translationSpec causes the hashCode of the translationSpec
          * to change. Because of this, before calling init, we need to remove them from
@@ -437,6 +428,10 @@ public abstract class TranslationEngine {
         this.isInitialized = true;
     }
 
+    protected void validateInit() {
+        validateTranslationEngineType();
+        validateTranslatorsInitialized();
+    }
     /**
      * returns whether this translationEngine is initialized or not
      */

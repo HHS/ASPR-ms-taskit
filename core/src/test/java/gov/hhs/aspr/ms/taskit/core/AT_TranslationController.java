@@ -21,11 +21,9 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.TestResourceHelper;
 import gov.hhs.aspr.ms.taskit.core.testsupport.TestTranslationEngine;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testcomplexobject.TestComplexAppObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testcomplexobject.TestComplexObjectTranslator;
-import gov.hhs.aspr.ms.taskit.core.testsupport.testcomplexobject.translationSpecs.TestComplexObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestObjectTranslator;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.input.TestInputObject;
-import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.translationSpecs.TestObjectTranslationSpec;
 import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -58,10 +56,11 @@ public class AT_TranslationController {
         assertEquals(CoreTranslationError.NULL_TRANSLATION_ENGINE, contractException.getErrorType());
 
         RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> {
-            for (TranslationEngine translationEngine : translationController.data.translationEngines.values()) {
-                translationController.translationEngines.put(translationEngine.getTranslationEngineType(),
-                        translationEngine);
-            }
+            TestTranslationEngine translationEngine2 = TestTranslationEngine.builder().buildWithoutSpecInit();
+
+            translationController.translationEngines.put(translationEngine2.getTranslationEngineType(),
+                        translationEngine2);
+            
             translationController.validateTranslationEngines();
         });
 
@@ -69,7 +68,6 @@ public class AT_TranslationController {
 
         runtimeException = assertThrows(RuntimeException.class, () -> {
             for (TranslationEngine translationEngine : translationController.data.translationEngines.values()) {
-                translationEngine.init();
                 translationController.translationEngines.put(translationEngine.getTranslationEngineType(),
                         translationEngine);
                 translationController.translationEngineClassToTypeMap.put(translationEngine.getClass(), null);
@@ -83,7 +81,6 @@ public class AT_TranslationController {
 
         runtimeException = assertThrows(RuntimeException.class, () -> {
             for (TranslationEngine translationEngine : translationController.data.translationEngines.values()) {
-                translationEngine.init();
                 translationController.translationEngines.put(translationEngine.getTranslationEngineType(),
                         translationEngine);
             }
@@ -117,7 +114,6 @@ public class AT_TranslationController {
             TranslationController translationController2 = TranslationController.builder()
                     .addTranslationEngine(TestTranslationEngine.builder().build()).buildWithoutInitAndChecks();
             for (TranslationEngine translationEngine : translationController2.data.translationEngines.values()) {
-                translationEngine.init();
                 translationController2.translationEngines.put(translationEngine.getTranslationEngineType(),
                         translationEngine);
             }
@@ -133,7 +129,6 @@ public class AT_TranslationController {
             TranslationController translationController2 = TranslationController.builder()
                     .addTranslationEngine(TestTranslationEngine.builder().build()).buildWithoutInitAndChecks();
             for (TranslationEngine translationEngine : translationController2.data.translationEngines.values()) {
-                translationEngine.init();
                 translationController2.translationEngines.put(translationEngine.getTranslationEngineType(),
                         translationEngine);
                 translationController2.translationEngineClassToTypeMap.put(translationEngine.getClass(), null);
@@ -145,31 +140,6 @@ public class AT_TranslationController {
                 "Not all Translation Engines have an associated Class -> Type -> Engine Mapping. Something went very wrong.",
                 runtimeException.getMessage());
 
-    }
-
-    @Test
-    @UnitTestMethod(target = TranslationController.class, name = "getTranslationEngine", args = { Class.class })
-    public void testGetTranslationEngine() {
-        TestTranslationEngine expectedValue = TestTranslationEngine.builder()
-                .addTranslationSpec(new TestObjectTranslationSpec())
-                .addTranslationSpec(new TestComplexObjectTranslationSpec()).build();
-        expectedValue.init();
-
-        TranslationController translationController = TranslationController.builder()
-                .addTranslationEngine(expectedValue).build();
-
-        assertEquals(expectedValue, translationController.getTranslationEngine(TestTranslationEngine.class));
-
-        // precondition
-        // translation engine is null and is tested by the test:
-        // testValidateTranslationEngine()
-
-        // classRef passed in does not match the class of the translation engine
-        ContractException contractException = assertThrows(ContractException.class, () -> {
-            translationController.getTranslationEngine(TranslationEngine.class);
-        });
-
-        assertEquals(CoreTranslationError.INVALID_TRANSLATION_ENGINE, contractException.getErrorType());
     }
 
     @Test
@@ -535,7 +505,7 @@ public class AT_TranslationController {
 
     @Test
     @UnitTestMethod(target = TranslationController.Builder.class, name = "addInputFilePath", args = { Path.class,
-            Class.class })
+            Class.class, TranslationEngineType.class })
     public void testAddInputFilePath() {
         String fileName = "addInputFilePath-testOutput.json";
 
@@ -578,7 +548,7 @@ public class AT_TranslationController {
 
     @Test
     @UnitTestMethod(target = TranslationController.Builder.class, name = "addOutputFilePath", args = { Path.class,
-            Class.class })
+            Class.class, TranslationEngineType.class })
     public void testAddOutputFilePath() {
         String fileName = "addOutputFilePath1-testOutput.json";
         String fileName2 = "addOutputFilePath2-testOutput.json";
@@ -629,7 +599,7 @@ public class AT_TranslationController {
 
     @Test
     @UnitTestMethod(target = TranslationController.Builder.class, name = "addOutputFilePath", args = { Path.class,
-            Class.class, Integer.class })
+            Class.class, Integer.class, TranslationEngineType.class })
     public void testAddOutputFilePath_ScenarioId() {
         // Tested by testAddOutputFilePath, which internally calls
         // addOutputFilePath(path, class, 0)
@@ -663,9 +633,9 @@ public class AT_TranslationController {
     }
 
     @Test
-    @UnitTestMethod(target = TranslationController.Builder.class, name = "addTranslationEngineBuilder", args = {
-            TranslationEngine.Builder.class })
-    public void testAddTransationEngineBuilder() {
+    @UnitTestMethod(target = TranslationController.Builder.class, name = "addTranslationEngine", args = {
+            TranslationEngine.class })
+    public void testAddTransationEngine() {
         TestTranslationEngine translationEngine = TestTranslationEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
                 .addTranslator(TestComplexObjectTranslator.getTranslator())

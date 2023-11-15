@@ -42,7 +42,6 @@ public class AT_AnyTranslationSpec {
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
                 .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
 
-        protobufTranslationEngine.init();
         AnyTranslationSpec anyTranslationSpec = new AnyTranslationSpec();
         anyTranslationSpec.init(protobufTranslationEngine);
 
@@ -85,7 +84,6 @@ public class AT_AnyTranslationSpec {
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
                 .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
 
-        protobufTranslationEngine.init();
         AnyTranslationSpec anyTranslationSpec = new AnyTranslationSpec();
         anyTranslationSpec.init(protobufTranslationEngine);
 
@@ -108,7 +106,6 @@ public class AT_AnyTranslationSpec {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder()
                 .addTranslationSpec(new TestProtobufEnumTranslationSpec()).build();
 
-        protobufTranslationEngine.init();
         AnyTranslationSpec anyTranslationSpec = new AnyTranslationSpec();
         anyTranslationSpec.init(protobufTranslationEngine);
 

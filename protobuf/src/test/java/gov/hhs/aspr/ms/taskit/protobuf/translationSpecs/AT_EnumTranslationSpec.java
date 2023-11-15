@@ -30,7 +30,6 @@ public class AT_EnumTranslationSpec {
     public void testConvertInputObject() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder()
                 .addTranslationSpec(new TestProtobufEnumTranslationSpec()).build();
-        protobufTranslationEngine.init();
 
         EnumTranslationSpec enumTranslationSpec = new EnumTranslationSpec();
         enumTranslationSpec.init(protobufTranslationEngine);
@@ -60,7 +59,6 @@ public class AT_EnumTranslationSpec {
     public void testConvertAppObject() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder()
                 .addTranslationSpec(new TestProtobufEnumTranslationSpec()).build();
-        protobufTranslationEngine.init();
 
         EnumTranslationSpec enumTranslationSpec = new EnumTranslationSpec();
         enumTranslationSpec.init(protobufTranslationEngine);

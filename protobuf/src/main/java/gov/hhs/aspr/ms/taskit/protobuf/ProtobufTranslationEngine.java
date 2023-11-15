@@ -27,6 +27,7 @@ import gov.hhs.aspr.ms.taskit.core.CoreTranslationError;
 import gov.hhs.aspr.ms.taskit.core.TranslationEngine;
 import gov.hhs.aspr.ms.taskit.core.TranslationEngineType;
 import gov.hhs.aspr.ms.taskit.core.TranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.Translator;
 import gov.hhs.aspr.ms.taskit.protobuf.translationSpecs.AnyTranslationSpec;
 import util.errors.ContractException;
 
@@ -88,7 +89,7 @@ public class ProtobufTranslationEngine extends TranslationEngine {
         @Override
         public ProtobufTranslationEngine build() {
             super.initTranslators();
-            
+
             TypeRegistry.Builder typeRegistryBuilder = TypeRegistry.newBuilder();
             this.descriptorSet.addAll(PrimitiveTranslationSpecs.getPrimitiveDescriptors());
 
@@ -115,7 +116,11 @@ public class ProtobufTranslationEngine extends TranslationEngine {
             }
             this.data.jsonPrinter = printer;
 
-            return new ProtobufTranslationEngine(this.data);
+            ProtobufTranslationEngine translationEngine = new ProtobufTranslationEngine(this.data);
+
+            translationEngine.initTranslationSpecs();
+
+            return translationEngine;
         }
 
         /**
@@ -167,10 +172,11 @@ public class ProtobufTranslationEngine extends TranslationEngine {
          */
         @Override
         public <I, S> Builder addTranslationSpec(TranslationSpec<I, S> translationSpec) {
+            _addTranslationSpec(translationSpec);
+
             if (!ProtobufTranslationSpec.class.isAssignableFrom(translationSpec.getClass())) {
                 throw new ContractException(ProtobufCoreTranslationError.INVALID_TRANSLATION_SPEC);
             }
-            super.addTranslationSpec(translationSpec);
 
             populate(translationSpec.getInputObjectClass());
             return this;
@@ -235,6 +241,21 @@ public class ProtobufTranslationEngine extends TranslationEngine {
                     | InvocationTargetException e) {
                 throw new RuntimeException(e);
             }
+        }
+
+        @Override
+        public gov.hhs.aspr.ms.taskit.core.TranslationEngine.Builder addTranslator(Translator translator) {
+            _addTranslator(translator);
+
+            return this;
+        }
+
+        @Override
+        public <M extends U, U> gov.hhs.aspr.ms.taskit.core.TranslationEngine.Builder addParentChildClassRelationship(
+                Class<M> classRef, Class<U> markerInterface) {
+            _addParentChildClassRelationship(classRef, markerInterface);
+
+            return this;
         }
     }
 

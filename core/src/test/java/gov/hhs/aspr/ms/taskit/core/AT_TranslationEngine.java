@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -39,30 +38,17 @@ import util.graph.MutableGraph;
 public class AT_TranslationEngine {
 
     @Test
-    @UnitTestMethod(target = TranslationEngine.class, name = "init", args = {})
-    public void testInit() {
-        TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
-        TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
-        TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder()
-                .addTranslationSpec(testObjectTranslationSpec).addTranslationSpec(testComplexObjectTranslationSpec)
-                .build();
-
-        testTranslationEngine.init();
-    }
-
-    @Test
     @UnitTestMethod(target = TranslationEngine.class, name = "isInitialized", args = {})
     public void testIsInitialized() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
         TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder()
                 .addTranslationSpec(testObjectTranslationSpec).addTranslationSpec(testComplexObjectTranslationSpec)
-                .build();
+                .buildWithoutSpecInit();
 
         assertFalse(testTranslationEngine.isInitialized);
 
-        testTranslationEngine.init();
-
+        testTranslationEngine.initTranslationSpecs();
         assertTrue(testTranslationEngine.isInitialized());
     }
 
@@ -72,11 +58,24 @@ public class AT_TranslationEngine {
         // preconditions
         // TranslationEngineType is set to UNKNOWN
         ContractException contractException = assertThrows(ContractException.class, () -> {
-            TestTranslationEngine engine = TestTranslationEngine.builder().buildWithoutType();
-            engine.init();
+            TranslationEngine engine = TestTranslationEngine.builder().buildWithUnknownType();
+
+            engine.validateInit();
         });
 
         assertEquals(CoreTranslationError.UNKNWON_TRANSLATION_ENGINE_TYPE, contractException.getErrorType());
+    }
+
+    @Test
+    @UnitTestMethod(target = TranslationEngine.class, name = "getTranslationEngineType", args = {})
+    public void testGetTranslationEngineType() {
+        TranslationEngine translationEngine = TestTranslationEngine.builder().build();
+
+        assertEquals(TranslationEngineType.CUSTOM, translationEngine.getTranslationEngineType());
+
+        translationEngine = TestTranslationEngine.builder().buildWithUnknownType();
+
+        assertEquals(TranslationEngineType.UNKNOWN, translationEngine.getTranslationEngineType());
     }
 
     @Test
@@ -88,8 +87,6 @@ public class AT_TranslationEngine {
                 .addTranslationSpec(testObjectTranslationSpec).addTranslationSpec(testComplexObjectTranslationSpec)
                 .build();
 
-        testTranslationEngine.init();
-
         assertDoesNotThrow(() -> testTranslationEngine.translationSpecsAreInitialized());
 
         // preconditions
@@ -97,7 +94,7 @@ public class AT_TranslationEngine {
         assertThrows(RuntimeException.class, () -> {
             TestTranslationEngine testTranslationEngine2 = TestTranslationEngine.builder()
                     .addTranslationSpec(new TestObjectTranslationSpec())
-                    .addTranslationSpec(testComplexObjectTranslationSpec).build();
+                    .addTranslationSpec(testComplexObjectTranslationSpec).buildWithoutSpecInit();
 
             testTranslationEngine2.translationSpecsAreInitialized();
         });
@@ -123,20 +120,17 @@ public class AT_TranslationEngine {
     public void testValidateTranslatorsInitialized() {
 
         assertDoesNotThrow(() -> {
-            TranslationEngine engine = TestTranslationEngine.builder()
-                    .addTranslator(TestObjectTranslator.getTranslator())
+            TestTranslationEngine.builder().addTranslator(TestObjectTranslator.getTranslator())
                     .addTranslator(TestComplexObjectTranslator.getTranslator()).build();
 
-            engine.init();
         });
 
         // preconditions
         ContractException contractException = assertThrows(ContractException.class, () -> {
             TranslationEngine engine = TestTranslationEngine.builder()
                     .addTranslator(TestObjectTranslator.getTranslator())
-                    .addTranslator(TestComplexObjectTranslator.getTranslator()).buildWithoutInit();
-
-            engine.init();
+                    .addTranslator(TestComplexObjectTranslator.getTranslator()).buildWithNoTranslatorInit();
+            engine.validateInit();
         });
         assertEquals(CoreTranslationError.UNINITIALIZED_TRANSLATORS, contractException.getErrorType());
     }
@@ -149,8 +143,6 @@ public class AT_TranslationEngine {
         TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder()
                 .addTranslationSpec(testObjectTranslationSpec).addTranslationSpec(testComplexObjectTranslationSpec)
                 .build();
-
-        testTranslationEngine.init();
 
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
         TestInputObject expectedInputObject = TestObjectUtil.getInputFromApp(expectedAppObject);
@@ -183,7 +175,6 @@ public class AT_TranslationEngine {
                 .addTranslationSpec(testObjectTranslationSpec).addTranslationSpec(testComplexObjectTranslationSpec)
                 .build();
 
-        testTranslationEngine.init();
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
         TestInputObject expectedInputObject = TestObjectUtil.getInputFromApp(expectedAppObject);
 
@@ -256,8 +247,6 @@ public class AT_TranslationEngine {
                 .addTranslationSpec(testObjectTranslationSpec).addTranslationSpec(testComplexObjectTranslationSpec)
                 .addTranslationSpec(wrapperTranslationSpec).build();
 
-        testTranslationEngine.init();
-
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
 
         TestObjectWrapper expectedWrapper = new TestObjectWrapper();
@@ -300,8 +289,6 @@ public class AT_TranslationEngine {
                 .addTranslationSpec(testObjectTranslationSpec).addTranslationSpec(testComplexObjectTranslationSpec)
                 .build();
 
-        testTranslationEngine.init();
-
         assertEquals(testObjectTranslationSpec, testTranslationEngine.getTranslationSpecForClass(TestAppObject.class));
         assertEquals(testObjectTranslationSpec,
                 testTranslationEngine.getTranslationSpecForClass(TestInputObject.class));
@@ -328,188 +315,6 @@ public class AT_TranslationEngine {
         });
 
         assertEquals(CoreTranslationError.UNKNOWN_TRANSLATION_SPEC, contractException.getErrorType());
-    }
-
-    @Test
-    @UnitTestMethod(target = TranslationEngine.class, name = "builder", args = {})
-    public void testBuilder() {
-        assertNotNull(TranslationEngine.builder());
-    }
-
-    @Test
-    @UnitTestMethod(target = TranslationEngine.Builder.class, name = "build", args = {})
-    public void testBuild() {
-        assertThrows(RuntimeException.class, () -> {
-            TranslationEngine.builder().build();
-        });
-    }
-
-    @Test
-    @UnitTestMethod(target = TranslationEngine.Builder.class, name = "addTranslationSpec", args = {
-            TranslationSpec.class })
-    public void testAddTranslationSpec() {
-        TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
-        TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
-        TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder()
-                .addTranslationSpec(testObjectTranslationSpec).addTranslationSpec(testComplexObjectTranslationSpec)
-                .build();
-
-        testTranslationEngine.init();
-
-        // show that the translation specs are retrievable by their own app and input
-        // classes
-        assertEquals(testObjectTranslationSpec,
-                testTranslationEngine.getTranslationSpecForClass(testObjectTranslationSpec.getAppObjectClass()));
-        assertEquals(testObjectTranslationSpec,
-                testTranslationEngine.getTranslationSpecForClass(testObjectTranslationSpec.getInputObjectClass()));
-
-        assertEquals(testComplexObjectTranslationSpec,
-                testTranslationEngine.getTranslationSpecForClass(testComplexObjectTranslationSpec.getAppObjectClass()));
-        assertEquals(testComplexObjectTranslationSpec, testTranslationEngine
-                .getTranslationSpecForClass(testComplexObjectTranslationSpec.getInputObjectClass()));
-
-        // preconditions
-        // translationSpec is null
-        ContractException contractException = assertThrows(ContractException.class, () -> {
-            TestTranslationEngine.builder().addTranslationSpec(null);
-        });
-
-        assertEquals(CoreTranslationError.NULL_TRANSLATION_SPEC, contractException.getErrorType());
-
-        // the translation spec getAppClass method returns null
-        contractException = assertThrows(ContractException.class, () -> {
-            TranslationSpec<TestObjectWrapper, Object> wrapperTranslationSpec = new TranslationSpec<TestObjectWrapper, Object>() {
-
-                @Override
-                protected Object convertInputObject(TestObjectWrapper inputObject) {
-                    return inputObject.getWrappedObject();
-                }
-
-                @Override
-                protected TestObjectWrapper convertAppObject(Object appObject) {
-                    TestObjectWrapper objectWrapper = new TestObjectWrapper();
-
-                    objectWrapper.setWrappedObject(appObject);
-
-                    return objectWrapper;
-                }
-
-                @Override
-                public Class<Object> getAppObjectClass() {
-                    return null;
-                }
-
-                @Override
-                public Class<TestObjectWrapper> getInputObjectClass() {
-                    return TestObjectWrapper.class;
-                }
-            };
-            TestTranslationEngine.builder().addTranslationSpec(wrapperTranslationSpec);
-        });
-
-        assertEquals(CoreTranslationError.NULL_TRANSLATION_SPEC_APP_CLASS, contractException.getErrorType());
-
-        // the translation spec getInputClass method returns null
-        contractException = assertThrows(ContractException.class, () -> {
-            TranslationSpec<TestObjectWrapper, Object> wrapperTranslationSpec = new TranslationSpec<TestObjectWrapper, Object>() {
-
-                @Override
-                protected Object convertInputObject(TestObjectWrapper inputObject) {
-                    return inputObject.getWrappedObject();
-                }
-
-                @Override
-                protected TestObjectWrapper convertAppObject(Object appObject) {
-                    TestObjectWrapper objectWrapper = new TestObjectWrapper();
-
-                    objectWrapper.setWrappedObject(appObject);
-
-                    return objectWrapper;
-                }
-
-                @Override
-                public Class<Object> getAppObjectClass() {
-                    return Object.class;
-                }
-
-                @Override
-                public Class<TestObjectWrapper> getInputObjectClass() {
-                    return null;
-                }
-            };
-            TestTranslationEngine.builder().addTranslationSpec(wrapperTranslationSpec);
-        });
-
-        assertEquals(CoreTranslationError.NULL_TRANSLATION_SPEC_INPUT_CLASS, contractException.getErrorType());
-
-        // if the translation spec has already been added (same, but different
-        // instances)
-        contractException = assertThrows(ContractException.class, () -> {
-            TestObjectTranslationSpec testObjectTranslationSpec1 = new TestObjectTranslationSpec();
-            TestObjectTranslationSpec testObjectTranslationSpec2 = new TestObjectTranslationSpec();
-
-            TestTranslationEngine.builder().addTranslationSpec(testObjectTranslationSpec1)
-                    .addTranslationSpec(testObjectTranslationSpec2);
-        });
-
-        assertEquals(CoreTranslationError.DUPLICATE_TRANSLATION_SPEC, contractException.getErrorType());
-
-        // if the translation spec has already been added (exact same instance)
-        contractException = assertThrows(ContractException.class, () -> {
-            TestObjectTranslationSpec testObjectTranslationSpec1 = new TestObjectTranslationSpec();
-
-            TestTranslationEngine.builder().addTranslationSpec(testObjectTranslationSpec1)
-                    .addTranslationSpec(testObjectTranslationSpec1);
-        });
-
-        assertEquals(CoreTranslationError.DUPLICATE_TRANSLATION_SPEC, contractException.getErrorType());
-    }
-
-    @Test
-    @UnitTestMethod(target = TranslationEngine.Builder.class, name = "addTranslator", args = { Translator.class })
-    public void testAddTranslator() {
-        TranslationEngine.builder().addTranslator(TestObjectTranslator.getTranslator());
-
-        // preconditions
-        ContractException contractException = assertThrows(ContractException.class, () -> {
-            TranslationEngine.builder().addTranslator(null);
-        });
-
-        assertEquals(CoreTranslationError.NULL_TRANSLATOR, contractException.getErrorType());
-
-        contractException = assertThrows(ContractException.class, () -> {
-            TranslationEngine.builder().addTranslator(TestObjectTranslator.getTranslator())
-                    .addTranslator(TestObjectTranslator.getTranslator());
-        });
-
-        assertEquals(CoreTranslationError.DUPLICATE_TRANSLATOR, contractException.getErrorType());
-    }
-
-    @Test
-    @UnitTestMethod(target = TranslationEngine.Builder.class, name = "addParentChildClassRelationship", args = {
-            Class.class, Class.class })
-    public void testAddParentChildClassRelationship() {
-        TranslationEngine.builder().addParentChildClassRelationship(TestAppObject.class, Object.class);
-
-        // preconditions
-        ContractException contractException = assertThrows(ContractException.class, () -> {
-            TranslationEngine.builder().addParentChildClassRelationship(null, Object.class);
-        });
-
-        assertEquals(CoreTranslationError.NULL_CLASS_REF, contractException.getErrorType());
-
-        contractException = assertThrows(ContractException.class, () -> {
-            TranslationEngine.builder().addParentChildClassRelationship(TestAppObject.class, null);
-        });
-
-        assertEquals(CoreTranslationError.NULL_CLASS_REF, contractException.getErrorType());
-
-        contractException = assertThrows(ContractException.class, () -> {
-            TranslationEngine.builder().addParentChildClassRelationship(TestAppObject.class, Object.class)
-                    .addParentChildClassRelationship(TestAppObject.class, Object.class);
-        });
-
-        assertEquals(CoreTranslationError.DUPLICATE_CLASSREF, contractException.getErrorType());
     }
 
     @Test
@@ -614,12 +419,7 @@ public class AT_TranslationEngine {
         assertNotEquals(testTranslationEngine2.hashCode(), testTranslationEngine4.hashCode());
         assertNotEquals(testTranslationEngine3.hashCode(), testTranslationEngine4.hashCode());
 
-        // same translation specs, but initialized vs not
-        testTranslationEngine5.init();
-        assertNotEquals(testTranslationEngine1.hashCode(), testTranslationEngine5.hashCode());
-
-        // same translation specs and both initialized
-        testTranslationEngine1.init();
+        // same translation specs
         assertEquals(testTranslationEngine1.hashCode(), testTranslationEngine5.hashCode());
     }
 
@@ -648,10 +448,10 @@ public class AT_TranslationEngine {
         TestObjectTranslationSpec testObjectTranslationSpec3 = new TestObjectTranslationSpec();
 
         TestTranslationEngine testTranslationEngine6 = TestTranslationEngine.builder()
-                .addTranslationSpec(testObjectTranslationSpec2).build();
+                .addTranslationSpec(testObjectTranslationSpec2).buildWithoutSpecInit();
 
         TestTranslationEngine testTranslationEngine7 = TestTranslationEngine.builder()
-                .addTranslationSpec(testObjectTranslationSpec3).build();
+                .addTranslationSpec(testObjectTranslationSpec3).buildWithoutSpecInit();
 
         // exact same
         assertEquals(testTranslationEngine1, testTranslationEngine1);
@@ -672,12 +472,10 @@ public class AT_TranslationEngine {
         testObjectTranslationSpec3.init(testTranslationEngine5);
         assertNotEquals(testTranslationEngine6, testTranslationEngine7);
 
-        // same translation specs, but initialized vs not
-        testTranslationEngine5.init();
-        assertNotEquals(testTranslationEngine1, testTranslationEngine5);
+        // init vs not init
+        assertNotEquals(testTranslationEngine1, testTranslationEngine6);
 
-        // same translation specs and both initialized
-        testTranslationEngine1.init();
+        // same translation specs
         assertEquals(testTranslationEngine1, testTranslationEngine5);
 
         TranslationEngine.Data data = new TranslationEngine.Data();

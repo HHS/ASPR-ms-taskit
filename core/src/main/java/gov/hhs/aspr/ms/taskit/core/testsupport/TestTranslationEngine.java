@@ -58,36 +58,49 @@ public class TestTranslationEngine extends TranslationEngine {
         @Override
         public TestTranslationEngine build() {
             super.initTranslators();
+
+            TestTranslationEngine translationEngine = new TestTranslationEngine(this.data);
+
+            translationEngine.initTranslationSpecs();
+            translationEngine.validateInit();
+            return translationEngine;
+        }
+
+        public TestTranslationEngine buildWithoutSpecInit() {
+            super.initTranslators();
             return new TestTranslationEngine(this.data);
         }
 
-        public TestTranslationEngine buildWithoutInit() {
+        public TestTranslationEngine buildWithNoTranslatorInit() {
+            TestTranslationEngine translationEngine = new TestTranslationEngine(this.data);
+            translationEngine.initTranslationSpecs();
+
             return new TestTranslationEngine(this.data);
         }
 
-        public TestTranslationEngine buildWithoutType() {
+        public TestTranslationEngine buildWithUnknownType() {
             this.data.setUnknownEngineType();
 
-            return this.build();
+            return new TestTranslationEngine(this.data);
         }
 
         @Override
         public <I, A> Builder addTranslationSpec(TranslationSpec<I, A> translationSpec) {
-            super.addTranslationSpec(translationSpec);
+            _addTranslationSpec(translationSpec);
 
             return this;
         }
 
         @Override
         public Builder addTranslator(Translator translator) {
-            super.addTranslator(translator);
+            _addTranslator(translator);
 
             return this;
         }
 
         @Override
         public <M extends U, U> Builder addParentChildClassRelationship(Class<M> classRef, Class<U> markerInterface) {
-            super.addParentChildClassRelationship(classRef, markerInterface);
+            _addParentChildClassRelationship(classRef, markerInterface);
 
             return this;
         }

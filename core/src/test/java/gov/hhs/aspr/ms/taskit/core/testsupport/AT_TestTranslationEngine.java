@@ -15,7 +15,10 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
+import gov.hhs.aspr.ms.taskit.core.TranslationEngineTestHelper;
+import gov.hhs.aspr.ms.taskit.core.TranslationEngineType;
 import gov.hhs.aspr.ms.taskit.core.TranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.Translator;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testcomplexobject.translationSpecs.TestComplexObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.input.TestInputObject;
@@ -40,8 +43,6 @@ public class AT_TestTranslationEngine {
         TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
         TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder()
                 .addTranslationSpec(testObjectTranslationSpec).addTranslationSpec(complexObjectTranslationSpec).build();
-
-        testTranslationEngine.init();
 
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
 
@@ -88,8 +89,6 @@ public class AT_TestTranslationEngine {
         TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder()
                 .addTranslationSpec(testObjectTranslationSpec).addTranslationSpec(complexObjectTranslationSpec).build();
 
-        testTranslationEngine.init();
-
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
 
         FileWriter fileWriter = new FileWriter(filePath.resolve(fileName).toFile());
@@ -121,12 +120,43 @@ public class AT_TestTranslationEngine {
     }
 
     @Test
+    @UnitTestMethod(target = TestTranslationEngine.Builder.class, name = "buildWithNoTranslatorInit", args = {})
+    public void testBuildWithNoTranslatorInit() {
+        assertNotNull(TestTranslationEngine.builder().buildWithNoTranslatorInit());
+    }
+
+    @Test
+    @UnitTestMethod(target = TestTranslationEngine.Builder.class, name = "buildWithUnknownType", args = {})
+    public void testBuildWithUnknownType() {
+        assertNotNull(TestTranslationEngine.builder().buildWithUnknownType());
+
+        assertEquals(TranslationEngineType.UNKNOWN, TestTranslationEngine.builder().buildWithUnknownType().getTranslationEngineType());
+    }
+
+    @Test
+    @UnitTestMethod(target = TestTranslationEngine.Builder.class, name = "buildWithoutSpecInit", args = {})
+    public void testBuildWithoutSpecInit() {
+        assertNotNull(TestTranslationEngine.builder().buildWithoutSpecInit());
+    }
+
+    @Test
     @UnitTestMethod(target = TestTranslationEngine.Builder.class, name = "addTranslationSpec", args = {
             TranslationSpec.class })
     public void testAddTranslationSpec() {
-        // covered by AT_TranslationEngine#testAddTranslationSpec
-        // this is just a wrapper method to ensure that the correct Child Engine builder
-        // is returned
+        TranslationEngineTestHelper.testAddTranslationSpec(TestTranslationEngine.builder());
+    }
+
+    @Test
+    @UnitTestMethod(target = TestTranslationEngine.Builder.class, name = "addTranslator", args = { Translator.class })
+    public void testAddTranslator() {
+        TranslationEngineTestHelper.testAddTranslator(TestTranslationEngine.builder());
+    }
+
+    @Test
+    @UnitTestMethod(target = TestTranslationEngine.Builder.class, name = "addParentChildClassRelationship", args = {
+            Class.class, Class.class })
+    public void testAddParentChildClassRelationship() {
+        TranslationEngineTestHelper.testAddParentChildClassRelationship(TestTranslationEngine.builder());
     }
 
     @Test

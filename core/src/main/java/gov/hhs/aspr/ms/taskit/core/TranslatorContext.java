@@ -22,7 +22,7 @@ public class TranslatorContext {
      * Returns an instance of the TranslationEngine Builder
      * 
      * @param <T> the type of the TranslationEngine
-     * @throws ContractException {@linkplain CoreTranslationError#INVALID_TRANSLATION_ENGINE_BUILDER}
+     * @throws ContractException {@linkplain CoreTranslationError#INVALID_TRANSLATION_ENGINE_BUILDER_CLASS_REF}
      *                           if the given classRef does not match the class or
      *                           the translatorCoreBuilder is null
      */
@@ -31,7 +31,7 @@ public class TranslatorContext {
             return classRef.cast(this.builder);
         }
 
-        throw new ContractException(CoreTranslationError.INVALID_TRANSLATION_ENGINE_BUILDER,
+        throw new ContractException(CoreTranslationError.INVALID_TRANSLATION_ENGINE_BUILDER_CLASS_REF,
                 "No Translation Engine Builder was found for the type: " + classRef.getName());
 
     }

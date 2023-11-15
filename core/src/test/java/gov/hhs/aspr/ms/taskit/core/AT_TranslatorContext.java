@@ -15,7 +15,7 @@ import util.errors.ContractException;
 public class AT_TranslatorContext {
 
     @Test
-    @UnitTestConstructor(target = TranslatorContext.class, args = { TranslationController.class })
+    @UnitTestConstructor(target = TranslatorContext.class, args = { TranslationEngine.Builder.class })
     public void testConstructor() {
         TranslatorContext translatorContext = new TranslatorContext(TestTranslationEngine.builder());
 
@@ -40,7 +40,7 @@ public class AT_TranslatorContext {
             translatorContext.getTranslationEngineBuilder(TranslationEngine.Builder.class);
         });
 
-        assertEquals(CoreTranslationError.INVALID_TRANSLATION_ENGINE_BUILDER, contractException.getErrorType());
+        assertEquals(CoreTranslationError.INVALID_TRANSLATION_ENGINE_BUILDER_CLASS_REF, contractException.getErrorType());
     }
 
 }
