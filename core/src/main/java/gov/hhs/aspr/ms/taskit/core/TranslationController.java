@@ -109,7 +109,9 @@ public final class TranslationController {
 
             TranslationController translatorController = new TranslationController(this.data);
 
-            translatorController.initTranslators();
+            translatorController.initTranslationEngines();
+            translatorController.validateTranslationEngines();
+
             return translatorController;
         }
 
@@ -263,7 +265,8 @@ public final class TranslationController {
                 // that is required by the addParentChildClassRelationship method
                 Class<?> parentClassRef = childToParentClassMap.get(childClassRef);
 
-                // Note: no 'class is not null' validation here because it was validated prior to being put into the engine
+                // Note: no 'class is not null' validation here because it was validated prior
+                // to being put into the engine
                 if (this.data.parentChildClassRelationshipMap.containsKey(childClassRef)) {
                     throw new ContractException(CoreTranslationError.DUPLICATE_CLASSREF);
                 }
@@ -355,20 +358,6 @@ public final class TranslationController {
             throw new RuntimeException(
                     "Not all Translation Engines have an associated Class -> Type -> Engine Mapping. Something went very wrong.");
         }
-    }
-
-    /*
-     * calls the init method on the translationEngines, Verifies that all
-     * translationSpecs have been initialized, Verifies that all Translation Engines
-     * have properly initialized and the associated mappings are valid
-     */
-    private TranslationController initTranslators() {
-
-        this.initTranslationEngines();
-
-        this.validateTranslationEngines();
-
-        return this;
     }
 
     void readInput(Path path, Class<?> classRef, TranslationEngine translationEngine) {
