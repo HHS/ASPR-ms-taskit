@@ -19,12 +19,12 @@ public final class Translator {
         this.data = data;
     }
 
-    protected static class Data {
+    final static class Data {
         private TranslatorId translatorId;
         private Consumer<TranslatorContext> initializer;
         private final Set<TranslatorId> dependencies = new LinkedHashSet<>();
 
-        protected Data() {
+        Data() {
         }
 
         @Override
@@ -49,7 +49,7 @@ public final class Translator {
 
     }
 
-    public static class Builder {
+    public final static class Builder {
         private Data data;
 
         private Builder(Data data) {

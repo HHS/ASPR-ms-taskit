@@ -35,7 +35,7 @@ import util.errors.ContractException;
  * Protobuf TranslationEngine that allows for conversion between POJOs and
  * Protobuf Messages, extends {@link TranslationEngine}
  */
-public class ProtobufTranslationEngine extends TranslationEngine {
+public final class ProtobufTranslationEngine extends TranslationEngine {
     private final Data data;
 
     private ProtobufTranslationEngine(Data data) {
@@ -43,7 +43,7 @@ public class ProtobufTranslationEngine extends TranslationEngine {
         this.data = data;
     }
 
-    private static class Data extends TranslationEngine.Data {
+    private final static class Data extends TranslationEngine.Data {
         // this is used specifically for Any message types to pack and unpack them
         private final Map<String, Class<?>> typeUrlToClassMap = new LinkedHashMap<>();
 
@@ -69,7 +69,7 @@ public class ProtobufTranslationEngine extends TranslationEngine {
         }
     }
 
-    public static class Builder extends TranslationEngine.Builder {
+    public final static class Builder extends TranslationEngine.Builder {
         private ProtobufTranslationEngine.Data data;
         private Set<Descriptor> descriptorSet = new LinkedHashSet<>();
         private final Set<FieldDescriptor> defaultValueFieldsToPrint = new LinkedHashSet<>();
@@ -88,7 +88,7 @@ public class ProtobufTranslationEngine extends TranslationEngine {
          */
         @Override
         public ProtobufTranslationEngine build() {
-            super.initTranslators();
+            initTranslators();
 
             TypeRegistry.Builder typeRegistryBuilder = TypeRegistry.newBuilder();
             this.descriptorSet.addAll(PrimitiveTranslationSpecs.getPrimitiveDescriptors());
@@ -182,6 +182,20 @@ public class ProtobufTranslationEngine extends TranslationEngine {
             return this;
         }
 
+        @Override
+        public Builder addTranslator(Translator translator) {
+            _addTranslator(translator);
+
+            return this;
+        }
+
+        @Override
+        public <M extends U, U> Builder addParentChildClassRelationship(Class<M> classRef, Class<U> markerInterface) {
+            _addParentChildClassRelationship(classRef, markerInterface);
+
+            return this;
+        }
+
         /**
          * checks the class to determine if it is a ProtocolMessageEnum or a Message and
          * if so, gets the Descriptor (which is akin to a class but for a Protobuf
@@ -193,7 +207,7 @@ public class ProtobufTranslationEngine extends TranslationEngine {
          *                           {@linkplain Message} nor
          *                           {@linkplain ProtocolMessageEnum}
          */
-        protected <U> void populate(Class<U> classRef) {
+        <U> void populate(Class<U> classRef) {
             String typeUrl;
             if (ProtocolMessageEnum.class.isAssignableFrom(classRef) && ProtocolMessageEnum.class != classRef) {
                 typeUrl = getDefaultEnum(classRef.asSubclass(ProtocolMessageEnum.class)).getDescriptorForType()
@@ -217,7 +231,7 @@ public class ProtobufTranslationEngine extends TranslationEngine {
         /**
          * given a Class ref to a Protobuf Message, get the defaultInstance of it
          */
-        protected <U extends Message> U getDefaultMessage(Class<U> classRef) {
+        <U extends Message> U getDefaultMessage(Class<U> classRef) {
             try {
                 Method method = classRef.getMethod("getDefaultInstance");
                 Object obj = method.invoke(null);
@@ -232,7 +246,7 @@ public class ProtobufTranslationEngine extends TranslationEngine {
          * given a Class ref to a ProtocolMessageEnum, get the default value for it,
          * enum number 0 within the proto enum
          */
-        protected <U extends ProtocolMessageEnum> U getDefaultEnum(Class<U> classRef) {
+        <U extends ProtocolMessageEnum> U getDefaultEnum(Class<U> classRef) {
             try {
                 Method method = classRef.getMethod("forNumber", int.class);
                 Object obj = method.invoke(null, 0);
@@ -243,20 +257,6 @@ public class ProtobufTranslationEngine extends TranslationEngine {
             }
         }
 
-        @Override
-        public gov.hhs.aspr.ms.taskit.core.TranslationEngine.Builder addTranslator(Translator translator) {
-            _addTranslator(translator);
-
-            return this;
-        }
-
-        @Override
-        public <M extends U, U> gov.hhs.aspr.ms.taskit.core.TranslationEngine.Builder addParentChildClassRelationship(
-                Class<M> classRef, Class<U> markerInterface) {
-            _addParentChildClassRelationship(classRef, markerInterface);
-
-            return this;
-        }
     }
 
     /**
@@ -266,15 +266,15 @@ public class ProtobufTranslationEngine extends TranslationEngine {
         return new Builder(new Data());
     }
 
-    protected Parser getJsonParser() {
+    Parser getJsonParser() {
         return this.data.jsonParser;
     }
 
-    protected Printer getJsonPrinter() {
+    Printer getJsonPrinter() {
         return this.data.jsonPrinter;
     }
 
-    protected void setDebug(boolean debug) {
+    void setDebug(boolean debug) {
         this.debug = debug;
     }
 
@@ -383,7 +383,7 @@ public class ProtobufTranslationEngine extends TranslationEngine {
      *                          </li>
      *                          </ul>
      */
-    protected <T, U extends Message> T parseJson(Reader reader, Class<U> inputClassRef) {
+    <T, U extends Message> T parseJson(Reader reader, Class<U> inputClassRef) {
 
         Message.Builder builder = getBuilderForMessage(inputClassRef);
 
@@ -401,7 +401,7 @@ public class ProtobufTranslationEngine extends TranslationEngine {
         }
     }
 
-    protected <U> Message.Builder getBuilderForMessage(Class<U> messageClass) {
+    <U> Message.Builder getBuilderForMessage(Class<U> messageClass) {
 
         Method[] messageMethods = messageClass.getDeclaredMethods();
 

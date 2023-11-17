@@ -32,11 +32,11 @@ public final class TranslationController {
     protected final Map<Class<? extends TranslationEngine>, TranslationEngineType> translationEngineClassToTypeMap = new LinkedHashMap<>();
     protected final List<Object> objects = Collections.synchronizedList(new ArrayList<>());
 
-    protected TranslationController(Data data) {
+    TranslationController(Data data) {
         this.data = data;
     }
 
-    protected static class Data {
+    final static class Data {
         protected Map<Class<? extends TranslationEngine>, TranslationEngine> translationEngines = new LinkedHashMap<>();
         protected final List<Translator> translators = new ArrayList<>();
         protected final Map<Path, Class<?>> inputFilePathMap = new LinkedHashMap<>();
@@ -45,14 +45,14 @@ public final class TranslationController {
         protected final Map<Path, TranslationEngineType> outputFilePathEngine = new LinkedHashMap<>();
         protected final Map<Class<?>, Class<?>> parentChildClassRelationshipMap = new LinkedHashMap<>();
 
-        protected Data() {
+        Data() {
         }
     }
 
-    public static class Builder {
-        protected Data data;
+    public final static class Builder {
+        Data data;
 
-        protected Builder(Data data) {
+        Builder(Data data) {
             this.data = data;
         }
 
@@ -115,7 +115,7 @@ public final class TranslationController {
             return translatorController;
         }
 
-        protected TranslationController buildWithoutInitAndChecks() {
+        TranslationController buildWithoutInitAndChecks() {
             return new TranslationController(this.data);
         }
 

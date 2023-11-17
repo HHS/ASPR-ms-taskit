@@ -58,7 +58,7 @@ class PrimitiveTranslationSpecs {
      * and their Descriptors are exclusively used to falicitate converting to/from a
      * Protobuf {@link Any} type
      */
-    protected static Set<Descriptor> getPrimitiveDescriptors() {
+    static Set<Descriptor> getPrimitiveDescriptors() {
         Set<Descriptor> set = new LinkedHashSet<>();
 
         set.add(BoolValue.getDefaultInstance().getDescriptorForType());
@@ -82,7 +82,7 @@ class PrimitiveTranslationSpecs {
      * are exclusively used to falicitate converting to/from a Protobuf {@link Any}
      * type
      */
-    protected static Set<ProtobufTranslationSpec<?, ?>> getPrimitiveTranslatorSpecs() {
+    static Set<ProtobufTranslationSpec<?, ?>> getPrimitiveTranslatorSpecs() {
         Set<ProtobufTranslationSpec<?, ?>> set = new LinkedHashSet<>();
 
         set.addAll(getPrimitiveInputTranslatorSpecMap().values());
@@ -98,7 +98,7 @@ class PrimitiveTranslationSpecs {
      * and their typeUrls are exclusively used to falicitate converting to/from a
      * Protobuf {@link Any} type
      */
-    protected static Map<String, Class<?>> getPrimitiveTypeUrlToClassMap() {
+    static Map<String, Class<?>> getPrimitiveTypeUrlToClassMap() {
         Map<String, Class<?>> map = new LinkedHashMap<>();
 
         map.put(BoolValue.getDefaultInstance().getDescriptorForType().getFullName(),
@@ -133,7 +133,7 @@ class PrimitiveTranslationSpecs {
      * and their inputObjectClasses are exclusively used to falicitate converting
      * to/from a Protobuf {@link Any} type
      */
-    protected static Map<Class<?>, ProtobufTranslationSpec<?, ?>> getPrimitiveInputTranslatorSpecMap() {
+    static Map<Class<?>, ProtobufTranslationSpec<?, ?>> getPrimitiveInputTranslatorSpecMap() {
         Map<Class<?>, ProtobufTranslationSpec<?, ?>> map = new LinkedHashMap<>();
 
         map.put(BOOLEAN_TRANSLATOR_SPEC.getInputObjectClass(), BOOLEAN_TRANSLATOR_SPEC);
@@ -159,7 +159,7 @@ class PrimitiveTranslationSpecs {
      * and their appObjectClasses are exclusively used to falicitate converting
      * to/from a Protobuf {@link Any} type
      */
-    protected static Map<Class<?>, ProtobufTranslationSpec<?, ?>> getPrimitiveObjectTranslatorSpecMap() {
+    static Map<Class<?>, ProtobufTranslationSpec<?, ?>> getPrimitiveObjectTranslatorSpecMap() {
         Map<Class<?>, ProtobufTranslationSpec<?, ?>> map = new LinkedHashMap<>();
 
         // no java version of unsigned int nor unsigned long

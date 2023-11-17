@@ -126,7 +126,7 @@ public abstract class TranslationEngine {
          */
         public abstract TranslationEngine build();
 
-        protected void initTranslators() {
+        protected final void initTranslators() {
             TranslatorContext translatorContext = new TranslatorContext(this);
 
             List<Translator> orderedTranslators = this.getOrderedTranslators();

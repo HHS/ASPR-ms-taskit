@@ -10,11 +10,11 @@ import util.errors.ContractException;
  * consumer that this context is used in from just being a consumer of a
  * TranslationEngine.Builder
  */
-public class TranslatorContext {
+public final class TranslatorContext {
 
     private final TranslationEngine.Builder builder;
 
-    public TranslatorContext(TranslationEngine.Builder builder) {
+    public TranslatorContext(final TranslationEngine.Builder builder) {
         this.builder = builder;
     }
 
@@ -26,7 +26,7 @@ public class TranslatorContext {
      *                           if the given classRef does not match the class or
      *                           the translatorCoreBuilder is null
      */
-    public <T extends TranslationEngine.Builder> T getTranslationEngineBuilder(Class<T> classRef) {
+    public <T extends TranslationEngine.Builder> T getTranslationEngineBuilder(final Class<T> classRef) {
         if (this.builder.getClass().isAssignableFrom(classRef)) {
             return classRef.cast(this.builder);
         }
