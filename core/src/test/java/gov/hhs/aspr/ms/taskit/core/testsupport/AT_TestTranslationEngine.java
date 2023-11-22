@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
@@ -47,18 +46,16 @@ public class AT_TestTranslationEngine {
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
 
         FileWriter fileWriter = new FileWriter(filePath.resolve(fileName).toFile());
-        FileReader fileReader = new FileReader(filePath.resolve(fileName).toFile());
 
         FileWriter fileWriter2 = new FileWriter(filePath.resolve(fileName2).toFile());
-        FileReader fileReader2 = new FileReader(filePath.resolve(fileName2).toFile());
 
         testTranslationEngine.writeOutput(fileWriter, expectedAppObject, Optional.empty());
-        TestAppObject actualAppObject = testTranslationEngine.readInput(fileReader, TestInputObject.class);
+        TestAppObject actualAppObject = testTranslationEngine.readInput(filePath.resolve(fileName), TestInputObject.class);
         assertEquals(expectedAppObject, actualAppObject);
 
         testTranslationEngine.writeOutput(fileWriter2, TestObjectUtil.getChildAppFromApp(expectedAppObject),
                 Optional.of(TestAppObject.class));
-        TestAppObject actualAppChildObject = testTranslationEngine.readInput(fileReader2, TestInputObject.class);
+        TestAppObject actualAppChildObject = testTranslationEngine.readInput(filePath.resolve(fileName2), TestInputObject.class);
         assertEquals(expectedAppObject, actualAppChildObject);
 
         // preconditions
@@ -92,18 +89,16 @@ public class AT_TestTranslationEngine {
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
 
         FileWriter fileWriter = new FileWriter(filePath.resolve(fileName).toFile());
-        FileReader fileReader = new FileReader(filePath.resolve(fileName).toFile());
 
         FileWriter fileWriter2 = new FileWriter(filePath.resolve(fileName2).toFile());
-        FileReader fileReader2 = new FileReader(filePath.resolve(fileName2).toFile());
 
         testTranslationEngine.writeOutput(fileWriter, expectedAppObject, Optional.empty());
-        TestAppObject actualAppObject = testTranslationEngine.readInput(fileReader, TestInputObject.class);
+        TestAppObject actualAppObject = testTranslationEngine.readInput(filePath.resolve(fileName), TestInputObject.class);
         assertEquals(expectedAppObject, actualAppObject);
 
         testTranslationEngine.writeOutput(fileWriter2, TestObjectUtil.getChildAppFromApp(expectedAppObject),
                 Optional.of(TestAppObject.class));
-        TestAppObject actualAppChildObject = testTranslationEngine.readInput(fileReader2, TestInputObject.class);
+        TestAppObject actualAppChildObject = testTranslationEngine.readInput(filePath.resolve(fileName2), TestInputObject.class);
         assertEquals(expectedAppObject, actualAppChildObject);
     }
 

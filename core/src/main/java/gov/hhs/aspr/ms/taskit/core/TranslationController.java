@@ -1,8 +1,6 @@
 package gov.hhs.aspr.ms.taskit.core;
 
 import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
@@ -292,10 +290,14 @@ public final class TranslationController {
      * 
      * @param <U> the classType associated with the reader
      */
-    private <U> void readInput(Reader reader, Class<U> inputClassRef, TranslationEngine translationEngine) {
-        Object appObject = translationEngine.readInput(reader, inputClassRef);
-
-        this.objects.add(appObject);
+    <U> void readInput(Path path, Class<U> inputClassRef, TranslationEngine translationEngine) {
+        Object appObject;
+        try {
+            appObject = translationEngine.readInput(path, inputClassRef);
+            this.objects.add(appObject);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -360,15 +362,6 @@ public final class TranslationController {
         }
     }
 
-    void readInput(Path path, Class<?> classRef, TranslationEngine translationEngine) {
-        Reader reader;
-        try {
-            reader = new FileReader(path.toFile());
-            this.readInput(reader, classRef, translationEngine);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     /**
      * Creates readers for each inputFilePath and passes the reader and classRef to

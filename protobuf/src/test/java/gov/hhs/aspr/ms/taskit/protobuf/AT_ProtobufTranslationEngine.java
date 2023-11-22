@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
@@ -162,10 +161,9 @@ public class AT_ProtobufTranslationEngine {
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
 
         FileWriter fileWriter = new FileWriter(filePath.resolve(fileName).toFile());
-        FileReader fileReader = new FileReader(filePath.resolve(fileName).toFile());
 
         protobufTranslationEngine.writeOutput(fileWriter, expectedAppObject, Optional.empty());
-        TestAppObject actualAppObject = protobufTranslationEngine.readInput(fileReader, TestInputObject.class);
+        TestAppObject actualAppObject = protobufTranslationEngine.readInput(filePath.resolve(fileName), TestInputObject.class);
         assertEquals(expectedAppObject, actualAppObject);
     }
 
@@ -244,24 +242,22 @@ public class AT_ProtobufTranslationEngine {
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
 
         FileWriter fileWriter = new FileWriter(filePath.resolve(fileName).toFile());
-        FileReader fileReader = new FileReader(filePath.resolve(fileName).toFile());
 
         FileWriter fileWriter2 = new FileWriter(filePath.resolve(fileName2).toFile());
-        FileReader fileReader2 = new FileReader(filePath.resolve(fileName2).toFile());
 
         protobufTranslationEngine.writeOutput(fileWriter, expectedAppObject, Optional.empty());
-        TestAppObject actualAppObject = protobufTranslationEngine.readInput(fileReader, TestInputObject.class);
+        TestAppObject actualAppObject = protobufTranslationEngine.readInput(filePath.resolve(fileName), TestInputObject.class);
         assertEquals(expectedAppObject, actualAppObject);
 
         protobufTranslationEngine.writeOutput(fileWriter2, TestObjectUtil.getChildAppFromApp(expectedAppObject),
                 Optional.of(TestAppObject.class));
-        TestAppObject actualAppChildObject = protobufTranslationEngine.readInput(fileReader2, TestInputObject.class);
+        TestAppObject actualAppChildObject = protobufTranslationEngine.readInput(filePath.resolve(fileName2), TestInputObject.class);
         assertEquals(expectedAppObject, actualAppChildObject);
 
         // preconditions
         // input class is not a Message class
         ContractException contractException = assertThrows(ContractException.class, () -> {
-            protobufTranslationEngine.readInput(fileReader2, TestAppObject.class);
+            protobufTranslationEngine.readInput(filePath.resolve(fileName2), TestAppObject.class);
         });
 
         assertEquals(ProtobufCoreTranslationError.INVALID_READ_INPUT_CLASS_REF, contractException.getErrorType());
@@ -286,25 +282,23 @@ public class AT_ProtobufTranslationEngine {
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
 
         FileWriter fileWriter = new FileWriter(filePath.resolve(fileName).toFile());
-        FileReader fileReader = new FileReader(filePath.resolve(fileName).toFile());
 
         FileWriter fileWriter2 = new FileWriter(filePath.resolve(fileName2).toFile());
-        FileReader fileReader2 = new FileReader(filePath.resolve(fileName2).toFile());
 
         protobufTranslationEngine.writeOutput(fileWriter, expectedAppObject, Optional.empty());
-        TestAppObject actualAppObject = protobufTranslationEngine.readInput(fileReader, TestInputObject.class);
+        TestAppObject actualAppObject = protobufTranslationEngine.readInput(filePath.resolve(fileName), TestInputObject.class);
         assertEquals(expectedAppObject, actualAppObject);
 
         protobufTranslationEngine.writeOutput(fileWriter2, TestObjectUtil.getChildAppFromApp(expectedAppObject),
                 Optional.of(TestAppObject.class));
-        TestAppObject actualAppChildObject = protobufTranslationEngine.readInput(fileReader2, TestInputObject.class);
+        TestAppObject actualAppChildObject = protobufTranslationEngine.readInput(filePath.resolve(fileName2), TestInputObject.class);
         assertEquals(expectedAppObject, actualAppChildObject);
 
         // this test is just for coverage, but this method should never be directly
         // called
         TestInputObject inputObject = TestObjectUtil.generateTestInputObject();
-        protobufTranslationEngine.writeOutput(fileWriter2, inputObject, Optional.empty());
-        actualAppObject = protobufTranslationEngine.readInput(fileReader2, TestInputObject.class);
+        protobufTranslationEngine.writeOutput(new FileWriter(filePath.resolve(fileName2).toFile()), inputObject, Optional.empty());
+        actualAppObject = protobufTranslationEngine.readInput(filePath.resolve(fileName2), TestInputObject.class);
         assertEquals(TestObjectUtil.getAppFromInput(inputObject), actualAppObject);
 
         // preconditions

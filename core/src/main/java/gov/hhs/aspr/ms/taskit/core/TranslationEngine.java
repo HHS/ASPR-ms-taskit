@@ -1,7 +1,8 @@
 package gov.hhs.aspr.ms.taskit.core;
 
-import java.io.Reader;
+import java.io.IOException;
 import java.io.Writer;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -475,7 +476,7 @@ public abstract class TranslationEngine {
      * abstract method that must be implemented by child TranslatorCores that
      * defines how to read from input files
      */
-    protected abstract <T, U> T readInput(Reader reader, Class<U> inputClassRef);
+    protected abstract <T, U> T readInput(Path path, Class<U> inputClassRef) throws IOException;
 
     /**
      * Given an object, uses the class of the object to obtain the translationSpec

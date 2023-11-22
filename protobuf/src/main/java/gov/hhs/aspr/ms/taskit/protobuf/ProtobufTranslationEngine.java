@@ -1,10 +1,13 @@
 package gov.hhs.aspr.ms.taskit.protobuf;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -343,6 +346,7 @@ public final class ProtobufTranslationEngine extends TranslationEngine {
      * 
      * @param <U> the type of the inputClass
      * @param <T> the return type
+     * @throws FileNotFoundException
      * @throws RuntimeException
      *                           <ul>
      *                           <li>if there is an issue getting the builder method
@@ -355,13 +359,12 @@ public final class ProtobufTranslationEngine extends TranslationEngine {
      *                           if the given inputClassRef is not assingable from
      *                           {@linkplain Message}
      */
-    protected <T, U> T readInput(Reader reader, Class<U> inputClassRef) {
+    protected <T, U> T readInput(Path path, Class<U> inputClassRef) throws IOException {
         if (!Message.class.isAssignableFrom(inputClassRef)) {
             throw new ContractException(ProtobufCoreTranslationError.INVALID_READ_INPUT_CLASS_REF);
         }
 
-        // JsonObject jsonObject = JsonParser.parseReader().getAsJsonObject();
-        return parseJson(reader, inputClassRef.asSubclass(Message.class));
+        return parseJson(new FileReader(path.toFile()), inputClassRef.asSubclass(Message.class));
     }
 
     /**

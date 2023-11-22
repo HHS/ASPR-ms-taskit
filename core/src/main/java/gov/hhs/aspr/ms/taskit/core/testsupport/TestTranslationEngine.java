@@ -1,8 +1,9 @@
 package gov.hhs.aspr.ms.taskit.core.testsupport;
 
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
 import java.io.Writer;
+import java.nio.file.Path;
 import java.util.Optional;
 
 import com.google.gson.Gson;
@@ -130,8 +131,8 @@ public class TestTranslationEngine extends TranslationEngine {
     }
 
     @Override
-    public <T, U> T readInput(Reader reader, Class<U> inputClassRef) {
-        JsonObject jsonObject = JsonParser.parseReader(new JsonReader(reader)).getAsJsonObject();
+    public <T, U> T readInput(Path path, Class<U> inputClassRef) throws IOException {
+        JsonObject jsonObject = JsonParser.parseReader(new JsonReader(new FileReader(path.toFile()))).getAsJsonObject();
 
         return convertObject(this.data.gson.fromJson(jsonObject.toString(), inputClassRef));
     }
