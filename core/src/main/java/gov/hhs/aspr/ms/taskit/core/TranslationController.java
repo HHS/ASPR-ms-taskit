@@ -1,10 +1,7 @@
 package gov.hhs.aspr.ms.taskit.core;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
-import java.io.Writer;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -307,9 +304,13 @@ public final class TranslationController {
      * @param <M> the class of the object to write to the outputFile
      * @param <U> the optional parent class of the object to write to the outputFile
      */
-    private <M extends U, U> void writeOutput(Writer writer, M object, Optional<Class<U>> superClass,
+    <M extends U, U> void writeOutput(Path path, M object, Optional<Class<U>> superClass,
             TranslationEngine translationEngine) {
-        translationEngine.writeOutput(writer, object, superClass);
+        try {
+            translationEngine.writeOutput(path, object, superClass);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     void initTranslationEngines() {
@@ -513,16 +514,7 @@ public final class TranslationController {
         TranslationEngineType type = this.data.outputFilePathEngine.get(path);
         TranslationEngine translationEngine = this.translationEngines.get(type);
 
-        this.writeOutput(new BufferedWriter(makeFileWriter(path)), object, pathPair.getSecond(), translationEngine);
-    }
-
-    FileWriter makeFileWriter(Path path) {
-
-        try {
-            return new FileWriter(path.toFile());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        this.writeOutput(path, object, pathPair.getSecond(), translationEngine);
     }
 
     /**

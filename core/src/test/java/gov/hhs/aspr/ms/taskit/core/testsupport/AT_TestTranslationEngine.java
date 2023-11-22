@@ -2,10 +2,7 @@ package gov.hhs.aspr.ms.taskit.core.testsupport;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
@@ -45,31 +42,14 @@ public class AT_TestTranslationEngine {
 
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
 
-        FileWriter fileWriter = new FileWriter(filePath.resolve(fileName).toFile());
-
-        FileWriter fileWriter2 = new FileWriter(filePath.resolve(fileName2).toFile());
-
-        testTranslationEngine.writeOutput(fileWriter, expectedAppObject, Optional.empty());
+        testTranslationEngine.writeOutput(filePath.resolve(fileName), expectedAppObject, Optional.empty());
         TestAppObject actualAppObject = testTranslationEngine.readInput(filePath.resolve(fileName), TestInputObject.class);
         assertEquals(expectedAppObject, actualAppObject);
 
-        testTranslationEngine.writeOutput(fileWriter2, TestObjectUtil.getChildAppFromApp(expectedAppObject),
+        testTranslationEngine.writeOutput(filePath.resolve(fileName2), TestObjectUtil.getChildAppFromApp(expectedAppObject),
                 Optional.of(TestAppObject.class));
         TestAppObject actualAppChildObject = testTranslationEngine.readInput(filePath.resolve(fileName2), TestInputObject.class);
         assertEquals(expectedAppObject, actualAppChildObject);
-
-        // preconditions
-        // IO error occurs
-        RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> {
-            FileWriter fileWriter3 = new FileWriter(filePath.resolve(fileName).toFile());
-            // close the file reader
-            fileWriter3.close();
-            testTranslationEngine.writeOutput(fileWriter3, expectedAppObject, Optional.empty());
-        });
-
-        assertTrue(runtimeException.getCause() instanceof IOException);
-
-        filePath.resolve(fileName).toFile().setWritable(true);
     }
 
     @Test
@@ -88,15 +68,11 @@ public class AT_TestTranslationEngine {
 
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
 
-        FileWriter fileWriter = new FileWriter(filePath.resolve(fileName).toFile());
-
-        FileWriter fileWriter2 = new FileWriter(filePath.resolve(fileName2).toFile());
-
-        testTranslationEngine.writeOutput(fileWriter, expectedAppObject, Optional.empty());
+        testTranslationEngine.writeOutput(filePath.resolve(fileName), expectedAppObject, Optional.empty());
         TestAppObject actualAppObject = testTranslationEngine.readInput(filePath.resolve(fileName), TestInputObject.class);
         assertEquals(expectedAppObject, actualAppObject);
 
-        testTranslationEngine.writeOutput(fileWriter2, TestObjectUtil.getChildAppFromApp(expectedAppObject),
+        testTranslationEngine.writeOutput(filePath.resolve(fileName2), TestObjectUtil.getChildAppFromApp(expectedAppObject),
                 Optional.of(TestAppObject.class));
         TestAppObject actualAppChildObject = testTranslationEngine.readInput(filePath.resolve(fileName2), TestInputObject.class);
         assertEquals(expectedAppObject, actualAppChildObject);

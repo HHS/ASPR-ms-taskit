@@ -1,8 +1,8 @@
 package gov.hhs.aspr.ms.taskit.core.testsupport;
 
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
 import java.nio.file.Path;
 import java.util.Optional;
 
@@ -112,7 +112,7 @@ public class TestTranslationEngine extends TranslationEngine {
     }
 
     @Override
-    public <U, M extends U> void writeOutput(Writer writer, M appObject, Optional<Class<U>> superClass) {
+    public <U, M extends U> void writeOutput(Path path, M appObject, Optional<Class<U>> superClass) throws IOException {
         Object outputObject;
         if (superClass.isPresent()) {
             outputObject = convertObjectAsSafeClass(appObject, superClass.get());
@@ -121,13 +121,9 @@ public class TestTranslationEngine extends TranslationEngine {
         }
 
         String stringToWrite = this.data.gson.toJson(outputObject);
-
-        try {
-            writer.write(stringToWrite);
-            writer.flush();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        FileWriter writer = new FileWriter(path.toFile());
+        writer.write(stringToWrite);
+        writer.flush();
     }
 
     @Override

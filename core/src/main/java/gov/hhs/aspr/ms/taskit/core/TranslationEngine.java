@@ -1,7 +1,6 @@
 package gov.hhs.aspr.ms.taskit.core;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -470,7 +469,7 @@ public abstract class TranslationEngine {
      * abstract method that must be implemented by child TranslatorCores that
      * defines how to write to output files
      */
-    protected abstract <U, M extends U> void writeOutput(Writer writer, M appObject, Optional<Class<U>> superClass);
+    protected abstract <U, M extends U> void writeOutput(Path path, M appObject, Optional<Class<U>> superClass) throws IOException;
 
     /**
      * abstract method that must be implemented by child TranslatorCores that

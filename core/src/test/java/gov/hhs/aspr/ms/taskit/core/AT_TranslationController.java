@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -59,8 +58,8 @@ public class AT_TranslationController {
             TestTranslationEngine translationEngine2 = TestTranslationEngine.builder().buildWithoutSpecInit();
 
             translationController.translationEngines.put(translationEngine2.getTranslationEngineType(),
-                        translationEngine2);
-            
+                    translationEngine2);
+
             translationController.validateTranslationEngines();
         });
 
@@ -183,22 +182,22 @@ public class AT_TranslationController {
 
     @Test
     @UnitTestForCoverage
-    public void testMakeFileWriter() {
-        String fileName = "MakeFileWriter-testOutput.json";
+    public void testWriteOutput_Engine() {
+        String fileName = "badFilePath-testoutput.json";
 
         TestResourceHelper.createTestOutputFile(filePath, fileName);
+        TestTranslationEngine engine = TestTranslationEngine.builder()
+                .addTranslator(TestObjectTranslator.getTranslator())
+                .addTranslator(TestComplexObjectTranslator.getTranslator()).build();
+        TranslationController translationController = TranslationController.builder().addTranslationEngine(engine)
+                .build();
 
-        TranslationController translationController = TranslationController.builder()
-                .addTranslationEngine(TestTranslationEngine.builder().build()).build();
-
-        FileWriter actuaFileWriter = translationController.makeFileWriter(filePath.resolve(fileName));
-
-        assertNotNull(actuaFileWriter);
         // preconditions
 
         // if the filePath is invalid
         RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> {
-            translationController.makeFileWriter(filePath);
+            translationController.writeOutput(filePath, TestObjectUtil.generateTestAppObject(), Optional.empty(),
+                    engine);
         });
 
         assertTrue(runtimeException.getCause() instanceof IOException);

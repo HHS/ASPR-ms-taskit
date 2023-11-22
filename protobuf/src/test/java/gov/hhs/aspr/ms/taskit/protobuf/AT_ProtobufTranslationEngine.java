@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.file.Path;
@@ -160,9 +159,7 @@ public class AT_ProtobufTranslationEngine {
 
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
 
-        FileWriter fileWriter = new FileWriter(filePath.resolve(fileName).toFile());
-
-        protobufTranslationEngine.writeOutput(fileWriter, expectedAppObject, Optional.empty());
+        protobufTranslationEngine.writeOutput(filePath.resolve(fileName), expectedAppObject, Optional.empty());
         TestAppObject actualAppObject = protobufTranslationEngine.readInput(filePath.resolve(fileName), TestInputObject.class);
         assertEquals(expectedAppObject, actualAppObject);
     }
@@ -241,15 +238,11 @@ public class AT_ProtobufTranslationEngine {
 
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
 
-        FileWriter fileWriter = new FileWriter(filePath.resolve(fileName).toFile());
-
-        FileWriter fileWriter2 = new FileWriter(filePath.resolve(fileName2).toFile());
-
-        protobufTranslationEngine.writeOutput(fileWriter, expectedAppObject, Optional.empty());
+        protobufTranslationEngine.writeOutput(filePath.resolve(fileName), expectedAppObject, Optional.empty());
         TestAppObject actualAppObject = protobufTranslationEngine.readInput(filePath.resolve(fileName), TestInputObject.class);
         assertEquals(expectedAppObject, actualAppObject);
 
-        protobufTranslationEngine.writeOutput(fileWriter2, TestObjectUtil.getChildAppFromApp(expectedAppObject),
+        protobufTranslationEngine.writeOutput(filePath.resolve(fileName2), TestObjectUtil.getChildAppFromApp(expectedAppObject),
                 Optional.of(TestAppObject.class));
         TestAppObject actualAppChildObject = protobufTranslationEngine.readInput(filePath.resolve(fileName2), TestInputObject.class);
         assertEquals(expectedAppObject, actualAppChildObject);
@@ -281,15 +274,11 @@ public class AT_ProtobufTranslationEngine {
 
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
 
-        FileWriter fileWriter = new FileWriter(filePath.resolve(fileName).toFile());
-
-        FileWriter fileWriter2 = new FileWriter(filePath.resolve(fileName2).toFile());
-
-        protobufTranslationEngine.writeOutput(fileWriter, expectedAppObject, Optional.empty());
+        protobufTranslationEngine.writeOutput(filePath.resolve(fileName), expectedAppObject, Optional.empty());
         TestAppObject actualAppObject = protobufTranslationEngine.readInput(filePath.resolve(fileName), TestInputObject.class);
         assertEquals(expectedAppObject, actualAppObject);
 
-        protobufTranslationEngine.writeOutput(fileWriter2, TestObjectUtil.getChildAppFromApp(expectedAppObject),
+        protobufTranslationEngine.writeOutput(filePath.resolve(fileName2), TestObjectUtil.getChildAppFromApp(expectedAppObject),
                 Optional.of(TestAppObject.class));
         TestAppObject actualAppChildObject = protobufTranslationEngine.readInput(filePath.resolve(fileName2), TestInputObject.class);
         assertEquals(expectedAppObject, actualAppChildObject);
@@ -297,22 +286,17 @@ public class AT_ProtobufTranslationEngine {
         // this test is just for coverage, but this method should never be directly
         // called
         TestInputObject inputObject = TestObjectUtil.generateTestInputObject();
-        protobufTranslationEngine.writeOutput(new FileWriter(filePath.resolve(fileName2).toFile()), inputObject, Optional.empty());
+        protobufTranslationEngine.writeOutput(filePath.resolve(fileName2), inputObject, Optional.empty());
         actualAppObject = protobufTranslationEngine.readInput(filePath.resolve(fileName2), TestInputObject.class);
         assertEquals(TestObjectUtil.getAppFromInput(inputObject), actualAppObject);
 
         // preconditions
         // IO error occurs
         RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> {
-            FileWriter fileWriter3 = new FileWriter(filePath.resolve(fileName).toFile());
-            // close the file reader
-            fileWriter3.close();
-            protobufTranslationEngine.writeOutput(fileWriter3, expectedAppObject, Optional.empty());
+            protobufTranslationEngine.writeOutput(filePath.resolve("/foo"), expectedAppObject, Optional.empty());
         });
 
         assertTrue(runtimeException.getCause() instanceof IOException);
-
-        filePath.resolve(fileName).toFile().setWritable(true);
     }
 
     @Test

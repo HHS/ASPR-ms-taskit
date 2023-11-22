@@ -2,6 +2,7 @@ package gov.hhs.aspr.ms.taskit.protobuf;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
@@ -292,7 +293,7 @@ public final class ProtobufTranslationEngine extends TranslationEngine {
      * @param <M> the type of the appObject
      * @throws RuntimeException if there is an IOException during writing
      */
-    protected <U, M extends U> void writeOutput(Writer writer, M appObject, Optional<Class<U>> superClass) {
+    protected <U, M extends U> void writeOutput(Path path, M appObject, Optional<Class<U>> superClass) throws IOException {
         Message message;
         if (Message.class.isAssignableFrom(appObject.getClass())) {
             message = Message.class.cast(appObject);
@@ -301,7 +302,7 @@ public final class ProtobufTranslationEngine extends TranslationEngine {
         } else {
             message = convertObject(appObject);
         }
-        writeOutput(writer, message);
+        writeOutput(path, message);
     }
 
     /**
@@ -315,8 +316,9 @@ public final class ProtobufTranslationEngine extends TranslationEngine {
      * @param <U> the type of the Message
      * @throws RuntimeException if there is an IOException during writing
      */
-    private <U extends Message> void writeOutput(Writer writer, U message) {
+    private <U extends Message> void writeOutput(Path path, U message) {
         try {
+            Writer writer = new FileWriter(path.toFile());
             this.data.jsonPrinter.appendTo(message, writer);
 
             if (debug) {
