@@ -1,8 +1,9 @@
 package gov.hhs.aspr.ms.taskit.core.testsupport;
 
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
+import java.nio.file.Path;
 import java.util.Optional;
 
 import com.google.gson.Gson;
@@ -11,7 +12,9 @@ import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 
 import gov.hhs.aspr.ms.taskit.core.TranslationEngine;
+import gov.hhs.aspr.ms.taskit.core.TranslationEngineType;
 import gov.hhs.aspr.ms.taskit.core.TranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.Translator;
 
 public class TestTranslationEngine extends TranslationEngine {
     private final Data data;
@@ -22,10 +25,15 @@ public class TestTranslationEngine extends TranslationEngine {
     }
 
     protected static class Data extends TranslationEngine.Data {
-        Gson gson = new Gson();
+        protected Gson gson = new Gson();
 
         protected Data() {
             super();
+            this.translationEngineType = TranslationEngineType.CUSTOM;
+        }
+
+        private void setUnknownEngineType() {
+            this.translationEngineType = TranslationEngineType.UNKNOWN;
         }
 
         @Override
@@ -50,16 +58,53 @@ public class TestTranslationEngine extends TranslationEngine {
 
         @Override
         public TestTranslationEngine build() {
+            super.initTranslators();
+
+            TestTranslationEngine translationEngine = new TestTranslationEngine(this.data);
+
+            translationEngine.initTranslationSpecs();
+            translationEngine.validateInit();
+            return translationEngine;
+        }
+
+        public TestTranslationEngine buildWithoutSpecInit() {
+            super.initTranslators();
+            return new TestTranslationEngine(this.data);
+        }
+
+        public TestTranslationEngine buildWithNoTranslatorInit() {
+            TestTranslationEngine translationEngine = new TestTranslationEngine(this.data);
+            translationEngine.initTranslationSpecs();
+
+            return new TestTranslationEngine(this.data);
+        }
+
+        public TestTranslationEngine buildWithUnknownType() {
+            this.data.setUnknownEngineType();
+
             return new TestTranslationEngine(this.data);
         }
 
         @Override
         public <I, A> Builder addTranslationSpec(TranslationSpec<I, A> translationSpec) {
-            super.addTranslationSpec(translationSpec);
+            _addTranslationSpec(translationSpec);
 
             return this;
         }
 
+        @Override
+        public Builder addTranslator(Translator translator) {
+            _addTranslator(translator);
+
+            return this;
+        }
+
+        @Override
+        public <M extends U, U> Builder addParentChildClassRelationship(Class<M> classRef, Class<U> markerInterface) {
+            _addParentChildClassRelationship(classRef, markerInterface);
+
+            return this;
+        }
     }
 
     public static Builder builder() {
@@ -67,7 +112,7 @@ public class TestTranslationEngine extends TranslationEngine {
     }
 
     @Override
-    public <U, M extends U> void writeOutput(Writer writer, M appObject, Optional<Class<U>> superClass) {
+    public <U, M extends U> void writeOutput(Path path, M appObject, Optional<Class<U>> superClass) throws IOException {
         Object outputObject;
         if (superClass.isPresent()) {
             outputObject = convertObjectAsSafeClass(appObject, superClass.get());
@@ -76,18 +121,14 @@ public class TestTranslationEngine extends TranslationEngine {
         }
 
         String stringToWrite = this.data.gson.toJson(outputObject);
-
-        try {
-            writer.write(stringToWrite);
-            writer.flush();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        FileWriter writer = new FileWriter(path.toFile());
+        writer.write(stringToWrite);
+        writer.flush();
     }
 
     @Override
-    public <T, U> T readInput(Reader reader, Class<U> inputClassRef) {
-        JsonObject jsonObject = JsonParser.parseReader(new JsonReader(reader)).getAsJsonObject();
+    public <T, U> T readInput(Path path, Class<U> inputClassRef) throws IOException {
+        JsonObject jsonObject = JsonParser.parseReader(new JsonReader(new FileReader(path.toFile()))).getAsJsonObject();
 
         return convertObject(this.data.gson.fromJson(jsonObject.toString(), inputClassRef));
     }

@@ -2,11 +2,7 @@ package gov.hhs.aspr.ms.taskit.core.testsupport;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
@@ -15,7 +11,10 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
+import gov.hhs.aspr.ms.taskit.core.TranslationEngineTestHelper;
+import gov.hhs.aspr.ms.taskit.core.TranslationEngineType;
 import gov.hhs.aspr.ms.taskit.core.TranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.Translator;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testcomplexobject.translationSpecs.TestComplexObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.input.TestInputObject;
@@ -41,37 +40,16 @@ public class AT_TestTranslationEngine {
         TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder()
                 .addTranslationSpec(testObjectTranslationSpec).addTranslationSpec(complexObjectTranslationSpec).build();
 
-        testTranslationEngine.init();
-
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
 
-        FileWriter fileWriter = new FileWriter(filePath.resolve(fileName).toFile());
-        FileReader fileReader = new FileReader(filePath.resolve(fileName).toFile());
-
-        FileWriter fileWriter2 = new FileWriter(filePath.resolve(fileName2).toFile());
-        FileReader fileReader2 = new FileReader(filePath.resolve(fileName2).toFile());
-
-        testTranslationEngine.writeOutput(fileWriter, expectedAppObject, Optional.empty());
-        TestAppObject actualAppObject = testTranslationEngine.readInput(fileReader, TestInputObject.class);
+        testTranslationEngine.writeOutput(filePath.resolve(fileName), expectedAppObject, Optional.empty());
+        TestAppObject actualAppObject = testTranslationEngine.readInput(filePath.resolve(fileName), TestInputObject.class);
         assertEquals(expectedAppObject, actualAppObject);
 
-        testTranslationEngine.writeOutput(fileWriter2, TestObjectUtil.getChildAppFromApp(expectedAppObject),
+        testTranslationEngine.writeOutput(filePath.resolve(fileName2), TestObjectUtil.getChildAppFromApp(expectedAppObject),
                 Optional.of(TestAppObject.class));
-        TestAppObject actualAppChildObject = testTranslationEngine.readInput(fileReader2, TestInputObject.class);
+        TestAppObject actualAppChildObject = testTranslationEngine.readInput(filePath.resolve(fileName2), TestInputObject.class);
         assertEquals(expectedAppObject, actualAppChildObject);
-
-        // preconditions
-        // IO error occurs
-        RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> {
-            FileWriter fileWriter3 = new FileWriter(filePath.resolve(fileName).toFile());
-            // close the file reader
-            fileWriter3.close();
-            testTranslationEngine.writeOutput(fileWriter3, expectedAppObject, Optional.empty());
-        });
-
-        assertTrue(runtimeException.getCause() instanceof IOException);
-
-        filePath.resolve(fileName).toFile().setWritable(true);
     }
 
     @Test
@@ -88,23 +66,15 @@ public class AT_TestTranslationEngine {
         TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder()
                 .addTranslationSpec(testObjectTranslationSpec).addTranslationSpec(complexObjectTranslationSpec).build();
 
-        testTranslationEngine.init();
-
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
 
-        FileWriter fileWriter = new FileWriter(filePath.resolve(fileName).toFile());
-        FileReader fileReader = new FileReader(filePath.resolve(fileName).toFile());
-
-        FileWriter fileWriter2 = new FileWriter(filePath.resolve(fileName2).toFile());
-        FileReader fileReader2 = new FileReader(filePath.resolve(fileName2).toFile());
-
-        testTranslationEngine.writeOutput(fileWriter, expectedAppObject, Optional.empty());
-        TestAppObject actualAppObject = testTranslationEngine.readInput(fileReader, TestInputObject.class);
+        testTranslationEngine.writeOutput(filePath.resolve(fileName), expectedAppObject, Optional.empty());
+        TestAppObject actualAppObject = testTranslationEngine.readInput(filePath.resolve(fileName), TestInputObject.class);
         assertEquals(expectedAppObject, actualAppObject);
 
-        testTranslationEngine.writeOutput(fileWriter2, TestObjectUtil.getChildAppFromApp(expectedAppObject),
+        testTranslationEngine.writeOutput(filePath.resolve(fileName2), TestObjectUtil.getChildAppFromApp(expectedAppObject),
                 Optional.of(TestAppObject.class));
-        TestAppObject actualAppChildObject = testTranslationEngine.readInput(fileReader2, TestInputObject.class);
+        TestAppObject actualAppChildObject = testTranslationEngine.readInput(filePath.resolve(fileName2), TestInputObject.class);
         assertEquals(expectedAppObject, actualAppChildObject);
     }
 
@@ -121,12 +91,43 @@ public class AT_TestTranslationEngine {
     }
 
     @Test
+    @UnitTestMethod(target = TestTranslationEngine.Builder.class, name = "buildWithNoTranslatorInit", args = {})
+    public void testBuildWithNoTranslatorInit() {
+        assertNotNull(TestTranslationEngine.builder().buildWithNoTranslatorInit());
+    }
+
+    @Test
+    @UnitTestMethod(target = TestTranslationEngine.Builder.class, name = "buildWithUnknownType", args = {})
+    public void testBuildWithUnknownType() {
+        assertNotNull(TestTranslationEngine.builder().buildWithUnknownType());
+
+        assertEquals(TranslationEngineType.UNKNOWN, TestTranslationEngine.builder().buildWithUnknownType().getTranslationEngineType());
+    }
+
+    @Test
+    @UnitTestMethod(target = TestTranslationEngine.Builder.class, name = "buildWithoutSpecInit", args = {})
+    public void testBuildWithoutSpecInit() {
+        assertNotNull(TestTranslationEngine.builder().buildWithoutSpecInit());
+    }
+
+    @Test
     @UnitTestMethod(target = TestTranslationEngine.Builder.class, name = "addTranslationSpec", args = {
             TranslationSpec.class })
     public void testAddTranslationSpec() {
-        // covered by AT_TranslationEngine#testAddTranslationSpec
-        // this is just a wrapper method to ensure that the correct Child Engine builder
-        // is returned
+        TranslationEngineTestHelper.testAddTranslationSpec(TestTranslationEngine.builder());
+    }
+
+    @Test
+    @UnitTestMethod(target = TestTranslationEngine.Builder.class, name = "addTranslator", args = { Translator.class })
+    public void testAddTranslator() {
+        TranslationEngineTestHelper.testAddTranslator(TestTranslationEngine.builder());
+    }
+
+    @Test
+    @UnitTestMethod(target = TestTranslationEngine.Builder.class, name = "addParentChildClassRelationship", args = {
+            Class.class, Class.class })
+    public void testAddParentChildClassRelationship() {
+        TranslationEngineTestHelper.testAddParentChildClassRelationship(TestTranslationEngine.builder());
     }
 
     @Test

@@ -1,10 +1,14 @@
 package gov.hhs.aspr.ms.taskit.protobuf;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -13,13 +17,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.stream.JsonReader;
 import com.google.protobuf.Any;
 import com.google.protobuf.Descriptors.Descriptor;
 import com.google.protobuf.Descriptors.FieldDescriptor;
-import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
 import com.google.protobuf.ProtocolMessageEnum;
 import com.google.protobuf.util.JsonFormat;
@@ -29,7 +29,9 @@ import com.google.protobuf.util.JsonFormat.TypeRegistry;
 
 import gov.hhs.aspr.ms.taskit.core.CoreTranslationError;
 import gov.hhs.aspr.ms.taskit.core.TranslationEngine;
+import gov.hhs.aspr.ms.taskit.core.TranslationEngineType;
 import gov.hhs.aspr.ms.taskit.core.TranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.Translator;
 import gov.hhs.aspr.ms.taskit.protobuf.translationSpecs.AnyTranslationSpec;
 import util.errors.ContractException;
 
@@ -37,7 +39,7 @@ import util.errors.ContractException;
  * Protobuf TranslationEngine that allows for conversion between POJOs and
  * Protobuf Messages, extends {@link TranslationEngine}
  */
-public class ProtobufTranslationEngine extends TranslationEngine {
+public final class ProtobufTranslationEngine extends TranslationEngine {
     private final Data data;
 
     private ProtobufTranslationEngine(Data data) {
@@ -45,7 +47,7 @@ public class ProtobufTranslationEngine extends TranslationEngine {
         this.data = data;
     }
 
-    private static class Data extends TranslationEngine.Data {
+    private final static class Data extends TranslationEngine.Data {
         // this is used specifically for Any message types to pack and unpack them
         private final Map<String, Class<?>> typeUrlToClassMap = new LinkedHashMap<>();
 
@@ -67,10 +69,11 @@ public class ProtobufTranslationEngine extends TranslationEngine {
             this.classToTranslationSpecMap.putAll(PrimitiveTranslationSpecs.getPrimitiveInputTranslatorSpecMap());
             this.classToTranslationSpecMap.putAll(PrimitiveTranslationSpecs.getPrimitiveObjectTranslatorSpecMap());
             this.translationSpecs.addAll(PrimitiveTranslationSpecs.getPrimitiveTranslatorSpecs());
+            this.translationEngineType = TranslationEngineType.PROTOBUF;
         }
     }
 
-    public static class Builder extends TranslationEngine.Builder {
+    public final static class Builder extends TranslationEngine.Builder {
         private ProtobufTranslationEngine.Data data;
         private Set<Descriptor> descriptorSet = new LinkedHashSet<>();
         private final Set<FieldDescriptor> defaultValueFieldsToPrint = new LinkedHashSet<>();
@@ -89,6 +92,8 @@ public class ProtobufTranslationEngine extends TranslationEngine {
          */
         @Override
         public ProtobufTranslationEngine build() {
+            initTranslators();
+
             TypeRegistry.Builder typeRegistryBuilder = TypeRegistry.newBuilder();
             this.descriptorSet.addAll(PrimitiveTranslationSpecs.getPrimitiveDescriptors());
 
@@ -115,7 +120,11 @@ public class ProtobufTranslationEngine extends TranslationEngine {
             }
             this.data.jsonPrinter = printer;
 
-            return new ProtobufTranslationEngine(this.data);
+            ProtobufTranslationEngine translationEngine = new ProtobufTranslationEngine(this.data);
+
+            translationEngine.initTranslationSpecs();
+
+            return translationEngine;
         }
 
         /**
@@ -167,12 +176,27 @@ public class ProtobufTranslationEngine extends TranslationEngine {
          */
         @Override
         public <I, S> Builder addTranslationSpec(TranslationSpec<I, S> translationSpec) {
+            _addTranslationSpec(translationSpec);
+
             if (!ProtobufTranslationSpec.class.isAssignableFrom(translationSpec.getClass())) {
                 throw new ContractException(ProtobufCoreTranslationError.INVALID_TRANSLATION_SPEC);
             }
-            super.addTranslationSpec(translationSpec);
 
             populate(translationSpec.getInputObjectClass());
+            return this;
+        }
+
+        @Override
+        public Builder addTranslator(Translator translator) {
+            _addTranslator(translator);
+
+            return this;
+        }
+
+        @Override
+        public <M extends U, U> Builder addParentChildClassRelationship(Class<M> classRef, Class<U> markerInterface) {
+            _addParentChildClassRelationship(classRef, markerInterface);
+
             return this;
         }
 
@@ -187,7 +211,7 @@ public class ProtobufTranslationEngine extends TranslationEngine {
          *                           {@linkplain Message} nor
          *                           {@linkplain ProtocolMessageEnum}
          */
-        protected <U> void populate(Class<U> classRef) {
+        <U> void populate(Class<U> classRef) {
             String typeUrl;
             if (ProtocolMessageEnum.class.isAssignableFrom(classRef) && ProtocolMessageEnum.class != classRef) {
                 typeUrl = getDefaultEnum(classRef.asSubclass(ProtocolMessageEnum.class)).getDescriptorForType()
@@ -211,7 +235,7 @@ public class ProtobufTranslationEngine extends TranslationEngine {
         /**
          * given a Class ref to a Protobuf Message, get the defaultInstance of it
          */
-        protected <U extends Message> U getDefaultMessage(Class<U> classRef) {
+        <U extends Message> U getDefaultMessage(Class<U> classRef) {
             try {
                 Method method = classRef.getMethod("getDefaultInstance");
                 Object obj = method.invoke(null);
@@ -226,7 +250,7 @@ public class ProtobufTranslationEngine extends TranslationEngine {
          * given a Class ref to a ProtocolMessageEnum, get the default value for it,
          * enum number 0 within the proto enum
          */
-        protected <U extends ProtocolMessageEnum> U getDefaultEnum(Class<U> classRef) {
+        <U extends ProtocolMessageEnum> U getDefaultEnum(Class<U> classRef) {
             try {
                 Method method = classRef.getMethod("forNumber", int.class);
                 Object obj = method.invoke(null, 0);
@@ -236,6 +260,7 @@ public class ProtobufTranslationEngine extends TranslationEngine {
                 throw new RuntimeException(e);
             }
         }
+
     }
 
     /**
@@ -245,15 +270,15 @@ public class ProtobufTranslationEngine extends TranslationEngine {
         return new Builder(new Data());
     }
 
-    protected Parser getJsonParser() {
+    Parser getJsonParser() {
         return this.data.jsonParser;
     }
 
-    protected Printer getJsonPrinter() {
+    Printer getJsonPrinter() {
         return this.data.jsonPrinter;
     }
 
-    protected void setDebug(boolean debug) {
+    void setDebug(boolean debug) {
         this.debug = debug;
     }
 
@@ -268,7 +293,7 @@ public class ProtobufTranslationEngine extends TranslationEngine {
      * @param <M> the type of the appObject
      * @throws RuntimeException if there is an IOException during writing
      */
-    protected <U, M extends U> void writeOutput(Writer writer, M appObject, Optional<Class<U>> superClass) {
+    protected <U, M extends U> void writeOutput(Path path, M appObject, Optional<Class<U>> superClass) throws IOException {
         Message message;
         if (Message.class.isAssignableFrom(appObject.getClass())) {
             message = Message.class.cast(appObject);
@@ -277,7 +302,7 @@ public class ProtobufTranslationEngine extends TranslationEngine {
         } else {
             message = convertObject(appObject);
         }
-        writeOutput(writer, message);
+        writeOutput(path, message);
     }
 
     /**
@@ -291,15 +316,16 @@ public class ProtobufTranslationEngine extends TranslationEngine {
      * @param <U> the type of the Message
      * @throws RuntimeException if there is an IOException during writing
      */
-    private <U extends Message> void writeOutput(Writer writer, U message) {
+    private <U extends Message> void writeOutput(Path path, U message) {
         try {
-            String messageToWrite = this.data.jsonPrinter.print(message);
+            Writer writer = new FileWriter(path.toFile());
+            this.data.jsonPrinter.appendTo(message, writer);
 
             if (debug) {
+                String messageToWrite = this.data.jsonPrinter.print(message);
                 printJsonToConsole(messageToWrite);
             }
 
-            writer.write(messageToWrite);
             writer.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -322,6 +348,7 @@ public class ProtobufTranslationEngine extends TranslationEngine {
      * 
      * @param <U> the type of the inputClass
      * @param <T> the return type
+     * @throws FileNotFoundException
      * @throws RuntimeException
      *                           <ul>
      *                           <li>if there is an issue getting the builder method
@@ -334,13 +361,12 @@ public class ProtobufTranslationEngine extends TranslationEngine {
      *                           if the given inputClassRef is not assingable from
      *                           {@linkplain Message}
      */
-    protected <T, U> T readInput(Reader reader, Class<U> inputClassRef) {
+    protected <T, U> T readInput(Path path, Class<U> inputClassRef) throws IOException {
         if (!Message.class.isAssignableFrom(inputClassRef)) {
             throw new ContractException(ProtobufCoreTranslationError.INVALID_READ_INPUT_CLASS_REF);
         }
 
-        JsonObject jsonObject = JsonParser.parseReader(new JsonReader(reader)).getAsJsonObject();
-        return parseJson(jsonObject, inputClassRef.asSubclass(Message.class));
+        return parseJson(new FileReader(path.toFile()), inputClassRef.asSubclass(Message.class));
     }
 
     /**
@@ -362,13 +388,12 @@ public class ProtobufTranslationEngine extends TranslationEngine {
      *                          </li>
      *                          </ul>
      */
-    protected <T, U extends Message> T parseJson(JsonObject inputJson, Class<U> inputClassRef) {
-        JsonObject jsonObject = inputJson.deepCopy();
+    <T, U extends Message> T parseJson(Reader reader, Class<U> inputClassRef) {
 
         Message.Builder builder = getBuilderForMessage(inputClassRef);
 
         try {
-            this.data.jsonParser.merge(jsonObject.toString(), builder);
+            this.data.jsonParser.merge(reader, builder);
 
             Message message = builder.build();
             if (debug) {
@@ -376,12 +401,12 @@ public class ProtobufTranslationEngine extends TranslationEngine {
             }
 
             return convertObject(message);
-        } catch (InvalidProtocolBufferException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    protected <U> Message.Builder getBuilderForMessage(Class<U> messageClass) {
+    <U> Message.Builder getBuilderForMessage(Class<U> messageClass) {
 
         Method[] messageMethods = messageClass.getDeclaredMethods();
 
