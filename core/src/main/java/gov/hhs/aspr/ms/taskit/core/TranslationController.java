@@ -1,7 +1,6 @@
 package gov.hhs.aspr.ms.taskit.core;
 
 import java.io.IOException;
-import java.io.Reader;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -365,15 +364,9 @@ public final class TranslationController {
 
 
     /**
-     * Creates readers for each inputFilePath and passes the reader and classRef to
+     * passes every input path and classRef to
      * the TranslationEngine via
-     * {@link TranslationController#readInput(Reader, Class)}
-     * 
-     * @throws ContractException
-     *                           <ul>
-     *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATION_ENGINE}
-     *                           if translationEngine is null</li>
-     *                           </ul>
+     * {@link TranslationController#readInput(Path, Class, TranslationEngine)}
      */
     public TranslationController readInput() {
         for (Path path : this.data.inputFilePathMap.keySet()) {
