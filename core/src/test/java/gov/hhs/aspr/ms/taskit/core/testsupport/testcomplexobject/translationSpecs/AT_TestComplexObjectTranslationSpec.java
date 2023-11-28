@@ -31,10 +31,8 @@ public class AT_TestComplexObjectTranslationSpec {
 
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
-        TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder()
+        TestTranslationEngine.builder()
                 .addTranslationSpec(testObjectTranslationSpec).addTranslationSpec(complexObjectTranslationSpec).build();
-
-        testTranslationEngine.init();
 
         TestComplexAppObject actualComplexAppObject = complexObjectTranslationSpec
                 .convertInputObject(testComplexInputObject);
@@ -51,10 +49,8 @@ public class AT_TestComplexObjectTranslationSpec {
 
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
-        TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder()
+        TestTranslationEngine.builder()
                 .addTranslationSpec(testObjectTranslationSpec).addTranslationSpec(complexObjectTranslationSpec).build();
-
-        testTranslationEngine.init();
 
         TestComplexInputObject actualComplexInputObject = complexObjectTranslationSpec
                 .convertAppObject(testComplexAppObject);

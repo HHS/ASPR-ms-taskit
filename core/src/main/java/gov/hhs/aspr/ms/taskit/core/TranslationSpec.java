@@ -22,12 +22,6 @@ public abstract class TranslationSpec<I, A> implements BaseTranslationSpec {
         this.initialized = true;
     }
 
-    protected void checkInit() {
-        if (!this.initialized) {
-            throw new ContractException(CoreTranslationError.UNITIALIZED_TRANSLATION_SPEC);
-        }
-    }
-
     /**
      * Returns the initialization state of this TranslationSpec
      */
@@ -118,6 +112,16 @@ public abstract class TranslationSpec<I, A> implements BaseTranslationSpec {
     }
 
     /**
+     * Returns the class of the app object
+     */
+    public abstract Class<A> getAppObjectClass();
+
+    /**
+     * Returns the class of the input object
+     */
+    public abstract Class<I> getInputObjectClass();
+
+    /**
      * Given an inputObject, converts it to it's appObject equivalent
      */
     protected abstract A convertInputObject(I inputObject);
@@ -127,13 +131,9 @@ public abstract class TranslationSpec<I, A> implements BaseTranslationSpec {
      */
     protected abstract I convertAppObject(A appObject);
 
-    /**
-     * Returns the class of the app object
-     */
-    public abstract Class<A> getAppObjectClass();
-
-    /**
-     * Returns the class of the input object
-     */
-    public abstract Class<I> getInputObjectClass();
+    void checkInit() {
+        if (!this.initialized) {
+            throw new ContractException(CoreTranslationError.UNITIALIZED_TRANSLATION_SPEC);
+        }
+    }
 }

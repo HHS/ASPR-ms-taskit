@@ -26,7 +26,6 @@ public class AT_TestProtobufComplexObjectTranslationSpec {
     public void testConvertInputObject() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder()
                 .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
-        protobufTranslationEngine.init();
 
         TestProtobufComplexObjectTranslationSpec complexObjectTranslationSpec = new TestProtobufComplexObjectTranslationSpec();
         complexObjectTranslationSpec.init(protobufTranslationEngine);
@@ -44,7 +43,6 @@ public class AT_TestProtobufComplexObjectTranslationSpec {
     public void testConvertAppObject() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder()
                 .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
-        protobufTranslationEngine.init();
 
         TestProtobufComplexObjectTranslationSpec complexObjectTranslationSpec = new TestProtobufComplexObjectTranslationSpec();
         complexObjectTranslationSpec.init(protobufTranslationEngine);

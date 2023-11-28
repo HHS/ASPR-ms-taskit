@@ -1,60 +1,53 @@
 package gov.hhs.aspr.ms.taskit.core;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
-import java.io.Writer;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.commons.math3.util.Pair;
 
 import util.errors.ContractException;
-import util.graph.Graph;
-import util.graph.GraphDepthEvaluator;
-import util.graph.Graphs;
-import util.graph.MutableGraph;
 
 /**
  * The TranslatorController serves as the master of cerimonies for translating
  * between two types of objects. Additionally, it has the ability to distribute
  * Input/Output files for reading and writing.
  */
-public class TranslationController {
+public final class TranslationController {
     protected final Data data;
-    protected TranslationEngine translationEngine;
+    protected final Map<TranslationEngineType, TranslationEngine> translationEngines = new LinkedHashMap<>();
+    protected final Map<Class<? extends TranslationEngine>, TranslationEngineType> translationEngineClassToTypeMap = new LinkedHashMap<>();
     protected final List<Object> objects = Collections.synchronizedList(new ArrayList<>());
-    protected TranslatorId focalTranslatorId = null;
 
-    protected TranslationController(Data data) {
+    TranslationController(Data data) {
         this.data = data;
     }
 
-    protected static class Data {
-        protected TranslationEngine.Builder translationEngineBuilder;
+    final static class Data {
+        protected Map<Class<? extends TranslationEngine>, TranslationEngine> translationEngines = new LinkedHashMap<>();
         protected final List<Translator> translators = new ArrayList<>();
         protected final Map<Path, Class<?>> inputFilePathMap = new LinkedHashMap<>();
+        protected final Map<Path, TranslationEngineType> inputFilePathEngine = new LinkedHashMap<>();
         protected final Map<Pair<Class<?>, Integer>, Path> outputFilePathMap = new LinkedHashMap<>();
+        protected final Map<Path, TranslationEngineType> outputFilePathEngine = new LinkedHashMap<>();
         protected final Map<Class<?>, Class<?>> parentChildClassRelationshipMap = new LinkedHashMap<>();
 
-        protected Data() {
+        Data() {
         }
     }
 
-    public static class Builder {
-        protected Data data;
+    public final static class Builder {
+        Data data;
 
-        protected Builder(Data data) {
+        Builder(Data data) {
             this.data = data;
         }
 
@@ -80,15 +73,19 @@ public class TranslationController {
             }
         }
 
-        private void validateTranslatorNotNull(Translator translator) {
-            if (translator == null) {
-                throw new ContractException(CoreTranslationError.NULL_TRANSLATOR);
+        private void validateTranslationEngineNotNull(TranslationEngine translationEngine) {
+            if (translationEngine == null) {
+                throw new ContractException(CoreTranslationError.NULL_TRANSLATION_ENGINE);
             }
         }
 
-        private void validateTranslationEngineBuilderNotNull(TranslationEngine.Builder translationEngineBuilder) {
-            if (translationEngineBuilder == null) {
-                throw new ContractException(CoreTranslationError.NULL_TRANSLATION_ENGINE_BUILDER);
+        private void validateTranslationEnginesNotNull() {
+            if (this.data.translationEngines.isEmpty()) {
+                throw new ContractException(CoreTranslationError.NULL_TRANSLATION_ENGINE,
+                        "No TranslationEngine Builders were added");
+            }
+            for (TranslationEngine engine : this.data.translationEngines.values()) {
+                validateTranslationEngineNotNull(engine);
             }
         }
 
@@ -98,20 +95,22 @@ public class TranslationController {
          * 
          * @throws ContractException
          *                           <ul>
-         *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATION_ENGINE_BUILDER}
+         *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATION_ENGINE}
          *                           if translationEngineBuilder has not been set</li>
          *                           </ul>
          */
         public TranslationController build() {
-            validateTranslationEngineBuilderNotNull(this.data.translationEngineBuilder);
+            validateTranslationEnginesNotNull();
 
             TranslationController translatorController = new TranslationController(this.data);
 
-            translatorController.initTranslators();
+            translatorController.initTranslationEngines();
+            translatorController.validateTranslationEngines();
+
             return translatorController;
         }
 
-        protected TranslationController buildWithoutInitAndChecks() {
+        TranslationController buildWithoutInitAndChecks() {
             return new TranslationController(this.data);
         }
 
@@ -131,7 +130,7 @@ public class TranslationController {
          *                           if filePath does not exist on the system</li>
          *                           </ul>
          */
-        public Builder addInputFilePath(Path filePath, Class<?> classRef) {
+        public Builder addInputFilePath(Path filePath, Class<?> classRef, TranslationEngineType translationEngineType) {
             validateFilePathNotNull(filePath);
             validateClassRefNotNull(classRef);
             validatePathNotDuplicate(filePath, true, false);
@@ -141,6 +140,7 @@ public class TranslationController {
             }
 
             this.data.inputFilePathMap.put(filePath, classRef);
+            this.data.inputFilePathEngine.put(filePath, translationEngineType);
             return this;
         }
 
@@ -163,8 +163,9 @@ public class TranslationController {
          *                           if filePath does not exist on the system</li>
          *                           </ul>
          */
-        public Builder addOutputFilePath(Path filePath, Class<?> classRef) {
-            return this.addOutputFilePath(filePath, classRef, 0);
+        public Builder addOutputFilePath(Path filePath, Class<?> classRef,
+                TranslationEngineType translationEngineType) {
+            return this.addOutputFilePath(filePath, classRef, 0, translationEngineType);
         }
 
         /**
@@ -186,7 +187,8 @@ public class TranslationController {
          *                           if filePath does not exist on the system</li>
          *                           </ul>
          */
-        public Builder addOutputFilePath(Path filePath, Class<?> classRef, Integer scenarioId) {
+        public Builder addOutputFilePath(Path filePath, Class<?> classRef, Integer scenarioId,
+                TranslationEngineType translationEngineType) {
             validateFilePathNotNull(filePath);
             validateClassRefNotNull(classRef);
             validatePathNotDuplicate(filePath, false, true);
@@ -202,6 +204,7 @@ public class TranslationController {
             }
 
             this.data.outputFilePathMap.put(key, filePath);
+            this.data.outputFilePathEngine.put(filePath, translationEngineType);
             return this;
         }
 
@@ -237,42 +240,38 @@ public class TranslationController {
         }
 
         /**
-         * Add a {@link Translator}
+         * Adds a {@link TranslationEngine.Builder}
          * 
          * @throws ContractException
          *                           <ul>
-         *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATOR}
-         *                           if translator is null</li>
-         *                           <li>{@linkplain CoreTranslationError#DUPLICATE_TRANSLATOR}
-         *                           if translator has alaready been added</li>
-         *                           </ul>
-         */
-        public Builder addTranslator(Translator translator) {
-            validateTranslatorNotNull(translator);
-
-            if (this.data.translators.contains(translator)) {
-                throw new ContractException(CoreTranslationError.DUPLICATE_TRANSLATOR);
-            }
-
-            this.data.translators.add(translator);
-            return this;
-        }
-
-        /**
-         * Sets the {@link TranslationEngine.Builder}
-         * 
-         * @throws ContractException
-         *                           <ul>
-         *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATION_ENGINE_BUILDER}
+         *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATION_ENGINE}
          *                           if translationEngineBuilder is null</li>
          *                           </ul>
          */
-        public Builder setTranslationEngineBuilder(TranslationEngine.Builder translationEngineBuilder) {
-            validateTranslationEngineBuilderNotNull(translationEngineBuilder);
+        public Builder addTranslationEngine(TranslationEngine translationEngine) {
+            validateTranslationEngineNotNull(translationEngine);
 
-            this.data.translationEngineBuilder = translationEngineBuilder;
+            this.data.translationEngines.put(translationEngine.getClass(), translationEngine);
+
+            Map<Class<?>, Class<?>> childToParentClassMap = translationEngine.getChildParentClassMap();
+
+            for (Class<?> childClassRef : childToParentClassMap.keySet()) {
+                // Need to duplicate code here because the map doesn't provide the type safety
+                // that is required by the addParentChildClassRelationship method
+                Class<?> parentClassRef = childToParentClassMap.get(childClassRef);
+
+                // Note: no 'class is not null' validation here because it was validated prior
+                // to being put into the engine
+                if (this.data.parentChildClassRelationshipMap.containsKey(childClassRef)) {
+                    throw new ContractException(CoreTranslationError.DUPLICATE_CLASSREF);
+                }
+
+                this.data.parentChildClassRelationshipMap.put(childClassRef, parentClassRef);
+            }
+
             return this;
         }
+
     }
 
     /**
@@ -282,93 +281,20 @@ public class TranslationController {
         return new Builder(new Data());
     }
 
-    private void validateClassRefNotNull(Class<?> classRef) {
-        if (classRef == null) {
-            throw new ContractException(CoreTranslationError.NULL_CLASS_REF);
-        }
-    }
-
-    /**
-     * Returns the translationEngineBuilder if and only if it is set, has not had it
-     * build method called, has not had it's init method called and is of the same
-     * type as the given classRef
-     * 
-     * @param <T> the class type of the TranslationEngine.Builder
-     * @throws ContractException
-     *                           <ul>
-     *                           <li>{@linkplain CoreTranslationError#INVALID_TRANSLATION_ENGINE_BUILDER}
-     *                           if the given classRef does not match the class or
-     *                           the translationEngineBuilder is null</li>
-     *                           </ul>
-     */
-    protected <T extends TranslationEngine.Builder> T getTranslationEngineBuilder(Class<T> classRef) {
-        if (this.translationEngine == null) {
-            if (this.data.translationEngineBuilder.getClass() == classRef) {
-                return classRef.cast(this.data.translationEngineBuilder);
-            }
-
-            throw new ContractException(CoreTranslationError.INVALID_TRANSLATION_ENGINE_BUILDER,
-                    "The TranslationEngine is of type: " + this.data.translationEngineBuilder.getClass().getName()
-                            + " and the given classRef was: " + classRef.getName());
-        }
-        // This should never happen, therefore it is an actual runtime exception and not
-        // a contract exception
-        throw new RuntimeException("Trying to get TranslatorCoreBuilder after it was built and/or initialized");
-
-    }
-
-    /**
-     * Returns the initialized TranslationEngine
-     * 
-     * @throws RuntimeException  if the Translation Engine has not been initialized
-     * @throws ContractException
-     *                           <ul>
-     *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATION_ENGINE}
-     *                           if translationEngine is null</li>
-     *                           <li>{@linkplain CoreTranslationError#INVALID_TRANSLATION_ENGINE}
-     *                           if the classRef does not match the class of the
-     *                           translationEngine</li>
-     *                           </ul>
-     */
-    public <T extends TranslationEngine> T getTranslationEngine(Class<T> classRef) {
-        validateTranslationEngine();
-
-        if (this.translationEngine.getClass() == classRef) {
-            return classRef.cast(this.translationEngine);
-        }
-
-        throw new ContractException(CoreTranslationError.INVALID_TRANSLATION_ENGINE);
-    }
-
-    /**
-     * Adds the given child parent class relationship Only callable through a
-     * {@link TranslatorContext} via the {@link Translator#getInitializer()}
-     * consumer
-     * 
-     * @param <M> the childClass
-     * @param <U> the parentClass
-     */
-    protected <M extends U, U> void addParentChildClassRelationship(Class<M> classRef, Class<U> parentClassRef) {
-        validateClassRefNotNull(classRef);
-        validateClassRefNotNull(parentClassRef);
-
-        if (this.data.parentChildClassRelationshipMap.containsKey(classRef)) {
-            throw new ContractException(CoreTranslationError.DUPLICATE_CLASSREF);
-        }
-
-        this.data.parentChildClassRelationshipMap.put(classRef, parentClassRef);
-    }
-
     /**
      * Passes the given reader and inputClassRef to the built
      * {@link TranslationEngine} to read, parse and translate the inputData.
      * 
      * @param <U> the classType associated with the reader
      */
-    private <U> void readInput(Reader reader, Class<U> inputClassRef) {
-        Object appObject = this.translationEngine.readInput(reader, inputClassRef);
-
-        this.objects.add(appObject);
+    <U> void readInput(Path path, Class<U> inputClassRef, TranslationEngine translationEngine) {
+        Object appObject;
+        try {
+            appObject = translationEngine.readInput(path, inputClassRef);
+            this.objects.add(appObject);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -378,16 +304,27 @@ public class TranslationController {
      * @param <M> the class of the object to write to the outputFile
      * @param <U> the optional parent class of the object to write to the outputFile
      */
-    private <M extends U, U> void writeOutput(Writer writer, M object, Optional<Class<U>> superClass) {
-        this.translationEngine.writeOutput(writer, object, superClass);
+    <M extends U, U> void writeOutput(Path path, M object, Optional<Class<U>> superClass,
+            TranslationEngine translationEngine) {
+        try {
+            translationEngine.writeOutput(path, object, superClass);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    protected void buildTranslationEngine() {
-        this.translationEngine = this.data.translationEngineBuilder.build();
+    void initTranslationEngines() {
+        for (TranslationEngine translationEngine : this.data.translationEngines.values()) {
+            translationEngine.translationSpecsAreInitialized();
+
+            this.translationEngines.put(translationEngine.getTranslationEngineType(), translationEngine);
+            this.translationEngineClassToTypeMap.put(translationEngine.getClass(),
+                    translationEngine.getTranslationEngineType());
+        }
     }
 
-    protected void validateTranslationEngine() {
-        if (this.translationEngine == null) {
+    void validateTranslationEngine(TranslationEngine translationEngine) {
+        if (translationEngine == null) {
             throw new ContractException(CoreTranslationError.NULL_TRANSLATION_ENGINE);
         }
 
@@ -396,44 +333,36 @@ public class TranslationController {
          * initTranslators() method, this should never happen, thus it is a
          * RuntimeException and not a ContractException
          */
-        if (!this.translationEngine.isInitialized()) {
+        if (!translationEngine.isInitialized()) {
             throw new RuntimeException("TranslationEngine has been built but has not been initialized.");
         }
     }
 
-    /*
-     * First gets an ordered list of translators based on their dependencies Then
-     * calls each translator's init callback method Then builds the
-     * translationEngine Then calls the init method on the translationEngine
-     * Verifies that all translationSpecs have been initialized
-     */
-    private TranslationController initTranslators() {
-        TranslatorContext translatorContext = new TranslatorContext(this);
+    void validateTranslationEngines() {
+        Set<Class<? extends TranslationEngine>> translationEngineClasses = new HashSet<>();
 
-        List<Translator> orderedTranslators = this.getOrderedTranslators();
-
-        for (Translator translator : orderedTranslators) {
-            translator.getInitializer().accept(translatorContext);
+        if (this.translationEngines.keySet().isEmpty()) {
+            throw new ContractException(CoreTranslationError.NO_TRANSLATION_ENGINES);
         }
 
-        this.buildTranslationEngine();
+        // validate each engine that exists irrespective of any mapping
+        for (TranslationEngine translationEngine : this.translationEngines.values()) {
+            validateTranslationEngine(translationEngine);
+            translationEngineClasses.add(translationEngine.getClass());
+        }
 
-        this.translationEngine.init();
-
-        this.translationEngine.translationSpecsAreInitialized();
-
-        return this;
-    }
-
-    protected void readInput(Path path, Class<?> classRef) {
-        Reader reader;
-        try {
-            reader = new FileReader(path.toFile());
-            this.readInput(reader, classRef);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+        // if the class to type map doesn't contain all of the classes of the engines in
+        // the engine map
+        // and
+        // if the engine map doesn't contain all of the types from the class to type map
+        // this ensures that every engine has a valid class -> type -> engine mapping
+        if (!(this.translationEngineClassToTypeMap.keySet().containsAll(translationEngineClasses)
+                && this.translationEngines.keySet().containsAll(this.translationEngineClassToTypeMap.values()))) {
+            throw new RuntimeException(
+                    "Not all Translation Engines have an associated Class -> Type -> Engine Mapping. Something went very wrong.");
         }
     }
+
 
     /**
      * Creates readers for each inputFilePath and passes the reader and classRef to
@@ -447,12 +376,12 @@ public class TranslationController {
      *                           </ul>
      */
     public TranslationController readInput() {
-        validateTranslationEngine();
-
         for (Path path : this.data.inputFilePathMap.keySet()) {
             Class<?> classRef = this.data.inputFilePathMap.get(path);
+            TranslationEngineType type = this.data.inputFilePathEngine.get(path);
+            TranslationEngine translationEngine = this.translationEngines.get(type);
 
-            this.readInput(path, classRef);
+            this.readInput(path, classRef, translationEngine);
         }
 
         return this;
@@ -467,7 +396,7 @@ public class TranslationController {
      * @param <M> the childClass
      * @param <U> the optional parentClass/MarkerInterfaceClass
      */
-    protected <M extends U, U> Pair<Path, Optional<Class<U>>> getOutputPath(Class<M> classRef, Integer scenarioId) {
+    <M extends U, U> Pair<Path, Optional<Class<U>>> getOutputPath(Class<M> classRef, Integer scenarioId) {
         Pair<Class<?>, Integer> key = new Pair<>(classRef, scenarioId);
 
         if (this.data.outputFilePathMap.containsKey(key)) {
@@ -577,23 +506,15 @@ public class TranslationController {
      */
     @SuppressWarnings("unchecked")
     public <M extends U, U> void writeOutput(M object, Integer scenarioId) {
-        validateTranslationEngine();
         // this gives an unchecked warning, surprisingly
         Class<M> classRef = (Class<M>) object.getClass();
 
         Pair<Path, Optional<Class<U>>> pathPair = getOutputPath(classRef, scenarioId);
         Path path = pathPair.getFirst();
+        TranslationEngineType type = this.data.outputFilePathEngine.get(path);
+        TranslationEngine translationEngine = this.translationEngines.get(type);
 
-        this.writeOutput(makeFileWriter(path), object, pathPair.getSecond());
-    }
-
-    protected FileWriter makeFileWriter(Path path) {
-
-        try {
-            return new FileWriter(path.toFile());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        this.writeOutput(path, object, pathPair.getSecond(), translationEngine);
     }
 
     /**
@@ -641,150 +562,4 @@ public class TranslationController {
         return this.objects;
     }
 
-    /*
-     * Goes through the list of translators and orders them based on their
-     * dependencies
-     */
-    protected List<Translator> getOrderedTranslators() {
-        return this.getOrderedTranslators(new MutableGraph<>(), new LinkedHashMap<>());
-    }
-
-    /*
-     * Goes through the list of translators and orders them based on their
-     * dependencies
-     */
-    protected List<Translator> getOrderedTranslators(MutableGraph<TranslatorId, Object> mutableGraph,
-            Map<TranslatorId, Translator> translatorMap) {
-
-        /*
-         * Add the nodes to the graph, check for duplicate ids, build the mapping from
-         * plugin id back to plugin
-         */
-        this.addNodes(mutableGraph, translatorMap);
-
-        // Add the edges to the graph
-        this.addEdges(mutableGraph);
-
-        /*
-         * Check for missing plugins from the plugin dependencies that were collected
-         * from the known plugins.
-         */
-        checkForMissingTranslators(mutableGraph, translatorMap);
-
-        /*
-         * Determine whether the graph is acyclic and generate a graph depth evaluator
-         * for the graph so that we can determine the order of initialization.
-         */
-        checkForCyclicGraph(mutableGraph);
-
-        // the graph is acyclic, so the depth evaluator is present
-        GraphDepthEvaluator<TranslatorId> graphDepthEvaluator = GraphDepthEvaluator
-                .getGraphDepthEvaluator(mutableGraph.toGraph()).get();
-
-        List<TranslatorId> orderedTranslatorIds = graphDepthEvaluator.getNodesInRankOrder();
-
-        List<Translator> orderedTranslators = new ArrayList<>();
-        for (TranslatorId translatorId : orderedTranslatorIds) {
-            orderedTranslators.add(translatorMap.get(translatorId));
-        }
-
-        return orderedTranslators;
-    }
-
-    protected void addNodes(MutableGraph<TranslatorId, Object> mutableGraph,
-            Map<TranslatorId, Translator> translatorMap) {
-        for (Translator translator : this.data.translators) {
-            focalTranslatorId = translator.getTranslatorId();
-            translatorMap.put(focalTranslatorId, translator);
-            // ensure that there are no duplicate plugins
-            if (mutableGraph.containsNode(focalTranslatorId)) {
-                throw new ContractException(CoreTranslationError.DUPLICATE_TRANSLATOR);
-            }
-            mutableGraph.addNode(focalTranslatorId);
-            focalTranslatorId = null;
-        }
-    }
-
-    protected void addEdges(MutableGraph<TranslatorId, Object> mutableGraph) {
-        for (Translator translator : this.data.translators) {
-            focalTranslatorId = translator.getTranslatorId();
-            for (TranslatorId translatorId : translator.getTranslatorDependencies()) {
-                mutableGraph.addEdge(new Object(), focalTranslatorId, translatorId);
-            }
-            focalTranslatorId = null;
-        }
-    }
-
-    protected void checkForMissingTranslators(MutableGraph<TranslatorId, Object> mutableGraph,
-            Map<TranslatorId, Translator> translatorMap) {
-        for (TranslatorId translatorId : mutableGraph.getNodes()) {
-            if (!translatorMap.containsKey(translatorId)) {
-                List<Object> inboundEdges = mutableGraph.getInboundEdges(translatorId);
-                StringBuilder sb = new StringBuilder();
-                sb.append("cannot locate instance of ");
-                sb.append(translatorId);
-                sb.append(" needed for ");
-                boolean first = true;
-                for (Object edge : inboundEdges) {
-                    if (first) {
-                        first = false;
-                    } else {
-                        sb.append(", ");
-                    }
-                    TranslatorId dependentTranslatorId = mutableGraph.getOriginNode(edge);
-                    sb.append(dependentTranslatorId);
-                }
-                throw new ContractException(CoreTranslationError.MISSING_TRANSLATOR, sb.toString());
-            }
-        }
-    }
-
-    protected void checkForCyclicGraph(MutableGraph<TranslatorId, Object> mutableGraph) {
-        Optional<GraphDepthEvaluator<TranslatorId>> optional = GraphDepthEvaluator
-                .getGraphDepthEvaluator(mutableGraph.toGraph());
-
-        if (!optional.isPresent()) {
-            /*
-             * Explain in detail why there is a circular dependency
-             */
-
-            Graph<TranslatorId, Object> g = mutableGraph.toGraph();
-            g = Graphs.getSourceSinkReducedGraph(g);
-            g = Graphs.getEdgeReducedGraph(g);
-            g = Graphs.getSourceSinkReducedGraph(g);
-
-            List<Graph<TranslatorId, Object>> cutGraphs = Graphs.cutGraph(g);
-            StringBuilder sb = new StringBuilder();
-            String lineSeparator = System.getProperty("line.separator");
-            sb.append(lineSeparator);
-            boolean firstCutGraph = true;
-
-            for (Graph<TranslatorId, Object> cutGraph : cutGraphs) {
-                if (firstCutGraph) {
-                    firstCutGraph = false;
-                } else {
-                    sb.append(lineSeparator);
-                }
-                sb.append("Dependency group: ");
-                sb.append(lineSeparator);
-                Set<TranslatorId> nodes = cutGraph.getNodes().stream()
-                        .collect(Collectors.toCollection(LinkedHashSet::new));
-
-                for (TranslatorId node : nodes) {
-                    sb.append("\t");
-                    sb.append(node);
-                    sb.append(" requires:");
-                    sb.append(lineSeparator);
-                    for (Object edge : cutGraph.getInboundEdges(node)) {
-                        TranslatorId dependencyNode = cutGraph.getOriginNode(edge);
-                        sb.append("\t");
-                        sb.append("\t");
-                        sb.append(dependencyNode);
-                        sb.append(lineSeparator);
-                    }
-                }
-            }
-            throw new ContractException(CoreTranslationError.CIRCULAR_TRANSLATOR_DEPENDENCIES, sb.toString());
-        }
-    }
 }
