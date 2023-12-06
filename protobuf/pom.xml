@@ -52,6 +52,11 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/proto</directory>
+            </resource>
+        </resources>
         <!-- 
             The plugins here are listed in order of execution to aid in understanding when they will run.
             Look up "maven lifecycle phases" and compare those to the phases in each execution for a more
@@ -88,7 +93,8 @@
                 </executions>
                 <configuration>
                     <protocArtifact>com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
-                    <protoSourceRoot>${basedir}/src/main/proto/gov/hhs/aspr/ms/taskit/protobuf</protoSourceRoot>
+                    <protoSourceRoot>${basedir}/src/main/proto</protoSourceRoot>
+                    <attachProtoSources>false</attachProtoSources>
                 </configuration>
             </plugin>
 
