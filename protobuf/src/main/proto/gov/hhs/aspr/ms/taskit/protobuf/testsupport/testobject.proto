@@ -1,10 +1,10 @@
 syntax = "proto3";
-package gov.hhs.aspr.ms.taskit.protobuf;
+package gov.hhs.aspr.ms.taskit.protobuf.testsupport;
 
 option java_multiple_files = true;
 option java_package = "gov.hhs.aspr.ms.taskit.protobuf.testsupport.testobject.input";
 
-import "testcomplexobject.proto";
+import "gov/hhs/aspr/ms/taskit/protobuf/testsupport/testcomplexobject.proto";
 
 enum TestInputEnum {
     TEST1 = 0;
