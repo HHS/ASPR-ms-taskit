@@ -12,7 +12,7 @@
 
     <!-- Artifact -->
     <groupId>gov.hhs.aspr.ms.taskit</groupId>
-    <artifactId>core</artifactId>
+    <artifactId>taskit-core</artifactId>
     <packaging>jar</packaging>
 
     <name>Translation and Serialization Toolkit: Core</name>

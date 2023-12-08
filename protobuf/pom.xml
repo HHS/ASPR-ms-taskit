@@ -12,7 +12,7 @@
 
     <!-- Artifact -->
     <groupId>gov.hhs.aspr.ms.taskit</groupId>
-    <artifactId>protobuf</artifactId>
+    <artifactId>taskit-protobuf</artifactId>
     <packaging>jar</packaging>
 
     <name>Translation and Serialization Toolkit: Protobuf</name>
@@ -36,7 +36,7 @@
     <dependencies>
         <dependency>
             <groupId>gov.hhs.aspr.ms.taskit</groupId>
-            <artifactId>core</artifactId>
+            <artifactId>taskit-core</artifactId>
             <version>${taskit-core.version}</version>
         </dependency>
         <dependency>
