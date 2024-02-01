@@ -28,7 +28,7 @@
 
         <!-- dependency versions -->
         <taskit-core.version>${revision}</taskit-core.version>
-        <protobuf.version>3.24.4</protobuf.version>
+        <protobuf.version>3.25.2</protobuf.version>
         <protoc.version>3.24.4</protoc.version>
     </properties>
 
