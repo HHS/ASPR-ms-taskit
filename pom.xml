@@ -57,7 +57,7 @@
         <!-- dependency versions -->
         <util.version>4.0.0</util.version>
         <junit-jupiter-engine.version>5.8.2</junit-jupiter-engine.version>
-        <jacoco-maven-plugin.version>0.8.9</jacoco-maven-plugin.version>
+        <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version>
     </properties>
 
     <!-- set dependency versions for all child projects -->
