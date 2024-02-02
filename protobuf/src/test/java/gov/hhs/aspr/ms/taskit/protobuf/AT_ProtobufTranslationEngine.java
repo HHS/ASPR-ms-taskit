@@ -27,7 +27,6 @@ import gov.hhs.aspr.ms.taskit.core.CoreTranslationError;
 import gov.hhs.aspr.ms.taskit.core.ProtobufTranslationEngineTestHelper;
 import gov.hhs.aspr.ms.taskit.core.TranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.Translator;
-import gov.hhs.aspr.ms.taskit.core.testsupport.TestResourceHelper;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppChildObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.translationSpecs.TestObjectTranslationSpec;
@@ -44,10 +43,11 @@ import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testobject.translationSpecs.T
 import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
+import util.resourcehelper.TestResourceHelper;
 
 public class AT_ProtobufTranslationEngine {
     Path basePath = TestResourceHelper.getResourceDir(this.getClass());
-    Path filePath = TestResourceHelper.makeTestOutputDir(basePath);
+    Path filePath = TestResourceHelper.makeOutputDir(basePath, "test-output");
 
     @Test
     @UnitTestMethod(target = ProtobufTranslationEngine.class, name = "getAnyFromObject", args = { Object.class })
@@ -149,7 +149,7 @@ public class AT_ProtobufTranslationEngine {
     public void testDebugPrint() throws IOException {
         String fileName = "debugPrintFromEngine_1-testOutput.json";
 
-        TestResourceHelper.createTestOutputFile(filePath, fileName);
+        TestResourceHelper.createOutputFile(filePath, fileName);
 
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder()
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
@@ -229,8 +229,8 @@ public class AT_ProtobufTranslationEngine {
         String fileName = "readInputFromEngine_1-testOutput.json";
         String fileName2 = "readInputFromEngine_2-testOutput.json";
 
-        TestResourceHelper.createTestOutputFile(filePath, fileName);
-        TestResourceHelper.createTestOutputFile(filePath, fileName2);
+        TestResourceHelper.createOutputFile(filePath, fileName);
+        TestResourceHelper.createOutputFile(filePath, fileName2);
 
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder()
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
@@ -265,8 +265,8 @@ public class AT_ProtobufTranslationEngine {
         String fileName = "writeOutputFromEngine_1-testOutput.json";
         String fileName2 = "writeOutputFromEngine_2-testOutput.json";
 
-        TestResourceHelper.createTestOutputFile(filePath, fileName);
-        TestResourceHelper.createTestOutputFile(filePath, fileName2);
+        TestResourceHelper.createOutputFile(filePath, fileName);
+        TestResourceHelper.createOutputFile(filePath, fileName2);
 
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder()
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())

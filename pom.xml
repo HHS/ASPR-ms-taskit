@@ -55,7 +55,7 @@
         <maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
 
         <!-- dependency versions -->
-        <util.version>4.0.0</util.version>
+        <util.version>4.1.0-SNAPSHOT</util.version>
         <junit-jupiter-engine.version>5.10.1</junit-jupiter-engine.version>
         <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version>
     </properties>
