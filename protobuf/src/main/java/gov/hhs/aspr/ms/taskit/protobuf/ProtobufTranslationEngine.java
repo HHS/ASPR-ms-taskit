@@ -65,10 +65,11 @@ public final class ProtobufTranslationEngine extends TranslationEngine {
              * Message is of type BoolValue, and so there is a translationSpec to convert
              * from a BoolValue to a boolean and vice versa
              */
-            this.typeUrlToClassMap.putAll(PrimitiveTranslationSpecs.getPrimitiveTypeUrlToClassMap());
-            this.classToTranslationSpecMap.putAll(PrimitiveTranslationSpecs.getPrimitiveInputTranslatorSpecMap());
-            this.classToTranslationSpecMap.putAll(PrimitiveTranslationSpecs.getPrimitiveObjectTranslatorSpecMap());
-            this.translationSpecs.addAll(PrimitiveTranslationSpecs.getPrimitiveTranslatorSpecs());
+            PrimitiveTranslationSpecs primitiveTranslationSpecs = new PrimitiveTranslationSpecs();
+            this.typeUrlToClassMap.putAll(primitiveTranslationSpecs.getPrimitiveTypeUrlToClassMap());
+            this.classToTranslationSpecMap.putAll(primitiveTranslationSpecs.getPrimitiveInputTranslatorSpecMap());
+            this.classToTranslationSpecMap.putAll(primitiveTranslationSpecs.getPrimitiveObjectTranslatorSpecMap());
+            this.translationSpecs.addAll(primitiveTranslationSpecs.getPrimitiveTranslatorSpecs());
             this.translationEngineType = TranslationEngineType.PROTOBUF;
         }
     }
@@ -95,7 +96,7 @@ public final class ProtobufTranslationEngine extends TranslationEngine {
             initTranslators();
 
             TypeRegistry.Builder typeRegistryBuilder = TypeRegistry.newBuilder();
-            this.descriptorSet.addAll(PrimitiveTranslationSpecs.getPrimitiveDescriptors());
+            this.descriptorSet.addAll(new PrimitiveTranslationSpecs().getPrimitiveDescriptors());
 
             this.descriptorSet.forEach((descriptor) -> {
                 typeRegistryBuilder.add(descriptor);

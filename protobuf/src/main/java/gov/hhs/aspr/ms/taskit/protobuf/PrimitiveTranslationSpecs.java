@@ -35,20 +35,20 @@ import gov.hhs.aspr.ms.taskit.protobuf.translationSpecs.ULongTranslationSpec;
  * specs needed for converting to/from the Protobuf {@link Any} type.
  */
 class PrimitiveTranslationSpecs {
-    private PrimitiveTranslationSpecs() {
+    PrimitiveTranslationSpecs() {
     }
 
-    private final static BooleanTranslationSpec BOOLEAN_TRANSLATOR_SPEC = new BooleanTranslationSpec();
-    private final static IntegerTranslationSpec INT32_TRANSLATOR_SPEC = new IntegerTranslationSpec();
-    private final static UIntegerTranslationSpec UINT32_TRANSLATOR_SPEC = new UIntegerTranslationSpec();
-    private final static LongTranslationSpec INT64_TRANSLATOR_SPEC = new LongTranslationSpec();
-    private final static ULongTranslationSpec UINT64_TRANSLATOR_SPEC = new ULongTranslationSpec();
-    private final static StringTranslationSpec STRING_TRANSLATOR_SPEC = new StringTranslationSpec();
-    private final static FloatTranslationSpec FLOAT_TRANSLATOR_SPEC = new FloatTranslationSpec();
-    private final static DoubleTranslationSpec DOUBLE_TRANSLATOR_SPEC = new DoubleTranslationSpec();
-    private final static DateTranslationSpec DATE_TRANSLATOR_SPEC = new DateTranslationSpec();
-    private final static EnumTranslationSpec ENUM_TRANSLATOR_SPEC = new EnumTranslationSpec();
-    private final static AnyTranslationSpec ANY_TRANSLATOR_SPEC = new AnyTranslationSpec();
+    final BooleanTranslationSpec BOOLEAN_TRANSLATOR_SPEC = new BooleanTranslationSpec();
+    final IntegerTranslationSpec INT32_TRANSLATOR_SPEC = new IntegerTranslationSpec();
+    final UIntegerTranslationSpec UINT32_TRANSLATOR_SPEC = new UIntegerTranslationSpec();
+    final LongTranslationSpec INT64_TRANSLATOR_SPEC = new LongTranslationSpec();
+    final ULongTranslationSpec UINT64_TRANSLATOR_SPEC = new ULongTranslationSpec();
+    final StringTranslationSpec STRING_TRANSLATOR_SPEC = new StringTranslationSpec();
+    final FloatTranslationSpec FLOAT_TRANSLATOR_SPEC = new FloatTranslationSpec();
+    final DoubleTranslationSpec DOUBLE_TRANSLATOR_SPEC = new DoubleTranslationSpec();
+    final DateTranslationSpec DATE_TRANSLATOR_SPEC = new DateTranslationSpec();
+    final EnumTranslationSpec ENUM_TRANSLATOR_SPEC = new EnumTranslationSpec();
+    final AnyTranslationSpec ANY_TRANSLATOR_SPEC = new AnyTranslationSpec();
 
     /**
      * Returns a set of Protobuf Message {@link Descriptor}s for each of the
@@ -58,7 +58,7 @@ class PrimitiveTranslationSpecs {
      * and their Descriptors are exclusively used to falicitate converting to/from a
      * Protobuf {@link Any} type
      */
-    static Set<Descriptor> getPrimitiveDescriptors() {
+    Set<Descriptor> getPrimitiveDescriptors() {
         Set<Descriptor> set = new LinkedHashSet<>();
 
         set.add(BoolValue.getDefaultInstance().getDescriptorForType());
@@ -82,7 +82,7 @@ class PrimitiveTranslationSpecs {
      * are exclusively used to falicitate converting to/from a Protobuf {@link Any}
      * type
      */
-    static Set<ProtobufTranslationSpec<?, ?>> getPrimitiveTranslatorSpecs() {
+    Set<ProtobufTranslationSpec<?, ?>> getPrimitiveTranslatorSpecs() {
         Set<ProtobufTranslationSpec<?, ?>> set = new LinkedHashSet<>();
 
         set.addAll(getPrimitiveInputTranslatorSpecMap().values());
@@ -98,7 +98,7 @@ class PrimitiveTranslationSpecs {
      * and their typeUrls are exclusively used to falicitate converting to/from a
      * Protobuf {@link Any} type
      */
-    static Map<String, Class<?>> getPrimitiveTypeUrlToClassMap() {
+    Map<String, Class<?>> getPrimitiveTypeUrlToClassMap() {
         Map<String, Class<?>> map = new LinkedHashMap<>();
 
         map.put(BoolValue.getDefaultInstance().getDescriptorForType().getFullName(),
@@ -133,7 +133,7 @@ class PrimitiveTranslationSpecs {
      * and their inputObjectClasses are exclusively used to falicitate converting
      * to/from a Protobuf {@link Any} type
      */
-    static Map<Class<?>, ProtobufTranslationSpec<?, ?>> getPrimitiveInputTranslatorSpecMap() {
+    Map<Class<?>, ProtobufTranslationSpec<?, ?>> getPrimitiveInputTranslatorSpecMap() {
         Map<Class<?>, ProtobufTranslationSpec<?, ?>> map = new LinkedHashMap<>();
 
         map.put(BOOLEAN_TRANSLATOR_SPEC.getInputObjectClass(), BOOLEAN_TRANSLATOR_SPEC);
@@ -159,7 +159,7 @@ class PrimitiveTranslationSpecs {
      * and their appObjectClasses are exclusively used to falicitate converting
      * to/from a Protobuf {@link Any} type
      */
-    static Map<Class<?>, ProtobufTranslationSpec<?, ?>> getPrimitiveObjectTranslatorSpecMap() {
+    Map<Class<?>, ProtobufTranslationSpec<?, ?>> getPrimitiveObjectTranslatorSpecMap() {
         Map<Class<?>, ProtobufTranslationSpec<?, ?>> map = new LinkedHashMap<>();
 
         // no java version of unsigned int nor unsigned long

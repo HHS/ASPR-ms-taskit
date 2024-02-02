@@ -21,14 +21,14 @@
     <!-- Properties -->
     <properties>
         <!-- plugin versions -->
-        <os-maven-plugin.version>1.7.0</os-maven-plugin.version>
+        <os-maven-plugin.version>1.7.1</os-maven-plugin.version>
         <protobuf-maven-plugin.version>0.6.1</protobuf-maven-plugin.version>
         <build-helper-maven-plugin.version>3.3.0</build-helper-maven-plugin.version>
         <maven-replacer-plugin.version>1.3.2</maven-replacer-plugin.version>
 
         <!-- dependency versions -->
         <taskit-core.version>${revision}</taskit-core.version>
-        <protobuf.version>3.24.4</protobuf.version>
+        <protobuf.version>3.25.2</protobuf.version>
         <protoc.version>3.24.4</protoc.version>
     </properties>
 
