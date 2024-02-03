@@ -52,7 +52,7 @@
         <flatten-maven-plugin.version>1.6.0</flatten-maven-plugin.version>
         <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
         <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
-        <maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
+        <maven-javadoc-plugin.version>3.6.3</maven-javadoc-plugin.version>
 
         <!-- dependency versions -->
         <gson.version>2.10.1</gson.version>
