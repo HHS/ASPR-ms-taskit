@@ -23,6 +23,8 @@ updates:
       dependencies:
         patterns:
           - "com.google.protobuf*"
+    ignore:
+      -dependency-name: "org.codehaus.plexus:plexus-utils"
           
   - package-ecosystem: "maven" # See documentation for possible values
     directory: "/" # Location of package manifests
@@ -43,3 +45,5 @@ updates:
         patterns:
           - "org.jacoco*"
           - "org.junit.jupiter*"
+    ignore:
+      -dependency-name: "org.codehaus.plexus:plexus-utils"
