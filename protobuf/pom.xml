@@ -54,6 +54,7 @@
             <artifactId>protoc</artifactId>
             <version>${protoc.version}</version>
             <type>pom</type>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
