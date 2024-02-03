@@ -29,7 +29,7 @@
         <!-- dependency versions -->
         <taskit-core.version>${revision}</taskit-core.version>
         <protobuf.version>3.25.2</protobuf.version>
-        <protoc.version>${protobuf.version}</protoc.version>
+        <protoc.version>3.25.2</protoc.version>
     </properties>
 
     <!-- Dependencies -->
@@ -49,6 +49,12 @@
             <artifactId>protobuf-java-util</artifactId>
             <version>${protobuf.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protoc</artifactId>
+            <version>${protoc.version}</version>
+            <type>pom</type>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
@@ -56,7 +62,7 @@
             <dependency>
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-utils</artifactId>
-                <version>3.0.24</version>
+                <version>3.4.2</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
