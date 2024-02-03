@@ -24,7 +24,8 @@ updates:
         patterns:
           - "com.google.protobuf*"
     ignore:
-      -dependency-name: "org.codehaus.plexus:plexus-utils"
+      - dependency-name: "org.codehaus.plexus:plexus-utils"
+        update-types: ["version-update:semver-major","version-update:semver-minor"]
           
   - package-ecosystem: "maven" # See documentation for possible values
     directory: "/" # Location of package manifests
@@ -46,4 +47,5 @@ updates:
           - "org.jacoco*"
           - "org.junit.jupiter*"
     ignore:
-      -dependency-name: "org.codehaus.plexus:plexus-utils"
+      - dependency-name: "org.codehaus.plexus:plexus-utils"
+        update-types: ["version-update:semver-major","version-update:semver-minor"]
