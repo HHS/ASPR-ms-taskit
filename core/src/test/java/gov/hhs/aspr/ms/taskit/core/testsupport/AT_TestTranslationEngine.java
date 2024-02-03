@@ -4,8 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
 import java.nio.file.Path;
 import java.util.Optional;
 
@@ -27,7 +25,7 @@ public class AT_TestTranslationEngine {
     Path filePath = TestResourceHelper.makeOutputDir(basePath, "test-output");
 
     @Test
-    @UnitTestMethod(target = TestTranslationEngine.class, name = "writeOutput", args = { Writer.class, Object.class,
+    @UnitTestMethod(target = TestTranslationEngine.class, name = "writeOutput", args = { Path.class, Object.class,
             Optional.class })
     public void testWriteOutput() throws IOException {
         String fileName = "writeOutputFromEngine_1-testOutput.json";
@@ -54,7 +52,7 @@ public class AT_TestTranslationEngine {
     }
 
     @Test
-    @UnitTestMethod(target = TestTranslationEngine.class, name = "readInput", args = { Reader.class, Class.class })
+    @UnitTestMethod(target = TestTranslationEngine.class, name = "readInput", args = { Path.class, Class.class })
     public void testReadInput() throws IOException {
         String fileName = "readInputFromEngine_1-testOutput.json";
         String fileName2 = "readInputFromEngine_2-testOutput.json";

@@ -112,16 +112,6 @@ public abstract class TranslationSpec<I, A> implements BaseTranslationSpec {
     }
 
     /**
-     * Returns the class of the app object
-     */
-    public abstract Class<A> getAppObjectClass();
-
-    /**
-     * Returns the class of the input object
-     */
-    public abstract Class<I> getInputObjectClass();
-
-    /**
      * Given an inputObject, converts it to it's appObject equivalent
      */
     protected abstract A convertInputObject(I inputObject);
@@ -130,6 +120,16 @@ public abstract class TranslationSpec<I, A> implements BaseTranslationSpec {
      * Given an appObject, converts it to it's inputObject equivalent
      */
     protected abstract I convertAppObject(A appObject);
+
+    /**
+     * Returns the class of the app object
+     */
+    public abstract Class<A> getAppObjectClass();
+
+    /**
+     * Returns the class of the input object
+     */
+    public abstract Class<I> getInputObjectClass();
 
     void checkInit() {
         if (!this.initialized) {

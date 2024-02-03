@@ -180,6 +180,8 @@
                         </goals>
                         <configuration>
                             <updatePomFile>true</updatePomFile>
+                            <flattenMode>ossrh</flattenMode>
+                            <flattenDependencyMode>all</flattenDependencyMode>
                         </configuration>
                     </execution>
                     <!-- ensure proper cleanup -->
