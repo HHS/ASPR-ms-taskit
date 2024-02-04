@@ -18,11 +18,11 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.input.TestInputObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.translationSpecs.TestObjectTranslationSpec;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
-import gov.hhs.aspr.ms.util.resourcehelper.TestResourceHelper;
+import gov.hhs.aspr.ms.util.resourcehelper.ResourceHelper;
 
 public class AT_TestTranslationEngine {
-    Path basePath = TestResourceHelper.getResourceDir(this.getClass());
-    Path filePath = TestResourceHelper.makeOutputDir(basePath, "test-output");
+    Path basePath = ResourceHelper.getResourceDir(this.getClass());
+    Path filePath = ResourceHelper.makeOutputDir(basePath, "test-output");
 
     @Test
     @UnitTestMethod(target = TestTranslationEngine.class, name = "writeOutput", args = { Path.class, Object.class,
@@ -31,8 +31,8 @@ public class AT_TestTranslationEngine {
         String fileName = "writeOutputFromEngine_1-testOutput.json";
         String fileName2 = "writeOutputFromEngine_2-testOutput.json";
 
-        TestResourceHelper.createOutputFile(filePath, fileName);
-        TestResourceHelper.createOutputFile(filePath, fileName2);
+        ResourceHelper.createOutputFile(filePath, fileName);
+        ResourceHelper.createOutputFile(filePath, fileName2);
 
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
@@ -57,8 +57,8 @@ public class AT_TestTranslationEngine {
         String fileName = "readInputFromEngine_1-testOutput.json";
         String fileName2 = "readInputFromEngine_2-testOutput.json";
 
-        TestResourceHelper.createOutputFile(filePath, fileName);
-        TestResourceHelper.createOutputFile(filePath, fileName2);
+        ResourceHelper.createOutputFile(filePath, fileName);
+        ResourceHelper.createOutputFile(filePath, fileName2);
 
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
