@@ -6,7 +6,7 @@
 version: 2
 updates:
   - package-ecosystem: "maven" # See documentation for possible values
-    directory: "/protobuf" # Location of package manifests
+    directory: "/" # Location of package manifests
     schedule:
       interval: "weekly"
     target-branch: "dev"
@@ -20,26 +20,11 @@ updates:
       standard-plugins:
         patterns:
           - "com.google.code.maven-replacer-plugin:maven-replacer-plugin"
-      dependencies:
-        patterns:
-          - "com.google.protobuf*"
-    ignore:
-      - dependency-name: "org.codehaus.plexus:plexus-utils"
-        update-types: ["version-update:semver-major","version-update:semver-minor"]
-          
-  - package-ecosystem: "maven" # See documentation for possible values
-    directory: "/" # Location of package manifests
-    schedule:
-      interval: "weekly"
-    target-branch: "dev"
-    open-pull-requests-limit: 10
-    groups:
-      standard-plugins:
-        patterns:
           - "org.codehaus.mojo:flatten-maven-plugin"
           - "org.apache.maven.plugins*"
       dependencies:
         patterns:
+          - "com.google.protobuf*"
           - "gov.hhs.aspr.ms:util"
           - "com.google.code.gson:gson"
       test-dependencies:
