@@ -17,9 +17,9 @@ updates:
           - "kr.motd.maven:os-maven-plugin"
           - "org.codehaus.mojo:build-helper-maven-plugin"
           - "org.xolstice.maven.plugins:protobuf-maven-plugin"
-      standard-plugins:
-        patterns:
           - "com.google.code.maven-replacer-plugin:maven-replacer-plugin"
+      standard-plugins:
+        patterns:   
           - "org.codehaus.mojo:flatten-maven-plugin"
           - "org.apache.maven.plugins*"
       dependencies:
