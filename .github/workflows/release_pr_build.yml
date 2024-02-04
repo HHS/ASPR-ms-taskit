@@ -6,11 +6,11 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Pull Request for Main Build
+name: Taskit Release Pull Request Build
 
-on: 
+on:
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   main-build:
@@ -19,18 +19,20 @@ jobs:
       contents: write
     steps:
     - name: Checkout Taskit
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     - name: Checkout Util
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: HHS/ASPR-ms-util
         path: util
+
     - name: Set up JDK 17
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
+
     - name: Build Util
       run: mvn clean install -DskipTests --file util/pom.xml
     - name: Build Taskit
