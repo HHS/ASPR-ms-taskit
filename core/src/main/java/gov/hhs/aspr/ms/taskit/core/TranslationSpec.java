@@ -2,7 +2,7 @@ package gov.hhs.aspr.ms.taskit.core;
 
 import java.util.Objects;
 
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
  * Core implementation of the {@link BaseTranslationSpec} that must be

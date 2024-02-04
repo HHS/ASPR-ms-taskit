@@ -30,10 +30,10 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestObjectWrapper;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.input.TestInputChildObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.input.TestInputObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.translationSpecs.TestObjectTranslationSpec;
-import util.annotations.UnitTestForCoverage;
-import util.annotations.UnitTestMethod;
-import util.errors.ContractException;
-import util.graph.MutableGraph;
+import gov.hhs.aspr.ms.util.annotations.UnitTestForCoverage;
+import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.errors.ContractException;
+import gov.hhs.aspr.ms.util.graph.MutableGraph;
 
 public class AT_TranslationEngine {
 

@@ -5,7 +5,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
  * The Translator class serves as a wrapper around one or more

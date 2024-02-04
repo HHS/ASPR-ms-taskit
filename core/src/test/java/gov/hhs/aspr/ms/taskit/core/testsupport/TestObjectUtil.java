@@ -9,7 +9,7 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppChildObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.input.TestInputChildObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.input.TestInputObject;
-import util.random.RandomGeneratorProvider;
+import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
 
 public class TestObjectUtil {
     static org.apache.commons.math3.random.RandomGenerator randomGenerator = RandomGeneratorProvider

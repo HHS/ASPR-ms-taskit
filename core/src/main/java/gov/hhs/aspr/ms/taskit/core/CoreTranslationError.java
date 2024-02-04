@@ -1,6 +1,6 @@
 package gov.hhs.aspr.ms.taskit.core;
 
-import util.errors.ContractError;
+import gov.hhs.aspr.ms.util.errors.ContractError;
 
 public enum CoreTranslationError implements ContractError {
 

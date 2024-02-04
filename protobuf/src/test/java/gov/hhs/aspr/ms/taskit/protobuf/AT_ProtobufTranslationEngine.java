@@ -40,10 +40,10 @@ import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testcomplexobject.translation
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testobject.input.TestInputEnum;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testobject.input.TestInputObject;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testobject.translationSpecs.TestProtobufObjectTranslationSpec;
-import util.annotations.UnitTestForCoverage;
-import util.annotations.UnitTestMethod;
-import util.errors.ContractException;
-import util.resourcehelper.TestResourceHelper;
+import gov.hhs.aspr.ms.util.annotations.UnitTestForCoverage;
+import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.errors.ContractException;
+import gov.hhs.aspr.ms.util.resourcehelper.TestResourceHelper;
 
 public class AT_ProtobufTranslationEngine {
     Path basePath = TestResourceHelper.getResourceDir(this.getClass());

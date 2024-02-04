@@ -17,8 +17,8 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.testcomplexobject.translationSpec
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.input.TestInputObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.translationSpecs.TestObjectTranslationSpec;
-import util.annotations.UnitTestMethod;
-import util.resourcehelper.TestResourceHelper;
+import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.resourcehelper.TestResourceHelper;
 
 public class AT_TestTranslationEngine {
     Path basePath = TestResourceHelper.getResourceDir(this.getClass());
