@@ -8,7 +8,7 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestObjectTranslator;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestObjectWrapper;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.translationSpecs.TestObjectTranslationSpec;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 public final class TranslationEngineTestHelper {
     private TranslationEngineTestHelper() {

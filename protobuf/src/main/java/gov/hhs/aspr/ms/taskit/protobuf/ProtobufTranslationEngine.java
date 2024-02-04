@@ -33,7 +33,7 @@ import gov.hhs.aspr.ms.taskit.core.TranslationEngineType;
 import gov.hhs.aspr.ms.taskit.core.TranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.Translator;
 import gov.hhs.aspr.ms.taskit.protobuf.translationSpecs.AnyTranslationSpec;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
  * Protobuf TranslationEngine that allows for conversion between POJOs and

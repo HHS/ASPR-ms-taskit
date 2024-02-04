@@ -13,7 +13,7 @@ import java.util.Set;
 
 import org.apache.commons.math3.util.Pair;
 
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
  * The TranslatorController serves as the master of cerimonies for translating
