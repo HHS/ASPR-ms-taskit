@@ -5,7 +5,7 @@
 
     <!-- parent -->
     <parent>
-        <groupId>gov.hhs.aspr.ms.taskit</groupId>
+        <groupId>gov.hhs.aspr.ms</groupId>
         <artifactId>taskit</artifactId>
         <version>${revision}</version>
     </parent>
@@ -15,7 +15,7 @@
     <artifactId>taskit-core</artifactId>
     <packaging>jar</packaging>
 
-    <name>Translation and Serialization Toolkit: Core</name>
+    <name>Taskit: Core</name>
     <description>The core components of a toolkit that aids in the conversion between two Java objects, primiarly for use with coverting between an input Java object and a application Java object.</description>
 
 </project>

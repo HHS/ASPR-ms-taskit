@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <!-- Artifact -->
-    <groupId>gov.hhs.aspr.ms.taskit</groupId>
+    <groupId>gov.hhs.aspr.ms</groupId>
     <artifactId>taskit</artifactId>
     <version>${revision}</version>
     <packaging>pom</packaging> 

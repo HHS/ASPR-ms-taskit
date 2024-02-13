@@ -5,7 +5,7 @@
 
     <!-- parent -->
     <parent>
-        <groupId>gov.hhs.aspr.ms.taskit</groupId>
+        <groupId>gov.hhs.aspr.ms</groupId>
         <artifactId>taskit</artifactId>
         <version>${revision}</version>
     </parent>
@@ -15,7 +15,7 @@
     <artifactId>taskit-protobuf</artifactId>
     <packaging>jar</packaging>
 
-    <name>Translation and Serialization Toolkit: Protobuf</name>
+    <name>Taskit: Protobuf</name>
     <description>A toolkit that aids in the conversion between Protobuf Java objects and application Java objects.</description>
 
     <!-- Properties -->
