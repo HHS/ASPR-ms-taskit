@@ -65,8 +65,8 @@ Distributed under the GPLv3 License. See [LICENSE](LICENSE) for more information
 [tag-url]: https://github.com/HHS/ASPR-ms-taskit/releases/latest
 [license-shield]: https://img.shields.io/github/license/HHS/ASPR-ms-taskit
 [license-url]: LICENSE
-[dev-build-shield]: https://img.shields.io/github/actions/workflow/status/HHS/ASPR-ms-taskit/dev-build.yml?label=dev-build
-[dev-build-url]: https://github.com/HHS/ASPR-ms-taskit/actions/workflows/dev-build.yml
-[build-shield]: https://img.shields.io/github/actions/workflow/status/HHS/ASPR-ms-taskit/release-build.yml?label=release-build
-[build-url]: https://github.com/HHS/ASPR-ms-taskit/actions/workflows/release-build.yml.yml
+[dev-build-shield]: https://img.shields.io/github/actions/workflow/status/HHS/ASPR-ms-taskit/dev_build.yml?label=dev-build
+[dev-build-url]: https://github.com/HHS/ASPR-ms-taskit/actions/workflows/dev_build.yml
+[build-shield]: https://img.shields.io/github/actions/workflow/status/HHS/ASPR-ms-taskit/release_build.yml?label=release-build
+[build-url]: https://github.com/HHS/ASPR-ms-taskit/actions/workflows/release_build.yml.yml
 
