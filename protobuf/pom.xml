@@ -5,17 +5,17 @@
 
     <!-- parent -->
     <parent>
-        <groupId>gov.hhs.aspr.ms</groupId>
-        <artifactId>taskit</artifactId>
+        <groupId>gov.hhs.aspr.ms.taskit</groupId>
+        <artifactId>parent</artifactId>
         <version>${revision}</version>
     </parent>
 
     <!-- Artifact -->
     <groupId>gov.hhs.aspr.ms.taskit</groupId>
-    <artifactId>taskit-protobuf</artifactId>
+    <artifactId>protobuf</artifactId>
     <packaging>jar</packaging>
 
-    <name>Taskit: Protobuf</name>
+    <name>Translation and Serialization Toolkit (Taskit): Protobuf</name>
     <description>A toolkit that aids in the conversion between Protobuf Java objects and application Java objects.</description>
 
     <!-- Properties -->
@@ -27,7 +27,6 @@
         <maven-replacer-plugin.version>1.4.1</maven-replacer-plugin.version>
 
         <!-- dependency versions -->
-        <taskit-core.version>${revision}</taskit-core.version>
         <protobuf.version>3.25.2</protobuf.version>
         <protoc.version>3.25.2</protoc.version>
     </properties>
@@ -36,8 +35,8 @@
     <dependencies>
         <dependency>
             <groupId>gov.hhs.aspr.ms.taskit</groupId>
-            <artifactId>taskit-core</artifactId>
-            <version>${taskit-core.version}</version>
+            <artifactId>core</artifactId>
+            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>com.google.protobuf</groupId>
