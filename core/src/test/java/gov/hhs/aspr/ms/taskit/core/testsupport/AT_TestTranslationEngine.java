@@ -4,8 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
 import java.nio.file.Path;
 import java.util.Optional;
 
@@ -19,21 +17,22 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.testcomplexobject.translationSpec
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.input.TestInputObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.translationSpecs.TestObjectTranslationSpec;
-import util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.resourcehelper.ResourceHelper;
 
 public class AT_TestTranslationEngine {
-    Path basePath = TestResourceHelper.getResourceDir(this.getClass());
-    Path filePath = TestResourceHelper.makeTestOutputDir(basePath);
+    Path basePath = ResourceHelper.getResourceDir(this.getClass());
+    Path filePath = ResourceHelper.makeOutputDir(basePath, "test-output");
 
     @Test
-    @UnitTestMethod(target = TestTranslationEngine.class, name = "writeOutput", args = { Writer.class, Object.class,
+    @UnitTestMethod(target = TestTranslationEngine.class, name = "writeOutput", args = { Path.class, Object.class,
             Optional.class })
     public void testWriteOutput() throws IOException {
         String fileName = "writeOutputFromEngine_1-testOutput.json";
         String fileName2 = "writeOutputFromEngine_2-testOutput.json";
 
-        TestResourceHelper.createTestOutputFile(filePath, fileName);
-        TestResourceHelper.createTestOutputFile(filePath, fileName2);
+        ResourceHelper.createOutputFile(filePath, fileName);
+        ResourceHelper.createOutputFile(filePath, fileName2);
 
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
@@ -53,13 +52,13 @@ public class AT_TestTranslationEngine {
     }
 
     @Test
-    @UnitTestMethod(target = TestTranslationEngine.class, name = "readInput", args = { Reader.class, Class.class })
+    @UnitTestMethod(target = TestTranslationEngine.class, name = "readInput", args = { Path.class, Class.class })
     public void testReadInput() throws IOException {
         String fileName = "readInputFromEngine_1-testOutput.json";
         String fileName2 = "readInputFromEngine_2-testOutput.json";
 
-        TestResourceHelper.createTestOutputFile(filePath, fileName);
-        TestResourceHelper.createTestOutputFile(filePath, fileName2);
+        ResourceHelper.createOutputFile(filePath, fileName);
+        ResourceHelper.createOutputFile(filePath, fileName2);
 
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();

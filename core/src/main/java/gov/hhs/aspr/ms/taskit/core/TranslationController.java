@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -13,7 +14,7 @@ import java.util.Set;
 
 import org.apache.commons.math3.util.Pair;
 
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
  * The TranslatorController serves as the master of cerimonies for translating
@@ -31,11 +32,11 @@ public final class TranslationController {
     }
 
     final static class Data {
-        protected Map<Class<? extends TranslationEngine>, TranslationEngine> translationEngines = new LinkedHashMap<>();
+        protected Set<TranslationEngine> translationEngines = new LinkedHashSet<>();
         protected final List<Translator> translators = new ArrayList<>();
         protected final Map<Path, Class<?>> inputFilePathMap = new LinkedHashMap<>();
         protected final Map<Path, TranslationEngineType> inputFilePathEngine = new LinkedHashMap<>();
-        protected final Map<Pair<Class<?>, Integer>, Path> outputFilePathMap = new LinkedHashMap<>();
+        protected final Map<String, Path> outputFilePathMap = new LinkedHashMap<>();
         protected final Map<Path, TranslationEngineType> outputFilePathEngine = new LinkedHashMap<>();
         protected final Map<Class<?>, Class<?>> parentChildClassRelationshipMap = new LinkedHashMap<>();
 
@@ -83,7 +84,7 @@ public final class TranslationController {
                 throw new ContractException(CoreTranslationError.NULL_TRANSLATION_ENGINE,
                         "No TranslationEngine Builders were added");
             }
-            for (TranslationEngine engine : this.data.translationEngines.values()) {
+            for (TranslationEngine engine : this.data.translationEngines) {
                 validateTranslationEngineNotNull(engine);
             }
         }
@@ -145,7 +146,8 @@ public final class TranslationController {
 
         /**
          * Adds the path and class ref to be written to after building via
-         * {@link TranslationController#writeOutput} with a scenario id of 0
+         * {@link TranslationController#writeOutput} with the given classRef and
+         * scenario id of 0 as the key
          * 
          * @throws ContractException
          *                           <ul>
@@ -155,11 +157,13 @@ public final class TranslationController {
          *                           if classRef is null</li>
          *                           <li>{@linkplain CoreTranslationError#DUPLICATE_OUTPUT_PATH}
          *                           if filePath has already been added</li>
-         *                           <li>{@linkplain CoreTranslationError#DUPLICATE_CLASSREF_SCENARIO_PAIR}
+         *                           <li>{@linkplain CoreTranslationError#DUPLICATE_OUTPUT_PATH_KEY}
          *                           if the classRef and scenarioId pair has already
          *                           been added</li>
          *                           <li>{@linkplain CoreTranslationError#INVALID_OUTPUT_PATH}
-         *                           if filePath does not exist on the system</li>
+         *                           if filePath does not exist on the system. Note this
+         *                           check is for the folder, not the file. The file
+         *                           will be created if necessary by the writer</li>
          *                           </ul>
          */
         public Builder addOutputFilePath(Path filePath, Class<?> classRef,
@@ -169,7 +173,8 @@ public final class TranslationController {
 
         /**
          * Adds the path and class ref to be written to after building via
-         * {@link TranslationController#writeOutput} with the given scenarioId
+         * {@link TranslationController#writeOutput} with the given classRef and
+         * scenarioId as the key
          * 
          * @throws ContractException
          *                           <ul>
@@ -179,23 +184,47 @@ public final class TranslationController {
          *                           if classRef is null</li>
          *                           <li>{@linkplain CoreTranslationError#DUPLICATE_OUTPUT_PATH}
          *                           if filePath has already been added</li>
-         *                           <li>{@linkplain CoreTranslationError#DUPLICATE_CLASSREF_SCENARIO_PAIR}
+         *                           <li>{@linkplain CoreTranslationError#DUPLICATE_OUTPUT_PATH_KEY}
          *                           if the classRef and scenarioId pair has already
          *                           been added</li>
          *                           <li>{@linkplain CoreTranslationError#INVALID_OUTPUT_PATH}
-         *                           if filePath does not exist on the system</li>
+         *                           if filePath does not exist on the system. Note this
+         *                           check is for the folder, not the file. The file
+         *                           will be created if necessary by the writer</li>
          *                           </ul>
          */
         public Builder addOutputFilePath(Path filePath, Class<?> classRef, Integer scenarioId,
                 TranslationEngineType translationEngineType) {
-            validateFilePathNotNull(filePath);
             validateClassRefNotNull(classRef);
+
+            return this.addOutputFilePath(filePath, classRef.getName() + ":" + scenarioId, translationEngineType);
+        }
+
+        /**
+         * Adds the path and class ref to be written to after building via
+         * {@link TranslationController#writeOutput} with the given key
+         * 
+         * @throws ContractException
+         *                           <ul>
+         *                           <li>{@linkplain CoreTranslationError#NULL_PATH} if
+         *                           filePath is null</li>
+         *                           <li>{@linkplain CoreTranslationError#DUPLICATE_OUTPUT_PATH}
+         *                           if filePath has already been added</li>
+         *                           <li>{@linkplain CoreTranslationError#DUPLICATE_OUTPUT_PATH_KEY}
+         *                           if the classRef and scenarioId pair has already
+         *                           been added</li>
+         *                           <li>{@linkplain CoreTranslationError#INVALID_OUTPUT_PATH}
+         *                           if filePath does not exist on the system. Note this
+         *                           check is for the folder, not the file. The file
+         *                           will be created if necessary by the writer</li>
+         *                           </ul>
+         */
+        public Builder addOutputFilePath(Path filePath, String key, TranslationEngineType translationEngineType) {
+            validateFilePathNotNull(filePath);
             validatePathNotDuplicate(filePath, false, true);
 
-            Pair<Class<?>, Integer> key = new Pair<>(classRef, scenarioId);
-
             if (this.data.outputFilePathMap.containsKey(key)) {
-                throw new ContractException(CoreTranslationError.DUPLICATE_CLASSREF_SCENARIO_PAIR);
+                throw new ContractException(CoreTranslationError.DUPLICATE_OUTPUT_PATH_KEY);
             }
 
             if (!filePath.getParent().toFile().exists()) {
@@ -226,15 +255,15 @@ public final class TranslationController {
          *                           added</li>
          *                           </ul>
          */
-        public <M extends U, U> Builder addParentChildClassRelationship(Class<M> classRef, Class<U> markerInterface) {
+        public <M extends U, U> Builder addParentChildClassRelationship(Class<M> classRef, Class<U> parentClassRef) {
             validateClassRefNotNull(classRef);
-            validateClassRefNotNull(markerInterface);
+            validateClassRefNotNull(parentClassRef);
 
             if (this.data.parentChildClassRelationshipMap.containsKey(classRef)) {
                 throw new ContractException(CoreTranslationError.DUPLICATE_CLASSREF);
             }
 
-            this.data.parentChildClassRelationshipMap.put(classRef, markerInterface);
+            this.data.parentChildClassRelationshipMap.put(classRef, parentClassRef);
             return this;
         }
 
@@ -250,7 +279,7 @@ public final class TranslationController {
         public Builder addTranslationEngine(TranslationEngine translationEngine) {
             validateTranslationEngineNotNull(translationEngine);
 
-            this.data.translationEngines.put(translationEngine.getClass(), translationEngine);
+            this.data.translationEngines.add(translationEngine);
 
             Map<Class<?>, Class<?>> childToParentClassMap = translationEngine.getChildParentClassMap();
 
@@ -313,13 +342,16 @@ public final class TranslationController {
     }
 
     void initTranslationEngines() {
-        for (TranslationEngine translationEngine : this.data.translationEngines.values()) {
+        for (TranslationEngine translationEngine : this.data.translationEngines) {
             translationEngine.translationSpecsAreInitialized();
 
             this.translationEngines.put(translationEngine.getTranslationEngineType(), translationEngine);
             this.translationEngineClassToTypeMap.put(translationEngine.getClass(),
                     translationEngine.getTranslationEngineType());
         }
+
+        // since we are making a new mapping, clear the original set in the data
+        this.data.translationEngines.clear();
     }
 
     void validateTranslationEngine(TranslationEngine translationEngine) {
@@ -362,7 +394,6 @@ public final class TranslationController {
         }
     }
 
-
     /**
      * passes every input path and classRef to
      * the TranslationEngine via
@@ -383,34 +414,54 @@ public final class TranslationController {
     /**
      * Given the classRef and scenarioId, find the given outputFilePath. If the
      * classRef Scenario pair has been added, that is returned. Otherwise, checks to
-     * see if the classRef exists in the markerInterfaceClassMap and if so, returns
+     * see if the classRef exists in the parentChildClassRelationshipMap and if so,
+     * returns
      * the resulting classRef scenarioId pair
      * 
      * @param <M> the childClass
      * @param <U> the optional parentClass/MarkerInterfaceClass
      */
-    <M extends U, U> Pair<Path, Optional<Class<U>>> getOutputPath(Class<M> classRef, Integer scenarioId) {
-        Pair<Class<?>, Integer> key = new Pair<>(classRef, scenarioId);
+    <M extends U, U> Pair<String, Optional<Class<U>>> getOutputPathKey(Class<M> classRef, Integer scenarioId) {
+        String key = classRef.getName() + ":" + scenarioId;
 
         if (this.data.outputFilePathMap.containsKey(key)) {
-            return new Pair<>(this.data.outputFilePathMap.get(key), Optional.empty());
+            return new Pair<>(key, Optional.empty());
         }
 
         if (this.data.parentChildClassRelationshipMap.containsKey(classRef)) {
             // can safely cast because of type checking when adding to the
-            // markerInterfaceClassMap
+            // parentChildClassRelationshipMap
             @SuppressWarnings("unchecked")
             Class<U> parentClass = (Class<U>) this.data.parentChildClassRelationshipMap.get(classRef);
 
-            key = new Pair<>(parentClass, scenarioId);
+            key = parentClass.getName() + ":" + scenarioId;
 
             if (this.data.outputFilePathMap.containsKey(key)) {
-                return new Pair<>(this.data.outputFilePathMap.get(key), Optional.of(parentClass));
+                return new Pair<>(key, Optional.of(parentClass));
             }
         }
 
         throw new ContractException(CoreTranslationError.INVALID_OUTPUT_CLASSREF,
                 "No path was provided for " + classRef.getName());
+    }
+
+    /**
+     * Given the classRef and scenarioId, find the given outputFilePath. If the
+     * classRef Scenario pair has been added, that is returned. Otherwise, checks to
+     * see if the classRef exists in the parentChildClassRelationshipMap and if so,
+     * returns
+     * the resulting classRef scenarioId pair
+     * 
+     * @param <M> the childClass
+     * @param <U> the optional parentClass/MarkerInterfaceClass
+     */
+    <M extends U, U> Path getOutputPath(String key) {
+        if (this.data.outputFilePathMap.containsKey(key)) {
+            return this.data.outputFilePathMap.get(key);
+        }
+
+        throw new ContractException(CoreTranslationError.INVALID_OUTPUT_CLASSREF,
+                "No path was provided for " + key);
     }
 
     /**
@@ -433,6 +484,28 @@ public final class TranslationController {
     public <T> void writeOutput(List<T> objects) {
         for (T object : objects) {
             this.writeOutput(object);
+        }
+    }
+
+    /**
+     * takes the list of objects and writes each object out to it's corresponding
+     * outputFilePath using the supplied key, if it exists
+     * <p>
+     * internally calls {@link TranslationController#writeOutput(Object)}
+     * 
+     * @param <T> the type of the list of obects to write to output
+     * @throws ContractException
+     *                           <ul>
+     *                           <li>{@linkplain CoreTranslationError#INVALID_OUTPUT_CLASSREF}
+     *                           if the supplied key has no valid outputFilePath
+     *                           mapping</li>
+     *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATION_ENGINE}
+     *                           if translationEngine is null</li>
+     *                           </ul>
+     */
+    public <T> void writeOutput(Map<String, T> objects) {
+        for (String key : objects.keySet()) {
+            this.writeOutput(objects.get(key), key);
         }
     }
 
@@ -502,14 +575,37 @@ public final class TranslationController {
         // this gives an unchecked warning, surprisingly
         Class<M> classRef = (Class<M>) object.getClass();
 
-        Pair<Path, Optional<Class<U>>> pathPair = getOutputPath(classRef, scenarioId);
-        Path path = pathPair.getFirst();
+        Pair<String, Optional<Class<U>>> keyPair = getOutputPathKey(classRef, scenarioId);
+
+        this.writeOutput(object, keyPair.getFirst(), keyPair.getSecond());
+    }
+
+    /**
+     * takes the given object and scenarioId pair and writes it out to it's
+     * corresponding outputFilePath, if it exists
+     * 
+     * @param <M> the classType of the object
+     * @throws ContractException
+     *                           <ul>
+     *                           <li>{@linkplain CoreTranslationError#INVALID_OUTPUT_CLASSREF}
+     *                           if the supplied key has no valid outputFilePath
+     *                           mapping</li>
+     *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATION_ENGINE}
+     *                           if translationEngine is null</li>
+     *                           </ul>
+     */
+    public <M> void writeOutput(M object, String key) {
+       this.writeOutput(object, key, Optional.empty());
+    }
+
+    <M extends U, U> void writeOutput(M object, String key, Optional<Class<U>> parentClassRef) {
+        Path path = getOutputPath(key);
+
         TranslationEngineType type = this.data.outputFilePathEngine.get(path);
         TranslationEngine translationEngine = this.translationEngines.get(type);
 
-        this.writeOutput(path, object, pathPair.getSecond(), translationEngine);
+        this.writeOutput(path, object, parentClassRef, translationEngine);
     }
-
     /**
      * Searches the list of read in objects and returns the first Object found of
      * the given classRef

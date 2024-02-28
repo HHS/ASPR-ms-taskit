@@ -1,6 +1,6 @@
 package gov.hhs.aspr.ms.taskit.protobuf;
 
-import util.errors.ContractError;
+import gov.hhs.aspr.ms.util.errors.ContractError;
 
 public enum ProtobufCoreTranslationError implements ContractError {
     INVALID_INPUT_CLASS("The input class is neither a Protobuf Message, nor a Protobuf Enum"),

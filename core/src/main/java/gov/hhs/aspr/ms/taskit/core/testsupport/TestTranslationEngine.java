@@ -124,6 +124,7 @@ public class TestTranslationEngine extends TranslationEngine {
         FileWriter writer = new FileWriter(path.toFile());
         writer.write(stringToWrite);
         writer.flush();
+        writer.close();
     }
 
     @Override

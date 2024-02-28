@@ -8,7 +8,7 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestObjectTranslator;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestObjectWrapper;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testcomplexobject.translationSpecs.TestProtobufComplexObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testobject.translationSpecs.TestProtobufObjectTranslationSpec;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 public final class ProtobufTranslationEngineTestHelper {
     private ProtobufTranslationEngineTestHelper() {

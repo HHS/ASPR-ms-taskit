@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import gov.hhs.aspr.ms.taskit.core.Translator;
 import gov.hhs.aspr.ms.taskit.core.TranslatorId;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testcomplexobject.TestComplexObjectTranslatorId;
-import util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 
 public class AT_TestObjectTranslator {
 

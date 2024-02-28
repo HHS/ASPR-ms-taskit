@@ -1,12 +1,12 @@
 package gov.hhs.aspr.ms.taskit.core;
 
-import util.errors.ContractError;
+import gov.hhs.aspr.ms.util.errors.ContractError;
 
 public enum CoreTranslationError implements ContractError {
 
     CIRCULAR_TRANSLATOR_DEPENDENCIES("Circular translator dependencies: "),
     DUPLICATE_CLASSREF("Duplicate ClassRef"),
-    DUPLICATE_CLASSREF_SCENARIO_PAIR("Duplicate ClassRef and Scenario Pair"),
+    DUPLICATE_OUTPUT_PATH_KEY("Duplicate ClassRef and Scenario Pair"),
     DUPLICATE_DEPENDENCY("Duplicate Dependency"),
     DUPLICATE_INPUT_PATH("Duplicate Input Path"),
     DUPLICATE_OUTPUT_PATH("Duplicate Output Path"),
@@ -40,7 +40,9 @@ public enum CoreTranslationError implements ContractError {
             "Translators were added to the builder but were not initialized. Make sure to call super.initTranslators() during your custom engine build method"),
     UNKNOWN_OBJECT("Object is not Translatable by this TranslationSpec"),
     UNKNWON_TRANSLATION_ENGINE_TYPE("Translation Engine Type was not set"),
-    UNKNOWN_CLASSREF("No object has been read in with the specified classRef");
+    UNKNOWN_CLASSREF("No object has been read in with the specified classRef"),
+    UNKNOWN_OUTPUT_PATH_KEY("The provided key does not exist"),
+    MISSING_OUTPUT_PATH_KEYS("The number of keys provided does not match the number of objects to be written");
 
     private final String description;
 

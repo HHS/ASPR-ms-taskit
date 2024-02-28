@@ -6,16 +6,16 @@
     <!-- parent -->
     <parent>
         <groupId>gov.hhs.aspr.ms.taskit</groupId>
-        <artifactId>taskit</artifactId>
+        <artifactId>parent</artifactId>
         <version>${revision}</version>
     </parent>
 
     <!-- Artifact -->
     <groupId>gov.hhs.aspr.ms.taskit</groupId>
-    <artifactId>taskit-protobuf</artifactId>
+    <artifactId>protobuf</artifactId>
     <packaging>jar</packaging>
 
-    <name>Translation and Serialization Toolkit: Protobuf</name>
+    <name>Translation and Serialization Toolkit (Taskit): Protobuf</name>
     <description>A toolkit that aids in the conversion between Protobuf Java objects and application Java objects.</description>
 
     <!-- Properties -->
@@ -23,21 +23,20 @@
         <!-- plugin versions -->
         <os-maven-plugin.version>1.7.1</os-maven-plugin.version>
         <protobuf-maven-plugin.version>0.6.1</protobuf-maven-plugin.version>
-        <build-helper-maven-plugin.version>3.3.0</build-helper-maven-plugin.version>
-        <maven-replacer-plugin.version>1.3.2</maven-replacer-plugin.version>
+        <build-helper-maven-plugin.version>3.5.0</build-helper-maven-plugin.version>
+        <maven-replacer-plugin.version>1.4.1</maven-replacer-plugin.version>
 
         <!-- dependency versions -->
-        <taskit-core.version>${revision}</taskit-core.version>
-        <protobuf.version>3.25.2</protobuf.version>
-        <protoc.version>3.24.4</protoc.version>
+        <protobuf.version>3.25.3</protobuf.version>
+        <protoc.version>3.25.3</protoc.version>
     </properties>
 
     <!-- Dependencies -->
     <dependencies>
         <dependency>
             <groupId>gov.hhs.aspr.ms.taskit</groupId>
-            <artifactId>taskit-core</artifactId>
-            <version>${taskit-core.version}</version>
+            <artifactId>core</artifactId>
+            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>com.google.protobuf</groupId>
@@ -48,6 +47,13 @@
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java-util</artifactId>
             <version>${protobuf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protoc</artifactId>
+            <version>${protoc.version}</version>
+            <type>pom</type>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -163,5 +169,6 @@
 
         </plugins>
     </build>
+
 
 </project>

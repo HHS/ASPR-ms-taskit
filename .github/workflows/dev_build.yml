@@ -42,7 +42,7 @@ jobs:
     - name: Build Util
       run: mvn clean install -DskipTests --file util/pom.xml
     - name: Build Taskit
-      run: mvn clean package --file pom.xml
+      run: mvn clean install --file pom.xml
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
    # - name: Update dependency graph

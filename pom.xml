@@ -5,7 +5,7 @@
 
     <!-- Artifact -->
     <groupId>gov.hhs.aspr.ms.taskit</groupId>
-    <artifactId>taskit</artifactId>
+    <artifactId>parent</artifactId>
     <version>${revision}</version>
     <packaging>pom</packaging>
 
@@ -41,7 +41,7 @@
     <!-- Properties -->
     <properties>
         <!-- Version -->
-        <revision>3.1.2</revision>
+        <revision>3.2.0</revision>
 
         <!-- basic project properties -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -52,11 +52,14 @@
         <flatten-maven-plugin.version>1.6.0</flatten-maven-plugin.version>
         <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
         <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
-        <maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
+        <maven-install-plugin.version>3.1.1</maven-install-plugin.version>
+        <maven-deploy-plugin.version>3.1.1</maven-deploy-plugin.version>
+        <maven-javadoc-plugin.version>3.6.3</maven-javadoc-plugin.version>
 
         <!-- dependency versions -->
-        <util.version>4.0.0</util.version>
-        <junit-jupiter-engine.version>5.10.1</junit-jupiter-engine.version>
+        <gson.version>2.10.1</gson.version>
+        <util.version>4.1.0</util.version>
+        <junit-jupiter-engine.version>5.10.2</junit-jupiter-engine.version>
         <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version>
     </properties>
 
@@ -66,14 +69,18 @@
             <dependency>
                 <groupId>com.google.code.gson</groupId>
                 <artifactId>gson</artifactId>
-                <version>2.10.1</version>
-                <scope>provided</scope>
+                <version>${gson.version}</version>
             </dependency>
             <dependency>
                 <groupId>gov.hhs.aspr.ms</groupId>
                 <artifactId>util</artifactId>
                 <version>${util.version}</version>
                 <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-utils</artifactId>
+                <version>3.4.2</version>
             </dependency>
             <dependency>
                 <groupId>org.jacoco</groupId>
@@ -153,6 +160,16 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>${maven-install-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>${maven-deploy-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>${maven-javadoc-plugin.version}</version>
                 </plugin>
@@ -174,6 +191,8 @@
                         </goals>
                         <configuration>
                             <updatePomFile>true</updatePomFile>
+                            <flattenMode>ossrh</flattenMode>
+                            <flattenDependencyMode>all</flattenDependencyMode>
                         </configuration>
                     </execution>
                     <!-- ensure proper cleanup -->
@@ -198,56 +217,6 @@
                 </configuration>
             </plugin>
 
-            <!-- Jacoco Coverage Check -->
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>default-prepare-agent</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>default-report</id>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>default-check</id>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <rule>
-                                    <element>BUNDLE</element>
-                                    <limits>
-                                        <limit>
-                                            <counter>LINE</counter>
-                                            <value>COVEREDRATIO</value>
-                                            <minimum>0.95</minimum>
-                                        </limit>
-                                        <limit>
-                                            <counter>BRANCH</counter>
-                                            <value>COVEREDRATIO</value>
-                                            <minimum>0.95</minimum>
-                                        </limit>
-                                        <limit>
-                                            <counter>INSTRUCTION</counter>
-                                            <value>COVEREDRATIO</value>
-                                            <minimum>0.95</minimum>
-                                        </limit>
-                                    </limits>
-                                </rule>
-                            </rules>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
             <!-- Attachs source jar to project -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -262,6 +231,26 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- for skipping parent install-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+                <inherited>false</inherited>
+            </plugin>
+
+            <!-- for skipping parent deployment -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+                <inherited>false</inherited>
+            </plugin>
         </plugins>
     </build>
 
@@ -270,6 +259,56 @@
             <id>release</id>
             <build>
                 <plugins>
+
+                    <!-- Jacoco Coverage Check -->
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>default-prepare-agent</id>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>default-report</id>
+                                <goals>
+                                    <goal>report</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>default-check</id>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                                <configuration>
+                                    <rules>
+                                        <rule>
+                                            <element>BUNDLE</element>
+                                            <limits>
+                                                <limit>
+                                                    <counter>LINE</counter>
+                                                    <value>COVEREDRATIO</value>
+                                                    <minimum>0.95</minimum>
+                                                </limit>
+                                                <limit>
+                                                    <counter>BRANCH</counter>
+                                                    <value>COVEREDRATIO</value>
+                                                    <minimum>0.95</minimum>
+                                                </limit>
+                                                <limit>
+                                                    <counter>INSTRUCTION</counter>
+                                                    <value>COVEREDRATIO</value>
+                                                    <minimum>0.95</minimum>
+                                                </limit>
+                                            </limits>
+                                        </rule>
+                                    </rules>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
                     <!--Attaches javadoc jar to project -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>

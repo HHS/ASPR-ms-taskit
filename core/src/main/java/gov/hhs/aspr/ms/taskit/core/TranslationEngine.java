@@ -12,11 +12,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import util.errors.ContractException;
-import util.graph.Graph;
-import util.graph.GraphDepthEvaluator;
-import util.graph.Graphs;
-import util.graph.MutableGraph;
+import gov.hhs.aspr.ms.util.errors.ContractException;
+import gov.hhs.aspr.ms.util.graph.Graph;
+import gov.hhs.aspr.ms.util.graph.GraphDepthEvaluator;
+import gov.hhs.aspr.ms.util.graph.Graphs;
+import gov.hhs.aspr.ms.util.graph.MutableGraph;
 
 /**
  * Main Translator Class Initializes all {@link TranslationSpec}s and maintains
