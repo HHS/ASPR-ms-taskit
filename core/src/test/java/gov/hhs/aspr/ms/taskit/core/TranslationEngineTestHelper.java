@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import gov.hhs.aspr.ms.taskit.core.testsupport.testcomplexobject.translationSpecs.TestComplexObjectTranslationSpec;
-import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestObjectTranslator;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestObjectWrapper;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.translationSpecs.TestObjectTranslationSpec;
@@ -148,29 +147,5 @@ public final class TranslationEngineTestHelper {
         });
 
         assertEquals(CoreTranslationError.DUPLICATE_TRANSLATOR, contractException.getErrorType());
-    }
-
-    public static void testAddParentChildClassRelationship(TranslationEngine.Builder builder) {
-        builder.addParentChildClassRelationship(TestAppObject.class, Object.class);
-
-        // preconditions
-        ContractException contractException = assertThrows(ContractException.class, () -> {
-            builder.addParentChildClassRelationship(null, Object.class);
-        });
-
-        assertEquals(CoreTranslationError.NULL_CLASS_REF, contractException.getErrorType());
-
-        contractException = assertThrows(ContractException.class, () -> {
-            builder.addParentChildClassRelationship(TestAppObject.class, null);
-        });
-
-        assertEquals(CoreTranslationError.NULL_CLASS_REF, contractException.getErrorType());
-
-        contractException = assertThrows(ContractException.class, () -> {
-            builder.addParentChildClassRelationship(TestAppObject.class, Object.class)
-                    .addParentChildClassRelationship(TestAppObject.class, Object.class);
-        });
-
-        assertEquals(CoreTranslationError.DUPLICATE_CLASSREF, contractException.getErrorType());
     }
 }

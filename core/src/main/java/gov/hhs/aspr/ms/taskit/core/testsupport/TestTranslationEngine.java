@@ -98,13 +98,6 @@ public class TestTranslationEngine extends TranslationEngine {
 
             return this;
         }
-
-        @Override
-        public <M extends U, U> Builder addParentChildClassRelationship(Class<M> classRef, Class<U> markerInterface) {
-            _addParentChildClassRelationship(classRef, markerInterface);
-
-            return this;
-        }
     }
 
     public static Builder builder() {
