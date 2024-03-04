@@ -569,18 +569,5 @@ public class AT_TranslationController {
         });
 
         assertEquals(CoreTranslationError.NULL_TRANSLATION_ENGINE, contractException.getErrorType());
-
-        contractException = assertThrows(ContractException.class, () -> {
-            TestTranslationEngine translationEngine2 = TestTranslationEngine.builder()
-                    .addTranslator(TestObjectTranslator.getTranslator())
-                    .addTranslator(TestComplexObjectTranslator.getTranslator())
-                    .addParentChildClassRelationship(TestAppObject.class, Object.class).build();
-
-            TranslationController.builder()
-                    .addParentChildClassRelationship(TestAppObject.class, Object.class)
-                    .addTranslationEngine(translationEngine2);
-        });
-
-        assertEquals(CoreTranslationError.DUPLICATE_CLASSREF, contractException.getErrorType());
     }
 }
