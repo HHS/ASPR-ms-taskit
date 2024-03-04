@@ -449,6 +449,13 @@ public class AT_ProtobufTranslationEngine {
     }
 
     @Test
+    @UnitTestMethod(target = ProtobufTranslationEngine.Builder.class, name = "addParentChildClassRelationship", args = {
+            Class.class, Class.class })
+    public void testAddParentChildClassRelationship() {
+        ProtobufTranslationEngineTestHelper.testAddParentChildClassRelationship(ProtobufTranslationEngine.builder());
+    }
+    
+    @Test
     @UnitTestMethod(target = ProtobufTranslationEngine.Builder.class, name = "setIgnoringUnknownFields", args = {
             boolean.class })
     public void testSetIgnoringUnknownFields() {
