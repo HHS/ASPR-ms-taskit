@@ -181,6 +181,22 @@ public final class TranslationController {
 
             this.data.translationEngines.add(translationEngine);
 
+            Map<Class<?>, Class<?>> childToParentClassMap = translationEngine.getChildParentClassMap();
+
+            for (Class<?> childClassRef : childToParentClassMap.keySet()) {
+                // Need to duplicate code here because the map doesn't provide the type safety
+                // that is required by the addParentChildClassRelationship method
+                Class<?> parentClassRef = childToParentClassMap.get(childClassRef);
+
+                // Note: no 'class is not null' validation here because it was validated prior
+                // to being put into the engine
+                if (this.data.parentChildClassRelationshipMap.containsKey(childClassRef)) {
+                    throw new ContractException(CoreTranslationError.DUPLICATE_CLASSREF);
+                }
+
+                this.data.parentChildClassRelationshipMap.put(childClassRef, parentClassRef);
+            }
+            
             return this;
         }
     }

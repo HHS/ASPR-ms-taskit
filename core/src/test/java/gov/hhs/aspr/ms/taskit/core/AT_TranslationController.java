@@ -228,7 +228,9 @@ public class AT_TranslationController {
 
         TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
-                .addTranslator(TestComplexObjectTranslator.getTranslator()).build();
+                .addTranslator(TestComplexObjectTranslator.getTranslator())
+                .addParentChildClassRelationship(TestAppChildObject.class, TestAppObject.class)
+                .build();
 
         TranslationController translationController = TranslationController.builder()
                 .addTranslationEngine(testTranslationEngine).build();
@@ -238,12 +240,17 @@ public class AT_TranslationController {
         translationController.writeOutput(expectedAppObject, filePath.resolve(fileName),
                 TranslationEngineType.CUSTOM);
 
+        TestAppChildObject testAppChildObject = TestObjectUtil.getChildAppFromApp(expectedAppObject);
+
+        translationController.writeOutput(testAppChildObject, filePath.resolve(fileName),
+                TranslationEngineType.CUSTOM);
         // preconditions
-        // the runtime exception is covered by the test - testMakeFileWriter()
-        // the contract exception for CoreTranslationError.INVALID_OUTPUT_CLASSREF is
-        // covered by the test - testGetOutputPath()
-        // the contract exception for CoreTranslationError.NULL_TRANSLATION_ENGINE is
-        // covered by the test - testValidateTranslationEngine()
+        // CoreTranslationError.NULL_OBJECT_FOR_TRANSLATION is tested by
+        // testWriteOutput_Base()
+        // CoreTranslationError#NULL_PATH is tested by testWriteOutput_Base()
+        // CoreTranslationError#INVALID_OUTPUT_PATH is tested by testWriteOutput_Base()
+        // CoreTranslationError#NULL_TRANSLATION_ENGINE is tested by
+        // testWriteOutput_Base()
     }
 
     @Test
@@ -276,6 +283,8 @@ public class AT_TranslationController {
         });
 
         assertEquals(CoreTranslationError.NULL_CLASS_REF, contractException.getErrorType());
+
+        // preconditions
         // CoreTranslationError.NULL_OBJECT_FOR_TRANSLATION is tested by
         // testWriteOutput_Base()
         // CoreTranslationError#NULL_PATH is tested by testWriteOutput_Base()
@@ -559,7 +568,8 @@ public class AT_TranslationController {
     public void testAddTransationEngine() {
         TestTranslationEngine translationEngine = TestTranslationEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
-                .addTranslator(TestComplexObjectTranslator.getTranslator()).build();
+                .addTranslator(TestComplexObjectTranslator.getTranslator())
+                .addParentChildClassRelationship(TestAppObject.class, Object.class).build();
 
         TranslationController.builder().addTranslationEngine(translationEngine).build();
 
@@ -569,5 +579,18 @@ public class AT_TranslationController {
         });
 
         assertEquals(CoreTranslationError.NULL_TRANSLATION_ENGINE, contractException.getErrorType());
+
+        contractException = assertThrows(ContractException.class, () -> {
+            TestTranslationEngine translationEngine2 = TestTranslationEngine.builder()
+                    .addTranslator(TestObjectTranslator.getTranslator())
+                    .addTranslator(TestComplexObjectTranslator.getTranslator())
+                    .addParentChildClassRelationship(TestAppObject.class, Object.class).build();
+
+            TranslationController.builder()
+                    .addParentChildClassRelationship(TestAppObject.class, Object.class)
+                    .addTranslationEngine(translationEngine2);
+        });
+
+        assertEquals(CoreTranslationError.DUPLICATE_CLASSREF, contractException.getErrorType());
     }
 }
