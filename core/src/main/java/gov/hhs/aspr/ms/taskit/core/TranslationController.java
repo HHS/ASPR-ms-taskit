@@ -34,6 +34,7 @@ public final class TranslationController {
         protected final List<Translator> translators = new ArrayList<>();
         protected final Map<Path, Class<?>> inputFilePathMap = new LinkedHashMap<>();
         protected final Map<Path, TranslationEngineType> inputFilePathEngine = new LinkedHashMap<>();
+        protected final Map<Class<?>, Class<?>> parentChildClassRelationshipMap = new LinkedHashMap<>();
 
         Data() {
         }
@@ -136,6 +137,37 @@ public final class TranslationController {
         }
 
         /**
+         * Adds the given classRef markerInterace mapping.
+         * <p>
+         * explicitly used when calling {@link TranslationController#writeOutput} with a
+         * class for which a classRef ScenarioId pair does not exist and/or the need to
+         * output the given class as the markerInterface instead of the concrete class
+         * 
+         * @param <M> the childClass
+         * @param <U> the parentClass/MarkerInterfaceClass
+         * @throws ContractException
+         *                           <ul>
+         *                           <li>{@linkplain CoreTranslationError#NULL_CLASS_REF}
+         *                           if classRef is null or if markerInterface is
+         *                           null</li>
+         *                           <li>{@linkplain CoreTranslationError#DUPLICATE_CLASSREF}
+         *                           if child parent relationship has already been
+         *                           added</li>
+         *                           </ul>
+         */
+        public <M extends U, U> Builder addParentChildClassRelationship(Class<M> classRef, Class<U> parentClassRef) {
+            validateClassRefNotNull(classRef);
+            validateClassRefNotNull(parentClassRef);
+
+            if (this.data.parentChildClassRelationshipMap.containsKey(classRef)) {
+                throw new ContractException(CoreTranslationError.DUPLICATE_CLASSREF);
+            }
+
+            this.data.parentChildClassRelationshipMap.put(classRef, parentClassRef);
+            return this;
+        }
+
+        /**
          * Adds a {@link TranslationEngine.Builder}
          * 
          * @throws ContractException
@@ -149,9 +181,24 @@ public final class TranslationController {
 
             this.data.translationEngines.add(translationEngine);
 
+            Map<Class<?>, Class<?>> childToParentClassMap = translationEngine.getChildParentClassMap();
+
+            for (Class<?> childClassRef : childToParentClassMap.keySet()) {
+                // Need to duplicate code here because the map doesn't provide the type safety
+                // that is required by the addParentChildClassRelationship method
+                Class<?> parentClassRef = childToParentClassMap.get(childClassRef);
+
+                // Note: no 'class is not null' validation here because it was validated prior
+                // to being put into the engine
+                if (this.data.parentChildClassRelationshipMap.containsKey(childClassRef)) {
+                    throw new ContractException(CoreTranslationError.DUPLICATE_CLASSREF);
+                }
+
+                this.data.parentChildClassRelationshipMap.put(childClassRef, parentClassRef);
+            }
+
             return this;
         }
-
     }
 
     /**
@@ -269,7 +316,17 @@ public final class TranslationController {
     public <M extends U, U> void writeOutput(M object, Path path,
             TranslationEngineType translationEngineType) {
 
-        this.writeOutput(object, Optional.empty(), path, translationEngineType);
+        Optional<Class<U>> parentClassRef = Optional.empty();
+
+        if (this.data.parentChildClassRelationshipMap.containsKey(object.getClass())) {
+            // can safely cast because of type checking when adding to the
+            // parentChildClassRelationshipMap
+            @SuppressWarnings("unchecked")
+            Class<U> parentClass = (Class<U>) this.data.parentChildClassRelationshipMap.get(object.getClass());
+
+            parentClassRef = Optional.of(parentClass);
+        }
+        this.writeOutput(object, parentClassRef, path, translationEngineType);
     }
 
     /**

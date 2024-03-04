@@ -235,7 +235,8 @@ public class AT_TranslationController {
 
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
 
-        translationController.writeOutput(expectedAppObject, filePath.resolve(fileName), TranslationEngineType.CUSTOM);
+        translationController.writeOutput(expectedAppObject, filePath.resolve(fileName),
+                TranslationEngineType.CUSTOM);
 
         // preconditions
         // the runtime exception is covered by the test - testMakeFileWriter()
@@ -319,7 +320,8 @@ public class AT_TranslationController {
 
         // if the path is invalid
         contractException = assertThrows(ContractException.class, () -> {
-            translationController.writeOutput(expectedAppObject, Optional.empty(), filePath.resolve("badPath").resolve(fileName),
+            translationController.writeOutput(expectedAppObject, Optional.empty(),
+                    filePath.resolve("badPath").resolve(fileName),
                     TranslationEngineType.CUSTOM);
         });
 
@@ -327,7 +329,8 @@ public class AT_TranslationController {
 
         // if the translation engine is null
         contractException = assertThrows(ContractException.class, () -> {
-            translationController.writeOutput(expectedAppObject, Optional.empty(), filePath.resolve(fileName),
+            translationController.writeOutput(expectedAppObject, Optional.empty(),
+                    filePath.resolve(fileName),
                     TranslationEngineType.UNKNOWN);
         });
 
@@ -352,7 +355,8 @@ public class AT_TranslationController {
 
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
 
-        translationController.writeOutput(expectedAppObject, filePath.resolve(fileName), TranslationEngineType.CUSTOM);
+        translationController.writeOutput(expectedAppObject, filePath.resolve(fileName),
+                TranslationEngineType.CUSTOM);
 
         translationController.readInput();
 
@@ -522,6 +526,34 @@ public class AT_TranslationController {
     }
 
     @Test
+    @UnitTestMethod(target = TranslationController.Builder.class, name = "addParentChildClassRelationship", args = {
+            Class.class, Class.class })
+    public void testAddParentChildClassRelationship() {
+        TranslationController.builder().addParentChildClassRelationship(TestAppObject.class, Object.class);
+
+        // preconditions
+        ContractException contractException = assertThrows(ContractException.class, () -> {
+            TranslationController.builder().addParentChildClassRelationship(null, Object.class);
+        });
+
+        assertEquals(CoreTranslationError.NULL_CLASS_REF, contractException.getErrorType());
+
+        contractException = assertThrows(ContractException.class, () -> {
+            TranslationController.builder().addParentChildClassRelationship(TestAppObject.class, null);
+        });
+
+        assertEquals(CoreTranslationError.NULL_CLASS_REF, contractException.getErrorType());
+
+        contractException = assertThrows(ContractException.class, () -> {
+            TranslationController.builder()
+                    .addParentChildClassRelationship(TestAppObject.class, Object.class)
+                    .addParentChildClassRelationship(TestAppObject.class, Object.class);
+        });
+
+        assertEquals(CoreTranslationError.DUPLICATE_CLASSREF, contractException.getErrorType());
+    }
+
+    @Test
     @UnitTestMethod(target = TranslationController.Builder.class, name = "addTranslationEngine", args = {
             TranslationEngine.class })
     public void testAddTransationEngine() {
@@ -537,5 +569,18 @@ public class AT_TranslationController {
         });
 
         assertEquals(CoreTranslationError.NULL_TRANSLATION_ENGINE, contractException.getErrorType());
+
+        contractException = assertThrows(ContractException.class, () -> {
+            TestTranslationEngine translationEngine2 = TestTranslationEngine.builder()
+                    .addTranslator(TestObjectTranslator.getTranslator())
+                    .addTranslator(TestComplexObjectTranslator.getTranslator())
+                    .addParentChildClassRelationship(TestAppObject.class, Object.class).build();
+
+            TranslationController.builder()
+                    .addParentChildClassRelationship(TestAppObject.class, Object.class)
+                    .addTranslationEngine(translationEngine2);
+        });
+
+        assertEquals(CoreTranslationError.DUPLICATE_CLASSREF, contractException.getErrorType());
     }
 }

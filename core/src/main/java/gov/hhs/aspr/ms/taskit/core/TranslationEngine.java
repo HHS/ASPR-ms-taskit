@@ -37,6 +37,7 @@ public abstract class TranslationEngine {
     protected static class Data {
         protected final Map<Class<?>, BaseTranslationSpec> classToTranslationSpecMap = new LinkedHashMap<>();
         protected final Set<BaseTranslationSpec> translationSpecs = new LinkedHashSet<>();
+        protected Map<Class<?>, Class<?>> childToParentClassMap = new LinkedHashMap<>();
         protected TranslationEngineType translationEngineType = TranslationEngineType.UNKNOWN;
         protected boolean translatorsInitialized = false;
 
@@ -108,6 +109,12 @@ public abstract class TranslationEngine {
         private void validateTranslatorNotNull(Translator translator) {
             if (translator == null) {
                 throw new ContractException(CoreTranslationError.NULL_TRANSLATOR);
+            }
+        }
+
+        private void validateClassRefNotNull(Class<?> classRef) {
+            if (classRef == null) {
+                throw new ContractException(CoreTranslationError.NULL_CLASS_REF);
             }
         }
 
@@ -184,6 +191,38 @@ public abstract class TranslationEngine {
             }
 
             this.translators.add(translator);
+        }
+
+        /**
+         * Adds the given classRef markerInterace mapping.
+         * <p>
+         * explicitly used when calling {@link TranslationController#writeOutput} with a
+         * class for which a classRef ScenarioId pair does not exist and/or the need to
+         * output the given class as the markerInterface instead of the concrete class
+         * 
+         * @param <M> the childClass
+         * @param <U> the parentClass/MarkerInterfaceClass
+         * @throws ContractException
+         *                           <ul>
+         *                           <li>{@linkplain CoreTranslationError#NULL_CLASS_REF}
+         *                           if classRef is null or if markerInterface is
+         *                           null</li>
+         *                           <li>{@linkplain CoreTranslationError#DUPLICATE_CLASSREF}
+         *                           if child parent relationship has already been
+         *                           added</li>
+         *                           </ul>
+         */
+        public abstract <M extends U, U> Builder addParentChildClassRelationship(Class<M> classRef, Class<U> markerInterface);
+
+        protected final <M extends U, U> void _addParentChildClassRelationship(Class<M> classRef, Class<U> markerInterface) {
+            validateClassRefNotNull(classRef);
+            validateClassRefNotNull(markerInterface);
+
+            if (this.data.childToParentClassMap.containsKey(classRef)) {
+                throw new ContractException(CoreTranslationError.DUPLICATE_CLASSREF);
+            }
+
+            this.data.childToParentClassMap.put(classRef, markerInterface);
         }
 
         /*
@@ -345,6 +384,16 @@ public abstract class TranslationEngine {
         if (!this.data.translatorsInitialized) {
             throw new ContractException(CoreTranslationError.UNINITIALIZED_TRANSLATORS);
         }
+    }
+
+    // This is package access so the TranslationController can access it but nothing
+    // else.
+    Map<Class<?>, Class<?>> getChildParentClassMap() {
+        Map<Class<?>, Class<?>> copyMap = new LinkedHashMap<>(this.data.childToParentClassMap);
+
+        this.data.childToParentClassMap = null;
+
+        return copyMap;
     }
 
     /**

@@ -123,6 +123,13 @@ public class AT_TestTranslationEngine {
     }
 
     @Test
+    @UnitTestMethod(target = TestTranslationEngine.Builder.class, name = "addParentChildClassRelationship", args = {
+            Class.class, Class.class })
+    public void testAddParentChildClassRelationship() {
+        TranslationEngineTestHelper.testAddParentChildClassRelationship(TestTranslationEngine.builder());
+    }
+
+    @Test
     @UnitTestMethod(target = TestTranslationEngine.class, name = "hashCode", args = {})
     public void testHashCode() {
         // covered by AT_TranslationEngine#testHashCode
