@@ -78,7 +78,8 @@ public abstract class TranslationEngine {
 
     /**
      * This class contains protected final methods for all of its abstract methods.
-     * All descendant classes of this class MUST call these if you want it to function properly.
+     * All descendant classes of this class MUST call these if you want it to
+     * function properly.
      */
     public abstract static class Builder {
         protected Data data;
@@ -121,6 +122,7 @@ public abstract class TranslationEngine {
         void clearBuilder() {
             this.data = new Data();
         }
+
         /**
          * Builder for the TranslationEngine
          */
@@ -193,7 +195,7 @@ public abstract class TranslationEngine {
             this.translators.add(translator);
         }
 
-                /**
+        /**
          * Adds the given classRef markerInterace mapping.
          * <p>
          * explicitly used when calling {@link TranslationController#writeOutput} with a
@@ -212,9 +214,11 @@ public abstract class TranslationEngine {
          *                           added</li>
          *                           </ul>
          */
-        public abstract <M extends U, U> Builder addParentChildClassRelationship(Class<M> classRef, Class<U> parentClassRef);
+        public abstract <M extends U, U> Builder addParentChildClassRelationship(Class<M> classRef,
+                Class<U> parentClassRef);
 
-        protected final <M extends U, U> void _addParentChildClassRelationship(Class<M> classRef, Class<U> parentClassRef) {
+        protected final <M extends U, U> void _addParentChildClassRelationship(Class<M> classRef,
+                Class<U> parentClassRef) {
             validateClassRefNotNull(classRef);
             validateClassRefNotNull(parentClassRef);
 
@@ -224,6 +228,7 @@ public abstract class TranslationEngine {
 
             this.data.childToParentClassMap.put(classRef, parentClassRef);
         }
+
         /*
          * Goes through the list of translators and orders them based on their
          * dependencies
@@ -385,7 +390,7 @@ public abstract class TranslationEngine {
         }
     }
 
-     // This is package access so the TranslationController can access it but nothing
+    // This is package access so the TranslationController can access it but nothing
     // else.
     Map<Class<?>, Class<?>> getChildParentClassMap() {
         Map<Class<?>, Class<?>> copyMap = new LinkedHashMap<>(this.data.childToParentClassMap);
@@ -394,7 +399,7 @@ public abstract class TranslationEngine {
 
         return copyMap;
     }
-    
+
     /**
      * returns the {@link TranslationEngineType} of this TranslationEngine
      * 
@@ -431,6 +436,7 @@ public abstract class TranslationEngine {
         validateTranslationEngineType();
         validateTranslatorsInitialized();
     }
+
     /**
      * returns whether this translationEngine is initialized or not
      */
@@ -468,7 +474,8 @@ public abstract class TranslationEngine {
      * abstract method that must be implemented by child TranslatorCores that
      * defines how to write to output files
      */
-    protected abstract <U, M extends U> void writeOutput(Path path, M appObject, Optional<Class<U>> superClass) throws IOException;
+    protected abstract <U, M extends U> void writeOutput(Path path, M appObject, Optional<Class<U>> superClass)
+            throws IOException;
 
     /**
      * abstract method that must be implemented by child TranslatorCores that

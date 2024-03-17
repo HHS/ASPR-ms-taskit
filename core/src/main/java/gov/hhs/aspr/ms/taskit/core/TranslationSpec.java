@@ -133,7 +133,7 @@ public abstract class TranslationSpec<I, A> implements BaseTranslationSpec {
 
     void checkInit() {
         if (!this.initialized) {
-            throw new ContractException(CoreTranslationError.UNITIALIZED_TRANSLATION_SPEC);
+            throw new ContractException(CoreTranslationError.UNINITIALIZED_TRANSLATION_SPEC);
         }
     }
 }

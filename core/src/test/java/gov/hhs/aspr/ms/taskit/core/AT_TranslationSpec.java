@@ -117,7 +117,7 @@ public class AT_TranslationSpec {
             testObjectTranslationSpec2.convert(new TestAppObject());
         });
 
-        assertEquals(CoreTranslationError.UNITIALIZED_TRANSLATION_SPEC, contractException.getErrorType());
+        assertEquals(CoreTranslationError.UNINITIALIZED_TRANSLATION_SPEC, contractException.getErrorType());
 
         // unknown object
         contractException = assertThrows(ContractException.class, () -> {
