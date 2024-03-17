@@ -11,6 +11,8 @@ public enum CoreTranslationError implements ContractError {
         DUPLICATE_TRANSLATOR("Duplicate Translator"),
         DUPLICATE_TRANSLATION_SPEC("Duplicate TranslationSpec"),
         INVALID_INPUT_PATH("The given input file path does not exist"),
+        INVALID_OUTPUT_PATH(
+            "The given output file path does not exist. While the file will be created on write, the directory will not."),
         INVALID_TRANSLATION_ENGINE_BUILDER_CLASS_REF(
                         "The given Translation Engine Builder classRef does not match the class of the actual Translation Engine Builder"),
         MISSING_TRANSLATOR("Missing Translator: "),
