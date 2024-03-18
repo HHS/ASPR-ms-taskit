@@ -27,8 +27,8 @@
         <maven-replacer-plugin.version>1.4.1</maven-replacer-plugin.version>
 
         <!-- dependency versions -->
-        <protobuf.version>3.25.3</protobuf.version>
-        <protoc.version>3.25.3</protoc.version>
+        <protobuf.version>4.26.0</protobuf.version>
+        <protoc.version>4.26.0</protoc.version>
     </properties>
 
     <!-- Dependencies -->
