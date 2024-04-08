@@ -18,6 +18,13 @@
     <name>Translation and Serialization Toolkit (Taskit): Protobuf</name>
     <description>A toolkit that aids in the conversion between Protobuf Java objects and application Java objects.</description>
 
+    <!-- SCM Information -->
+    <scm>
+        <connection>scm:git:git://github.com/HHS/aspr-ms-taskit.git</connection>
+        <developerConnection>scm:git:ssh://github.com:HHS/aspr-ms-taskit.git</developerConnection>
+        <url>https://github.com/HHS/aspr-ms-taskit/tree/main/protobuf</url>
+    </scm>
+
     <!-- Properties -->
     <properties>
         <!-- plugin versions -->
