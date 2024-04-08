@@ -57,6 +57,8 @@ Documentation has yet to be created. In the interim, the code is mostly commente
 ## License
 Distributed under the GPLv3 License. See [LICENSE](LICENSE) for more information.
 
+Please read the [HHS vulnerability discloure](https://www.hhs.gov/vulnerability-disclosure-policy/index.html).
+
 
 <!-- MARKDOWN LINKS & IMAGES -->
 [contributors-shield]: https://img.shields.io/github/contributors/HHS/ASPR-ms-taskit

@@ -19,6 +19,10 @@
             <name>GNU GENERAL PUBLIC LICENSE v3</name>
             <url>https://www.gnu.org/licenses/gpl-3.0.en.html</url>
         </license>
+        <license>
+            <name>Vulnerability Disclosure Policy</name>
+            <url>https://www.hhs.gov/vulnerability-disclosure-policy/index.html</url>
+        </license>
     </licenses>
 
     <!-- Developers -->
@@ -41,7 +45,7 @@
     <!-- Properties -->
     <properties>
         <!-- Version -->
-        <revision>3.2.0</revision>
+        <revision>3.2.1</revision>
 
         <!-- basic project properties -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
