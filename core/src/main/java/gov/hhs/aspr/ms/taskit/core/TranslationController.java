@@ -196,7 +196,7 @@ public final class TranslationController {
 
                 this.data.parentChildClassRelationshipMap.put(childClassRef, parentClassRef);
             }
-            
+
             return this;
         }
     }
@@ -412,10 +412,19 @@ public final class TranslationController {
      *                           </ul>
      */
     public <T> T getFirstObject(Class<T> classRef) {
-        for (Object object : this.objects) {
+        int index = -1;
+        for (int i = 0; i < this.objects.size(); i++) {
+            Object object = this.objects.get(i);
+
             if (classRef.isAssignableFrom(object.getClass())) {
-                return classRef.cast(object);
+                index = i;
+                break;
             }
+
+        }
+
+        if (index > -1) {
+            return classRef.cast(this.objects.remove(index));
         }
 
         throw new ContractException(CoreTranslationError.UNKNOWN_CLASSREF);
@@ -429,10 +438,13 @@ public final class TranslationController {
      */
     public <T> List<T> getObjects(Class<T> classRef) {
         List<T> objects = new ArrayList<>();
-        for (Object object : this.objects) {
+        for (int i = 0; i < this.objects.size(); i++) {
+            Object object = this.objects.get(i);
+
             if (classRef.isAssignableFrom(object.getClass())) {
-                objects.add(classRef.cast(object));
+                objects.add(classRef.cast(this.objects.remove(i)));
             }
+
         }
 
         return objects;
@@ -442,7 +454,12 @@ public final class TranslationController {
      * Returns the entire list of read in objects
      */
     public List<Object> getObjects() {
-        return this.objects;
+        List<Object> objects = new ArrayList<>();
+        for (int i = 0; i < this.objects.size(); i++) {
+            objects.add(this.objects.remove(i));
+        }
+
+        return objects;
     }
 
 }
