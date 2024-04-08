@@ -17,7 +17,8 @@
 
     <name>Translation and Serialization Toolkit (Taskit): Core</name>
     <description>The core components of a toolkit that aids in the conversion between two Java objects, primiarly for use with coverting between an input Java object and a application Java object.</description>
-
+    <url>https://github.com/HHS/aspr-ms-taskit</url>
+    
     <!-- SCM Information -->
     <scm>
         <connection>scm:git:git://github.com/HHS/aspr-ms-taskit.git</connection>
