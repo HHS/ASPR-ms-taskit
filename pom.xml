@@ -20,7 +20,7 @@
             <url>https://www.gnu.org/licenses/gpl-3.0.en.html</url>
         </license>
         <license>
-            <name>Vulnerability Disclosure Policy</name>
+            <name>HHS Vulnerability Disclosure Policy</name>
             <url>https://www.hhs.gov/vulnerability-disclosure-policy/index.html</url>
         </license>
     </licenses>
@@ -31,6 +31,12 @@
             <name>Zachary Bischoff</name>
             <organization>Leidos</organization>
             <email>zachary.bischoff@leidos.com</email>
+            <organizationUrl>https://www.leidos.com</organizationUrl>
+        </developer>
+        <developer>
+            <name>Shawn Hatch</name>
+            <organization>Leidos</organization>
+            <email>shawn.hatch@leidos.com</email>
             <organizationUrl>https://www.leidos.com</organizationUrl>
         </developer>
     </developers>
