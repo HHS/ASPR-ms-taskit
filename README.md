@@ -71,9 +71,9 @@ See [TestObject](protobuf/src/main/proto/gov/hhs/aspr/ms/taskit/protobuf/testobj
 - Maven 3.8.x
 - Java 17
 - Favorite IDE for Java development
-- Modeling Util located [here](https://github.com/HHS/ASPR-ms-util)
+- Modeling Utilities located [here](https://github.com/HHS/ASPR-ms-util)
     
-*Note that Modeling Util is in Maven Central, so there is no need to clone and build it.
+*Note that Modeling Utilities is in Maven Central, so there is no need to clone and build it.
 
 ### Building
 To build this project:
