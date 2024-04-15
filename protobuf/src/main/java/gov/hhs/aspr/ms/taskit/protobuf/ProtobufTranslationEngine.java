@@ -200,7 +200,7 @@ public final class ProtobufTranslationEngine extends TranslationEngine {
 
             return this;
         }
-
+        
         /**
          * checks the class to determine if it is a ProtocolMessageEnum or a Message and
          * if so, gets the Descriptor (which is akin to a class but for a Protobuf

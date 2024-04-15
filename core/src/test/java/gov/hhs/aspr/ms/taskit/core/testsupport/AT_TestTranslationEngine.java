@@ -128,7 +128,7 @@ public class AT_TestTranslationEngine {
     public void testAddParentChildClassRelationship() {
         TranslationEngineTestHelper.testAddParentChildClassRelationship(TestTranslationEngine.builder());
     }
-
+    
     @Test
     @UnitTestMethod(target = TestTranslationEngine.class, name = "hashCode", args = {})
     public void testHashCode() {

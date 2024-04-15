@@ -78,7 +78,8 @@ public abstract class TranslationEngine {
 
     /**
      * This class contains protected final methods for all of its abstract methods.
-     * All descendant classes of this class MUST call these if you want it to function properly.
+     * All descendant classes of this class MUST call these if you want it to
+     * function properly.
      */
     public abstract static class Builder {
         protected Data data;
@@ -121,6 +122,7 @@ public abstract class TranslationEngine {
         void clearBuilder() {
             this.data = new Data();
         }
+
         /**
          * Builder for the TranslationEngine
          */
@@ -212,17 +214,19 @@ public abstract class TranslationEngine {
          *                           added</li>
          *                           </ul>
          */
-        public abstract <M extends U, U> Builder addParentChildClassRelationship(Class<M> classRef, Class<U> markerInterface);
+        public abstract <M extends U, U> Builder addParentChildClassRelationship(Class<M> classRef,
+                Class<U> parentClassRef);
 
-        protected final <M extends U, U> void _addParentChildClassRelationship(Class<M> classRef, Class<U> markerInterface) {
+        protected final <M extends U, U> void _addParentChildClassRelationship(Class<M> classRef,
+                Class<U> parentClassRef) {
             validateClassRefNotNull(classRef);
-            validateClassRefNotNull(markerInterface);
+            validateClassRefNotNull(parentClassRef);
 
             if (this.data.childToParentClassMap.containsKey(classRef)) {
                 throw new ContractException(CoreTranslationError.DUPLICATE_CLASSREF);
             }
 
-            this.data.childToParentClassMap.put(classRef, markerInterface);
+            this.data.childToParentClassMap.put(classRef, parentClassRef);
         }
 
         /*
@@ -432,6 +436,7 @@ public abstract class TranslationEngine {
         validateTranslationEngineType();
         validateTranslatorsInitialized();
     }
+
     /**
      * returns whether this translationEngine is initialized or not
      */
@@ -469,7 +474,8 @@ public abstract class TranslationEngine {
      * abstract method that must be implemented by child TranslatorCores that
      * defines how to write to output files
      */
-    protected abstract <U, M extends U> void writeOutput(Path path, M appObject, Optional<Class<U>> superClass) throws IOException;
+    protected abstract <U, M extends U> void writeOutput(Path path, M appObject, Optional<Class<U>> superClass)
+            throws IOException;
 
     /**
      * abstract method that must be implemented by child TranslatorCores that

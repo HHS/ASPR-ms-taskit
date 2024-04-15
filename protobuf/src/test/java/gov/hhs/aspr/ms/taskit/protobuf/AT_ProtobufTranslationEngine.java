@@ -160,7 +160,8 @@ public class AT_ProtobufTranslationEngine {
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
 
         protobufTranslationEngine.writeOutput(filePath.resolve(fileName), expectedAppObject, Optional.empty());
-        TestAppObject actualAppObject = protobufTranslationEngine.readInput(filePath.resolve(fileName), TestInputObject.class);
+        TestAppObject actualAppObject = protobufTranslationEngine.readInput(filePath.resolve(fileName),
+                TestInputObject.class);
         assertEquals(expectedAppObject, actualAppObject);
     }
 
@@ -239,12 +240,15 @@ public class AT_ProtobufTranslationEngine {
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
 
         protobufTranslationEngine.writeOutput(filePath.resolve(fileName), expectedAppObject, Optional.empty());
-        TestAppObject actualAppObject = protobufTranslationEngine.readInput(filePath.resolve(fileName), TestInputObject.class);
+        TestAppObject actualAppObject = protobufTranslationEngine.readInput(filePath.resolve(fileName),
+                TestInputObject.class);
         assertEquals(expectedAppObject, actualAppObject);
 
-        protobufTranslationEngine.writeOutput(filePath.resolve(fileName2), TestObjectUtil.getChildAppFromApp(expectedAppObject),
+        protobufTranslationEngine.writeOutput(filePath.resolve(fileName2),
+                TestObjectUtil.getChildAppFromApp(expectedAppObject),
                 Optional.of(TestAppObject.class));
-        TestAppObject actualAppChildObject = protobufTranslationEngine.readInput(filePath.resolve(fileName2), TestInputObject.class);
+        TestAppObject actualAppChildObject = protobufTranslationEngine.readInput(filePath.resolve(fileName2),
+                TestInputObject.class);
         assertEquals(expectedAppObject, actualAppChildObject);
 
         // preconditions
@@ -275,12 +279,15 @@ public class AT_ProtobufTranslationEngine {
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
 
         protobufTranslationEngine.writeOutput(filePath.resolve(fileName), expectedAppObject, Optional.empty());
-        TestAppObject actualAppObject = protobufTranslationEngine.readInput(filePath.resolve(fileName), TestInputObject.class);
+        TestAppObject actualAppObject = protobufTranslationEngine.readInput(filePath.resolve(fileName),
+                TestInputObject.class);
         assertEquals(expectedAppObject, actualAppObject);
 
-        protobufTranslationEngine.writeOutput(filePath.resolve(fileName2), TestObjectUtil.getChildAppFromApp(expectedAppObject),
+        protobufTranslationEngine.writeOutput(filePath.resolve(fileName2),
+                TestObjectUtil.getChildAppFromApp(expectedAppObject),
                 Optional.of(TestAppObject.class));
-        TestAppObject actualAppChildObject = protobufTranslationEngine.readInput(filePath.resolve(fileName2), TestInputObject.class);
+        TestAppObject actualAppChildObject = protobufTranslationEngine.readInput(filePath.resolve(fileName2),
+                TestInputObject.class);
         assertEquals(expectedAppObject, actualAppChildObject);
 
         // this test is just for coverage, but this method should never be directly
@@ -447,7 +454,7 @@ public class AT_ProtobufTranslationEngine {
     public void testAddParentChildClassRelationship() {
         ProtobufTranslationEngineTestHelper.testAddParentChildClassRelationship(ProtobufTranslationEngine.builder());
     }
-
+    
     @Test
     @UnitTestMethod(target = ProtobufTranslationEngine.Builder.class, name = "setIgnoringUnknownFields", args = {
             boolean.class })
