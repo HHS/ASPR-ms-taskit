@@ -22,7 +22,7 @@ To use this project in your project, simply add the following dependency to your
 <dependency>
     <groupId>gov.hhs.aspr.ms.taskit</groupId>
     <artifactId>core</artifactId>
-    <version>3.2.1</version>
+    <version>4.0.0</version>
 </dependency>
 ```
 
@@ -31,7 +31,7 @@ To use the protobuf library of taskit, simply add the following dependency to yo
 <dependency>
     <groupId>gov.hhs.aspr.ms.taskit</groupId>
     <artifactId>protobuf</artifactId>
-    <version>3.2.1</version>
+    <version>4.0.0</version>
 </dependency>
 ```
 
