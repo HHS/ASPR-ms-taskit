@@ -51,7 +51,7 @@
     <!-- Properties -->
     <properties>
         <!-- Version -->
-        <revision>4.0.0</revision>
+        <revision>4.1.0-SNAPSHOT</revision>
 
         <!-- basic project properties -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
