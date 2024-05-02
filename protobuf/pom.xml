@@ -18,7 +18,7 @@
     <name>Translation and Serialization Toolkit (Taskit): Protobuf</name>
     <description>A toolkit that aids in the conversion between Protobuf Java objects and application Java objects.</description>
     <url>https://github.com/HHS/aspr-ms-taskit</url>
-    
+
     <!-- SCM Information -->
     <scm>
         <connection>scm:git:git://github.com/HHS/aspr-ms-taskit.git</connection>
@@ -165,18 +165,36 @@
             </plugin>
 
             <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <extensions>true</extensions>
                 <configuration>
-                    <excludes>
-                        <exclude>com/google/type/*.class</exclude>
-                        <exclude>**/input/**/*.class</exclude>
-                    </excludes>
+                    <publishingServerId>central</publishingServerId>
+                    <tokenAuth>true</tokenAuth>
+                    <deploymentName>ASPR MS Taskit Protobuf</deploymentName>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
 
 
+    <profiles>
+        <profile>
+            <id>jacoco</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <configuration>
+                            <excludes>
+                                <exclude>com/google/type/*.class</exclude>
+                                <exclude>**/input/**/*.class</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
