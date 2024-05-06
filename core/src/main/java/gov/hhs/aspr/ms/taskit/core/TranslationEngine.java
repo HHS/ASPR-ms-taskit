@@ -395,8 +395,6 @@ public abstract class TranslationEngine {
     Map<Class<?>, Class<?>> getChildParentClassMap() {
         Map<Class<?>, Class<?>> copyMap = new LinkedHashMap<>(this.data.childToParentClassMap);
 
-        this.data.childToParentClassMap = null;
-
         return copyMap;
     }
 
