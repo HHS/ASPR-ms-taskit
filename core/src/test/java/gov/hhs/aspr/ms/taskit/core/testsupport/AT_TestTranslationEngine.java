@@ -22,7 +22,7 @@ import gov.hhs.aspr.ms.util.resourcehelper.ResourceHelper;
 
 public class AT_TestTranslationEngine {
     Path basePath = ResourceHelper.getResourceDir(this.getClass());
-    Path filePath = ResourceHelper.makeOutputDir(basePath, "test-output");
+    Path filePath = ResourceHelper.createDirectory(basePath, "test-output");
 
     @Test
     @UnitTestMethod(target = TestTranslationEngine.class, name = "writeOutput", args = { Path.class, Object.class,
@@ -31,8 +31,8 @@ public class AT_TestTranslationEngine {
         String fileName = "writeOutputFromEngine_1-testOutput.json";
         String fileName2 = "writeOutputFromEngine_2-testOutput.json";
 
-        ResourceHelper.createOutputFile(filePath, fileName);
-        ResourceHelper.createOutputFile(filePath, fileName2);
+        ResourceHelper.createFile(filePath, fileName);
+        ResourceHelper.createFile(filePath, fileName2);
 
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
@@ -57,8 +57,8 @@ public class AT_TestTranslationEngine {
         String fileName = "readInputFromEngine_1-testOutput.json";
         String fileName2 = "readInputFromEngine_2-testOutput.json";
 
-        ResourceHelper.createOutputFile(filePath, fileName);
-        ResourceHelper.createOutputFile(filePath, fileName2);
+        ResourceHelper.createFile(filePath, fileName);
+        ResourceHelper.createFile(filePath, fileName2);
 
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
