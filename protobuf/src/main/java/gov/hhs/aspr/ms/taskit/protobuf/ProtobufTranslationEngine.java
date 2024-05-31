@@ -159,7 +159,7 @@ public final class ProtobufTranslationEngine extends TranslationEngine {
         }
 
         /**
-         * Overriden implementation of
+         * Override implementation of
          * {@link TranslationEngine.Builder#addTranslationSpec(TranslationSpec)} that
          * also populates the type urls for all Protobuf Message types that exist within
          * the translationSpec
@@ -167,7 +167,7 @@ public final class ProtobufTranslationEngine extends TranslationEngine {
          * @throws ContractException
          *                           <ul>
          *                           <li>{@link ProtobufCoreTranslationError#INVALID_INPUT_CLASS}
-         *                           if the given inputClassRef is not assingable from
+         *                           if the given inputClassRef is not assignable from
          *                           {@linkplain Message} nor
          *                           {@linkplain ProtocolMessageEnum}</li>
          *                           <li>{@link ProtobufCoreTranslationError#INVALID_TRANSLATION_SPEC}
@@ -208,7 +208,7 @@ public final class ProtobufTranslationEngine extends TranslationEngine {
          * descriptorMap and typeUrlToClassMap
          * 
          * @throws ContractException {@link ProtobufCoreTranslationError#INVALID_INPUT_CLASS}
-         *                           if the given inputClassRef is not assingable from
+         *                           if the given inputClassRef is not assignable from
          *                           {@linkplain Message} nor
          *                           {@linkplain ProtocolMessageEnum}
          */
@@ -363,7 +363,7 @@ public final class ProtobufTranslationEngine extends TranslationEngine {
      *                               </li>
      *                               </ul>
      * @throws ContractException     {@linkplain ProtobufCoreTranslationError#INVALID_READ_INPUT_CLASS_REF}
-     *                               if the given inputClassRef is not assingable
+     *                               if the given inputClassRef is not assignable
      *                               from
      *                               {@linkplain Message}
      */
@@ -438,7 +438,7 @@ public final class ProtobufTranslationEngine extends TranslationEngine {
         }
 
         throw new RuntimeException(
-                "\"newBuilder\" method exists, but it requires arugments, when it is expected to require 0 arugments");
+                "\"newBuilder\" method exists, but it requires arguments, when it is expected to require 0 arguments");
     }
 
     /**
@@ -500,7 +500,7 @@ public final class ProtobufTranslationEngine extends TranslationEngine {
         }
 
         throw new ContractException(ProtobufCoreTranslationError.UNKNOWN_TYPE_URL,
-                "Unable to find corrsponding class for: " + typeUrl);
+                "Unable to find corresponding class for: " + typeUrl);
     }
 
 }

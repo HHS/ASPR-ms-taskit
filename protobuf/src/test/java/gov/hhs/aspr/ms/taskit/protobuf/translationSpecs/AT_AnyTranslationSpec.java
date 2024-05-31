@@ -55,7 +55,7 @@ public class AT_AnyTranslationSpec {
         assertEquals(expectedValue, obj);
 
         // preconditions
-        // the typeurl of the any is malformed
+        // the type url of the any is malformed
         RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> {
             Any badAny = Any.newBuilder().setTypeUrl("badTypeUrl").build();
             anyTranslationSpec.convertInputObject(badAny);
@@ -72,7 +72,7 @@ public class AT_AnyTranslationSpec {
 
         assertEquals("Message is not assignable from " + TestInputEnum.class.getName(), runtimeException.getMessage());
 
-        // the typeurl doesn't match the class of the packed message
+        // the type url doesn't match the class of the packed message
         // this is tested in the test: testUnpackMessage
     }
 
@@ -109,7 +109,7 @@ public class AT_AnyTranslationSpec {
         AnyTranslationSpec anyTranslationSpec = new AnyTranslationSpec();
         anyTranslationSpec.init(protobufTranslationEngine);
 
-        // app object coverted into any
+        // app object converted into any
         Integer value = 100;
         Int32Value expectedValue = Int32Value.of(value);
 
@@ -121,10 +121,10 @@ public class AT_AnyTranslationSpec {
 
         // app enum converted into any by wrapping it in a WrapperEnumValue
         TestAppEnum appValue = TestAppEnum.TEST1;
-        TestInputEnum expecetedValue = TestInputEnum.TEST1;
+        TestInputEnum expectedValueEnum = TestInputEnum.TEST1;
 
         WrapperEnumValue wrapperEnumValue = WrapperEnumValue.newBuilder()
-                .setEnumTypeUrl(TestInputEnum.getDescriptor().getFullName()).setValue(expecetedValue.name()).build();
+                .setEnumTypeUrl(TestInputEnum.getDescriptor().getFullName()).setValue(expectedValueEnum.name()).build();
 
         expectedAny = Any.pack(wrapperEnumValue);
 
@@ -133,7 +133,7 @@ public class AT_AnyTranslationSpec {
         assertEquals(expectedAny, actualAny);
 
         // by calling covert on an object that was already converted
-        // this case is specifcally used for
+        // this case is specifically used for
         // ProtobufTranslationEngine.testGetAnyFromObjectAsSafeClass
         actualAny = anyTranslationSpec.convertAppObject(wrapperEnumValue);
 
