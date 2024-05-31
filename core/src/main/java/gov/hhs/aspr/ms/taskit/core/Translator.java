@@ -120,9 +120,9 @@ public final class Translator {
          * @throws ContractException
          *                           <ul>
          *                           <li>{@linkplain CoreTranslationError#NULL_DEPENDENCY}
-         *                           if the dependecy is null</li>
+         *                           if the dependency is null</li>
          *                           <li>{@linkplain CoreTranslationError#DUPLICATE_DEPENDENCY}
-         *                           if the dependecy has already been added</li>
+         *                           if the dependency has already been added</li>
          *                           </ul>
          */
         public Builder addDependency(TranslatorId dependency) {

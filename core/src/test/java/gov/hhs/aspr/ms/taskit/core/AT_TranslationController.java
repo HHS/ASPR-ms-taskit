@@ -100,7 +100,7 @@ public class AT_TranslationController {
     @Test
     @UnitTestForCoverage
     /*
-     * purpose of this test is to show that if there isnt a valid TranslationEngine
+     * purpose of this test is to show that if there isn't a valid TranslationEngine
      * class -> Translation Engine Type -> Translation Engine mapping, an exception
      * is thrown
      */
@@ -196,7 +196,7 @@ public class AT_TranslationController {
     @Test
     @UnitTestForCoverage
     public void testWriteOutput_Engine() {
-        String fileName = "badFilePath-testoutput.json";
+        String fileName = "badFilePath-testOutput.json";
 
         ResourceHelper.createFile(filePath, fileName);
         TestTranslationEngine engine = TestTranslationEngine.builder()
@@ -565,7 +565,7 @@ public class AT_TranslationController {
     @Test
     @UnitTestMethod(target = TranslationController.Builder.class, name = "addTranslationEngine", args = {
             TranslationEngine.class })
-    public void testAddTransationEngine() {
+    public void testAddTranslationEngine() {
         TestTranslationEngine translationEngine = TestTranslationEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
                 .addTranslator(TestComplexObjectTranslator.getTranslator())
