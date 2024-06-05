@@ -12,6 +12,7 @@ import gov.hhs.aspr.ms.util.resourcehelper.ResourceHelper;
 
 public class TranslationSpecSupport {
 
+    private TranslationSpecSupport() {}
     /*
      * This method is to ensure that every translationSpec that is supposed to be
      * tied to a Translator is defined in its list of translationSpecs. If a
