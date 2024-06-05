@@ -19,7 +19,7 @@ public enum CoreTranslationError implements ContractError {
         NO_TRANSLATION_ENGINES("There are no translation engines added to this controller."),
         NULL_CLASS_REF("Null Class Ref"),
         NULL_DEPENDENCY("Null dependency"),
-        NULL_INIT_CONSUMER("Null Initilizer Consumer"),
+        NULL_INIT_CONSUMER("Null Initializer Consumer"),
         NULL_OBJECT_FOR_TRANSLATION("The object to be translated was null"),
         NULL_PATH("Null Path"),
         NULL_TRANSLATION_ENGINE("Null Translation Engine"),
@@ -34,7 +34,7 @@ public enum CoreTranslationError implements ContractError {
                         "Translators were added to the builder but were not initialized. Make sure to call super.initTranslators() during your custom engine build method"),
         UNKNOWN_CLASSREF("No object has been read in with the specified classRef"),
         UNKNOWN_OBJECT("Object is not Translatable by this TranslationSpec"),
-        UNKNWON_TRANSLATION_ENGINE_TYPE("Translation Engine Type was not set"),
+        UNKNOWN_TRANSLATION_ENGINE_TYPE("Translation Engine Type was not set"),
         UNKNOWN_TRANSLATION_SPEC("No translation spec was provided for the given class"),
         UNSUPPORTED_VERSION("The given version is not supported");
 

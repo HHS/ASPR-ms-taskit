@@ -180,7 +180,7 @@ public abstract class TranslationEngine {
          *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATOR}
          *                           if translator is null</li>
          *                           <li>{@linkplain CoreTranslationError#DUPLICATE_TRANSLATOR}
-         *                           if translator has alaready been added</li>
+         *                           if translator has already been added</li>
          *                           </ul>
          */
         public abstract Builder addTranslator(Translator translator);
@@ -196,7 +196,7 @@ public abstract class TranslationEngine {
         }
 
         /**
-         * Adds the given classRef markerInterace mapping.
+         * Adds the given classRef markerInterface mapping.
          * <p>
          * explicitly used when calling {@link TranslationController#writeOutput} with a
          * class for which a classRef ScenarioId pair does not exist and/or the need to
@@ -380,7 +380,7 @@ public abstract class TranslationEngine {
 
     private void validateTranslationEngineType() {
         if (this.data.translationEngineType == TranslationEngineType.UNKNOWN) {
-            throw new ContractException(CoreTranslationError.UNKNWON_TRANSLATION_ENGINE_TYPE);
+            throw new ContractException(CoreTranslationError.UNKNOWN_TRANSLATION_ENGINE_TYPE);
         }
     }
 
@@ -395,15 +395,13 @@ public abstract class TranslationEngine {
     Map<Class<?>, Class<?>> getChildParentClassMap() {
         Map<Class<?>, Class<?>> copyMap = new LinkedHashMap<>(this.data.childToParentClassMap);
 
-        this.data.childToParentClassMap = null;
-
         return copyMap;
     }
 
     /**
      * returns the {@link TranslationEngineType} of this TranslationEngine
      * 
-     * guarenteed to NOT be {@link TranslationEngineType#UNKNOWN}
+     * guaranteed to NOT be {@link TranslationEngineType#UNKNOWN}
      */
     public TranslationEngineType getTranslationEngineType() {
         return this.data.translationEngineType;

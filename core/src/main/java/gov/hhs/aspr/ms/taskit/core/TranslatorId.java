@@ -5,7 +5,7 @@ package gov.hhs.aspr.ms.taskit.core;
  */
 public interface TranslatorId {
     /**
-     * Implementationn consistent with equals()
+     * Implementation consistent with equals()
      */
     @Override
     public int hashCode();

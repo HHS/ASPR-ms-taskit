@@ -29,7 +29,7 @@ import gov.hhs.aspr.ms.util.resourcehelper.ResourceHelper;
 public class AT_TranslationController {
 
     Path basePath = ResourceHelper.getResourceDir(this.getClass());
-    Path filePath = ResourceHelper.makeOutputDir(basePath, "test-output");
+    Path filePath = ResourceHelper.createDirectory(basePath, "test-output");
 
     @Test
     @UnitTestForCoverage
@@ -100,7 +100,7 @@ public class AT_TranslationController {
     @Test
     @UnitTestForCoverage
     /*
-     * purpose of this test is to show that if there isnt a valid TranslationEngine
+     * purpose of this test is to show that if there isn't a valid TranslationEngine
      * class -> Translation Engine Type -> Translation Engine mapping, an exception
      * is thrown
      */
@@ -158,7 +158,7 @@ public class AT_TranslationController {
     public void testReadInput() {
         String fileName = "readInput-testOutput.json";
 
-        ResourceHelper.createOutputFile(filePath, fileName);
+        ResourceHelper.createFile(filePath, fileName);
 
         TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
@@ -196,9 +196,9 @@ public class AT_TranslationController {
     @Test
     @UnitTestForCoverage
     public void testWriteOutput_Engine() {
-        String fileName = "badFilePath-testoutput.json";
+        String fileName = "badFilePath-testOutput.json";
 
-        ResourceHelper.createOutputFile(filePath, fileName);
+        ResourceHelper.createFile(filePath, fileName);
         TestTranslationEngine engine = TestTranslationEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
                 .addTranslator(TestComplexObjectTranslator.getTranslator()).build();
@@ -224,7 +224,7 @@ public class AT_TranslationController {
     public void testWriteOutput() {
         String fileName = "writeOutput-testOutput.json";
 
-        ResourceHelper.createOutputFile(filePath, fileName);
+        ResourceHelper.createFile(filePath, fileName);
 
         TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
@@ -259,7 +259,7 @@ public class AT_TranslationController {
     public void testWriteOutput_ParentClass() {
         String fileName = "writeOutput_ParentClass-testOutput.json";
 
-        ResourceHelper.createOutputFile(filePath, fileName);
+        ResourceHelper.createFile(filePath, fileName);
 
         TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
@@ -298,7 +298,7 @@ public class AT_TranslationController {
     public void testWriteOutput_Base() {
         String fileName = "writeOutput_Base-testOutput.json";
 
-        ResourceHelper.createOutputFile(filePath, fileName);
+        ResourceHelper.createFile(filePath, fileName);
 
         TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
@@ -351,7 +351,7 @@ public class AT_TranslationController {
     public void testGetFirstObject() throws IOException {
         String fileName = "getFirstObject-testOutput.json";
 
-        ResourceHelper.createOutputFile(filePath, fileName);
+        ResourceHelper.createFile(filePath, fileName);
 
         TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
@@ -390,8 +390,8 @@ public class AT_TranslationController {
         String fileName = "GetObjects_OfClass_1-testOutput.json";
         String fileName2 = "GetObjects_OfClass_2-testOutput.json";
 
-        ResourceHelper.createOutputFile(filePath, fileName);
-        ResourceHelper.createOutputFile(filePath, fileName2);
+        ResourceHelper.createFile(filePath, fileName);
+        ResourceHelper.createFile(filePath, fileName2);
 
         TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
@@ -432,8 +432,8 @@ public class AT_TranslationController {
         String fileName = "GetObjects_1-testOutput.json";
         String fileName2 = "GetObjects_2-testOutput.json";
 
-        ResourceHelper.createOutputFile(filePath, fileName);
-        ResourceHelper.createOutputFile(filePath, fileName2);
+        ResourceHelper.createFile(filePath, fileName);
+        ResourceHelper.createFile(filePath, fileName2);
 
         TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
@@ -492,7 +492,7 @@ public class AT_TranslationController {
     public void testAddInputFilePath() {
         String fileName = "addInputFilePath-testOutput.json";
 
-        ResourceHelper.createOutputFile(filePath, fileName);
+        ResourceHelper.createFile(filePath, fileName);
 
         assertDoesNotThrow(() -> TranslationController.builder()
                 .addInputFilePath(filePath.resolve(fileName), TestInputObject.class,
@@ -565,7 +565,7 @@ public class AT_TranslationController {
     @Test
     @UnitTestMethod(target = TranslationController.Builder.class, name = "addTranslationEngine", args = {
             TranslationEngine.class })
-    public void testAddTransationEngine() {
+    public void testAddTranslationEngine() {
         TestTranslationEngine translationEngine = TestTranslationEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
                 .addTranslator(TestComplexObjectTranslator.getTranslator())

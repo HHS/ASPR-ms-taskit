@@ -19,6 +19,10 @@
             <name>GNU GENERAL PUBLIC LICENSE v3</name>
             <url>https://www.gnu.org/licenses/gpl-3.0.en.html</url>
         </license>
+        <license>
+            <name>HHS Vulnerability Disclosure Policy</name>
+            <url>https://www.hhs.gov/vulnerability-disclosure-policy/index.html</url>
+        </license>
     </licenses>
 
     <!-- Developers -->
@@ -27,6 +31,12 @@
             <name>Zachary Bischoff</name>
             <organization>Leidos</organization>
             <email>zachary.bischoff@leidos.com</email>
+            <organizationUrl>https://www.leidos.com</organizationUrl>
+        </developer>
+        <developer>
+            <name>Shawn Hatch</name>
+            <organization>Leidos</organization>
+            <email>shawn.hatch@leidos.com</email>
             <organizationUrl>https://www.leidos.com</organizationUrl>
         </developer>
     </developers>
@@ -41,7 +51,7 @@
     <!-- Properties -->
     <properties>
         <!-- Version -->
-        <revision>4.0.0-SNAPSHOT</revision>
+        <revision>4.1.0-SNAPSHOT</revision>
 
         <!-- basic project properties -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -51,16 +61,18 @@
         <!-- plugin versions -->
         <flatten-maven-plugin.version>1.6.0</flatten-maven-plugin.version>
         <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
-        <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
-        <maven-install-plugin.version>3.1.1</maven-install-plugin.version>
-        <maven-deploy-plugin.version>3.1.1</maven-deploy-plugin.version>
-        <maven-javadoc-plugin.version>3.6.3</maven-javadoc-plugin.version>
+        <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
+        <maven-install-plugin.version>3.1.2</maven-install-plugin.version>
+        <maven-deploy-plugin.version>3.1.2</maven-deploy-plugin.version>
+        <maven-javadoc-plugin.version>3.7.0</maven-javadoc-plugin.version>
+        <maven-gpg-plugin.version>3.2.4</maven-gpg-plugin.version>
+        <central-publishing-maven-plugin.version>0.4.0</central-publishing-maven-plugin.version>
 
         <!-- dependency versions -->
-        <gson.version>2.10.1</gson.version>
-        <util.version>4.1.0</util.version>
+        <gson.version>2.11.0</gson.version>
+        <util.version>4.2.0-SNAPSHOT</util.version>
         <junit-jupiter-engine.version>5.10.2</junit-jupiter-engine.version>
-        <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version>
+        <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
     </properties>
 
     <!-- set dependency versions for all child projects -->
@@ -173,6 +185,16 @@
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>${maven-javadoc-plugin.version}</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>${maven-gpg-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.sonatype.central</groupId>
+                    <artifactId>central-publishing-maven-plugin</artifactId>
+                    <version>${central-publishing-maven-plugin.version}</version>
+                </plugin>
             </plugins>
 
         </pluginManagement>
@@ -256,7 +278,74 @@
 
     <profiles>
         <profile>
-            <id>release</id>
+            <id>javadoc</id>
+            <build>
+                <plugins>
+                    <!--Attaches javadoc jar to project -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <configuration>
+                            <doclint>all,-missing</doclint>
+                            <additionalDependencies>
+                                <additionalDependency>
+                                    <groupId>gov.hhs.aspr.ms</groupId>
+                                    <artifactId>util</artifactId>
+                                    <version>${util.version}</version>
+                                </additionalDependency>
+                                <additionalDependency>
+                                    <groupId>org.junit.jupiter</groupId>
+                                    <artifactId>junit-jupiter-api</artifactId>
+                                    <version>${junit-jupiter-engine.version}</version>
+                                </additionalDependency>
+                            </additionalDependencies>
+                            <author>false</author>
+                            <additionalJOptions>
+                                <additionalJOption>-Xmaxerrs</additionalJOption>
+                                <additionalJOption>65536</additionalJOption>
+                                <additionalJOption>-Xmaxwarns</additionalJOption>
+                                <additionalJOption>65536</additionalJOption>
+                            </additionalJOptions>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>sign</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>${maven-gpg-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <useAgent>false</useAgent>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>jacoco</id>
             <build>
                 <plugins>
 
@@ -306,42 +395,6 @@
                                         </rule>
                                     </rules>
                                 </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <!--Attaches javadoc jar to project -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <configuration>
-                            <doclint>all,-missing</doclint>
-                            <additionalDependencies>
-                                <additionalDependency>
-                                    <groupId>gov.hhs.aspr.ms</groupId>
-                                    <artifactId>util</artifactId>
-                                    <version>${util.version}</version>
-                                </additionalDependency>
-                                <additionalDependency>
-                                    <groupId>org.junit.jupiter</groupId>
-                                    <artifactId>junit-jupiter-api</artifactId>
-                                    <version>${junit-jupiter-engine.version}</version>
-                                </additionalDependency>
-                            </additionalDependencies>
-                            <author>false</author>
-                            <additionalJOptions>
-                                <additionalJOption>-Xmaxerrs</additionalJOption>
-                                <additionalJOption>65536</additionalJOption>
-                                <additionalJOption>-Xmaxwarns</additionalJOption>
-                                <additionalJOption>65536</additionalJOption>
-                            </additionalJOptions>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>attach-javadocs</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
                             </execution>
                         </executions>
                     </plugin>

@@ -15,7 +15,7 @@ import java.util.Set;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
- * The TranslatorController serves as the master of cerimonies for translating
+ * The TranslatorController serves as the master of ceremonies for translating
  * between two types of objects. Additionally, it has the ability to distribute
  * Input/Output files for reading and writing.
  */
@@ -137,7 +137,7 @@ public final class TranslationController {
         }
 
         /**
-         * Adds the given classRef markerInterace mapping.
+         * Adds the given classRef markerInterface mapping.
          * <p>
          * explicitly used when calling {@link TranslationController#writeOutput} with a
          * class for which a classRef ScenarioId pair does not exist and/or the need to
@@ -404,7 +404,7 @@ public final class TranslationController {
      * Searches the list of read in objects and returns the first Object found of
      * the given classRef
      * 
-     * @param <T> the type of the obect to get
+     * @param <T> the type of the object to get
      * @throws ContractException
      *                           <ul>
      *                           <li>{@linkplain CoreTranslationError#UNKNOWN_CLASSREF}
@@ -434,7 +434,7 @@ public final class TranslationController {
      * Searches the list of read in objects and returns all Objects found with the
      * given classRef
      * 
-     * @param <T> the type of the obect to get
+     * @param <T> the type of the object to get
      */
     public <T> List<T> getObjects(Class<T> classRef) {
         List<T> objects = new ArrayList<>();
