@@ -1,8 +1,8 @@
 package gov.hhs.aspr.ms.taskit.protobuf.testsupport.testClasses;
 
-public class BadMessageBadArguements {
+public class BadMessageBadArguments {
 
-    private BadMessageBadArguements() {
+    private BadMessageBadArguments() {
 
     }
 

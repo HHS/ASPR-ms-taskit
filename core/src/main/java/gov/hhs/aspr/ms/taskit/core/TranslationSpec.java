@@ -37,14 +37,14 @@ public abstract class TranslationSpec<I, A> implements BaseTranslationSpec {
      * Input Class and if so, calls the related method
      * </p>
      * <p>
-     * It then checks if the the object class is assinable from either the App or
+     * It then checks if the the object class is assignable from either the App or
      * Input Class and if so, calls the related method
      * </p>
      * <p>
      * If no match can be found, an exception is thrown
      * </p>
      * 
-     * @param <T> the expected return type after translation/coversion
+     * @param <T> the expected return type after translation/conversion
      * @throws ContractException {@linkplain CoreTranslationError#UNKNOWN_OBJECT} if
      *                           no match can be found between the passed in object
      *                           and the given appClass and InputClass
@@ -102,7 +102,7 @@ public abstract class TranslationSpec<I, A> implements BaseTranslationSpec {
             return false;
         }
 
-        // if different intput class, not equal
+        // if different input class, not equal
         if (getInputObjectClass() != other.getInputObjectClass()) {
             return false;
         }
