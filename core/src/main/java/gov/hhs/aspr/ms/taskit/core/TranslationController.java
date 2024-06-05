@@ -442,10 +442,12 @@ public final class TranslationController {
             Object object = this.objects.get(i);
 
             if (classRef.isAssignableFrom(object.getClass())) {
-                objects.add(classRef.cast(this.objects.remove(i)));
+                objects.add(classRef.cast(object));
             }
 
         }
+
+        this.objects.removeAll(objects);
 
         return objects;
     }
@@ -454,12 +456,16 @@ public final class TranslationController {
      * Returns the entire list of read in objects
      */
     public List<Object> getObjects() {
-        List<Object> objects = new ArrayList<>();
-        for (int i = 0; i < this.objects.size(); i++) {
-            objects.add(this.objects.remove(i));
-        }
+        List<Object> objects = new ArrayList<>(this.objects);
+        
+        this.objects.clear();
 
         return objects;
+    }
+
+    // package access for testing
+    int getNumObjects() {
+        return this.objects.size();
     }
 
 }
