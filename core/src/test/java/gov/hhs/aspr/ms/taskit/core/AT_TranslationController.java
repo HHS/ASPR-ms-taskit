@@ -17,6 +17,7 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.TestObjectUtil;
 import gov.hhs.aspr.ms.taskit.core.testsupport.TestTranslationEngine;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testcomplexobject.TestComplexAppObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testcomplexobject.TestComplexObjectTranslator;
+import gov.hhs.aspr.ms.taskit.core.testsupport.testcomplexobject.input.TestComplexInputObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppChildObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestObjectTranslator;
@@ -29,7 +30,7 @@ import gov.hhs.aspr.ms.util.resourcehelper.ResourceHelper;
 public class AT_TranslationController {
 
     Path basePath = ResourceHelper.getResourceDir(this.getClass());
-    Path filePath = ResourceHelper.makeOutputDir(basePath, "test-output");
+    Path filePath = ResourceHelper.createDirectory(basePath, "test-output");
 
     @Test
     @UnitTestForCoverage
@@ -100,7 +101,7 @@ public class AT_TranslationController {
     @Test
     @UnitTestForCoverage
     /*
-     * purpose of this test is to show that if there isnt a valid TranslationEngine
+     * purpose of this test is to show that if there isn't a valid TranslationEngine
      * class -> Translation Engine Type -> Translation Engine mapping, an exception
      * is thrown
      */
@@ -158,7 +159,7 @@ public class AT_TranslationController {
     public void testReadInput() {
         String fileName = "readInput-testOutput.json";
 
-        ResourceHelper.createOutputFile(filePath, fileName);
+        ResourceHelper.createFile(filePath, fileName);
 
         TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
@@ -176,7 +177,7 @@ public class AT_TranslationController {
 
         translationController.readInput();
 
-        assertTrue(translationController.getObjects().size() == 1);
+        assertEquals(1, translationController.getNumObjects());
 
         TestAppObject actualTestAppObject = translationController.getFirstObject(TestAppObject.class);
 
@@ -196,9 +197,9 @@ public class AT_TranslationController {
     @Test
     @UnitTestForCoverage
     public void testWriteOutput_Engine() {
-        String fileName = "badFilePath-testoutput.json";
+        String fileName = "badFilePath-testOutput.json";
 
-        ResourceHelper.createOutputFile(filePath, fileName);
+        ResourceHelper.createFile(filePath, fileName);
         TestTranslationEngine engine = TestTranslationEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
                 .addTranslator(TestComplexObjectTranslator.getTranslator()).build();
@@ -224,7 +225,7 @@ public class AT_TranslationController {
     public void testWriteOutput() {
         String fileName = "writeOutput-testOutput.json";
 
-        ResourceHelper.createOutputFile(filePath, fileName);
+        ResourceHelper.createFile(filePath, fileName);
 
         TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
@@ -259,7 +260,7 @@ public class AT_TranslationController {
     public void testWriteOutput_ParentClass() {
         String fileName = "writeOutput_ParentClass-testOutput.json";
 
-        ResourceHelper.createOutputFile(filePath, fileName);
+        ResourceHelper.createFile(filePath, fileName);
 
         TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
@@ -298,7 +299,7 @@ public class AT_TranslationController {
     public void testWriteOutput_Base() {
         String fileName = "writeOutput_Base-testOutput.json";
 
-        ResourceHelper.createOutputFile(filePath, fileName);
+        ResourceHelper.createFile(filePath, fileName);
 
         TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
@@ -350,8 +351,10 @@ public class AT_TranslationController {
     @UnitTestMethod(target = TranslationController.class, name = "getFirstObject", args = { Class.class })
     public void testGetFirstObject() throws IOException {
         String fileName = "getFirstObject-testOutput.json";
+        String fileName2 = "getFirstObject-testOutput2.json";
 
-        ResourceHelper.createOutputFile(filePath, fileName);
+        ResourceHelper.createFile(filePath, fileName);
+        ResourceHelper.createFile(filePath, fileName2);
 
         TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
@@ -360,18 +363,24 @@ public class AT_TranslationController {
         TranslationController translationController = TranslationController.builder()
                 .addInputFilePath(filePath.resolve(fileName), TestInputObject.class,
                         TranslationEngineType.CUSTOM)
+                .addInputFilePath(filePath.resolve(fileName2), TestComplexInputObject.class,
+                        TranslationEngineType.CUSTOM)
                 .addTranslationEngine(testTranslationEngine).build();
 
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
+        TestComplexAppObject expectedComplexAppObject = TestObjectUtil.generateTestComplexAppObject();
 
         translationController.writeOutput(expectedAppObject, filePath.resolve(fileName),
                 TranslationEngineType.CUSTOM);
 
+        translationController.writeOutput(expectedComplexAppObject, filePath.resolve(fileName2),
+                TranslationEngineType.CUSTOM);
+
         translationController.readInput();
 
-        assertTrue(translationController.getObjects().size() == 1);
-
+        assertEquals(2, translationController.getNumObjects());
         TestAppObject actualTestAppObject = translationController.getFirstObject(TestAppObject.class);
+        assertEquals(1, translationController.getNumObjects());
 
         assertNotNull(actualTestAppObject);
 
@@ -389,9 +398,11 @@ public class AT_TranslationController {
     public void testGetObjects_OfClass() throws IOException {
         String fileName = "GetObjects_OfClass_1-testOutput.json";
         String fileName2 = "GetObjects_OfClass_2-testOutput.json";
+        String fileName3 = "GetObjects_OfClass_3-testOutput.json";
 
-        ResourceHelper.createOutputFile(filePath, fileName);
-        ResourceHelper.createOutputFile(filePath, fileName2);
+        ResourceHelper.createFile(filePath, fileName);
+        ResourceHelper.createFile(filePath, fileName2);
+        ResourceHelper.createFile(filePath, fileName3);
 
         TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
@@ -402,27 +413,33 @@ public class AT_TranslationController {
                         TranslationEngineType.CUSTOM)
                 .addInputFilePath(filePath.resolve(fileName2), TestInputObject.class,
                         TranslationEngineType.CUSTOM)
+                .addInputFilePath(filePath.resolve(fileName3), TestComplexInputObject.class,
+                        TranslationEngineType.CUSTOM)
                 .addTranslationEngine(testTranslationEngine).build();
 
         List<TestAppObject> expectedObjects = TestObjectUtil.getListOfAppObjects(2);
+        TestComplexAppObject expectedComplexAppObject = TestObjectUtil.generateTestComplexAppObject();
 
         translationController.writeOutput(expectedObjects.get(0), filePath.resolve(fileName),
                 TranslationEngineType.CUSTOM);
         translationController.writeOutput(expectedObjects.get(1), filePath.resolve(fileName2),
                 TranslationEngineType.CUSTOM);
+        translationController.writeOutput(expectedComplexAppObject, filePath.resolve(fileName3),
+                TranslationEngineType.CUSTOM);
 
         translationController.readInput();
 
-        assertEquals(2, translationController.getObjects().size());
+        assertEquals(3, translationController.getNumObjects());
 
         List<TestAppObject> actualObjects = translationController.getObjects(TestAppObject.class);
+        assertEquals(1, translationController.getNumObjects());
 
         assertEquals(2, actualObjects.size());
 
         assertTrue(actualObjects.containsAll(expectedObjects));
 
-        List<TestComplexAppObject> actualObjects2 = translationController
-                .getObjects(TestComplexAppObject.class);
+        List<TestAppObject> actualObjects2 = translationController
+                .getObjects(TestAppObject.class);
         assertTrue(actualObjects2.isEmpty());
     }
 
@@ -432,8 +449,8 @@ public class AT_TranslationController {
         String fileName = "GetObjects_1-testOutput.json";
         String fileName2 = "GetObjects_2-testOutput.json";
 
-        ResourceHelper.createOutputFile(filePath, fileName);
-        ResourceHelper.createOutputFile(filePath, fileName2);
+        ResourceHelper.createFile(filePath, fileName);
+        ResourceHelper.createFile(filePath, fileName2);
 
         TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
@@ -455,10 +472,10 @@ public class AT_TranslationController {
 
         translationController.readInput();
 
-        assertEquals(2, translationController.getObjects().size());
+        assertEquals(2, translationController.getNumObjects());
 
         List<Object> actualObjects = translationController.getObjects();
-
+        assertEquals(0, translationController.getNumObjects());
         assertEquals(2, actualObjects.size());
 
         assertTrue(actualObjects.containsAll(expectedObjects));
@@ -492,7 +509,7 @@ public class AT_TranslationController {
     public void testAddInputFilePath() {
         String fileName = "addInputFilePath-testOutput.json";
 
-        ResourceHelper.createOutputFile(filePath, fileName);
+        ResourceHelper.createFile(filePath, fileName);
 
         assertDoesNotThrow(() -> TranslationController.builder()
                 .addInputFilePath(filePath.resolve(fileName), TestInputObject.class,
@@ -565,7 +582,7 @@ public class AT_TranslationController {
     @Test
     @UnitTestMethod(target = TranslationController.Builder.class, name = "addTranslationEngine", args = {
             TranslationEngine.class })
-    public void testAddTransationEngine() {
+    public void testAddTranslationEngine() {
         TestTranslationEngine translationEngine = TestTranslationEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
                 .addTranslator(TestComplexObjectTranslator.getTranslator())

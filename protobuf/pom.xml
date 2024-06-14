@@ -31,7 +31,7 @@
         <!-- plugin versions -->
         <os-maven-plugin.version>1.7.1</os-maven-plugin.version>
         <protobuf-maven-plugin.version>0.6.1</protobuf-maven-plugin.version>
-        <build-helper-maven-plugin.version>3.5.0</build-helper-maven-plugin.version>
+        <build-helper-maven-plugin.version>3.6.0</build-helper-maven-plugin.version>
         <maven-replacer-plugin.version>1.4.1</maven-replacer-plugin.version>
 
         <!-- dependency versions -->
@@ -165,13 +165,13 @@
             </plugin>
 
             <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <extensions>true</extensions>
                 <configuration>
-                    <excludes>
-                        <exclude>com/google/type/*.class</exclude>
-                        <exclude>**/input/**/*.class</exclude>
-                    </excludes>
+                    <publishingServerId>central</publishingServerId>
+                    <tokenAuth>true</tokenAuth>
+                    <deploymentName>ASPR MS Taskit Protobuf</deploymentName>
                 </configuration>
             </plugin>
 
@@ -184,4 +184,23 @@
     </build>
 
 
+    <profiles>
+        <profile>
+            <id>jacoco</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <configuration>
+                            <excludes>
+                                <exclude>com/google/type/*.class</exclude>
+                                <exclude>**/input/**/*.class</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

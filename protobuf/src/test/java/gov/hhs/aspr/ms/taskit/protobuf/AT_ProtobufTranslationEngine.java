@@ -31,7 +31,7 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppChildObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.translationSpecs.TestObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.TestObjectUtil;
-import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testClasses.BadMessageBadArguements;
+import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testClasses.BadMessageBadArguments;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testClasses.BadMessageIllegalAccess;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testClasses.BadMessageNoMethod;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testClasses.BadMessageNonStaticMethod;
@@ -47,7 +47,7 @@ import gov.hhs.aspr.ms.util.resourcehelper.ResourceHelper;
 
 public class AT_ProtobufTranslationEngine {
     Path basePath = ResourceHelper.getResourceDir(this.getClass());
-    Path filePath = ResourceHelper.makeOutputDir(basePath, "test-output");
+    Path filePath = ResourceHelper.createDirectory(basePath, "test-output");
 
     @Test
     @UnitTestMethod(target = ProtobufTranslationEngine.class, name = "getAnyFromObject", args = { Object.class })
@@ -83,7 +83,7 @@ public class AT_ProtobufTranslationEngine {
 
         // preconditions
 
-        // no translationSpec was prodived for the parent class
+        // no translationSpec was provided for the parent class
         ContractException contractException = assertThrows(ContractException.class, () -> {
             ProtobufTranslationEngine protobufTranslationEngine2 = ProtobufTranslationEngine.builder()
                     .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
@@ -149,7 +149,7 @@ public class AT_ProtobufTranslationEngine {
     public void testDebugPrint() throws IOException {
         String fileName = "debugPrintFromEngine_1-testOutput.json";
 
-        ResourceHelper.createOutputFile(filePath, fileName);
+        ResourceHelper.createFile(filePath, fileName);
 
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder()
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
@@ -212,9 +212,9 @@ public class AT_ProtobufTranslationEngine {
             protobufTranslationEngine.getBuilderForMessage(BadMessageNonStaticMethod.class);
         });
 
-        // class has a static newBuilder method but it takes arguements
+        // class has a static newBuilder method but it takes arguments
         assertThrows(RuntimeException.class, () -> {
-            protobufTranslationEngine.getBuilderForMessage(BadMessageBadArguements.class);
+            protobufTranslationEngine.getBuilderForMessage(BadMessageBadArguments.class);
         });
 
         // class has a newBuilder method but it is not accessible
@@ -230,8 +230,8 @@ public class AT_ProtobufTranslationEngine {
         String fileName = "readInputFromEngine_1-testOutput.json";
         String fileName2 = "readInputFromEngine_2-testOutput.json";
 
-        ResourceHelper.createOutputFile(filePath, fileName);
-        ResourceHelper.createOutputFile(filePath, fileName2);
+        ResourceHelper.createFile(filePath, fileName);
+        ResourceHelper.createFile(filePath, fileName2);
 
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder()
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
@@ -259,7 +259,7 @@ public class AT_ProtobufTranslationEngine {
 
         assertEquals(ProtobufCoreTranslationError.INVALID_READ_INPUT_CLASS_REF, contractException.getErrorType());
 
-        // precondition for the Runtime exceptions are convered by the tests:
+        // precondition for the Runtime exceptions are covered by the tests:
         // testGetBuilderForMessage() and testParseJson()
     }
 
@@ -269,8 +269,8 @@ public class AT_ProtobufTranslationEngine {
         String fileName = "writeOutputFromEngine_1-testOutput.json";
         String fileName2 = "writeOutputFromEngine_2-testOutput.json";
 
-        ResourceHelper.createOutputFile(filePath, fileName);
-        ResourceHelper.createOutputFile(filePath, fileName2);
+        ResourceHelper.createFile(filePath, fileName);
+        ResourceHelper.createFile(filePath, fileName2);
 
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder()
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())

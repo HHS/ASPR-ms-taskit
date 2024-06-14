@@ -111,7 +111,7 @@ public class AT_TranslationSpec {
         assertEquals(expectedAppChildObject, TestObjectUtil.getChildAppFromApp(actualAppChildObject));
 
         // precondition
-        // TranslationSpec not intialized
+        // TranslationSpec not initialized
         ContractException contractException = assertThrows(ContractException.class, () -> {
             TestObjectTranslationSpec testObjectTranslationSpec2 = new TestObjectTranslationSpec();
             testObjectTranslationSpec2.convert(new TestAppObject());

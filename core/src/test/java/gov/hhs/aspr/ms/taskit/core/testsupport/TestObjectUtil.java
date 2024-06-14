@@ -81,9 +81,9 @@ public class TestObjectUtil {
 
     public static TestAppObject getAppFromInput(TestInputObject inputObject) {
         TestAppObject appObject = new TestAppObject();
-        TestComplexAppObject complextAppObject = getComplexAppFromComplexInput(inputObject.getTestComplexInputObject());
+        TestComplexAppObject complexAppObject = getComplexAppFromComplexInput(inputObject.getTestComplexInputObject());
 
-        appObject.setTestComplexAppObject(complextAppObject);
+        appObject.setTestComplexAppObject(complexAppObject);
         appObject.setBool(inputObject.isBool());
         appObject.setInteger(inputObject.getInteger());
         appObject.setString(inputObject.getString());
@@ -93,9 +93,9 @@ public class TestObjectUtil {
 
     public static TestInputObject getInputFromApp(TestAppObject appObject) {
         TestInputObject inputObject = new TestInputObject();
-        TestComplexInputObject complextInputObject = getComplexInputFromComplexApp(appObject.getTestComplexAppObject());
+        TestComplexInputObject complexInputObject = getComplexInputFromComplexApp(appObject.getTestComplexAppObject());
 
-        inputObject.setTestComplexInputObject(complextInputObject);
+        inputObject.setTestComplexInputObject(complexInputObject);
         inputObject.setBool(appObject.isBool());
         inputObject.setInteger(appObject.getInteger());
         inputObject.setString(appObject.getString());
@@ -126,22 +126,22 @@ public class TestObjectUtil {
     }
 
     public static TestComplexAppObject getComplexAppFromComplexInput(TestComplexInputObject inputObject) {
-        TestComplexAppObject complextAppObject = new TestComplexAppObject();
+        TestComplexAppObject complexAppObject = new TestComplexAppObject();
 
-        complextAppObject.setNumEntities(inputObject.getNumEntities());
-        complextAppObject.setStartTime(inputObject.getStartTime());
-        complextAppObject.setTestString(inputObject.getTestString());
+        complexAppObject.setNumEntities(inputObject.getNumEntities());
+        complexAppObject.setStartTime(inputObject.getStartTime());
+        complexAppObject.setTestString(inputObject.getTestString());
 
-        return complextAppObject;
+        return complexAppObject;
     }
 
     public static TestComplexInputObject getComplexInputFromComplexApp(TestComplexAppObject appObject) {
-        TestComplexInputObject complextInputObject = new TestComplexInputObject();
+        TestComplexInputObject complexInputObject = new TestComplexInputObject();
 
-        complextInputObject.setNumEntities(appObject.getNumEntities());
-        complextInputObject.setStartTime(appObject.getStartTime());
-        complextInputObject.setTestString(appObject.getTestString());
+        complexInputObject.setNumEntities(appObject.getNumEntities());
+        complexInputObject.setStartTime(appObject.getStartTime());
+        complexInputObject.setTestString(appObject.getTestString());
 
-        return complextInputObject;
+        return complexInputObject;
     }
 }
