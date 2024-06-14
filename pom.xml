@@ -194,6 +194,14 @@
                     <groupId>org.sonatype.central</groupId>
                     <artifactId>central-publishing-maven-plugin</artifactId>
                     <version>${central-publishing-maven-plugin.version}</version>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <publishingServerId>central</publishingServerId>
+                        <tokenAuth>true</tokenAuth>
+                        <deploymentName>ASPR MS Taskit</deploymentName>
+                        <autoPublish>true</autoPublish>
+                        <waitUntil>published</waitUntil>
+                    </configuration>
                 </plugin>
             </plugins>
 
@@ -273,17 +281,6 @@
                 </configuration>
                 <inherited>false</inherited>
             </plugin>
-
-            <plugin>
-                <groupId>org.sonatype.central</groupId>
-                <artifactId>central-publishing-maven-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                  <publishingServerId>central</publishingServerId>
-                  <tokenAuth>true</tokenAuth>
-                  <deploymentName>ASPR MS Taskit</deploymentName>
-                </configuration>
-              </plugin>
         </plugins>
     </build>
 

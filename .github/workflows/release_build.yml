@@ -18,6 +18,8 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    outputs:
+      taskit_version: ${{ steps.version-string.outputs.taskit_version }}
     permissions:
       contents: write
     steps:
@@ -42,10 +44,12 @@ jobs:
         MAVEN_PASSWORD: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
         MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_SECRET_KEY_PASSWORD }}
 
-    - name: Get Taskit Version
+    - name: Get Version
+      id: version-string
       run: |
         echo "version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout --file pom.xml)" >> "$GITHUB_ENV"
-
+        echo "taskit_version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout --file pom.xml)" >> "$GITHUB_OUTPUT"
+        
     - name: Make Taskit Release
       uses: ncipollo/release-action@v1.13.0
       with:
@@ -54,3 +58,51 @@ jobs:
         tag: "v${{ env.version }}"
         generateReleaseNotes: true
         skipIfReleaseExists: true
+
+  update-gcm-taskit:
+    needs: release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      VERSION: ${{ needs.release.outputs.gcm_taskit_version }}
+    steps:
+      - name: Checkout GCM Taskit
+        uses: actions/checkout@v4
+        with:
+          repository: HHS/ASPR-ms-gcm-taskit
+          token: ${{ secrets.GHA_BOT }}
+
+      - name: Update Taskit version
+        run : |
+          echo "$VERSION"
+          sed -i "0,/<taskit.version>.*<\/taskit.version>/s//<taskit.version>$VERSION<\/taskit.version>/g" pom.xml
+
+      - name: Increment GCM Taskit Version
+        run: |
+          current_version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout --file pom.xml)
+          echo GCM Taskit Version: $current_version
+          parts=( ${current_version//./ } )
+          bv=$((parts[2] + 1))
+          new_version="${parts[0]}.${parts[1]}.${bv}"
+          echo New GCM Taskit Version: $new_version
+          sed -i "0,/<revision>.*<\/revision>/s//<revision>$new_version<\/revision>/g" pom.xml
+
+      - name: Setup Git
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Make branch in GCM Taskit
+        run: |
+          git checkout -b update-gcm-taskit-to-$VERSION
+          git add pom.xml
+          git commit -m "Update gcm taskit to $VERSION"
+          git push --set-upstream origin update-gcm-taskit-to-$VERSION
+      
+      - name: Make PR in GCM Taskit
+        run: |
+          gh pr create -R HHS/ASPR-ms-gcm-taskit -B main --fill
+          gh pr merge -m --auto
+        env:
+          GH_TOKEN: ${{ secrets.GHA_BOT }}

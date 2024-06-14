@@ -26,4 +26,13 @@
         <url>https://github.com/HHS/aspr-ms-taskit/tree/main/core</url>
     </scm>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+    
 </project>
