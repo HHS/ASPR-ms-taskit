@@ -60,6 +60,7 @@ jobs:
         skipIfReleaseExists: true
 
   update-gcm-taskit:
+    if: ${{ !contains(github.event.head_commit.message, 'update-util-to-') }}
     needs: release
     runs-on: ubuntu-latest
     permissions:
