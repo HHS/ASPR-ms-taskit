@@ -15,7 +15,7 @@ import java.util.Set;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
- * The TranslatorController serves as the master of cerimonies for translating
+ * The TranslatorController serves as the master of ceremonies for translating
  * between two types of objects. Additionally, it has the ability to distribute
  * Input/Output files for reading and writing.
  */
@@ -137,7 +137,7 @@ public final class TranslationController {
         }
 
         /**
-         * Adds the given classRef markerInterace mapping.
+         * Adds the given classRef markerInterface mapping.
          * <p>
          * explicitly used when calling {@link TranslationController#writeOutput} with a
          * class for which a classRef ScenarioId pair does not exist and/or the need to
@@ -196,7 +196,7 @@ public final class TranslationController {
 
                 this.data.parentChildClassRelationshipMap.put(childClassRef, parentClassRef);
             }
-            
+
             return this;
         }
     }
@@ -404,7 +404,7 @@ public final class TranslationController {
      * Searches the list of read in objects and returns the first Object found of
      * the given classRef
      * 
-     * @param <T> the type of the obect to get
+     * @param <T> the type of the object to get
      * @throws ContractException
      *                           <ul>
      *                           <li>{@linkplain CoreTranslationError#UNKNOWN_CLASSREF}
@@ -412,10 +412,19 @@ public final class TranslationController {
      *                           </ul>
      */
     public <T> T getFirstObject(Class<T> classRef) {
-        for (Object object : this.objects) {
+        int index = -1;
+        for (int i = 0; i < this.objects.size(); i++) {
+            Object object = this.objects.get(i);
+
             if (classRef.isAssignableFrom(object.getClass())) {
-                return classRef.cast(object);
+                index = i;
+                break;
             }
+
+        }
+
+        if (index > -1) {
+            return classRef.cast(this.objects.remove(index));
         }
 
         throw new ContractException(CoreTranslationError.UNKNOWN_CLASSREF);
@@ -425,15 +434,20 @@ public final class TranslationController {
      * Searches the list of read in objects and returns all Objects found with the
      * given classRef
      * 
-     * @param <T> the type of the obect to get
+     * @param <T> the type of the object to get
      */
     public <T> List<T> getObjects(Class<T> classRef) {
         List<T> objects = new ArrayList<>();
-        for (Object object : this.objects) {
+        for (int i = 0; i < this.objects.size(); i++) {
+            Object object = this.objects.get(i);
+
             if (classRef.isAssignableFrom(object.getClass())) {
                 objects.add(classRef.cast(object));
             }
+
         }
+
+        this.objects.removeAll(objects);
 
         return objects;
     }
@@ -442,7 +456,16 @@ public final class TranslationController {
      * Returns the entire list of read in objects
      */
     public List<Object> getObjects() {
-        return this.objects;
+        List<Object> objects = new ArrayList<>(this.objects);
+        
+        this.objects.clear();
+
+        return objects;
+    }
+
+    // package access for testing
+    int getNumObjects() {
+        return this.objects.size();
     }
 
 }

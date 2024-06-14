@@ -63,7 +63,7 @@ public class AT_TranslationEngine {
             engine.validateInit();
         });
 
-        assertEquals(CoreTranslationError.UNKNWON_TRANSLATION_ENGINE_TYPE, contractException.getErrorType());
+        assertEquals(CoreTranslationError.UNKNOWN_TRANSLATION_ENGINE_TYPE, contractException.getErrorType());
     }
 
     @Test

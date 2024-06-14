@@ -21,7 +21,7 @@ public class AT_Translator {
     @Test
     @UnitTestMethod(target = Translator.class, name = "getInitializer", args = {})
     public void testGetInitializer() {
-        Consumer<TranslatorContext> expectedInitializer = (translatorConext) -> {
+        Consumer<TranslatorContext> expectedInitializer = (translatorContext) -> {
         };
         Translator testTranslator = Translator.builder().setInitializer(expectedInitializer)
                 .setTranslatorId(new TranslatorId() {
@@ -35,7 +35,7 @@ public class AT_Translator {
     public void testGetTranslatorId() {
         TranslatorId expectedTranslatorId = new TranslatorId() {
         };
-        Translator testTranslator = Translator.builder().setInitializer((translatorConext) -> {
+        Translator testTranslator = Translator.builder().setInitializer((translatorContext) -> {
         }).setTranslatorId(expectedTranslatorId).build();
 
         assertEquals(expectedTranslatorId, testTranslator.getTranslatorId());
@@ -46,7 +46,7 @@ public class AT_Translator {
     public void testGetTranslatorDependencies() {
         TranslatorId expectedTranslatorId = new TranslatorId() {
         };
-        Translator testTranslator = Translator.builder().setInitializer((translatorConext) -> {
+        Translator testTranslator = Translator.builder().setInitializer((translatorContext) -> {
         }).setTranslatorId(expectedTranslatorId).addDependency(TestObjectTranslatorId.TRANSLATOR_ID)
                 .addDependency(TestComplexObjectTranslatorId.TRANSLATOR_ID).build();
 
@@ -66,7 +66,7 @@ public class AT_Translator {
         };
         TranslatorId translatorIdB = new TranslatorId() {
         };
-        Consumer<TranslatorContext> consumerA = (translatorConext) -> {
+        Consumer<TranslatorContext> consumerA = (translatorContext) -> {
         };
 
         Translator translatorA = Translator.builder().setInitializer(consumerA).setTranslatorId(translatorIdA).build();
@@ -91,7 +91,7 @@ public class AT_Translator {
         // if same id, but different dependencies, not equal
         assertNotEquals(translatorA.hashCode(), translatorC.hashCode());
 
-        // if same id and dependecies, equal
+        // if same id and dependencies, equal
         assertEquals(translatorC.hashCode(), translatorD.hashCode());
     }
 
@@ -102,7 +102,7 @@ public class AT_Translator {
         };
         TranslatorId translatorIdB = new TranslatorId() {
         };
-        Consumer<TranslatorContext> consumerA = (translatorConext) -> {
+        Consumer<TranslatorContext> consumerA = (translatorContext) -> {
         };
         Translator translatorA = Translator.builder().setInitializer(consumerA).setTranslatorId(translatorIdA).build();
 
@@ -129,7 +129,7 @@ public class AT_Translator {
         // if same id, but different dependencies, not equal
         assertNotEquals(translatorA, translatorC);
 
-        // if same id and dependecies, equal
+        // if same id and dependencies, equal
         assertEquals(translatorC, translatorD);
 
         Translator.Data data = new Translator.Data();
@@ -149,7 +149,7 @@ public class AT_Translator {
     public void testBuild() {
         TranslatorId translatorIdA = new TranslatorId() {
         };
-        Translator translatorA = Translator.builder().setInitializer((translatorConext) -> {
+        Translator translatorA = Translator.builder().setInitializer((translatorContext) -> {
         }).setTranslatorId(translatorIdA).build();
 
         assertNotNull(translatorA);
@@ -164,7 +164,7 @@ public class AT_Translator {
 
         // null translatorId
         contractException = assertThrows(ContractException.class, () -> {
-            Translator.builder().setInitializer((translatorConext) -> {
+            Translator.builder().setInitializer((translatorContext) -> {
             }).build();
         });
 
@@ -176,7 +176,7 @@ public class AT_Translator {
     public void testSetTranslatorId() {
         TranslatorId translatorIdA = new TranslatorId() {
         };
-        Translator translatorA = Translator.builder().setInitializer((translatorConext) -> {
+        Translator translatorA = Translator.builder().setInitializer((translatorContext) -> {
         }).setTranslatorId(translatorIdA).build();
 
         assertEquals(translatorIdA, translatorA.getTranslatorId());
@@ -193,7 +193,7 @@ public class AT_Translator {
     @Test
     @UnitTestMethod(target = Translator.Builder.class, name = "setInitializer", args = { Consumer.class })
     public void testSetInitializer() {
-        Consumer<TranslatorContext> expectedInitializer = (translatorConext) -> {
+        Consumer<TranslatorContext> expectedInitializer = (translatorContext) -> {
         };
         Translator testTranslator = Translator.builder().setInitializer(expectedInitializer)
                 .setTranslatorId(new TranslatorId() {
@@ -215,7 +215,7 @@ public class AT_Translator {
     public void testAddDependency() {
         TranslatorId expectedTranslatorId = new TranslatorId() {
         };
-        Translator testTranslator = Translator.builder().setInitializer((translatorConext) -> {
+        Translator testTranslator = Translator.builder().setInitializer((translatorContext) -> {
         }).setTranslatorId(expectedTranslatorId).addDependency(TestObjectTranslatorId.TRANSLATOR_ID)
                 .addDependency(TestComplexObjectTranslatorId.TRANSLATOR_ID).build();
 

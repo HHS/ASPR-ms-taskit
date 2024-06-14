@@ -1,11 +1,11 @@
 package gov.hhs.aspr.ms.taskit.protobuf;
 
+import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
-import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.file.Path;
@@ -159,7 +159,7 @@ public final class ProtobufTranslationEngine extends TranslationEngine {
         }
 
         /**
-         * Overriden implementation of
+         * Override implementation of
          * {@link TranslationEngine.Builder#addTranslationSpec(TranslationSpec)} that
          * also populates the type urls for all Protobuf Message types that exist within
          * the translationSpec
@@ -167,7 +167,7 @@ public final class ProtobufTranslationEngine extends TranslationEngine {
          * @throws ContractException
          *                           <ul>
          *                           <li>{@link ProtobufCoreTranslationError#INVALID_INPUT_CLASS}
-         *                           if the given inputClassRef is not assingable from
+         *                           if the given inputClassRef is not assignable from
          *                           {@linkplain Message} nor
          *                           {@linkplain ProtocolMessageEnum}</li>
          *                           <li>{@link ProtobufCoreTranslationError#INVALID_TRANSLATION_SPEC}
@@ -200,7 +200,7 @@ public final class ProtobufTranslationEngine extends TranslationEngine {
 
             return this;
         }
-        
+
         /**
          * checks the class to determine if it is a ProtocolMessageEnum or a Message and
          * if so, gets the Descriptor (which is akin to a class but for a Protobuf
@@ -208,7 +208,7 @@ public final class ProtobufTranslationEngine extends TranslationEngine {
          * descriptorMap and typeUrlToClassMap
          * 
          * @throws ContractException {@link ProtobufCoreTranslationError#INVALID_INPUT_CLASS}
-         *                           if the given inputClassRef is not assingable from
+         *                           if the given inputClassRef is not assignable from
          *                           {@linkplain Message} nor
          *                           {@linkplain ProtocolMessageEnum}
          */
@@ -294,7 +294,8 @@ public final class ProtobufTranslationEngine extends TranslationEngine {
      * @param <M> the type of the appObject
      * @throws RuntimeException if there is an IOException during writing
      */
-    protected <U, M extends U> void writeOutput(Path path, M appObject, Optional<Class<U>> superClass) throws IOException {
+    protected <U, M extends U> void writeOutput(Path path, M appObject, Optional<Class<U>> superClass)
+            throws IOException {
         Message message;
         if (Message.class.isAssignableFrom(appObject.getClass())) {
             message = Message.class.cast(appObject);
@@ -319,7 +320,7 @@ public final class ProtobufTranslationEngine extends TranslationEngine {
      */
     private <U extends Message> void writeOutput(Path path, U message) {
         try {
-            Writer writer = new FileWriter(path.toFile());
+            BufferedWriter writer = new BufferedWriter(new FileWriter(path.toFile()));
             this.data.jsonPrinter.appendTo(message, writer);
 
             if (debug) {
@@ -351,16 +352,20 @@ public final class ProtobufTranslationEngine extends TranslationEngine {
      * @param <T> the return type
      * @throws FileNotFoundException
      * @throws RuntimeException
-     *                           <ul>
-     *                           <li>if there is an issue getting the builder method
-     *                           from the inputClassRef</li>
-     *                           <li>if there is an issue merging the read in JSON
-     *                           object into the resulting Protobuf Message builder
-     *                           </li>
-     *                           </ul>
-     * @throws ContractException {@linkplain ProtobufCoreTranslationError#INVALID_READ_INPUT_CLASS_REF}
-     *                           if the given inputClassRef is not assingable from
-     *                           {@linkplain Message}
+     *                               <ul>
+     *                               <li>if there is an issue getting the builder
+     *                               method
+     *                               from the inputClassRef</li>
+     *                               <li>if there is an issue merging the read in
+     *                               JSON
+     *                               object into the resulting Protobuf Message
+     *                               builder
+     *                               </li>
+     *                               </ul>
+     * @throws ContractException     {@linkplain ProtobufCoreTranslationError#INVALID_READ_INPUT_CLASS_REF}
+     *                               if the given inputClassRef is not assignable
+     *                               from
+     *                               {@linkplain Message}
      */
     protected <T, U> T readInput(Path path, Class<U> inputClassRef) throws IOException {
         if (!Message.class.isAssignableFrom(inputClassRef)) {
@@ -433,7 +438,7 @@ public final class ProtobufTranslationEngine extends TranslationEngine {
         }
 
         throw new RuntimeException(
-                "\"newBuilder\" method exists, but it requires arugments, when it is expected to require 0 arugments");
+                "\"newBuilder\" method exists, but it requires arguments, when it is expected to require 0 arguments");
     }
 
     /**
@@ -495,7 +500,7 @@ public final class ProtobufTranslationEngine extends TranslationEngine {
         }
 
         throw new ContractException(ProtobufCoreTranslationError.UNKNOWN_TYPE_URL,
-                "Unable to find corrsponding class for: " + typeUrl);
+                "Unable to find corresponding class for: " + typeUrl);
     }
 
 }
