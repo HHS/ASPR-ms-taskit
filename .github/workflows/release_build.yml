@@ -37,12 +37,12 @@ jobs:
         gpg-private-key: ${{ secrets.GPG_SECRET_KEY }}
         gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
-    # - name: Build and Deploy Taskit
-    #   run: mvn clean deploy -Pjavadoc,sign --file pom.xml
-    #   env:
-    #     MAVEN_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
-    #     MAVEN_PASSWORD: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
-    #     MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_SECRET_KEY_PASSWORD }}
+    - name: Build and Deploy Taskit
+      run: mvn clean deploy -Pjavadoc,sign --file pom.xml
+      env:
+        MAVEN_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+        MAVEN_PASSWORD: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
+        MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_SECRET_KEY_PASSWORD }}
 
     - name: Get Version
       id: version-string
@@ -50,14 +50,14 @@ jobs:
         echo "version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout --file pom.xml)" >> "$GITHUB_ENV"
         echo "taskit_version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout --file pom.xml)" >> "$GITHUB_OUTPUT"
         
-    # - name: Make Taskit Release
-    #   uses: ncipollo/release-action@v1.13.0
-    #   with:
-    #     artifacts: "core/target/core-${{ env.version }}*,protobuf/target/protobuf-${{ env.version }}*"
-    #     name: "v${{ env.version }}"
-    #     tag: "v${{ env.version }}"
-    #     generateReleaseNotes: true
-    #     skipIfReleaseExists: true
+    - name: Make Taskit Release
+      uses: ncipollo/release-action@v1.13.0
+      with:
+        artifacts: "core/target/core-${{ env.version }}*,protobuf/target/protobuf-${{ env.version }}*"
+        name: "v${{ env.version }}"
+        tag: "v${{ env.version }}"
+        generateReleaseNotes: true
+        skipIfReleaseExists: true
 
   update-gcm-taskit:
     needs: release
