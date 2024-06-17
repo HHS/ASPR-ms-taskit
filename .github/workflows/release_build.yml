@@ -96,10 +96,10 @@ jobs:
 
       - name: Make branch in GCM Taskit
         run: |
-          git checkout -b update-gcm-taskit-to-$VERSION
+          git checkout -b update-taskit-to-$VERSION
           git add pom.xml
-          git commit -m "Update gcm taskit to $VERSION"
-          git push --set-upstream origin update-gcm-taskit-to-$VERSION
+          git commit -m "Update taskit to $VERSION"
+          git push --set-upstream origin update-taskit-to-$VERSION
       
       - name: Make PR in GCM Taskit
         run: |
