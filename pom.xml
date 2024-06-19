@@ -51,7 +51,7 @@
     <!-- Properties -->
     <properties>
         <!-- Version -->
-        <revision>4.1.0</revision>
+        <revision>4.1.1</revision>
 
         <!-- basic project properties -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -70,7 +70,7 @@
 
         <!-- dependency versions -->
         <gson.version>2.11.0</gson.version>
-        <util.version>4.2.0</util.version>
+        <util.version>4.2.1</util.version>
         <junit-jupiter-engine.version>5.10.2</junit-jupiter-engine.version>
         <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
     </properties>
