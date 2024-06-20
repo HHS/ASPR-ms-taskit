@@ -167,17 +167,6 @@
             <plugin>
                 <groupId>org.sonatype.central</groupId>
                 <artifactId>central-publishing-maven-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <publishingServerId>central</publishingServerId>
-                    <tokenAuth>true</tokenAuth>
-                    <deploymentName>ASPR MS Taskit Protobuf</deploymentName>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.sonatype.central</groupId>
-                <artifactId>central-publishing-maven-plugin</artifactId>
             </plugin>
 
         </plugins>
