@@ -1,5 +1,6 @@
 package gov.hhs.aspr.ms.taskit.protobuf;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -372,7 +373,7 @@ public final class ProtobufTranslationEngine extends TranslationEngine {
             throw new ContractException(ProtobufCoreTranslationError.INVALID_READ_INPUT_CLASS_REF);
         }
 
-        return parseJson(new FileReader(path.toFile()), inputClassRef.asSubclass(Message.class));
+        return parseJson(new BufferedReader(new FileReader(path.toFile())), inputClassRef.asSubclass(Message.class));
     }
 
     /**
