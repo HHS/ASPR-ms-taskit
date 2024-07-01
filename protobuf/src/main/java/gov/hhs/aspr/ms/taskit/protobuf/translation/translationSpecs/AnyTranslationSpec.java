@@ -1,10 +1,10 @@
-package gov.hhs.aspr.ms.taskit.protobuf.translationSpecs;
+package gov.hhs.aspr.ms.taskit.protobuf.translation.translationSpecs;
 
 import com.google.protobuf.Any;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
 
-import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.translation.ProtobufTranslationSpec;
 
 /**
  * TranslationSpec that defines how to translate from any Java Object to a

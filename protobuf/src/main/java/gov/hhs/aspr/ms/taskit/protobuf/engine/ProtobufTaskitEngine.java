@@ -30,8 +30,8 @@ import gov.hhs.aspr.ms.taskit.core.engine.TaskitError;
 import gov.hhs.aspr.ms.taskit.core.translation.ITranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.Translator;
-import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
-import gov.hhs.aspr.ms.taskit.protobuf.translationSpecs.AnyTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.translation.ProtobufTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.translation.translationSpecs.AnyTranslationSpec;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**

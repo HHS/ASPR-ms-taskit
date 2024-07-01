@@ -1,10 +1,10 @@
-package gov.hhs.aspr.ms.taskit.protobuf.translationSpecs;
+package gov.hhs.aspr.ms.taskit.protobuf.translation.translationSpecs;
 
 import java.time.LocalDate;
 
 import com.google.type.Date;
 
-import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.translation.ProtobufTranslationSpec;
 
 /**
  * TranslationSpec that defines how to translate from any Java {@link LocalDate}

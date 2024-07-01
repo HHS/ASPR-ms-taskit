@@ -13,6 +13,7 @@ import gov.hhs.aspr.ms.taskit.protobuf.engine.ProtobufTaskitEngine;
 import gov.hhs.aspr.ms.taskit.protobuf.input.WrapperEnumValue;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testobject.input.TestInputEnum;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testobject.translationSpecs.TestProtobufEnumTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.translation.translationSpecs.EnumTranslationSpec;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestForCoverage;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;

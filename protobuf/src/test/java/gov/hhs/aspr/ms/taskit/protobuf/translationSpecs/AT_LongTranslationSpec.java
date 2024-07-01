@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import com.google.protobuf.Int64Value;
 
 import gov.hhs.aspr.ms.taskit.protobuf.engine.ProtobufTaskitEngine;
+import gov.hhs.aspr.ms.taskit.protobuf.translation.translationSpecs.LongTranslationSpec;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestForCoverage;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;

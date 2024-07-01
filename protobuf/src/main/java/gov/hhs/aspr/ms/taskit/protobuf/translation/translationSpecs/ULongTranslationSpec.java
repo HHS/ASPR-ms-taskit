@@ -1,8 +1,8 @@
-package gov.hhs.aspr.ms.taskit.protobuf.translationSpecs;
+package gov.hhs.aspr.ms.taskit.protobuf.translation.translationSpecs;
 
 import com.google.protobuf.UInt64Value;
 
-import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.translation.ProtobufTranslationSpec;
 
 /**
  * TranslationSpec that defines how to translate from any Java Long to a Protobuf

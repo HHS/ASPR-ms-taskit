@@ -1,4 +1,4 @@
-package gov.hhs.aspr.ms.taskit.protobuf;
+package gov.hhs.aspr.ms.taskit.protobuf.translation;
 
 import gov.hhs.aspr.ms.taskit.core.engine.ITaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;

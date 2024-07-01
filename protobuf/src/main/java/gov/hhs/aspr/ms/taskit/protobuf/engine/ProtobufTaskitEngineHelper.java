@@ -23,19 +23,19 @@ import com.google.protobuf.UInt32Value;
 import com.google.protobuf.UInt64Value;
 import com.google.type.Date;
 
-import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
 import gov.hhs.aspr.ms.taskit.protobuf.input.WrapperEnumValue;
-import gov.hhs.aspr.ms.taskit.protobuf.translationSpecs.AnyTranslationSpec;
-import gov.hhs.aspr.ms.taskit.protobuf.translationSpecs.BooleanTranslationSpec;
-import gov.hhs.aspr.ms.taskit.protobuf.translationSpecs.DateTranslationSpec;
-import gov.hhs.aspr.ms.taskit.protobuf.translationSpecs.DoubleTranslationSpec;
-import gov.hhs.aspr.ms.taskit.protobuf.translationSpecs.EnumTranslationSpec;
-import gov.hhs.aspr.ms.taskit.protobuf.translationSpecs.FloatTranslationSpec;
-import gov.hhs.aspr.ms.taskit.protobuf.translationSpecs.IntegerTranslationSpec;
-import gov.hhs.aspr.ms.taskit.protobuf.translationSpecs.LongTranslationSpec;
-import gov.hhs.aspr.ms.taskit.protobuf.translationSpecs.StringTranslationSpec;
-import gov.hhs.aspr.ms.taskit.protobuf.translationSpecs.UIntegerTranslationSpec;
-import gov.hhs.aspr.ms.taskit.protobuf.translationSpecs.ULongTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.translation.ProtobufTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.translation.translationSpecs.AnyTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.translation.translationSpecs.BooleanTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.translation.translationSpecs.DateTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.translation.translationSpecs.DoubleTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.translation.translationSpecs.EnumTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.translation.translationSpecs.FloatTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.translation.translationSpecs.IntegerTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.translation.translationSpecs.LongTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.translation.translationSpecs.StringTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.translation.translationSpecs.UIntegerTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.translation.translationSpecs.ULongTranslationSpec;
 
 /**
  * This is a helper class that encompasses all of the primitive translation

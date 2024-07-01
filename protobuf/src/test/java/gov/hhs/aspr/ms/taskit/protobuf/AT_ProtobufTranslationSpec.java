@@ -8,7 +8,8 @@ import com.google.protobuf.BoolValue;
 
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
 import gov.hhs.aspr.ms.taskit.protobuf.engine.ProtobufTaskitEngine;
-import gov.hhs.aspr.ms.taskit.protobuf.translationSpecs.BooleanTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.translation.ProtobufTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.translation.translationSpecs.BooleanTranslationSpec;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 
 public class AT_ProtobufTranslationSpec {

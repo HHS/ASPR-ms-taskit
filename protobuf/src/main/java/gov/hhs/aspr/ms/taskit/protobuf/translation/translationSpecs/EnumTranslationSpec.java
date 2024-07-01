@@ -1,12 +1,12 @@
-package gov.hhs.aspr.ms.taskit.protobuf.translationSpecs;
+package gov.hhs.aspr.ms.taskit.protobuf.translation.translationSpecs;
 
 import java.lang.reflect.InvocationTargetException;
 
 import com.google.protobuf.Any;
 import com.google.protobuf.ProtocolMessageEnum;
 
-import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
 import gov.hhs.aspr.ms.taskit.protobuf.input.WrapperEnumValue;
+import gov.hhs.aspr.ms.taskit.protobuf.translation.ProtobufTranslationSpec;
 
 /**
  * TranslationSpec that defines how to translate from any Java Enum to a Protobuf

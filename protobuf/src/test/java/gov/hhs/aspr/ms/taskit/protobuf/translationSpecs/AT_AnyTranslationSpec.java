@@ -18,6 +18,7 @@ import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testobject.input.TestInputEnu
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testobject.input.TestInputObject;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testobject.translationSpecs.TestProtobufEnumTranslationSpec;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testobject.translationSpecs.TestProtobufObjectTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.translation.translationSpecs.AnyTranslationSpec;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestForCoverage;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;

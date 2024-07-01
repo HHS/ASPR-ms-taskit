@@ -1,8 +1,8 @@
-package gov.hhs.aspr.ms.taskit.protobuf.translationSpecs;
+package gov.hhs.aspr.ms.taskit.protobuf.translation.translationSpecs;
 
 import com.google.protobuf.StringValue;
 
-import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.translation.ProtobufTranslationSpec;
 
 /**
  * TranslationSpec that defines how to translate from any Java String to a
