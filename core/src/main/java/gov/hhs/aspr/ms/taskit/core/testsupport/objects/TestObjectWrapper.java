@@ -1,4 +1,4 @@
-package gov.hhs.aspr.ms.taskit.core.testsupport.testobject;
+package gov.hhs.aspr.ms.taskit.core.testsupport.objects;
 
 import java.util.Objects;
 

@@ -12,8 +12,8 @@ import java.util.function.Consumer;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitError;
-import gov.hhs.aspr.ms.taskit.core.testsupport.testcomplexobject.TestComplexObjectTranslatorId;
-import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestObjectTranslatorId;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.TestComplexObjectTranslatorId;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.TestObjectTranslatorId;
 import gov.hhs.aspr.ms.taskit.core.translation.Translator;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslatorContext;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslatorId;

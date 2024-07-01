@@ -1,8 +1,7 @@
-package gov.hhs.aspr.ms.taskit.core.testsupport.testobject;
+package gov.hhs.aspr.ms.taskit.core.testsupport.translation;
 
-import gov.hhs.aspr.ms.taskit.core.testsupport.TestTaskitEngine;
-import gov.hhs.aspr.ms.taskit.core.testsupport.testcomplexobject.TestComplexObjectTranslatorId;
-import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.translationSpecs.TestObjectTranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.testsupport.engine.TestTaskitEngine;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.translationSpecs.TestObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.Translator;
 
 public class TestObjectTranslator {

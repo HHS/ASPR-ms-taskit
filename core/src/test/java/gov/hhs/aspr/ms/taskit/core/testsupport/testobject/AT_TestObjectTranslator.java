@@ -7,7 +7,9 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.ms.taskit.core.testsupport.testcomplexobject.TestComplexObjectTranslatorId;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.TestComplexObjectTranslatorId;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.TestObjectTranslator;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.TestObjectTranslatorId;
 import gov.hhs.aspr.ms.taskit.core.translation.Translator;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslatorId;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
