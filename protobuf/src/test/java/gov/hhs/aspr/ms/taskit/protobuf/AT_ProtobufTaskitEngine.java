@@ -27,7 +27,7 @@ import gov.hhs.aspr.ms.taskit.core.ProtobufTaskitEngineTestHelper;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitError;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppChildObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppObject;
-import gov.hhs.aspr.ms.taskit.core.testsupport.translation.translationSpecs.TestObjectTranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.specs.TestObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.Translator;
 import gov.hhs.aspr.ms.taskit.protobuf.engine.ProtobufTaskitEngine;

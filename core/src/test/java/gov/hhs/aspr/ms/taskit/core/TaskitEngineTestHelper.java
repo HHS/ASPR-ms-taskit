@@ -9,8 +9,8 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.engine.TestTaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestObjectWrapper;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.TestObjectTranslator;
-import gov.hhs.aspr.ms.taskit.core.testsupport.translation.translationSpecs.TestComplexObjectTranslationSpec;
-import gov.hhs.aspr.ms.taskit.core.testsupport.translation.translationSpecs.TestObjectTranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.specs.TestComplexObjectTranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.specs.TestObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 

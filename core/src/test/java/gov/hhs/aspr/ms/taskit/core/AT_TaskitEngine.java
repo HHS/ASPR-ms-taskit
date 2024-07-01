@@ -31,8 +31,8 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.translation.TestComplexObjectTran
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.TestComplexObjectTranslatorId;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.TestObjectTranslator;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.TestObjectTranslatorId;
-import gov.hhs.aspr.ms.taskit.core.testsupport.translation.translationSpecs.TestComplexObjectTranslationSpec;
-import gov.hhs.aspr.ms.taskit.core.testsupport.translation.translationSpecs.TestObjectTranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.specs.TestComplexObjectTranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.specs.TestObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.ITranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.Translator;
