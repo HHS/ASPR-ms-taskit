@@ -1,4 +1,4 @@
-package gov.hhs.aspr.ms.taskit.protobuf.translation.translationSpecs;
+package gov.hhs.aspr.ms.taskit.protobuf.translation.specs;
 
 import com.google.protobuf.UInt64Value;
 
