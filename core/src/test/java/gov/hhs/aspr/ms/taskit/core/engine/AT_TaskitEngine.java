@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngineType;
-import gov.hhs.aspr.ms.taskit.core.engine.TaskitError;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitCoreError;
 import gov.hhs.aspr.ms.taskit.core.testsupport.TestObjectUtil;
 import gov.hhs.aspr.ms.taskit.core.testsupport.engine.TestTaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppChildObject;
@@ -70,7 +70,7 @@ public class AT_TaskitEngine {
             engine.validateInit();
         });
 
-        assertEquals(TaskitError.UNKNOWN_TASKIT_ENGINE_TYPE, contractException.getErrorType());
+        assertEquals(TaskitCoreError.UNKNOWN_TASKIT_ENGINE_TYPE, contractException.getErrorType());
     }
 
     @Test
@@ -139,7 +139,7 @@ public class AT_TaskitEngine {
                     .addTranslator(TestComplexObjectTranslator.getTranslator()).buildWithNoTranslatorInit();
             engine.validateInit();
         });
-        assertEquals(TaskitError.UNINITIALIZED_TRANSLATORS, contractException.getErrorType());
+        assertEquals(TaskitCoreError.UNINITIALIZED_TRANSLATORS, contractException.getErrorType());
     }
 
     @Test
@@ -169,7 +169,7 @@ public class AT_TaskitEngine {
             testTaskitEngine.translateObject(null);
         });
 
-        assertEquals(TaskitError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
+        assertEquals(TaskitCoreError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
     }
 
     @Test
@@ -205,14 +205,14 @@ public class AT_TaskitEngine {
             testTaskitEngine.translateObjectAsClassSafe(null, Object.class);
         });
 
-        assertEquals(TaskitError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
+        assertEquals(TaskitCoreError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
 
         // the passed in parentClassRef is null
         contractException = assertThrows(ContractException.class, () -> {
             testTaskitEngine.translateObjectAsClassSafe(expectedAppChildObject, null);
         });
 
-        assertEquals(TaskitError.NULL_CLASS_REF, contractException.getErrorType());
+        assertEquals(TaskitCoreError.NULL_CLASS_REF, contractException.getErrorType());
     }
 
     @Test
@@ -277,14 +277,14 @@ public class AT_TaskitEngine {
             testTaskitEngine.translateObjectAsClassUnsafe(null, Object.class);
         });
 
-        assertEquals(TaskitError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
+        assertEquals(TaskitCoreError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
 
         // the passed in parentClassRef is null
         contractException = assertThrows(ContractException.class, () -> {
             testTaskitEngine.translateObjectAsClassUnsafe(expectedAppObject, null);
         });
 
-        assertEquals(TaskitError.NULL_CLASS_REF, contractException.getErrorType());
+        assertEquals(TaskitCoreError.NULL_CLASS_REF, contractException.getErrorType());
     }
 
     @Test
@@ -321,7 +321,7 @@ public class AT_TaskitEngine {
             testTaskitEngine.getTranslationSpecForClass(Object.class);
         });
 
-        assertEquals(TaskitError.UNKNOWN_TRANSLATION_SPEC, contractException.getErrorType());
+        assertEquals(TaskitCoreError.UNKNOWN_TRANSLATION_SPEC, contractException.getErrorType());
     }
 
     @Test
@@ -351,7 +351,7 @@ public class AT_TaskitEngine {
             taskitEngineBuilder.addNodes(mutableGraph, translatorMap);
         });
 
-        assertEquals(TaskitError.DUPLICATE_TRANSLATOR, contractException.getErrorType());
+        assertEquals(TaskitCoreError.DUPLICATE_TRANSLATOR, contractException.getErrorType());
 
         // missing translator
         contractException = assertThrows(ContractException.class, () -> {
@@ -369,7 +369,7 @@ public class AT_TaskitEngine {
             taskitEngineBuilder.checkForMissingTranslators(mutableGraph, translatorMap);
         });
 
-        assertEquals(TaskitError.MISSING_TRANSLATOR, contractException.getErrorType());
+        assertEquals(TaskitCoreError.MISSING_TRANSLATOR, contractException.getErrorType());
 
         // cyclic graph
         contractException = assertThrows(ContractException.class, () -> {
@@ -391,7 +391,7 @@ public class AT_TaskitEngine {
             taskitEngineBuilder.checkForCyclicGraph(mutableGraph);
         });
 
-        assertEquals(TaskitError.CIRCULAR_TRANSLATOR_DEPENDENCIES, contractException.getErrorType());
+        assertEquals(TaskitCoreError.CIRCULAR_TRANSLATOR_DEPENDENCIES, contractException.getErrorType());
     }
 
     @Test

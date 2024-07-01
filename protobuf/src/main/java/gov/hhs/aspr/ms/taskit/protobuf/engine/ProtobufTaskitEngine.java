@@ -26,7 +26,7 @@ import gov.hhs.aspr.ms.taskit.core.engine.ITaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.engine.ITaskitEngineBuilder;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngineType;
-import gov.hhs.aspr.ms.taskit.core.engine.TaskitError;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitCoreError;
 import gov.hhs.aspr.ms.taskit.core.translation.ITranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.Translator;
@@ -283,7 +283,7 @@ public final class ProtobufTaskitEngine implements ITaskitEngine {
     @Override
     public <M> void write(Path path, M object) throws IOException {
         if (!Message.class.isAssignableFrom(object.getClass())) {
-            throw new ContractException(TaskitError.INVALID_OUTPUT_CLASS, Message.class.getName());
+            throw new ContractException(TaskitCoreError.INVALID_OUTPUT_CLASS, Message.class.getName());
         }
 
         Message message = Message.class.cast(object);
@@ -333,7 +333,7 @@ public final class ProtobufTaskitEngine implements ITaskitEngine {
      * 
      * @param <U> the type of the inputClass
      * @param <T> the return type
-     * @throws ContractException {@linkplain TaskitError#INVALID_INPUT_CLASS}
+     * @throws ContractException {@linkplain TaskitCoreError#INVALID_INPUT_CLASS}
      *                           if the given inputClassRef is not assignable
      *                           from
      *                           {@linkplain Message}
@@ -361,7 +361,7 @@ public final class ProtobufTaskitEngine implements ITaskitEngine {
      * 
      * @param <U> the type of the inputClass
      * 
-     * @throws ContractException {@linkplain TaskitError#INVALID_INPUT_CLASS}
+     * @throws ContractException {@linkplain TaskitCoreError#INVALID_INPUT_CLASS}
      *                           if the given inputClassRef is not assignable
      *                           from
      *                           {@linkplain Message}
@@ -382,7 +382,7 @@ public final class ProtobufTaskitEngine implements ITaskitEngine {
     @Override
     public <U> U read(Path path, Class<U> classRef) throws IOException {
         if (!Message.class.isAssignableFrom(classRef)) {
-            throw new ContractException(TaskitError.INVALID_INPUT_CLASS, Message.class.getName());
+            throw new ContractException(TaskitCoreError.INVALID_INPUT_CLASS, Message.class.getName());
         }
 
         Reader reader = new BufferedReader(new FileReader(path.toFile()));
@@ -431,7 +431,7 @@ public final class ProtobufTaskitEngine implements ITaskitEngine {
      * 
      * @param <U> the parent Class
      * @param <M> the object class
-     * @throws ContractException {@linkplain TaskitError#UNKNOWN_TRANSLATION_SPEC}
+     * @throws ContractException {@linkplain TaskitCoreError#UNKNOWN_TRANSLATION_SPEC}
      *                           if no translationSpec was provided for the given
      *                           parentClassRef
      */
@@ -451,9 +451,9 @@ public final class ProtobufTaskitEngine implements ITaskitEngine {
      * @param <T> the return type after translating
      * @throws ContractException
      *                           <ul>
-     *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
+     *                           <li>{@linkplain TaskitCoreError#NULL_OBJECT_FOR_TRANSLATION}
      *                           if the passed in object is null</li>
-     *                           <li>{@linkplain TaskitError#UNKNOWN_TRANSLATION_SPEC}
+     *                           <li>{@linkplain TaskitCoreError#UNKNOWN_TRANSLATION_SPEC}
      *                           if no translationSpec was provided for the given
      *                           objects class</li>
      *                           </ul>
@@ -480,11 +480,11 @@ public final class ProtobufTaskitEngine implements ITaskitEngine {
      *            translationSpec you want to use
      * @throws ContractException
      *                           <ul>
-     *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
+     *                           <li>{@linkplain TaskitCoreError#NULL_OBJECT_FOR_TRANSLATION}
      *                           if the passed in object is null</li>
-     *                           <li>{@linkplain TaskitError#NULL_CLASS_REF}
+     *                           <li>{@linkplain TaskitCoreError#NULL_CLASS_REF}
      *                           if the passed in parentClassRef is null</li>
-     *                           <li>{@linkplain TaskitError#UNKNOWN_TRANSLATION_SPEC}
+     *                           <li>{@linkplain TaskitCoreError#UNKNOWN_TRANSLATION_SPEC}
      *                           if no translationSpec was provided for the given
      *                           objects class</li>
      *                           </ul>
@@ -515,11 +515,11 @@ public final class ProtobufTaskitEngine implements ITaskitEngine {
      * @param <U> the type of the class for which translationSpec you want to use
      * @throws ContractException
      *                           <ul>
-     *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
+     *                           <li>{@linkplain TaskitCoreError#NULL_OBJECT_FOR_TRANSLATION}
      *                           if the passed in object is null</li>
-     *                           <li>{@linkplain TaskitError#NULL_CLASS_REF}
+     *                           <li>{@linkplain TaskitCoreError#NULL_CLASS_REF}
      *                           if the passed in objectClassRef is null</li>
-     *                           <li>{@linkplain TaskitError#UNKNOWN_TRANSLATION_SPEC}
+     *                           <li>{@linkplain TaskitCoreError#UNKNOWN_TRANSLATION_SPEC}
      *                           if no translationSpec was provided for the given
      *                           objects class</li>
      *                           </ul>

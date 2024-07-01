@@ -4,7 +4,7 @@ import java.util.Objects;
 
 import gov.hhs.aspr.ms.taskit.core.engine.ITaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
-import gov.hhs.aspr.ms.taskit.core.engine.TaskitError;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitCoreError;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
@@ -48,7 +48,7 @@ public abstract class TranslationSpec<I, A> implements ITranslationSpec {
      * </p>
      * 
      * @param <T> the expected return type after translation/conversion
-     * @throws ContractException {@linkplain TaskitError#UNKNOWN_OBJECT} if
+     * @throws ContractException {@linkplain TaskitCoreError#UNKNOWN_OBJECT} if
      *                           no match can be found between the passed in object
      *                           and the given appClass and InputClass
      */
@@ -72,7 +72,7 @@ public abstract class TranslationSpec<I, A> implements ITranslationSpec {
             return (T) this.translateInputObject((I) obj);
         }
 
-        throw new ContractException(TaskitError.UNKNOWN_OBJECT, "Object is not a "
+        throw new ContractException(TaskitCoreError.UNKNOWN_OBJECT, "Object is not a "
                 + this.getAppObjectClass().getName() + " and it is not a " + this.getInputObjectClass().getName());
 
     }
@@ -136,7 +136,7 @@ public abstract class TranslationSpec<I, A> implements ITranslationSpec {
 
     void checkInit() {
         if (!this.initialized) {
-            throw new ContractException(TaskitError.UNINITIALIZED_TRANSLATION_SPEC);
+            throw new ContractException(TaskitCoreError.UNINITIALIZED_TRANSLATION_SPEC);
         }
     }
 }

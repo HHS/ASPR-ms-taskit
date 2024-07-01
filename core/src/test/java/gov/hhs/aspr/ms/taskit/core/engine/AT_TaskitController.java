@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitController;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngineType;
-import gov.hhs.aspr.ms.taskit.core.engine.TaskitError;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitCoreError;
 import gov.hhs.aspr.ms.taskit.core.testsupport.TestObjectUtil;
 import gov.hhs.aspr.ms.taskit.core.testsupport.engine.TestTaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppChildObject;
@@ -48,7 +48,7 @@ public class AT_TaskitController {
             translationController.validateTaskitEngines();
         });
 
-        assertEquals(TaskitError.NO_TASKIT_ENGINES, contractException.getErrorType());
+        assertEquals(TaskitCoreError.NO_TASKIT_ENGINES, contractException.getErrorType());
 
         contractException = assertThrows(ContractException.class, () -> {
             for (TaskitEngine taskitEngine : translationController.data.taskitEngines) {
@@ -58,7 +58,7 @@ public class AT_TaskitController {
             translationController.validateTaskitEngines();
         });
 
-        assertEquals(TaskitError.NULL_TASKIT_ENGINE, contractException.getErrorType());
+        assertEquals(TaskitCoreError.NULL_TASKIT_ENGINE, contractException.getErrorType());
 
         RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> {
             TestTaskitEngine taskitEngine2 = TestTaskitEngine.builder()
@@ -118,7 +118,7 @@ public class AT_TaskitController {
             translationController.validateTaskitEngines();
         });
 
-        assertEquals(TaskitError.NO_TASKIT_ENGINES, contractException.getErrorType());
+        assertEquals(TaskitCoreError.NO_TASKIT_ENGINES, contractException.getErrorType());
 
         // class to type map not populated
         RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> {
@@ -287,7 +287,7 @@ public class AT_TaskitController {
                     TaskitEngineType.CUSTOM);
         });
 
-        assertEquals(TaskitError.NULL_CLASS_REF, contractException.getErrorType());
+        assertEquals(TaskitCoreError.NULL_CLASS_REF, contractException.getErrorType());
 
         // preconditions
         // CoreTranslationError.NULL_OBJECT_FOR_TRANSLATION is tested by
@@ -322,7 +322,7 @@ public class AT_TaskitController {
                     TaskitEngineType.CUSTOM);
         });
 
-        assertEquals(TaskitError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
+        assertEquals(TaskitCoreError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
 
         // the path is null
         contractException = assertThrows(ContractException.class, () -> {
@@ -330,7 +330,7 @@ public class AT_TaskitController {
                     TaskitEngineType.CUSTOM);
         });
 
-        assertEquals(TaskitError.NULL_PATH, contractException.getErrorType());
+        assertEquals(TaskitCoreError.NULL_PATH, contractException.getErrorType());
 
         // if the path is invalid
         contractException = assertThrows(ContractException.class, () -> {
@@ -339,7 +339,7 @@ public class AT_TaskitController {
                     TaskitEngineType.CUSTOM);
         });
 
-        assertEquals(TaskitError.INVALID_OUTPUT_PATH, contractException.getErrorType());
+        assertEquals(TaskitCoreError.INVALID_OUTPUT_PATH, contractException.getErrorType());
 
         // if the translation engine is null
         contractException = assertThrows(ContractException.class, () -> {
@@ -348,7 +348,7 @@ public class AT_TaskitController {
                     TaskitEngineType.UNKNOWN);
         });
 
-        assertEquals(TaskitError.NULL_TASKIT_ENGINE, contractException.getErrorType());
+        assertEquals(TaskitCoreError.NULL_TASKIT_ENGINE, contractException.getErrorType());
     }
 
     @Test
@@ -394,7 +394,7 @@ public class AT_TaskitController {
             translationController.getFirstObject(TestInputObject.class);
         });
 
-        assertEquals(TaskitError.UNKNOWN_CLASSREF, contractException.getErrorType());
+        assertEquals(TaskitCoreError.UNKNOWN_CLASSREF, contractException.getErrorType());
     }
 
     @Test
@@ -504,7 +504,7 @@ public class AT_TaskitController {
             TaskitController.builder().build();
         });
 
-        assertEquals(TaskitError.NULL_TASKIT_ENGINE, contractException.getErrorType());
+        assertEquals(TaskitCoreError.NULL_TASKIT_ENGINE, contractException.getErrorType());
     }
 
     @Test
@@ -526,14 +526,14 @@ public class AT_TaskitController {
                     TaskitEngineType.CUSTOM);
         });
 
-        assertEquals(TaskitError.NULL_PATH, contractException.getErrorType());
+        assertEquals(TaskitCoreError.NULL_PATH, contractException.getErrorType());
 
         contractException = assertThrows(ContractException.class, () -> {
             TaskitController.builder().addInputFilePath(filePath.resolve(fileName), null,
                     TaskitEngineType.CUSTOM);
         });
 
-        assertEquals(TaskitError.NULL_CLASS_REF, contractException.getErrorType());
+        assertEquals(TaskitCoreError.NULL_CLASS_REF, contractException.getErrorType());
 
         contractException = assertThrows(ContractException.class, () -> {
             TaskitController.builder()
@@ -543,7 +543,7 @@ public class AT_TaskitController {
                             TaskitEngineType.CUSTOM);
         });
 
-        assertEquals(TaskitError.DUPLICATE_INPUT_PATH, contractException.getErrorType());
+        assertEquals(TaskitCoreError.DUPLICATE_INPUT_PATH, contractException.getErrorType());
 
         contractException = assertThrows(ContractException.class, () -> {
             TaskitController.builder().addInputFilePath(filePath.resolve("badPath"),
@@ -551,7 +551,7 @@ public class AT_TaskitController {
                     TaskitEngineType.CUSTOM);
         });
 
-        assertEquals(TaskitError.INVALID_INPUT_PATH, contractException.getErrorType());
+        assertEquals(TaskitCoreError.INVALID_INPUT_PATH, contractException.getErrorType());
 
     }
 
@@ -566,13 +566,13 @@ public class AT_TaskitController {
             TaskitController.builder().addParentChildClassRelationship(null, Object.class);
         });
 
-        assertEquals(TaskitError.NULL_CLASS_REF, contractException.getErrorType());
+        assertEquals(TaskitCoreError.NULL_CLASS_REF, contractException.getErrorType());
 
         contractException = assertThrows(ContractException.class, () -> {
             TaskitController.builder().addParentChildClassRelationship(TestAppObject.class, null);
         });
 
-        assertEquals(TaskitError.NULL_CLASS_REF, contractException.getErrorType());
+        assertEquals(TaskitCoreError.NULL_CLASS_REF, contractException.getErrorType());
 
         contractException = assertThrows(ContractException.class, () -> {
             TaskitController.builder()
@@ -580,7 +580,7 @@ public class AT_TaskitController {
                     .addParentChildClassRelationship(TestAppObject.class, Object.class);
         });
 
-        assertEquals(TaskitError.DUPLICATE_CLASSREF, contractException.getErrorType());
+        assertEquals(TaskitCoreError.DUPLICATE_CLASSREF, contractException.getErrorType());
     }
 
     @Test
@@ -599,7 +599,7 @@ public class AT_TaskitController {
             TaskitController.builder().addTaskitEngine(null);
         });
 
-        assertEquals(TaskitError.NULL_TASKIT_ENGINE, contractException.getErrorType());
+        assertEquals(TaskitCoreError.NULL_TASKIT_ENGINE, contractException.getErrorType());
 
         contractException = assertThrows(ContractException.class, () -> {
             TestTaskitEngine taskitEngine2 = TestTaskitEngine.builder()
@@ -612,6 +612,6 @@ public class AT_TaskitController {
                     .addTaskitEngine(taskitEngine2);
         });
 
-        assertEquals(TaskitError.DUPLICATE_CLASSREF, contractException.getErrorType());
+        assertEquals(TaskitCoreError.DUPLICATE_CLASSREF, contractException.getErrorType());
     }
 }

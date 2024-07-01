@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
-import gov.hhs.aspr.ms.taskit.core.engine.TaskitError;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitCoreError;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestObjectWrapper;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.TestObjectTranslator;
@@ -42,7 +42,7 @@ public final class ProtobufTaskitEngineTestHelper {
             builder.addTranslationSpec(null);
         });
 
-        assertEquals(TaskitError.NULL_TRANSLATION_SPEC, contractException.getErrorType());
+        assertEquals(TaskitCoreError.NULL_TRANSLATION_SPEC, contractException.getErrorType());
 
         builder.clearBuilder();
         // the translation spec getAppClass method returns null
@@ -76,7 +76,7 @@ public final class ProtobufTaskitEngineTestHelper {
             builder.addTranslationSpec(wrapperTranslationSpec);
         });
 
-        assertEquals(TaskitError.NULL_TRANSLATION_SPEC_APP_CLASS, contractException.getErrorType());
+        assertEquals(TaskitCoreError.NULL_TRANSLATION_SPEC_APP_CLASS, contractException.getErrorType());
 
         builder.clearBuilder();
         // the translation spec getInputClass method returns null
@@ -110,7 +110,7 @@ public final class ProtobufTaskitEngineTestHelper {
             builder.addTranslationSpec(wrapperTranslationSpec);
         });
 
-        assertEquals(TaskitError.NULL_TRANSLATION_SPEC_INPUT_CLASS, contractException.getErrorType());
+        assertEquals(TaskitCoreError.NULL_TRANSLATION_SPEC_INPUT_CLASS, contractException.getErrorType());
 
         builder.clearBuilder();
         // if the translation spec has already been added (same, but different
@@ -122,7 +122,7 @@ public final class ProtobufTaskitEngineTestHelper {
             builder.addTranslationSpec(testObjectTranslationSpec1).addTranslationSpec(testObjectTranslationSpec2);
         });
 
-        assertEquals(TaskitError.DUPLICATE_TRANSLATION_SPEC, contractException.getErrorType());
+        assertEquals(TaskitCoreError.DUPLICATE_TRANSLATION_SPEC, contractException.getErrorType());
 
         builder.clearBuilder();
         // if the translation spec has already been added (exact same instance)
@@ -132,7 +132,7 @@ public final class ProtobufTaskitEngineTestHelper {
             builder.addTranslationSpec(testObjectTranslationSpec1).addTranslationSpec(testObjectTranslationSpec1);
         });
 
-        assertEquals(TaskitError.DUPLICATE_TRANSLATION_SPEC, contractException.getErrorType());
+        assertEquals(TaskitCoreError.DUPLICATE_TRANSLATION_SPEC, contractException.getErrorType());
     }
 
     public static void testAddTranslator(TaskitEngine.Builder builder) {
@@ -143,14 +143,14 @@ public final class ProtobufTaskitEngineTestHelper {
             builder.addTranslator(null);
         });
 
-        assertEquals(TaskitError.NULL_TRANSLATOR, contractException.getErrorType());
+        assertEquals(TaskitCoreError.NULL_TRANSLATOR, contractException.getErrorType());
 
         contractException = assertThrows(ContractException.class, () -> {
             builder.addTranslator(TestObjectTranslator.getTranslator())
                     .addTranslator(TestObjectTranslator.getTranslator());
         });
 
-        assertEquals(TaskitError.DUPLICATE_TRANSLATOR, contractException.getErrorType());
+        assertEquals(TaskitCoreError.DUPLICATE_TRANSLATOR, contractException.getErrorType());
     }
 
     public static void testAddParentChildClassRelationship(TaskitEngine.Builder builder) {
@@ -161,19 +161,19 @@ public final class ProtobufTaskitEngineTestHelper {
             builder.addParentChildClassRelationship(null, Object.class);
         });
 
-        assertEquals(TaskitError.NULL_CLASS_REF, contractException.getErrorType());
+        assertEquals(TaskitCoreError.NULL_CLASS_REF, contractException.getErrorType());
 
         contractException = assertThrows(ContractException.class, () -> {
             builder.addParentChildClassRelationship(TestAppObject.class, null);
         });
 
-        assertEquals(TaskitError.NULL_CLASS_REF, contractException.getErrorType());
+        assertEquals(TaskitCoreError.NULL_CLASS_REF, contractException.getErrorType());
 
         contractException = assertThrows(ContractException.class, () -> {
             builder.addParentChildClassRelationship(TestAppObject.class, Object.class)
                     .addParentChildClassRelationship(TestAppObject.class, Object.class);
         });
 
-        assertEquals(TaskitError.DUPLICATE_CLASSREF, contractException.getErrorType());
+        assertEquals(TaskitCoreError.DUPLICATE_CLASSREF, contractException.getErrorType());
     }
 }

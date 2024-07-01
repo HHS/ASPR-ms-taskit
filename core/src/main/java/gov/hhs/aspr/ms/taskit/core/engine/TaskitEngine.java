@@ -97,31 +97,31 @@ public final class TaskitEngine implements ITaskitEngine {
 
         private <I, A> void validateTranslationSpec(TranslationSpec<I, A> translationSpec) {
             if (translationSpec == null) {
-                throw new ContractException(TaskitError.NULL_TRANSLATION_SPEC);
+                throw new ContractException(TaskitCoreError.NULL_TRANSLATION_SPEC);
             }
 
             if (translationSpec.getAppObjectClass() == null) {
-                throw new ContractException(TaskitError.NULL_TRANSLATION_SPEC_APP_CLASS);
+                throw new ContractException(TaskitCoreError.NULL_TRANSLATION_SPEC_APP_CLASS);
             }
 
             if (translationSpec.getInputObjectClass() == null) {
-                throw new ContractException(TaskitError.NULL_TRANSLATION_SPEC_INPUT_CLASS);
+                throw new ContractException(TaskitCoreError.NULL_TRANSLATION_SPEC_INPUT_CLASS);
             }
 
             if (this.data.translationSpecs.contains(translationSpec)) {
-                throw new ContractException(TaskitError.DUPLICATE_TRANSLATION_SPEC);
+                throw new ContractException(TaskitCoreError.DUPLICATE_TRANSLATION_SPEC);
             }
         }
 
         private void validateTranslatorNotNull(Translator translator) {
             if (translator == null) {
-                throw new ContractException(TaskitError.NULL_TRANSLATOR);
+                throw new ContractException(TaskitCoreError.NULL_TRANSLATOR);
             }
         }
 
         private void validateClassRefNotNull(Class<?> classRef) {
             if (classRef == null) {
-                throw new ContractException(TaskitError.NULL_CLASS_REF);
+                throw new ContractException(TaskitCoreError.NULL_CLASS_REF);
             }
         }
 
@@ -168,15 +168,15 @@ public final class TaskitEngine implements ITaskitEngine {
          * @param <A> the app object type
          * @throws ContractException
          *                           <ul>
-         *                           <li>{@linkplain TaskitError#NULL_TRANSLATION_SPEC}
+         *                           <li>{@linkplain TaskitCoreError#NULL_TRANSLATION_SPEC}
          *                           if the given translationSpec is null</li>
-         *                           <li>{@linkplain TaskitError#NULL_TRANSLATION_SPEC_APP_CLASS}
+         *                           <li>{@linkplain TaskitCoreError#NULL_TRANSLATION_SPEC_APP_CLASS}
          *                           if the given translationSpecs getAppClass method
          *                           returns null</li>
-         *                           <li>{@linkplain TaskitError#NULL_TRANSLATION_SPEC_INPUT_CLASS}
+         *                           <li>{@linkplain TaskitCoreError#NULL_TRANSLATION_SPEC_INPUT_CLASS}
          *                           if the given translationSpecs getInputClass method
          *                           returns null</li>
-         *                           <li>{@linkplain TaskitError#DUPLICATE_TRANSLATION_SPEC}
+         *                           <li>{@linkplain TaskitCoreError#DUPLICATE_TRANSLATION_SPEC}
          *                           if the given translationSpec is already known</li>
          *                           </ul>
          */
@@ -196,9 +196,9 @@ public final class TaskitEngine implements ITaskitEngine {
          * 
          * @throws ContractException
          *                           <ul>
-         *                           <li>{@linkplain TaskitError#NULL_TRANSLATOR}
+         *                           <li>{@linkplain TaskitCoreError#NULL_TRANSLATOR}
          *                           if translator is null</li>
-         *                           <li>{@linkplain TaskitError#DUPLICATE_TRANSLATOR}
+         *                           <li>{@linkplain TaskitCoreError#DUPLICATE_TRANSLATOR}
          *                           if translator has already been added</li>
          *                           </ul>
          */
@@ -206,7 +206,7 @@ public final class TaskitEngine implements ITaskitEngine {
             validateTranslatorNotNull(translator);
 
             if (this.translators.contains(translator)) {
-                throw new ContractException(TaskitError.DUPLICATE_TRANSLATOR);
+                throw new ContractException(TaskitCoreError.DUPLICATE_TRANSLATOR);
             }
 
             this.translators.add(translator);
@@ -225,10 +225,10 @@ public final class TaskitEngine implements ITaskitEngine {
          * @param <U> the parentClass/MarkerInterfaceClass
          * @throws ContractException
          *                           <ul>
-         *                           <li>{@linkplain TaskitError#NULL_CLASS_REF}
+         *                           <li>{@linkplain TaskitCoreError#NULL_CLASS_REF}
          *                           if classRef is null or if markerInterface is
          *                           null</li>
-         *                           <li>{@linkplain TaskitError#DUPLICATE_CLASSREF}
+         *                           <li>{@linkplain TaskitCoreError#DUPLICATE_CLASSREF}
          *                           if child parent relationship has already been
          *                           added</li>
          *                           </ul>
@@ -239,7 +239,7 @@ public final class TaskitEngine implements ITaskitEngine {
             validateClassRefNotNull(parentClassRef);
 
             if (this.data.childToParentClassMap.containsKey(classRef)) {
-                throw new ContractException(TaskitError.DUPLICATE_CLASSREF);
+                throw new ContractException(TaskitCoreError.DUPLICATE_CLASSREF);
             }
 
             this.data.childToParentClassMap.put(classRef, parentClassRef);
@@ -304,7 +304,7 @@ public final class TaskitEngine implements ITaskitEngine {
                 translatorMap.put(focalTranslatorId, translator);
                 // ensure that there are no duplicate plugins
                 if (mutableGraph.containsNode(focalTranslatorId)) {
-                    throw new ContractException(TaskitError.DUPLICATE_TRANSLATOR);
+                    throw new ContractException(TaskitCoreError.DUPLICATE_TRANSLATOR);
                 }
                 mutableGraph.addNode(focalTranslatorId);
                 focalTranslatorId = null;
@@ -341,7 +341,7 @@ public final class TaskitEngine implements ITaskitEngine {
                         TranslatorId dependentTranslatorId = mutableGraph.getOriginNode(edge);
                         sb.append(dependentTranslatorId);
                     }
-                    throw new ContractException(TaskitError.MISSING_TRANSLATOR, sb.toString());
+                    throw new ContractException(TaskitCoreError.MISSING_TRANSLATOR, sb.toString());
                 }
             }
         }
@@ -391,7 +391,7 @@ public final class TaskitEngine implements ITaskitEngine {
                         }
                     }
                 }
-                throw new ContractException(TaskitError.CIRCULAR_TRANSLATOR_DEPENDENCIES, sb.toString());
+                throw new ContractException(TaskitCoreError.CIRCULAR_TRANSLATOR_DEPENDENCIES, sb.toString());
             }
         }
     }
@@ -405,13 +405,13 @@ public final class TaskitEngine implements ITaskitEngine {
 
     private void validateTaskitEngineType() {
         if (this.data.taskitEngineType == TaskitEngineType.UNKNOWN) {
-            throw new ContractException(TaskitError.UNKNOWN_TASKIT_ENGINE_TYPE);
+            throw new ContractException(TaskitCoreError.UNKNOWN_TASKIT_ENGINE_TYPE);
         }
     }
 
     private void validateTranslatorsInitialized() {
         if (!this.data.translatorsInitialized) {
-            throw new ContractException(TaskitError.UNINITIALIZED_TRANSLATORS);
+            throw new ContractException(TaskitCoreError.UNINITIALIZED_TRANSLATORS);
         }
     }
 
@@ -570,16 +570,16 @@ public final class TaskitEngine implements ITaskitEngine {
      * @param <T> the return type after translating
      * @throws ContractException
      *                           <ul>
-     *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
+     *                           <li>{@linkplain TaskitCoreError#NULL_OBJECT_FOR_TRANSLATION}
      *                           if the passed in object is null</li>
-     *                           <li>{@linkplain TaskitError#UNKNOWN_TRANSLATION_SPEC}
+     *                           <li>{@linkplain TaskitCoreError#UNKNOWN_TRANSLATION_SPEC}
      *                           if no translationSpec was provided for the given
      *                           objects class</li>
      *                           </ul>
      */
     public <T> T translateObject(Object object) {
         if (object == null) {
-            throw new ContractException(TaskitError.NULL_OBJECT_FOR_TRANSLATION);
+            throw new ContractException(TaskitCoreError.NULL_OBJECT_FOR_TRANSLATION);
         }
         return getTranslationSpecForClass(object.getClass()).translate(object);
     }
@@ -601,22 +601,22 @@ public final class TaskitEngine implements ITaskitEngine {
      *            translationSpec you want to use
      * @throws ContractException
      *                           <ul>
-     *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
+     *                           <li>{@linkplain TaskitCoreError#NULL_OBJECT_FOR_TRANSLATION}
      *                           if the passed in object is null</li>
-     *                           <li>{@linkplain TaskitError#NULL_CLASS_REF}
+     *                           <li>{@linkplain TaskitCoreError#NULL_CLASS_REF}
      *                           if the passed in parentClassRef is null</li>
-     *                           <li>{@linkplain TaskitError#UNKNOWN_TRANSLATION_SPEC}
+     *                           <li>{@linkplain TaskitCoreError#UNKNOWN_TRANSLATION_SPEC}
      *                           if no translationSpec was provided for the given
      *                           objects class</li>
      *                           </ul>
      */
     public <T, M extends U, U> T translateObjectAsClassSafe(M object, Class<U> parentClassRef) {
         if (object == null) {
-            throw new ContractException(TaskitError.NULL_OBJECT_FOR_TRANSLATION);
+            throw new ContractException(TaskitCoreError.NULL_OBJECT_FOR_TRANSLATION);
         }
 
         if (parentClassRef == null) {
-            throw new ContractException(TaskitError.NULL_CLASS_REF);
+            throw new ContractException(TaskitCoreError.NULL_CLASS_REF);
         }
 
         return getTranslationSpecForClass(parentClassRef).translate(object);
@@ -643,22 +643,22 @@ public final class TaskitEngine implements ITaskitEngine {
      * @param <U> the type of the class for which translationSpec you want to use
      * @throws ContractException
      *                           <ul>
-     *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
+     *                           <li>{@linkplain TaskitCoreError#NULL_OBJECT_FOR_TRANSLATION}
      *                           if the passed in object is null</li>
-     *                           <li>{@linkplain TaskitError#NULL_CLASS_REF}
+     *                           <li>{@linkplain TaskitCoreError#NULL_CLASS_REF}
      *                           if the passed in objectClassRef is null</li>
-     *                           <li>{@linkplain TaskitError#UNKNOWN_TRANSLATION_SPEC}
+     *                           <li>{@linkplain TaskitCoreError#UNKNOWN_TRANSLATION_SPEC}
      *                           if no translationSpec was provided for the given
      *                           objects class</li>
      *                           </ul>
      */
     public <T, M, U> T translateObjectAsClassUnsafe(M object, Class<U> objectClassRef) {
         if (object == null) {
-            throw new ContractException(TaskitError.NULL_OBJECT_FOR_TRANSLATION);
+            throw new ContractException(TaskitCoreError.NULL_OBJECT_FOR_TRANSLATION);
         }
 
         if (objectClassRef == null) {
-            throw new ContractException(TaskitError.NULL_CLASS_REF);
+            throw new ContractException(TaskitCoreError.NULL_CLASS_REF);
         }
 
         return getTranslationSpecForClass(objectClassRef).translate(object);
@@ -668,14 +668,14 @@ public final class TaskitEngine implements ITaskitEngine {
      * Given a classRef, returns the translationSpec associated with that class, if
      * it is known
      * 
-     * @throws ContractException {@linkplain TaskitError#UNKNOWN_TRANSLATION_SPEC}
+     * @throws ContractException {@linkplain TaskitCoreError#UNKNOWN_TRANSLATION_SPEC}
      *                           if no translationSpec for the given class was found
      */
     public ITranslationSpec getTranslationSpecForClass(Class<?> classRef) {
         if (this.data.classToTranslationSpecMap.containsKey(classRef)) {
             return this.data.classToTranslationSpecMap.get(classRef);
         }
-        throw new ContractException(TaskitError.UNKNOWN_TRANSLATION_SPEC, classRef.getName());
+        throw new ContractException(TaskitCoreError.UNKNOWN_TRANSLATION_SPEC, classRef.getName());
     }
 
     @Override

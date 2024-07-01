@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
-import gov.hhs.aspr.ms.taskit.core.engine.TaskitError;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitCoreError;
 import gov.hhs.aspr.ms.taskit.core.testsupport.engine.TestTaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslatorContext;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
@@ -43,7 +43,7 @@ public class AT_TranslatorContext {
             translatorContext.getTaskitEngineBuilder(TaskitEngine.Builder.class);
         });
 
-        assertEquals(TaskitError.INVALID_TASKIT_ENGINE_BUILDER_CLASS_REF, contractException.getErrorType());
+        assertEquals(TaskitCoreError.INVALID_TASKIT_ENGINE_BUILDER_CLASS_REF, contractException.getErrorType());
     }
 
 }
