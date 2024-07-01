@@ -5,13 +5,13 @@ import com.google.protobuf.StringValue;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
 
 /**
- * TranslationSpec that defines how to convert from any Java String to a
+ * TranslationSpec that defines how to translate from any Java String to a
  * Protobuf {@link StringValue} type and vice versa
  */
 public class StringTranslationSpec extends ProtobufTranslationSpec<StringValue, String> {
 
     @Override
-    protected String convertInputObject(StringValue inputObject) {
+    protected String translateInputObject(StringValue inputObject) {
         return inputObject.getValue();
     }
 

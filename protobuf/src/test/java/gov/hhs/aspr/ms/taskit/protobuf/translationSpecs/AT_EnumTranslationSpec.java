@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import com.google.protobuf.BoolValue;
 
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppEnum;
-import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTaskitEngine;
+import gov.hhs.aspr.ms.taskit.protobuf.engine.ProtobufTaskitEngine;
 import gov.hhs.aspr.ms.taskit.protobuf.input.WrapperEnumValue;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testobject.input.TestInputEnum;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testobject.translationSpecs.TestProtobufEnumTranslationSpec;
@@ -39,7 +39,7 @@ public class AT_EnumTranslationSpec {
                 .setEnumTypeUrl(TestInputEnum.TEST1.getDescriptorForType().getFullName())
                 .setValue(TestInputEnum.TEST1.name()).build();
 
-        TestAppEnum actualValue = (TestAppEnum) enumTranslationSpec.convertInputObject(inputValue);
+        TestAppEnum actualValue = (TestAppEnum) enumTranslationSpec.translateInputObject(inputValue);
 
         assertEquals(expectedValue, actualValue);
 
@@ -50,7 +50,7 @@ public class AT_EnumTranslationSpec {
                     .setEnumTypeUrl(BoolValue.getDefaultInstance().getDescriptorForType().getFullName())
                     .setValue(TestInputEnum.TEST1.name()).build();
 
-            enumTranslationSpec.convertInputObject(badInputValue);
+            enumTranslationSpec.translateInputObject(badInputValue);
         });
     }
 

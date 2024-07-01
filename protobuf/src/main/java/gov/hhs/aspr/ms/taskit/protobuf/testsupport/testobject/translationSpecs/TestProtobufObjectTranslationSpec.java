@@ -7,7 +7,7 @@ import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testobject.input.TestInputObj
 
 public class TestProtobufObjectTranslationSpec extends ProtobufTranslationSpec<TestInputObject, TestAppObject> {
     @Override
-    protected TestAppObject convertInputObject(TestInputObject inputObject) {
+    protected TestAppObject translateInputObject(TestInputObject inputObject) {
         TestAppObject testAppObject = new TestAppObject();
 
         testAppObject.setBool(inputObject.getBool());

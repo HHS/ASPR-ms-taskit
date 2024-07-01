@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import com.google.protobuf.Int64Value;
 
-import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTaskitEngine;
+import gov.hhs.aspr.ms.taskit.protobuf.engine.ProtobufTaskitEngine;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestForCoverage;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
@@ -31,7 +31,7 @@ public class AT_LongTranslationSpec {
         Long expectedValue = 100L;
         Int64Value inputValue = Int64Value.of(expectedValue);
 
-        Long actualValue = longTranslationSpec.convertInputObject(inputValue);
+        Long actualValue = longTranslationSpec.translateInputObject(inputValue);
 
         assertEquals(expectedValue, actualValue);
     }

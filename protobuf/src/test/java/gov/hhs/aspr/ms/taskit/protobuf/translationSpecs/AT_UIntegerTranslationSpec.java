@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import com.google.protobuf.UInt32Value;
 
-import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTaskitEngine;
+import gov.hhs.aspr.ms.taskit.protobuf.engine.ProtobufTaskitEngine;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestForCoverage;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
@@ -31,7 +31,7 @@ public class AT_UIntegerTranslationSpec {
         Integer expectedValue = 10;
         UInt32Value inputValue = UInt32Value.of(expectedValue);
 
-        Integer actualValue = uIntegerTranslationSpec.convertInputObject(inputValue);
+        Integer actualValue = uIntegerTranslationSpec.translateInputObject(inputValue);
 
         assertEquals(expectedValue, actualValue);
     }

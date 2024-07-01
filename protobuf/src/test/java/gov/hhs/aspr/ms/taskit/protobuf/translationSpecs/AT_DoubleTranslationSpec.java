@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import com.google.protobuf.DoubleValue;
 
-import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTaskitEngine;
+import gov.hhs.aspr.ms.taskit.protobuf.engine.ProtobufTaskitEngine;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestForCoverage;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
@@ -31,7 +31,7 @@ public class AT_DoubleTranslationSpec {
         Double expectedValue = 100.0;
         DoubleValue inputValue = DoubleValue.of(expectedValue);
 
-        Double actualValue = doubleTranslationSpec.convertInputObject(inputValue);
+        Double actualValue = doubleTranslationSpec.translateInputObject(inputValue);
 
         assertEquals(expectedValue, actualValue);
     }

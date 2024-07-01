@@ -9,7 +9,7 @@ import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
 import gov.hhs.aspr.ms.taskit.protobuf.input.WrapperEnumValue;
 
 /**
- * TranslationSpec that defines how to convert from any Java Enum to a Protobuf
+ * TranslationSpec that defines how to translate from any Java Enum to a Protobuf
  * {@link WrapperEnumValue} type and vice versa
  * <p>
  * <b>Note: A {@link WrapperEnumValue} is specifically used to wrap a Enum into
@@ -24,7 +24,7 @@ import gov.hhs.aspr.ms.taskit.protobuf.input.WrapperEnumValue;
 public class EnumTranslationSpec extends ProtobufTranslationSpec<WrapperEnumValue, Enum> {
 
     @Override
-    protected Enum convertInputObject(WrapperEnumValue inputObject) {
+    protected Enum translateInputObject(WrapperEnumValue inputObject) {
         String typeUrl = inputObject.getEnumTypeUrl();
         String value = inputObject.getValue();
 

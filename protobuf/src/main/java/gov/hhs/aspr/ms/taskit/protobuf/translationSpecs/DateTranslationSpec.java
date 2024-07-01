@@ -7,13 +7,13 @@ import com.google.type.Date;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
 
 /**
- * TranslationSpec that defines how to convert from any Java {@link LocalDate}
+ * TranslationSpec that defines how to translate from any Java {@link LocalDate}
  * to a Protobuf {@link Date} type and vice versa
  */
 public class DateTranslationSpec extends ProtobufTranslationSpec<Date, LocalDate> {
 
     @Override
-    protected LocalDate convertInputObject(Date inputObject) {
+    protected LocalDate translateInputObject(Date inputObject) {
         return LocalDate.of(inputObject.getYear(), inputObject.getMonth(), inputObject.getDay());
     }
 

@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import com.google.protobuf.StringValue;
 
-import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTaskitEngine;
+import gov.hhs.aspr.ms.taskit.protobuf.engine.ProtobufTaskitEngine;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestForCoverage;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
@@ -31,7 +31,7 @@ public class AT_StringTranslationSpec {
         String expectedValue = "testString";
         StringValue inputValue = StringValue.of(expectedValue);
 
-        String actualValue = stringTranslationSpec.convertInputObject(inputValue);
+        String actualValue = stringTranslationSpec.translateInputObject(inputValue);
 
         assertEquals(expectedValue, actualValue);
     }

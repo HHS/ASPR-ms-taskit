@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppEnum;
-import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTaskitEngine;
+import gov.hhs.aspr.ms.taskit.protobuf.engine.ProtobufTaskitEngine;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testobject.input.TestInputEnum;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestForCoverage;
@@ -31,7 +31,7 @@ public class AT_TestProtobufEnumTranslationSpec {
         TestAppEnum expectedValue = TestAppEnum.TEST1;
         TestInputEnum inputValue = TestInputEnum.TEST1;
 
-        TestAppEnum actualValue = enumTranslationSpec.convertInputObject(inputValue);
+        TestAppEnum actualValue = enumTranslationSpec.translateInputObject(inputValue);
 
         assertEquals(expectedValue, actualValue);
     }

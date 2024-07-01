@@ -5,13 +5,13 @@ import com.google.protobuf.Int64Value;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
 
 /**
- * TranslationSpec that defines how to convert from any Java Long to a Protobuf
+ * TranslationSpec that defines how to translate from any Java Long to a Protobuf
  * {@link Int64Value} type and vice versa
  */
 public class LongTranslationSpec extends ProtobufTranslationSpec<Int64Value, Long> {
 
     @Override
-    protected Long convertInputObject(Int64Value inputObject) {
+    protected Long translateInputObject(Int64Value inputObject) {
         return inputObject.getValue();
     }
 

@@ -6,7 +6,7 @@ import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testobject.input.TestInputEnu
 
 public class TestProtobufEnumTranslationSpec extends ProtobufTranslationSpec<TestInputEnum, TestAppEnum> {
     @Override
-    protected TestAppEnum convertInputObject(TestInputEnum inputObject) {
+    protected TestAppEnum translateInputObject(TestInputEnum inputObject) {
         return TestAppEnum.valueOf(inputObject.name());
     }
 

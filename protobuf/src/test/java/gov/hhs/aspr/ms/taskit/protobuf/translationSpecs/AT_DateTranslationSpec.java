@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import com.google.type.Date;
 
-import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTaskitEngine;
+import gov.hhs.aspr.ms.taskit.protobuf.engine.ProtobufTaskitEngine;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestForCoverage;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
@@ -34,7 +34,7 @@ public class AT_DateTranslationSpec {
         Date inputValue = Date.newBuilder().setDay(expectedValue.getDayOfMonth())
                 .setMonth(expectedValue.getMonthValue()).setYear(expectedValue.getYear()).build();
 
-        LocalDate actualValue = dateTranslationSpec.convertInputObject(inputValue);
+        LocalDate actualValue = dateTranslationSpec.translateInputObject(inputValue);
 
         assertEquals(expectedValue, actualValue);
     }

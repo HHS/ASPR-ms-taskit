@@ -5,13 +5,13 @@ import com.google.protobuf.Int32Value;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
 
 /**
- * TranslationSpec that defines how to convert from any Java Integer to a
+ * TranslationSpec that defines how to translate from any Java Integer to a
  * Protobuf {@link Int32Value} type and vice versa
  */
 public class IntegerTranslationSpec extends ProtobufTranslationSpec<Int32Value, Integer> {
 
     @Override
-    protected Integer convertInputObject(Int32Value inputObject) {
+    protected Integer translateInputObject(Int32Value inputObject) {
         return inputObject.getValue();
     }
 

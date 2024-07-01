@@ -30,6 +30,8 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.translationSpecs.TestObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.Translator;
+import gov.hhs.aspr.ms.taskit.protobuf.engine.ProtobufTaskitEngine;
+import gov.hhs.aspr.ms.taskit.protobuf.engine.ProtobufTaskitError;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.TestObjectUtil;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testClasses.BadMessageBadArguments;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testClasses.BadMessageIllegalAccess;
@@ -77,7 +79,7 @@ public class AT_ProtobufTaskitEngine {
         TestInputObject expectedInputObject = TestObjectUtil.getInputFromApp(testAppChildObject);
         Any expectedAny = Any.pack(expectedInputObject);
 
-        Any actualAny = protobufTaskitEngine.getAnyFromObjectAsSafeClass(testAppChildObject, TestAppObject.class);
+        Any actualAny = protobufTaskitEngine.getAnyFromObjectAsClassSafe(testAppChildObject, TestAppObject.class);
 
         assertEquals(expectedAny, actualAny);
 
@@ -91,7 +93,7 @@ public class AT_ProtobufTaskitEngine {
             TestAppObject testAppObject2 = TestObjectUtil.generateTestAppObject();
             TestAppChildObject testAppChildObject2 = TestObjectUtil.getChildAppFromApp(testAppObject2);
 
-            protobufTaskitEngine2.getAnyFromObjectAsSafeClass(testAppChildObject2, TestAppObject.class);
+            protobufTaskitEngine2.getAnyFromObjectAsClassSafe(testAppChildObject2, TestAppObject.class);
         });
 
         assertEquals(TaskitError.UNKNOWN_TRANSLATION_SPEC, contractException.getErrorType());
@@ -141,7 +143,7 @@ public class AT_ProtobufTaskitEngine {
             protobufTaskitEngine2.getClassFromTypeUrl("badUrl");
         });
 
-        assertEquals(ProtobufCoreTranslationError.UNKNOWN_TYPE_URL, contractException.getErrorType());
+        assertEquals(ProtobufTaskitError.UNKNOWN_TYPE_URL, contractException.getErrorType());
     }
 
     @Test
@@ -257,7 +259,7 @@ public class AT_ProtobufTaskitEngine {
             protobufTaskitEngine.readInput(filePath.resolve(fileName2), TestAppObject.class);
         });
 
-        assertEquals(ProtobufCoreTranslationError.INVALID_READ_INPUT_CLASS_REF, contractException.getErrorType());
+        assertEquals(ProtobufTaskitError.INVALID_INPUT_CLASS, contractException.getErrorType());
 
         // precondition for the Runtime exceptions are covered by the tests:
         // testGetBuilderForMessage() and testParseJson()
@@ -373,21 +375,21 @@ public class AT_ProtobufTaskitEngine {
             pBuilder.populate(TestAppObject.class);
         });
 
-        assertEquals(ProtobufCoreTranslationError.INVALID_INPUT_CLASS, contractException.getErrorType());
+        assertEquals(ProtobufTaskitError.INVALID_TRANSLATION_SPEC_INPUT_CLASS, contractException.getErrorType());
 
         // the class is exactly a Message.class
         contractException = assertThrows(ContractException.class, () -> {
             pBuilder.populate(Message.class);
         });
 
-        assertEquals(ProtobufCoreTranslationError.INVALID_INPUT_CLASS, contractException.getErrorType());
+        assertEquals(ProtobufTaskitError.INVALID_TRANSLATION_SPEC_INPUT_CLASS, contractException.getErrorType());
 
         // the class is exactly a ProtocolMessageEnum.class
         contractException = assertThrows(ContractException.class, () -> {
             pBuilder.populate(ProtocolMessageEnum.class);
         });
 
-        assertEquals(ProtobufCoreTranslationError.INVALID_INPUT_CLASS, contractException.getErrorType());
+        assertEquals(ProtobufTaskitError.INVALID_TRANSLATION_SPEC_INPUT_CLASS, contractException.getErrorType());
 
     }
 
@@ -436,7 +438,7 @@ public class AT_ProtobufTaskitEngine {
             ProtobufTaskitEngine.builder().addTranslationSpec(new TestObjectTranslationSpec());
         });
 
-        assertEquals(ProtobufCoreTranslationError.INVALID_TRANSLATION_SPEC, contractException.getErrorType());
+        assertEquals(ProtobufTaskitError.INVALID_TRANSLATION_SPEC, contractException.getErrorType());
         // that the inputClass is not a Message nor a
         // ProtocolMessageEnum, and is tested in the testPopulate() test
     }

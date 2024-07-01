@@ -8,7 +8,7 @@ public class TestProtobufComplexObjectTranslationSpec
         extends ProtobufTranslationSpec<TestComplexInputObject, TestComplexAppObject> {
 
     @Override
-    protected TestComplexAppObject convertInputObject(TestComplexInputObject inputObject) {
+    protected TestComplexAppObject translateInputObject(TestComplexInputObject inputObject) {
         TestComplexAppObject testComplexAppObject = new TestComplexAppObject();
 
         testComplexAppObject.setNumEntities(inputObject.getNumEntities());

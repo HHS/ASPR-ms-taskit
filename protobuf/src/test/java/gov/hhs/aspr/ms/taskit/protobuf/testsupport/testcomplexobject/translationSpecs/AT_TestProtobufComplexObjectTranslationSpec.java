@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.taskit.core.testsupport.testcomplexobject.TestComplexAppObject;
-import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTaskitEngine;
+import gov.hhs.aspr.ms.taskit.protobuf.engine.ProtobufTaskitEngine;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.TestObjectUtil;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testcomplexobject.input.TestComplexInputObject;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
@@ -33,7 +33,7 @@ public class AT_TestProtobufComplexObjectTranslationSpec {
         TestComplexAppObject expectedValue = TestObjectUtil.generateTestComplexAppObject();
         TestComplexInputObject inputValue = TestObjectUtil.getComplexInputFromComplexApp(expectedValue);
 
-        TestComplexAppObject actualValue = complexObjectTranslationSpec.convertInputObject(inputValue);
+        TestComplexAppObject actualValue = complexObjectTranslationSpec.translateInputObject(inputValue);
 
         assertEquals(expectedValue, actualValue);
     }

@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import com.google.protobuf.BoolValue;
 
-import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTaskitEngine;
+import gov.hhs.aspr.ms.taskit.protobuf.engine.ProtobufTaskitEngine;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestForCoverage;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
@@ -31,7 +31,7 @@ public class AT_BooleanTranslationSpec {
         Boolean expectedValue = false;
         BoolValue inputValue = BoolValue.of(false);
 
-        Boolean actualValue = booleanTranslationSpec.convertInputObject(inputValue);
+        Boolean actualValue = booleanTranslationSpec.translateInputObject(inputValue);
 
         assertEquals(expectedValue, actualValue);
     }

@@ -7,13 +7,13 @@ import com.google.protobuf.Message;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
 
 /**
- * TranslationSpec that defines how to convert from any Java Object to a
+ * TranslationSpec that defines how to translate from any Java Object to a
  * Protobuf {@link Any} type and vice versa
  */
 public class AnyTranslationSpec extends ProtobufTranslationSpec<Any, Object> {
 
     @Override
-    protected Object convertInputObject(Any inputObject) {
+    protected Object translateInputObject(Any inputObject) {
         String fullTypeUrl = inputObject.getTypeUrl();
         String[] parts = fullTypeUrl.split("/");
 
@@ -53,7 +53,7 @@ public class AnyTranslationSpec extends ProtobufTranslationSpec<Any, Object> {
             message = this.taskitEngine.translateObjectAsClassSafe(Enum.class.cast(appObject), Enum.class);
         }
 
-        // in the event that the object was converted BEFORE calling this
+        // in the event that the object was translateed BEFORE calling this
         // translationSpec, there is no need to translate it again.
         else if (Message.class.isAssignableFrom(appObject.getClass())) {
             message = Message.class.cast(appObject);

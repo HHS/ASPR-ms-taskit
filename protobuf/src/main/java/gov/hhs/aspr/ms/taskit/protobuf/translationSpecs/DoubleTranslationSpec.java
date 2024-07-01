@@ -5,13 +5,13 @@ import com.google.protobuf.DoubleValue;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
 
 /**
- * TranslationSpec that defines how to convert from any Java Double to a
+ * TranslationSpec that defines how to translate from any Java Double to a
  * Protobuf {@link DoubleValue} type and vice versa
  */
 public class DoubleTranslationSpec extends ProtobufTranslationSpec<DoubleValue, Double> {
 
     @Override
-    protected Double convertInputObject(DoubleValue inputObject) {
+    protected Double translateInputObject(DoubleValue inputObject) {
         return inputObject.getValue();
     }
 
