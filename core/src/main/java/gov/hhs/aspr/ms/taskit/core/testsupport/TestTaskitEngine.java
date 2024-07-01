@@ -4,7 +4,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Optional;
 import java.util.Set;
 
 import com.google.gson.Gson;
@@ -30,7 +29,7 @@ public class TestTaskitEngine implements ITaskitEngine {
     protected static class Data {
         protected Gson gson = new Gson();
 
-        private TaskitEngine baseTaskitEngine;
+        private TaskitEngine taskitEngine;
 
         protected Data() {
 
@@ -51,7 +50,7 @@ public class TestTaskitEngine implements ITaskitEngine {
     public static class Builder implements ITaskitEngineBuilder {
         private TestTaskitEngine.Data data;
 
-        private TaskitEngine.Builder baseTaskitEngineBuilder = TaskitEngine.builder();
+        private TaskitEngine.Builder taskitEngineBuilder = TaskitEngine.builder();
 
         private Builder(TestTaskitEngine.Data data) {
             this.data = data;
@@ -60,64 +59,64 @@ public class TestTaskitEngine implements ITaskitEngine {
         void clearBuilder() {
             this.data = new Data();
         }
-        
+
         @Override
         public TestTaskitEngine build() {
-            this.baseTaskitEngineBuilder.setTaskitEngineType(TaskitEngineType.CUSTOM);
+            this.taskitEngineBuilder.setTaskitEngineType(TaskitEngineType.CUSTOM);
 
-            this.data.baseTaskitEngine = baseTaskitEngineBuilder.build();
+            this.data.taskitEngine = taskitEngineBuilder.build();
 
             TestTaskitEngine taskitEngine = new TestTaskitEngine(this.data);
 
-            this.data.baseTaskitEngine.initTranslationSpecs(taskitEngine);
-            this.data.baseTaskitEngine.validateInit();
+            this.data.taskitEngine.initTranslationSpecs(taskitEngine);
+            this.data.taskitEngine.validateInit();
             return taskitEngine;
         }
 
         public TestTaskitEngine buildWithoutSpecInit() {
-            this.baseTaskitEngineBuilder.setTaskitEngineType(TaskitEngineType.CUSTOM);
+            this.taskitEngineBuilder.setTaskitEngineType(TaskitEngineType.CUSTOM);
 
-            this.data.baseTaskitEngine = baseTaskitEngineBuilder.build();
+            this.data.taskitEngine = taskitEngineBuilder.build();
 
             return new TestTaskitEngine(this.data);
         }
 
         public TestTaskitEngine buildWithUnknownType() {
-            this.baseTaskitEngineBuilder.setTaskitEngineType(TaskitEngineType.UNKNOWN);
+            this.taskitEngineBuilder.setTaskitEngineType(TaskitEngineType.UNKNOWN);
 
-            this.data.baseTaskitEngine = baseTaskitEngineBuilder.build();
+            this.data.taskitEngine = taskitEngineBuilder.build();
 
             TestTaskitEngine taskitEngine = new TestTaskitEngine(this.data);
 
-            this.data.baseTaskitEngine.initTranslationSpecs(taskitEngine);
-            this.data.baseTaskitEngine.validateInit();
+            this.data.taskitEngine.initTranslationSpecs(taskitEngine);
+            this.data.taskitEngine.validateInit();
             return taskitEngine;
         }
 
         @Override
         public <I, A> Builder addTranslationSpec(TranslationSpec<I, A> translationSpec) {
-            this.baseTaskitEngineBuilder.addTranslationSpec(translationSpec);
+            this.taskitEngineBuilder.addTranslationSpec(translationSpec);
 
             return this;
         }
 
         @Override
         public Builder addTranslator(Translator translator) {
-            this.baseTaskitEngineBuilder.addTranslator(translator);
+            this.taskitEngineBuilder.addTranslator(translator);
 
             return this;
         }
 
         @Override
         public <M extends U, U> Builder addParentChildClassRelationship(Class<M> classRef, Class<U> markerInterface) {
-            this.baseTaskitEngineBuilder.addParentChildClassRelationship(classRef, markerInterface);
+            this.taskitEngineBuilder.addParentChildClassRelationship(classRef, markerInterface);
 
             return this;
         }
 
         @Override
         public ITaskitEngineBuilder setTaskitEngineType(TaskitEngineType taskitEngineType) {
-            this.baseTaskitEngineBuilder.setTaskitEngineType(taskitEngineType);
+            this.taskitEngineBuilder.setTaskitEngineType(taskitEngineType);
 
             return this;
         }
@@ -128,28 +127,35 @@ public class TestTaskitEngine implements ITaskitEngine {
     }
 
     @Override
-    public <U, M extends U> void write(Path outputPath, M object, Optional<Class<U>> outputClassRefOverride)
-            throws IOException {
-        Object outputObject;
-        if (outputClassRefOverride.isPresent()) {
-            outputObject = translateObjectAsClassSafe(object, outputClassRefOverride.get());
-        } else {
-            outputObject = translateObject(object);
-        }
-
-        String stringToWrite = this.data.gson.toJson(outputObject);
-        FileWriter writer = new FileWriter(outputPath.toFile());
+    public <M> void write(Path path, M object) throws IOException {
+        String stringToWrite = this.data.gson.toJson(object);
+        FileWriter writer = new FileWriter(path.toFile());
         writer.write(stringToWrite);
         writer.flush();
         writer.close();
     }
 
     @Override
-    public <T, U> T read(Path inputPath, Class<U> inputClassRef) throws IOException {
+    public <M> void translateAndWrite(Path path, M object) throws IOException {
+        write(path, translateObject(object));
+    }
+
+    @Override
+    public <U, M extends U> void translateAndWrite(Path path, M object, Class<U> classRef) throws IOException {
+        write(path, translateObjectAsClassSafe(object, classRef));
+    }
+
+    @Override
+    public <U> U read(Path inputPath, Class<U> inputClassRef) throws IOException {
         JsonObject jsonObject = JsonParser.parseReader(new JsonReader(new FileReader(inputPath.toFile())))
                 .getAsJsonObject();
 
-        return translateObject(this.data.gson.fromJson(jsonObject.toString(), inputClassRef));
+        return this.data.gson.fromJson(jsonObject.toString(), inputClassRef);
+    }
+
+    @Override
+    public <T, U> T readAndTranslate(Path inputPath, Class<U> inputClassRef) throws IOException {
+        return translateObject(read(inputPath, inputClassRef));
     }
 
     @Override
@@ -164,32 +170,32 @@ public class TestTaskitEngine implements ITaskitEngine {
 
     @Override
     public TaskitEngine getTaskitEngine() {
-        return this.data.baseTaskitEngine;
+        return this.data.taskitEngine;
     }
 
     @Override
     public TaskitEngineType getTaskitEngineType() {
-        return this.data.baseTaskitEngine.getTaskitEngineType();
+        return this.data.taskitEngine.getTaskitEngineType();
     }
 
     @Override
     public Set<ITranslationSpec> getTranslationSpecs() {
-        return this.data.baseTaskitEngine.getTranslationSpecs();
+        return this.data.taskitEngine.getTranslationSpecs();
     }
 
     @Override
     public <T> T translateObject(Object object) {
-        return this.data.baseTaskitEngine.translateObject(object);
+        return this.data.taskitEngine.translateObject(object);
     }
 
     @Override
     public <T, M extends U, U> T translateObjectAsClassSafe(M object, Class<U> classRef) {
-        return this.data.baseTaskitEngine.translateObjectAsClassSafe(object, classRef);
+        return this.data.taskitEngine.translateObjectAsClassSafe(object, classRef);
     }
 
     @Override
     public <T, M, U> T translateObjectAsClassUnsafe(M object, Class<U> classRef) {
-        return this.data.baseTaskitEngine.translateObjectAsClassUnsafe(object, classRef);
+        return this.data.taskitEngine.translateObjectAsClassUnsafe(object, classRef);
     }
 
 }
