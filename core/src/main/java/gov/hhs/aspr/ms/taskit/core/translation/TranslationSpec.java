@@ -115,12 +115,12 @@ public abstract class TranslationSpec<I, A> implements ITranslationSpec {
     }
 
     /**
-     * Given an inputObject, converts it to it's appObject equivalent
+     * Given an inputObject, translates it to it's appObject equivalent
      */
     protected abstract A translateInputObject(I inputObject);
 
     /**
-     * Given an appObject, converts it to it's inputObject equivalent
+     * Given an appObject, translates it to it's inputObject equivalent
      */
     protected abstract I translateAppObject(A appObject);
 

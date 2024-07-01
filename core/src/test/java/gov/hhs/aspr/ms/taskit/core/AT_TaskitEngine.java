@@ -143,7 +143,7 @@ public class AT_TaskitEngine {
     }
 
     @Test
-    @UnitTestMethod(target = TaskitEngine.class, name = "convertObject", args = { Object.class })
+    @UnitTestMethod(target = TaskitEngine.class, name = "translateObject", args = { Object.class })
     public void testConvertObject() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
@@ -173,7 +173,7 @@ public class AT_TaskitEngine {
     }
 
     @Test
-    @UnitTestMethod(target = TaskitEngine.class, name = "convertObjectAsSafeClass", args = { Object.class,
+    @UnitTestMethod(target = TaskitEngine.class, name = "translateObjectAsSafeClass", args = { Object.class,
             Class.class })
     public void testConvertObjectAsSafeClass() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
@@ -216,7 +216,7 @@ public class AT_TaskitEngine {
     }
 
     @Test
-    @UnitTestMethod(target = TaskitEngine.class, name = "convertObjectAsUnsafeClass", args = { Object.class,
+    @UnitTestMethod(target = TaskitEngine.class, name = "translateObjectAsUnsafeClass", args = { Object.class,
             Class.class })
     public void testConvertObjectAsUnsafeClass() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
@@ -226,12 +226,12 @@ public class AT_TaskitEngine {
         TranslationSpec<TestObjectWrapper, Object> wrapperTranslationSpec = new TranslationSpec<TestObjectWrapper, Object>() {
 
             @Override
-            protected Object convertInputObject(TestObjectWrapper inputObject) {
+            protected Object translateInputObject(TestObjectWrapper inputObject) {
                 return inputObject.getWrappedObject();
             }
 
             @Override
-            protected TestObjectWrapper convertAppObject(Object appObject) {
+            protected TestObjectWrapper translateAppObject(Object appObject) {
                 TestObjectWrapper objectWrapper = new TestObjectWrapper();
 
                 objectWrapper.setWrappedObject(appObject);

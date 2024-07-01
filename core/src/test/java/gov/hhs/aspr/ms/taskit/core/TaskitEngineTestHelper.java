@@ -51,12 +51,12 @@ public final class TaskitEngineTestHelper {
             TranslationSpec<TestObjectWrapper, Object> wrapperTranslationSpec = new TranslationSpec<TestObjectWrapper, Object>() {
 
                 @Override
-                protected Object convertInputObject(TestObjectWrapper inputObject) {
+                protected Object translateInputObject(TestObjectWrapper inputObject) {
                     return inputObject.getWrappedObject();
                 }
 
                 @Override
-                protected TestObjectWrapper convertAppObject(Object appObject) {
+                protected TestObjectWrapper translateAppObject(Object appObject) {
                     TestObjectWrapper objectWrapper = new TestObjectWrapper();
 
                     objectWrapper.setWrappedObject(appObject);
@@ -85,12 +85,12 @@ public final class TaskitEngineTestHelper {
             TranslationSpec<TestObjectWrapper, Object> wrapperTranslationSpec = new TranslationSpec<TestObjectWrapper, Object>() {
 
                 @Override
-                protected Object convertInputObject(TestObjectWrapper inputObject) {
+                protected Object translateInputObject(TestObjectWrapper inputObject) {
                     return inputObject.getWrappedObject();
                 }
 
                 @Override
-                protected TestObjectWrapper convertAppObject(Object appObject) {
+                protected TestObjectWrapper translateAppObject(Object appObject) {
                     TestObjectWrapper objectWrapper = new TestObjectWrapper();
 
                     objectWrapper.setWrappedObject(appObject);

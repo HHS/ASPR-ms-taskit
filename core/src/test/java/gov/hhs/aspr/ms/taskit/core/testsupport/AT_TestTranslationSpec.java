@@ -22,12 +22,12 @@ public class AT_TestTranslationSpec {
         assertNotNull(new TestTranslationSpec<TestInputObject, TestAppObject>() {
 
             @Override
-            protected TestAppObject convertInputObject(TestInputObject inputObject) {
+            protected TestAppObject translateInputObject(TestInputObject inputObject) {
                 return new TestAppObject();
             }
 
             @Override
-            protected TestInputObject convertAppObject(TestAppObject appObject) {
+            protected TestInputObject translateAppObject(TestAppObject appObject) {
                 return new TestInputObject();
             }
 

@@ -7,12 +7,12 @@ public enum TaskitError implements ContractError {
         CIRCULAR_TRANSLATOR_DEPENDENCIES("Circular translator dependencies: "),
         DUPLICATE_CLASSREF("Duplicate ClassRef"),
         DUPLICATE_DEPENDENCY("Duplicate Dependency"),
-        DUPLICATE_INPUT_PATH("Duplicate Input Path"),
         DUPLICATE_TRANSLATOR("Duplicate Translator"),
         DUPLICATE_TRANSLATION_SPEC("Duplicate TranslationSpec"),
-        INVALID_INPUT_PATH("The given input file path does not exist"),
-        INVALID_OUTPUT_CLASS_OVERRIDE(
-                        "The given output class is not known to be a parent of the current objects class. You need to specify this in the TaskitEngine Builder, otherwise this check will fail."),
+        INVALID_INPUT_CLASS("The given input class is not of the expected type."),
+        INVALID_OUTPUT_CLASS("The given output class is not of the expected type."),
+        INVALID_PARENT_OUTPUT_CLASS(
+                        "The given output class is not known to be a parent of the given objects class. You need to specify this in the TaskitEngine Builder, otherwise this check will fail."),
         INVALID_OUTPUT_PATH(
                         "The given output file path does not exist. While the file will be created on write, the directory will not."),
         INVALID_TASKIT_ENGINE_BUILDER_CLASS_REF(

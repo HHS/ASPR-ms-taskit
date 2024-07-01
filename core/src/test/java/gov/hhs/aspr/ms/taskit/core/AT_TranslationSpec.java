@@ -33,13 +33,13 @@ public class AT_TranslationSpec {
         TranslationSpec<TestInputObject, TestAppObject> translationSpec = new TranslationSpec<>() {
 
             @Override
-            protected TestAppObject convertInputObject(TestInputObject inputObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'convertInputObject'");
+            protected TestAppObject translateInputObject(TestInputObject inputObject) {
+                throw new UnsupportedOperationException("Unimplemented method 'translateInputObject'");
             }
 
             @Override
-            protected TestInputObject convertAppObject(TestAppObject appObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'convertAppObject'");
+            protected TestInputObject translateAppObject(TestAppObject appObject) {
+                throw new UnsupportedOperationException("Unimplemented method 'translateAppObject'");
             }
 
             @Override
@@ -85,7 +85,7 @@ public class AT_TranslationSpec {
     }
 
     @Test
-    @UnitTestMethod(target = TranslationSpec.class, name = "convert", args = { Object.class })
+    @UnitTestMethod(target = TranslationSpec.class, name = "translate", args = { Object.class })
     public void testConvert() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
@@ -140,13 +140,13 @@ public class AT_TranslationSpec {
         TranslationSpec<TestInputObject, TestAppObject> translationSpecA = new TranslationSpec<>() {
 
             @Override
-            protected TestAppObject convertInputObject(TestInputObject inputObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'convertInputObject'");
+            protected TestAppObject translateInputObject(TestInputObject inputObject) {
+                throw new UnsupportedOperationException("Unimplemented method 'translateInputObject'");
             }
 
             @Override
-            protected TestInputObject convertAppObject(TestAppObject appObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'convertAppObject'");
+            protected TestInputObject translateAppObject(TestAppObject appObject) {
+                throw new UnsupportedOperationException("Unimplemented method 'translateAppObject'");
             }
 
             @Override
@@ -165,13 +165,13 @@ public class AT_TranslationSpec {
         TranslationSpec<TestInputObject, TestAppChildObject> translationSpecB = new TranslationSpec<>() {
 
             @Override
-            protected TestAppChildObject convertInputObject(TestInputObject inputObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'convertInputObject'");
+            protected TestAppChildObject translateInputObject(TestInputObject inputObject) {
+                throw new UnsupportedOperationException("Unimplemented method 'translateInputObject'");
             }
 
             @Override
-            protected TestInputObject convertAppObject(TestAppChildObject appObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'convertAppObject'");
+            protected TestInputObject translateAppObject(TestAppChildObject appObject) {
+                throw new UnsupportedOperationException("Unimplemented method 'translateAppObject'");
             }
 
             @Override
@@ -190,13 +190,13 @@ public class AT_TranslationSpec {
         TranslationSpec<TestInputChildObject, TestAppObject> translationSpecC = new TranslationSpec<>() {
 
             @Override
-            protected TestAppObject convertInputObject(TestInputChildObject inputObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'convertInputObject'");
+            protected TestAppObject translateInputObject(TestInputChildObject inputObject) {
+                throw new UnsupportedOperationException("Unimplemented method 'translateInputObject'");
             }
 
             @Override
-            protected TestInputChildObject convertAppObject(TestAppObject appObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'convertAppObject'");
+            protected TestInputChildObject translateAppObject(TestAppObject appObject) {
+                throw new UnsupportedOperationException("Unimplemented method 'translateAppObject'");
             }
 
             @Override
@@ -215,13 +215,13 @@ public class AT_TranslationSpec {
         TranslationSpec<TestInputChildObject, TestAppChildObject> translationSpecD = new TranslationSpec<>() {
 
             @Override
-            protected TestAppChildObject convertInputObject(TestInputChildObject inputObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'convertInputObject'");
+            protected TestAppChildObject translateInputObject(TestInputChildObject inputObject) {
+                throw new UnsupportedOperationException("Unimplemented method 'translateInputObject'");
             }
 
             @Override
-            protected TestInputChildObject convertAppObject(TestAppChildObject appObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'convertAppObject'");
+            protected TestInputChildObject translateAppObject(TestAppChildObject appObject) {
+                throw new UnsupportedOperationException("Unimplemented method 'translateAppObject'");
             }
 
             @Override
@@ -240,13 +240,13 @@ public class AT_TranslationSpec {
         TranslationSpec<TestInputObject, TestAppObject> translationSpecE = new TranslationSpec<>() {
 
             @Override
-            protected TestAppObject convertInputObject(TestInputObject inputObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'convertInputObject'");
+            protected TestAppObject translateInputObject(TestInputObject inputObject) {
+                throw new UnsupportedOperationException("Unimplemented method 'translateInputObject'");
             }
 
             @Override
-            protected TestInputObject convertAppObject(TestAppObject appObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'convertAppObject'");
+            protected TestInputObject translateAppObject(TestAppObject appObject) {
+                throw new UnsupportedOperationException("Unimplemented method 'translateAppObject'");
             }
 
             @Override
@@ -297,13 +297,13 @@ public class AT_TranslationSpec {
         TranslationSpec<TestInputObject, TestAppObject> translationSpecA = new TranslationSpec<>() {
 
             @Override
-            protected TestAppObject convertInputObject(TestInputObject inputObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'convertInputObject'");
+            protected TestAppObject translateInputObject(TestInputObject inputObject) {
+                throw new UnsupportedOperationException("Unimplemented method 'translateInputObject'");
             }
 
             @Override
-            protected TestInputObject convertAppObject(TestAppObject appObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'convertAppObject'");
+            protected TestInputObject translateAppObject(TestAppObject appObject) {
+                throw new UnsupportedOperationException("Unimplemented method 'translateAppObject'");
             }
 
             @Override
@@ -322,13 +322,13 @@ public class AT_TranslationSpec {
         TranslationSpec<TestInputObject, TestAppChildObject> translationSpecB = new TranslationSpec<>() {
 
             @Override
-            protected TestAppChildObject convertInputObject(TestInputObject inputObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'convertInputObject'");
+            protected TestAppChildObject translateInputObject(TestInputObject inputObject) {
+                throw new UnsupportedOperationException("Unimplemented method 'translateInputObject'");
             }
 
             @Override
-            protected TestInputObject convertAppObject(TestAppChildObject appObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'convertAppObject'");
+            protected TestInputObject translateAppObject(TestAppChildObject appObject) {
+                throw new UnsupportedOperationException("Unimplemented method 'translateAppObject'");
             }
 
             @Override
@@ -347,13 +347,13 @@ public class AT_TranslationSpec {
         TranslationSpec<TestInputChildObject, TestAppObject> translationSpecC = new TranslationSpec<>() {
 
             @Override
-            protected TestAppObject convertInputObject(TestInputChildObject inputObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'convertInputObject'");
+            protected TestAppObject translateInputObject(TestInputChildObject inputObject) {
+                throw new UnsupportedOperationException("Unimplemented method 'translateInputObject'");
             }
 
             @Override
-            protected TestInputChildObject convertAppObject(TestAppObject appObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'convertAppObject'");
+            protected TestInputChildObject translateAppObject(TestAppObject appObject) {
+                throw new UnsupportedOperationException("Unimplemented method 'translateAppObject'");
             }
 
             @Override
@@ -372,13 +372,13 @@ public class AT_TranslationSpec {
         TranslationSpec<TestInputChildObject, TestAppChildObject> translationSpecD = new TranslationSpec<>() {
 
             @Override
-            protected TestAppChildObject convertInputObject(TestInputChildObject inputObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'convertInputObject'");
+            protected TestAppChildObject translateInputObject(TestInputChildObject inputObject) {
+                throw new UnsupportedOperationException("Unimplemented method 'translateInputObject'");
             }
 
             @Override
-            protected TestInputChildObject convertAppObject(TestAppChildObject appObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'convertAppObject'");
+            protected TestInputChildObject translateAppObject(TestAppChildObject appObject) {
+                throw new UnsupportedOperationException("Unimplemented method 'translateAppObject'");
             }
 
             @Override
@@ -397,13 +397,13 @@ public class AT_TranslationSpec {
         TranslationSpec<TestInputObject, TestAppObject> translationSpecE = new TranslationSpec<>() {
 
             @Override
-            protected TestAppObject convertInputObject(TestInputObject inputObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'convertInputObject'");
+            protected TestAppObject translateInputObject(TestInputObject inputObject) {
+                throw new UnsupportedOperationException("Unimplemented method 'translateInputObject'");
             }
 
             @Override
-            protected TestInputObject convertAppObject(TestAppObject appObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'convertAppObject'");
+            protected TestInputObject translateAppObject(TestAppObject appObject) {
+                throw new UnsupportedOperationException("Unimplemented method 'translateAppObject'");
             }
 
             @Override

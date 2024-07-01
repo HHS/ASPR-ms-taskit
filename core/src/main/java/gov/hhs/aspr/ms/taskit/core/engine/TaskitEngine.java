@@ -523,7 +523,7 @@ public final class TaskitEngine implements ITaskitEngine {
     @Override
     public <U, M extends U> void translateAndWrite(Path path, M appObject, Class<U> outputClass)
             throws IOException {
-        throw new UnsupportedOperationException("Called 'convertAndWriteAs' on TaskitEngine");
+        throw new UnsupportedOperationException("Called 'translateAndWriteAs' on TaskitEngine");
     }
 
     /**
@@ -535,7 +535,7 @@ public final class TaskitEngine implements ITaskitEngine {
     @Override
     public <M> void translateAndWrite(Path path, M appObject)
             throws IOException {
-        throw new UnsupportedOperationException("Called 'convertAndWrite' on TaskitEngine");
+        throw new UnsupportedOperationException("Called 'translateAndWrite' on TaskitEngine");
     }
 
     /**
@@ -567,7 +567,7 @@ public final class TaskitEngine implements ITaskitEngine {
      * this conversion method will be used approx ~90% of the time
      * </p>
      * 
-     * @param <T> the return type after converting
+     * @param <T> the return type after translating
      * @throws ContractException
      *                           <ul>
      *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
@@ -595,7 +595,7 @@ public final class TaskitEngine implements ITaskitEngine {
      * this conversion method will be used approx ~7% of the time
      * </p>
      * 
-     * @param <T> the return type after converting
+     * @param <T> the return type after translating
      * @param <M> the type of the object; extends U
      * @param <U> the parent type of the object and the class for which
      *            translationSpec you want to use
@@ -638,7 +638,7 @@ public final class TaskitEngine implements ITaskitEngine {
      * this conversion method will be used approx ~3% of the time
      * </p>
      * 
-     * @param <T> the return type after converting
+     * @param <T> the return type after translating
      * @param <M> the type of the object
      * @param <U> the type of the class for which translationSpec you want to use
      * @throws ContractException

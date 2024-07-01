@@ -19,7 +19,7 @@ import gov.hhs.aspr.ms.util.resourcehelper.ResourceHelper;
 
 /**
  * The TaskitController allows {@link ITaskitEngine}s to be added to it, and
- * acts as a wrapper around the TaskitEngine read/write/convert methods.
+ * acts as a wrapper around the TaskitEngine read/write/translate methods.
  */
 public final class TaskitController {
     protected final Data data;
@@ -341,7 +341,7 @@ public final class TaskitController {
      *                           <ul>
      *                           <li>{@linkplain TaskitError#NULL_CLASS_REF}
      *                           if the output classref is null</li>
-     *                           <li>{@linkplain TaskitError#INVALID_OUTPUT_CLASS_OVERRIDE}
+     *                           <li>{@linkplain TaskitError#INVALID_PARENT_OUTPUT_CLASS}
      *                           if the output classref is not known to be a parent
      *                           of the given object's class</li>
      *                           <li>{@linkplain TaskitError#NULL_PATH}
@@ -365,7 +365,7 @@ public final class TaskitController {
         }
 
         if (!this.data.parentChildClassRelationshipMap.values().contains(outputClass)) {
-            throw new ContractException(TaskitError.INVALID_OUTPUT_CLASS_OVERRIDE);
+            throw new ContractException(TaskitError.INVALID_PARENT_OUTPUT_CLASS);
         }
 
         write(path, object, Optional.of(outputClass), taskitEngineType, true);
