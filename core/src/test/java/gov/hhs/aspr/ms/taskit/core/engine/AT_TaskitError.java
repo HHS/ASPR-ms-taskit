@@ -1,4 +1,4 @@
-package gov.hhs.aspr.ms.taskit.core;
+package gov.hhs.aspr.ms.taskit.core.engine;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -8,10 +8,9 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.ms.taskit.core.engine.TaskitError;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 
-public class AT_CoreTranslationError {
+public class AT_TaskitError {
 
     @Test
     @UnitTestMethod(target = TaskitError.class, name = "getDescription", args = {})

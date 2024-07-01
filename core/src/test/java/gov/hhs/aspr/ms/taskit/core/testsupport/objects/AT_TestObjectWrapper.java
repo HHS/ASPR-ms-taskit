@@ -1,4 +1,4 @@
-package gov.hhs.aspr.ms.taskit.core.testsupport.testobject;
+package gov.hhs.aspr.ms.taskit.core.testsupport.objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -8,9 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.taskit.core.testsupport.TestObjectUtil;
-import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppObject;
-import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestInputObject;
-import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestObjectWrapper;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 
