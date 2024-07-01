@@ -38,19 +38,19 @@ public class AnyTranslationSpec extends ProtobufTranslationSpec<Any, Object> {
         try {
             Message unpackedMessage = inputObject.unpack(messageClassRef);
 
-            return this.taskitEngine.convertObject(unpackedMessage);
+            return this.taskitEngine.translateObject(unpackedMessage);
         } catch (InvalidProtocolBufferException e) {
             throw new RuntimeException("Unable To unpack any type to given class: " + messageClassRef.getName(), e);
         }
     }
 
     @Override
-    protected Any convertAppObject(Object appObject) {
+    protected Any translateAppObject(Object appObject) {
 
         Message message;
 
         if (Enum.class.isAssignableFrom(appObject.getClass())) {
-            message = this.taskitEngine.convertObjectAsSafeClass(Enum.class.cast(appObject), Enum.class);
+            message = this.taskitEngine.translateObjectAsClassSafe(Enum.class.cast(appObject), Enum.class);
         }
 
         // in the event that the object was converted BEFORE calling this
@@ -58,7 +58,7 @@ public class AnyTranslationSpec extends ProtobufTranslationSpec<Any, Object> {
         else if (Message.class.isAssignableFrom(appObject.getClass())) {
             message = Message.class.cast(appObject);
         } else {
-            message = this.taskitEngine.convertObject(appObject);
+            message = this.taskitEngine.translateObject(appObject);
         }
 
         return Any.pack(message);

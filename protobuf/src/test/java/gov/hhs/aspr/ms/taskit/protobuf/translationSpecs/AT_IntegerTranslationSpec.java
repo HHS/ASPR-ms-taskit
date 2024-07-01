@@ -47,7 +47,7 @@ public class AT_IntegerTranslationSpec {
         Integer appValue = 10;
         Int32Value expectedValue = Int32Value.of(appValue);
 
-        Int32Value actualValue = integerTranslationSpec.convertAppObject(appValue);
+        Int32Value actualValue = integerTranslationSpec.translateAppObject(appValue);
 
         assertEquals(expectedValue, actualValue);
     }

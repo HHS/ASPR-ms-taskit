@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import gov.hhs.aspr.ms.taskit.core.translation.BaseTranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.translation.ITranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.Translator;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslatorContext;
@@ -40,8 +40,8 @@ public final class TaskitEngine implements ITaskitEngine {
     }
 
     protected static final class Data {
-        protected final Map<Class<?>, BaseTranslationSpec> classToTranslationSpecMap = new LinkedHashMap<>();
-        protected final Set<BaseTranslationSpec> translationSpecs = new LinkedHashSet<>();
+        protected final Map<Class<?>, ITranslationSpec> classToTranslationSpecMap = new LinkedHashMap<>();
+        protected final Set<ITranslationSpec> translationSpecs = new LinkedHashSet<>();
         protected Map<Class<?>, Class<?>> childToParentClassMap = new LinkedHashMap<>();
         protected TaskitEngineType taskitEngineType = TaskitEngineType.UNKNOWN;
         protected boolean translatorsInitialized = false;
@@ -152,7 +152,7 @@ public final class TaskitEngine implements ITaskitEngine {
         }
 
         /**
-         * Sets the type for this Translation Engine
+         * Sets the type for this Taskit Engine
          */
         public final Builder setTaskitEngineType(TaskitEngineType taskitEngineType) {
             this.data.taskitEngineType = taskitEngineType;
@@ -397,7 +397,7 @@ public final class TaskitEngine implements ITaskitEngine {
     }
 
     /**
-     * Returns a new builder for a BaseTaskitEngine
+     * Returns a new builder for a Base TaskitEngine
      */
     public static TaskitEngine.Builder builder() {
         return new Builder(new Data());
@@ -443,11 +443,11 @@ public final class TaskitEngine implements ITaskitEngine {
          * the translationSpecs Set then initialize them, then add them back to the set.
          * Set's aren't happy when the hash code of the objects in them change
          */
-        List<BaseTranslationSpec> copyOfTranslationSpecs = new ArrayList<>(this.data.translationSpecs);
+        List<ITranslationSpec> copyOfTranslationSpecs = new ArrayList<>(this.data.translationSpecs);
 
         this.data.translationSpecs.clear();
 
-        for (BaseTranslationSpec translationSpec : copyOfTranslationSpecs) {
+        for (ITranslationSpec translationSpec : copyOfTranslationSpecs) {
             translationSpec.init(taskitEngine);
             this.data.translationSpecs.add(translationSpec);
         }
@@ -476,7 +476,7 @@ public final class TaskitEngine implements ITaskitEngine {
      */
     public void translationSpecsAreInitialized() {
 
-        for (BaseTranslationSpec translationSpec : this.data.translationSpecs) {
+        for (ITranslationSpec translationSpec : this.data.translationSpecs) {
             if (!translationSpec.isInitialized()) {
                 throw new RuntimeException(translationSpec.getClass().getName()
                         + " was not properly initialized, be sure to call super()");
@@ -486,11 +486,11 @@ public final class TaskitEngine implements ITaskitEngine {
     }
 
     /**
-     * Returns an instance of the Base Translation Engine
+     * Returns an instance of the Base Taskit Engine
      * 
      * NOTE: for {@link TaskitEngine} it returns itself
      */
-    public TaskitEngine getBaseTaskitEngine() {
+    public TaskitEngine getTaskitEngine() {
         return this;
     }
 
@@ -498,36 +498,71 @@ public final class TaskitEngine implements ITaskitEngine {
      * Returns a set of all {@link TranslationSpec}s associated with this
      * TaskitEngine
      */
-    public Set<BaseTranslationSpec> getTranslationSpecs() {
+    public Set<ITranslationSpec> getTranslationSpecs() {
         return this.data.translationSpecs;
     }
 
     /**
-     * abstract method that must be implemented by child TranslatorCores that
-     * defines how to write to output files
+     * writing to files must be defined in explicit TaskitEngines, the base taskit
+     * engine knows nothing about writing to files
      * 
-     * NOTE: THIS METHOD SHOULD NEVER BE CALLED DIRECTLY
+     * THIS METHOD SHOULD NEVER BE CALLED DIRECTLY
      */
     @Override
-    public <U, M extends U> void write(Path path, M appObject, Optional<Class<U>> superClass)
+    public <M> void write(Path path, M object)
             throws IOException {
-        throw new UnsupportedOperationException("Called 'write' on Base TaskitEngine");
+        throw new UnsupportedOperationException("Called 'write' on TaskitEngine");
     }
 
     /**
-     * abstract method that must be implemented by child TranslatorCores that
-     * defines how to read from input files
+     * writing to files must be defined in explicit TaskitEngines, the base taskit
+     * engine knows nothing about writing to files
      * 
-     * NOTE: THIS METHOD SHOULD NEVER BE CALLED DIRECTLY
+     * THIS METHOD SHOULD NEVER BE CALLED DIRECTLY
      */
     @Override
-    public <T, U> T read(Path path, Class<U> inputClassRef) throws IOException {
-        throw new UnsupportedOperationException("Called 'read' on Base TaskitEngine");
+    public <U, M extends U> void translateAndWrite(Path path, M appObject, Class<U> outputClass)
+            throws IOException {
+        throw new UnsupportedOperationException("Called 'convertAndWriteAs' on TaskitEngine");
+    }
+
+    /**
+     * writing to files must be defined in explicit TaskitEngines, the base taskit
+     * engine knows nothing about writing to files
+     * 
+     * THIS METHOD SHOULD NEVER BE CALLED DIRECTLY
+     */
+    @Override
+    public <M> void translateAndWrite(Path path, M appObject)
+            throws IOException {
+        throw new UnsupportedOperationException("Called 'convertAndWrite' on TaskitEngine");
+    }
+
+    /**
+     * reading files must be defined in explicit TaskitEngines, the base taskit
+     * engine knows nothing about reading files
+     * 
+     * THIS METHOD SHOULD NEVER BE CALLED DIRECTLY
+     */
+    @Override
+    public <U> U read(Path path, Class<U> inputClassRef) throws IOException {
+        throw new UnsupportedOperationException("Called 'read' on TaskitEngine");
+    }
+
+    /**
+     * reading files must be defined in explicit TaskitEngines, the base taskit
+     * engine knows nothing about reading files
+     * 
+     * THIS METHOD SHOULD NEVER BE CALLED DIRECTLY
+     */
+    @Override
+    public <T, U> T readAndTranslate(Path path, Class<U> inputClassRef) throws IOException {
+        throw new UnsupportedOperationException("Called 'readAndConvert' on TaskitEngine");
     }
 
     /**
      * Given an object, uses the class of the object to obtain the translationSpec
-     * and then calls {@link TranslationSpec#convert(Object)}
+     * and then calls {@link TranslationSpec#translate(Object)}
      * <p>
      * this conversion method will be used approx ~90% of the time
      * </p>
@@ -542,16 +577,16 @@ public final class TaskitEngine implements ITaskitEngine {
      *                           objects class</li>
      *                           </ul>
      */
-    public <T> T convertObject(Object object) {
+    public <T> T translateObject(Object object) {
         if (object == null) {
             throw new ContractException(TaskitError.NULL_OBJECT_FOR_TRANSLATION);
         }
-        return getTranslationSpecForClass(object.getClass()).convert(object);
+        return getTranslationSpecForClass(object.getClass()).translate(object);
     }
 
     /**
      * Given an object, uses the parent class of the object to obtain the
-     * translationSpec and then calls {@link TranslationSpec#convert(Object)}
+     * translationSpec and then calls {@link TranslationSpec#translate(Object)}
      * <p>
      * This method call is safe in the sense that the type parameters ensure that
      * the passed in object is actually a child of the passed in parentClassRef
@@ -575,7 +610,7 @@ public final class TaskitEngine implements ITaskitEngine {
      *                           objects class</li>
      *                           </ul>
      */
-    public <T, M extends U, U> T convertObjectAsSafeClass(M object, Class<U> parentClassRef) {
+    public <T, M extends U, U> T translateObjectAsClassSafe(M object, Class<U> parentClassRef) {
         if (object == null) {
             throw new ContractException(TaskitError.NULL_OBJECT_FOR_TRANSLATION);
         }
@@ -584,12 +619,12 @@ public final class TaskitEngine implements ITaskitEngine {
             throw new ContractException(TaskitError.NULL_CLASS_REF);
         }
 
-        return getTranslationSpecForClass(parentClassRef).convert(object);
+        return getTranslationSpecForClass(parentClassRef).translate(object);
     }
 
     /**
      * Given an object, uses the passed in class to obtain the translationSpec and
-     * then calls {@link TranslationSpec#convert(Object)}
+     * then calls {@link TranslationSpec#translate(Object)}
      * <p>
      * This method call is unsafe in the sense that the type parameters do not
      * ensure any relationship between the passed in object and the passed in
@@ -617,7 +652,7 @@ public final class TaskitEngine implements ITaskitEngine {
      *                           objects class</li>
      *                           </ul>
      */
-    public <T, M, U> T convertObjectAsUnsafeClass(M object, Class<U> objectClassRef) {
+    public <T, M, U> T translateObjectAsClassUnsafe(M object, Class<U> objectClassRef) {
         if (object == null) {
             throw new ContractException(TaskitError.NULL_OBJECT_FOR_TRANSLATION);
         }
@@ -626,7 +661,7 @@ public final class TaskitEngine implements ITaskitEngine {
             throw new ContractException(TaskitError.NULL_CLASS_REF);
         }
 
-        return getTranslationSpecForClass(objectClassRef).convert(object);
+        return getTranslationSpecForClass(objectClassRef).translate(object);
     }
 
     /**
@@ -636,7 +671,7 @@ public final class TaskitEngine implements ITaskitEngine {
      * @throws ContractException {@linkplain TaskitError#UNKNOWN_TRANSLATION_SPEC}
      *                           if no translationSpec for the given class was found
      */
-    public BaseTranslationSpec getTranslationSpecForClass(Class<?> classRef) {
+    public ITranslationSpec getTranslationSpecForClass(Class<?> classRef) {
         if (this.data.classToTranslationSpecMap.containsKey(classRef)) {
             return this.data.classToTranslationSpecMap.get(classRef);
         }

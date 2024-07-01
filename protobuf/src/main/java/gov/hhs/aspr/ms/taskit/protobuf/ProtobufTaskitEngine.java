@@ -33,7 +33,7 @@ import gov.hhs.aspr.ms.taskit.core.engine.ITaskitEngineBuilder;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngineType;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitError;
-import gov.hhs.aspr.ms.taskit.core.translation.BaseTranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.translation.ITranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.Translator;
 import gov.hhs.aspr.ms.taskit.protobuf.translationSpecs.AnyTranslationSpec;
@@ -317,9 +317,9 @@ public final class ProtobufTaskitEngine implements ITaskitEngine {
         if (Message.class.isAssignableFrom(outputObject.getClass())) {
             message = Message.class.cast(outputObject);
         } else if (outputClassRefOverride.isPresent()) {
-            message = convertObjectAsSafeClass(outputObject, outputClassRefOverride.get());
+            message = translateObjectAsClassSafe(outputObject, outputClassRefOverride.get());
         } else {
-            message = convertObject(outputObject);
+            message = translateObject(outputObject);
         }
 
         BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath.toFile()));
@@ -370,7 +370,7 @@ public final class ProtobufTaskitEngine implements ITaskitEngine {
 
         Message message = builder.build();
 
-        return convertObject(message);
+        return translateObject(message);
     }
 
     <U> Message.Builder getBuilderForMessage(Class<U> messageClass) {
@@ -411,7 +411,7 @@ public final class ProtobufTaskitEngine implements ITaskitEngine {
      * @param <T> the return type
      */
     public <T> T getObjectFromAny(Any anyValue) {
-        return convertObject(anyValue);
+        return translateObject(anyValue);
     }
 
     /**
@@ -421,7 +421,7 @@ public final class ProtobufTaskitEngine implements ITaskitEngine {
      * </p>
      */
     public Any getAnyFromObject(Object object) {
-        return convertObjectAsUnsafeClass(object, Any.class);
+        return translateObjectAsClassUnsafe(object, Any.class);
     }
 
     /**
@@ -429,7 +429,7 @@ public final class ProtobufTaskitEngine implements ITaskitEngine {
      * <p>
      * This method call differs from {@link #getAnyFromObject(Object)} in that it
      * will first convert the object using the safe parent class by calling
-     * {@link #convertObjectAsSafeClass(Object, Class)} and will then use the
+     * {@link #translateObjectAsClassSafe(Object, Class)} and will then use the
      * {@link AnyTranslationSpec} to wrap the resulting converted object in an
      * {@link Any}
      * </p>
@@ -441,14 +441,14 @@ public final class ProtobufTaskitEngine implements ITaskitEngine {
      *                           parentClassRef
      */
     public <U, M extends U> Any getAnyFromObjectAsSafeClass(M object, Class<U> parentClassRef) {
-        U convertedObject = convertObjectAsSafeClass(object, parentClassRef);
+        U convertedObject = translateObjectAsClassSafe(object, parentClassRef);
 
-        return convertObjectAsUnsafeClass(convertedObject, Any.class);
+        return translateObjectAsClassUnsafe(convertedObject, Any.class);
     }
 
     /**
      * Given an object, uses the class of the object to obtain the translationSpec
-     * and then calls {@link TranslationSpec#convert(Object)}
+     * and then calls {@link TranslationSpec#translate(Object)}
      * <p>
      * this conversion method will be used approx ~90% of the time
      * </p>
@@ -464,13 +464,13 @@ public final class ProtobufTaskitEngine implements ITaskitEngine {
      *                           </ul>
      */
     @Override
-    public <T> T convertObject(Object object) {
-        return this.data.baseTaskitEngine.convertObject(object);
+    public <T> T translateObject(Object object) {
+        return this.data.baseTaskitEngine.translateObject(object);
     }
 
     /**
      * Given an object, uses the parent class of the object to obtain the
-     * translationSpec and then calls {@link TranslationSpec#convert(Object)}
+     * translationSpec and then calls {@link TranslationSpec#translate(Object)}
      * <p>
      * This method call is safe in the sense that the type parameters ensure that
      * the passed in object is actually a child of the passed in parentClassRef
@@ -495,13 +495,13 @@ public final class ProtobufTaskitEngine implements ITaskitEngine {
      *                           </ul>
      */
     @Override
-    public <T, M extends U, U> T convertObjectAsSafeClass(M object, Class<U> classRef) {
-        return this.data.baseTaskitEngine.convertObjectAsSafeClass(object, classRef);
+    public <T, M extends U, U> T translateObjectAsClassSafe(M object, Class<U> classRef) {
+        return this.data.baseTaskitEngine.translateObjectAsClassSafe(object, classRef);
     }
 
     /**
      * Given an object, uses the passed in class to obtain the translationSpec and
-     * then calls {@link TranslationSpec#convert(Object)}
+     * then calls {@link TranslationSpec#translate(Object)}
      * <p>
      * This method call is unsafe in the sense that the type parameters do not
      * ensure any relationship between the passed in object and the passed in
@@ -530,8 +530,8 @@ public final class ProtobufTaskitEngine implements ITaskitEngine {
      *                           </ul>
      */
     @Override
-    public <T, M, U> T convertObjectAsUnsafeClass(M object, Class<U> classRef) {
-        return this.data.baseTaskitEngine.convertObjectAsUnsafeClass(object, classRef);
+    public <T, M, U> T translateObjectAsClassUnsafe(M object, Class<U> classRef) {
+        return this.data.baseTaskitEngine.translateObjectAsClassUnsafe(object, classRef);
     }
 
     /**
@@ -556,7 +556,7 @@ public final class ProtobufTaskitEngine implements ITaskitEngine {
      * Returns an instance of the BaseTaskitEngine for this translation engine
      */
     @Override
-    public TaskitEngine getBaseTaskitEngine() {
+    public TaskitEngine getTaskitEngine() {
         return this.data.baseTaskitEngine;
     }
 
@@ -575,7 +575,7 @@ public final class ProtobufTaskitEngine implements ITaskitEngine {
      * TaskitEngine
      */
     @Override
-    public Set<BaseTranslationSpec> getTranslationSpecs() {
+    public Set<ITranslationSpec> getTranslationSpecs() {
         return this.data.baseTaskitEngine.getTranslationSpecs();
     }
 

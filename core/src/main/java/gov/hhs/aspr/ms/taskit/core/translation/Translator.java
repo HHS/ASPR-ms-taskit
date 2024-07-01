@@ -11,7 +11,7 @@ import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
  * The Translator class serves as a wrapper around one or more
- * {@link BaseTranslationSpec}(s) and assists in adding those translationSpecs
+ * {@link ITranslationSpec}(s) and assists in adding those translationSpecs
  * to the {@link TaskitEngine}
  */
 public final class Translator {

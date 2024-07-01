@@ -11,8 +11,10 @@ public enum TaskitError implements ContractError {
         DUPLICATE_TRANSLATOR("Duplicate Translator"),
         DUPLICATE_TRANSLATION_SPEC("Duplicate TranslationSpec"),
         INVALID_INPUT_PATH("The given input file path does not exist"),
+        INVALID_OUTPUT_CLASS_OVERRIDE(
+                        "The given output class is not known to be a parent of the current objects class. You need to specify this in the TaskitEngine Builder, otherwise this check will fail."),
         INVALID_OUTPUT_PATH(
-            "The given output file path does not exist. While the file will be created on write, the directory will not."),
+                        "The given output file path does not exist. While the file will be created on write, the directory will not."),
         INVALID_TASKIT_ENGINE_BUILDER_CLASS_REF(
                         "The given Taskit Engine Builder classRef does not match the class of the actual Taskit Engine Builder"),
         MISSING_TRANSLATOR("Missing Translator: "),
@@ -22,8 +24,9 @@ public enum TaskitError implements ContractError {
         NULL_INIT_CONSUMER("Null Initializer Consumer"),
         NULL_OBJECT_FOR_TRANSLATION("The object to be translated was null"),
         NULL_PATH("Null Path"),
-        NULL_TASKIT_ENGINE("Null Translation Engine"),
-        NULL_TASKIT_ENGINE_BUILDER("Null Translation Engine Builder"),
+        NULL_TASKIT_ENGINE("Null Taskit Engine"),
+        NULL_TASKIT_ENGINE_BUILDER("Null Taskit Engine Builder"),
+        NULL_TASKIT_ENGINE_TYPE("Null Taskit Engine Type"),
         NULL_TRANSLATION_SPEC("Null TranslationSpec"),
         NULL_TRANSLATION_SPEC_APP_CLASS("Null TranslationSpec App Class"),
         NULL_TRANSLATION_SPEC_INPUT_CLASS("Null TranslationSpec Input Class"),

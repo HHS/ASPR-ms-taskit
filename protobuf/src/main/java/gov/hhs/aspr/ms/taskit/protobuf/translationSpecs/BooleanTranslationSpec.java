@@ -16,7 +16,7 @@ public class BooleanTranslationSpec extends ProtobufTranslationSpec<BoolValue, B
     }
 
     @Override
-    protected BoolValue convertAppObject(Boolean appObject) {
+    protected BoolValue translateAppObject(Boolean appObject) {
         return BoolValue.of(appObject);
     }
 

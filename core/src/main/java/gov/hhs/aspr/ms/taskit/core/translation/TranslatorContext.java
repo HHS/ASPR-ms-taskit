@@ -27,7 +27,7 @@ public final class TranslatorContext {
      * @param <T> the type of the TaskitEngine
      * @throws ContractException {@linkplain TaskitError#INVALID_TASKIT_ENGINE_BUILDER_CLASS_REF}
      *                           if the given classRef does not match the class or
-     *                           the translatorCoreBuilder is null
+     *                           the taskitEngineBuilder is null
      */
     public <T extends ITaskitEngineBuilder> T getTaskitEngineBuilder(final Class<T> classRef) {
         if (this.builder.getClass().isAssignableFrom(classRef)) {
@@ -35,7 +35,7 @@ public final class TranslatorContext {
         }
 
         throw new ContractException(TaskitError.INVALID_TASKIT_ENGINE_BUILDER_CLASS_REF,
-                "No Translation Engine Builder was found for the type: " + classRef.getName());
+                "No Taskit Engine Builder was found for the type: " + classRef.getName());
 
     }
 }

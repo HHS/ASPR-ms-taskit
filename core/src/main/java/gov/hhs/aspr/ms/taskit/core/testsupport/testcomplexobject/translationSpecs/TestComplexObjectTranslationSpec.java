@@ -8,7 +8,7 @@ public class TestComplexObjectTranslationSpec
         extends TestTranslationSpec<TestComplexInputObject, TestComplexAppObject> {
 
     @Override
-    protected TestComplexAppObject convertInputObject(TestComplexInputObject inputObject) {
+    protected TestComplexAppObject translateInputObject(TestComplexInputObject inputObject) {
         TestComplexAppObject testAppObject = new TestComplexAppObject();
 
         testAppObject.setNumEntities(inputObject.getNumEntities());
@@ -19,7 +19,7 @@ public class TestComplexObjectTranslationSpec
     }
 
     @Override
-    protected TestComplexInputObject convertAppObject(TestComplexAppObject appObject) {
+    protected TestComplexInputObject translateAppObject(TestComplexAppObject appObject) {
         TestComplexInputObject testInputObject = new TestComplexInputObject();
 
         testInputObject.setNumEntities(appObject.getNumEntities());

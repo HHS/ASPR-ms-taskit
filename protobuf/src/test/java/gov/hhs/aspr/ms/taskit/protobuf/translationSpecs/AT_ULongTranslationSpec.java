@@ -47,7 +47,7 @@ public class AT_ULongTranslationSpec {
         Long appValue = 100L;
         UInt64Value expectedValue = UInt64Value.of(appValue);
 
-        UInt64Value actualValue = booleanTranslationSpec.convertAppObject(appValue);
+        UInt64Value actualValue = booleanTranslationSpec.translateAppObject(appValue);
 
         assertEquals(expectedValue, actualValue);
     }

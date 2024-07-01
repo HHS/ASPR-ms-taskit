@@ -47,7 +47,7 @@ public class AT_LongTranslationSpec {
         Long appValue = 1000L;
         Int64Value expectedValue = Int64Value.of(appValue);
 
-        Int64Value actualValue = longTranslationSpec.convertAppObject(appValue);
+        Int64Value actualValue = longTranslationSpec.translateAppObject(appValue);
 
         assertEquals(expectedValue, actualValue);
     }

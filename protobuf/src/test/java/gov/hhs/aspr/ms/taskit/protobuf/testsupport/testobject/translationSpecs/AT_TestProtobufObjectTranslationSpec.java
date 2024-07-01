@@ -51,7 +51,7 @@ public class AT_TestProtobufObjectTranslationSpec {
         TestAppObject appValue = TestObjectUtil.generateTestAppObject();
         TestInputObject expectedValue = TestObjectUtil.getInputFromApp(appValue);
 
-        TestInputObject actualValue = objectTranslationSpec.convertAppObject(appValue);
+        TestInputObject actualValue = objectTranslationSpec.translateAppObject(appValue);
 
         assertEquals(expectedValue, actualValue);
     }

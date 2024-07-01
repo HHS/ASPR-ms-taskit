@@ -115,7 +115,7 @@ public class AT_AnyTranslationSpec {
 
         Any expectedAny = Any.pack(expectedValue);
 
-        Any actualAny = anyTranslationSpec.convertAppObject(value);
+        Any actualAny = anyTranslationSpec.translateAppObject(value);
 
         assertEquals(expectedAny, actualAny);
 
@@ -128,14 +128,14 @@ public class AT_AnyTranslationSpec {
 
         expectedAny = Any.pack(wrapperEnumValue);
 
-        actualAny = anyTranslationSpec.convertAppObject(appValue);
+        actualAny = anyTranslationSpec.translateAppObject(appValue);
 
         assertEquals(expectedAny, actualAny);
 
         // by calling covert on an object that was already converted
         // this case is specifically used for
         // ProtobufTaskitEngine.testGetAnyFromObjectAsSafeClass
-        actualAny = anyTranslationSpec.convertAppObject(wrapperEnumValue);
+        actualAny = anyTranslationSpec.translateAppObject(wrapperEnumValue);
 
         assertEquals(expectedAny, actualAny);
     }

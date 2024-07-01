@@ -47,7 +47,7 @@ public class AT_FloatTranslationSpec {
         Float appValue = 10.01f;
         FloatValue expectedValue = FloatValue.of(appValue);
 
-        FloatValue actualValue = floatTranslationSpec.convertAppObject(appValue);
+        FloatValue actualValue = floatTranslationSpec.translateAppObject(appValue);
 
         assertEquals(expectedValue, actualValue);
     }

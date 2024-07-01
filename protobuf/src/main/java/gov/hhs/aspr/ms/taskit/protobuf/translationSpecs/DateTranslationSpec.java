@@ -18,7 +18,7 @@ public class DateTranslationSpec extends ProtobufTranslationSpec<Date, LocalDate
     }
 
     @Override
-    protected Date convertAppObject(LocalDate appObject) {
+    protected Date translateAppObject(LocalDate appObject) {
         return Date.newBuilder().setYear(appObject.getYear()).setMonth(appObject.getMonth().getValue())
                 .setDay(appObject.getDayOfMonth()).build();
     }

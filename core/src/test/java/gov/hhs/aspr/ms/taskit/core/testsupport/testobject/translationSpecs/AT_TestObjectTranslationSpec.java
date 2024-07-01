@@ -33,7 +33,7 @@ public class AT_TestObjectTranslationSpec {
         TestTaskitEngine.builder()
                 .addTranslationSpec(testObjectTranslationSpec).addTranslationSpec(complexObjectTranslationSpec).build();
 
-        TestAppObject actualAppObject = testObjectTranslationSpec.convertInputObject(testInputObject);
+        TestAppObject actualAppObject = testObjectTranslationSpec.translateInputObject(testInputObject);
 
         assertEquals(expectedAppObject, actualAppObject);
     }
@@ -49,7 +49,7 @@ public class AT_TestObjectTranslationSpec {
         TestTaskitEngine.builder()
                 .addTranslationSpec(testObjectTranslationSpec).addTranslationSpec(complexObjectTranslationSpec).build();
 
-        TestInputObject actualInputObject = testObjectTranslationSpec.convertAppObject(testAppObject);
+        TestInputObject actualInputObject = testObjectTranslationSpec.translateAppObject(testAppObject);
 
         assertEquals(expectedInputObject, actualInputObject);
     }

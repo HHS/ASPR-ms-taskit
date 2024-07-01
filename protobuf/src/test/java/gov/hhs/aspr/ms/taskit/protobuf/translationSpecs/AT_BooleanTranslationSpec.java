@@ -47,7 +47,7 @@ public class AT_BooleanTranslationSpec {
         Boolean appValue = false;
         BoolValue expectedValue = BoolValue.of(false);
 
-        BoolValue actualValue = booleanTranslationSpec.convertAppObject(appValue);
+        BoolValue actualValue = booleanTranslationSpec.translateAppObject(appValue);
 
         assertEquals(expectedValue, actualValue);
     }

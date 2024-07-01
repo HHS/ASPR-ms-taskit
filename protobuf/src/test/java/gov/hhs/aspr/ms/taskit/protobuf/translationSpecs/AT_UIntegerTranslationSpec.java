@@ -47,7 +47,7 @@ public class AT_UIntegerTranslationSpec {
         Integer appValue = 100;
         UInt32Value expectedValue = UInt32Value.of(appValue);
 
-        UInt32Value actualValue = uIntegerTranslationSpec.convertAppObject(appValue);
+        UInt32Value actualValue = uIntegerTranslationSpec.translateAppObject(appValue);
 
         assertEquals(expectedValue, actualValue);
     }

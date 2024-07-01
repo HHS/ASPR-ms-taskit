@@ -47,7 +47,7 @@ public class AT_TestProtobufEnumTranslationSpec {
         TestAppEnum appValue = TestAppEnum.TEST2;
         TestInputEnum expectedValue = TestInputEnum.TEST2;
 
-        TestInputEnum actualValue = enumTranslationSpec.convertAppObject(appValue);
+        TestInputEnum actualValue = enumTranslationSpec.translateAppObject(appValue);
 
         assertEquals(expectedValue, actualValue);
     }

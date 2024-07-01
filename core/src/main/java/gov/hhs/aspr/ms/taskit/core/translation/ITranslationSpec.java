@@ -3,13 +3,12 @@ package gov.hhs.aspr.ms.taskit.core.translation;
 import gov.hhs.aspr.ms.taskit.core.engine.ITaskitEngine;
 
 /**
- * Base interface for TranslationSpecifications (TranslationSpecs) Package level
- * access
+ * Interface for TranslationSpecifications (TranslationSpecs)
  */
-public interface BaseTranslationSpec {
+public interface ITranslationSpec {
     <T extends ITaskitEngine> void init(T taskitEngine);
 
-    <T> T convert(Object object);
+    <T> T translate(Object object);
 
     boolean isInitialized();
 }

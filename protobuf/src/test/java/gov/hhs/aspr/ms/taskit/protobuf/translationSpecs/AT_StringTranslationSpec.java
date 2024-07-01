@@ -47,7 +47,7 @@ public class AT_StringTranslationSpec {
         String appValue = "testString";
         StringValue expectedValue = StringValue.of(appValue);
 
-        StringValue actualValue = stringTranslationSpec.convertAppObject(appValue);
+        StringValue actualValue = stringTranslationSpec.translateAppObject(appValue);
 
         assertEquals(expectedValue, actualValue);
     }

@@ -19,7 +19,7 @@ public class TestProtobufComplexObjectTranslationSpec
     }
 
     @Override
-    protected TestComplexInputObject convertAppObject(TestComplexAppObject appObject) {
+    protected TestComplexInputObject translateAppObject(TestComplexAppObject appObject) {
         return TestComplexInputObject.newBuilder().setNumEntities(appObject.getNumEntities())
                 .setStartTime(appObject.getStartTime()).setTestString(appObject.getTestString()).build();
     }

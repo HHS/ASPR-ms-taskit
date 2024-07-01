@@ -11,7 +11,7 @@ public class TestProtobufEnumTranslationSpec extends ProtobufTranslationSpec<Tes
     }
 
     @Override
-    protected TestInputEnum convertAppObject(TestAppEnum appObject) {
+    protected TestInputEnum translateAppObject(TestAppEnum appObject) {
         return TestInputEnum.valueOf(appObject.name());
     }
 

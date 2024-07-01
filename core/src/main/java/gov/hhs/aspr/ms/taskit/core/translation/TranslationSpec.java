@@ -8,13 +8,13 @@ import gov.hhs.aspr.ms.taskit.core.engine.TaskitError;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
- * Core implementation of the {@link BaseTranslationSpec} that must be
+ * Core implementation of the {@link ITranslationSpec} that must be
  * implemented by each needed translationSpec.
  * <p>
  * Note: No reference to a {@link TaskitEngine} exists in this class, and
  * must be implemented by the implementing class.
  */
-public abstract class TranslationSpec<I, A> implements BaseTranslationSpec {
+public abstract class TranslationSpec<I, A> implements ITranslationSpec {
     private boolean initialized = false;
 
     /**
@@ -33,7 +33,7 @@ public abstract class TranslationSpec<I, A> implements BaseTranslationSpec {
     }
 
     /**
-     * The implementation of the {@link BaseTranslationSpec#convert(Object)} method
+     * The implementation of the {@link ITranslationSpec#translate(Object)} method
      * Given the object, determines which method should be called.
      * <p>
      * It first checks if the object class is exactly equal to either the App or
@@ -53,23 +53,23 @@ public abstract class TranslationSpec<I, A> implements BaseTranslationSpec {
      *                           and the given appClass and InputClass
      */
     @SuppressWarnings("unchecked")
-    public <T> T convert(Object obj) {
+    public <T> T translate(Object obj) {
         checkInit();
 
         if ((this.getAppObjectClass() == obj.getClass())) {
-            return (T) this.convertAppObject((A) obj);
+            return (T) this.translateAppObject((A) obj);
         }
 
         if ((this.getInputObjectClass() == obj.getClass())) {
-            return (T) this.convertInputObject((I) obj);
+            return (T) this.translateInputObject((I) obj);
         }
 
         if ((this.getAppObjectClass().isAssignableFrom(obj.getClass()))) {
-            return (T) this.convertAppObject((A) obj);
+            return (T) this.translateAppObject((A) obj);
         }
 
         if ((this.getInputObjectClass().isAssignableFrom(obj.getClass()))) {
-            return (T) this.convertInputObject((I) obj);
+            return (T) this.translateInputObject((I) obj);
         }
 
         throw new ContractException(TaskitError.UNKNOWN_OBJECT, "Object is not a "
@@ -117,12 +117,12 @@ public abstract class TranslationSpec<I, A> implements BaseTranslationSpec {
     /**
      * Given an inputObject, converts it to it's appObject equivalent
      */
-    protected abstract A convertInputObject(I inputObject);
+    protected abstract A translateInputObject(I inputObject);
 
     /**
      * Given an appObject, converts it to it's inputObject equivalent
      */
-    protected abstract I convertAppObject(A appObject);
+    protected abstract I translateAppObject(A appObject);
 
     /**
      * Returns the class of the app object

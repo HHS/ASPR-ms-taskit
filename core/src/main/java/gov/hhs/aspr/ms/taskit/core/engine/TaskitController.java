@@ -3,7 +3,6 @@ package gov.hhs.aspr.ms.taskit.core.engine;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -12,19 +11,20 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.Translator;
 import gov.hhs.aspr.ms.util.errors.ContractException;
+import gov.hhs.aspr.ms.util.resourcehelper.ResourceError;
+import gov.hhs.aspr.ms.util.resourcehelper.ResourceHelper;
 
 /**
- * The TranslatorController serves as the master of ceremonies for translating
- * between two types of objects. Additionally, it has the ability to distribute
- * Input/Output files for reading and writing.
+ * The TaskitController allows {@link ITaskitEngine}s to be added to it, and
+ * acts as a wrapper around the TaskitEngine read/write/convert methods.
  */
 public final class TaskitController {
     protected final Data data;
     protected final Map<TaskitEngineType, ITaskitEngine> taskitEngines = new LinkedHashMap<>();
     protected final Map<Class<? extends ITaskitEngine>, TaskitEngineType> taskitEngineClassToTypeMap = new LinkedHashMap<>();
-    protected final List<Object> objects = Collections.synchronizedList(new ArrayList<>());
 
     TaskitController(Data data) {
         this.data = data;
@@ -33,8 +33,6 @@ public final class TaskitController {
     final static class Data {
         protected Set<ITaskitEngine> taskitEngines = new LinkedHashSet<>();
         protected final List<Translator> translators = new ArrayList<>();
-        protected final Map<Path, Class<?>> inputFilePathMap = new LinkedHashMap<>();
-        protected final Map<Path, TaskitEngineType> inputFilePathEngine = new LinkedHashMap<>();
         protected final Map<Class<?>, Class<?>> parentChildClassRelationshipMap = new LinkedHashMap<>();
 
         Data() {
@@ -51,18 +49,6 @@ public final class TaskitController {
         private void validateClassRefNotNull(Class<?> classRef) {
             if (classRef == null) {
                 throw new ContractException(TaskitError.NULL_CLASS_REF);
-            }
-        }
-
-        private void validateFilePathNotNull(Path filePath) {
-            if (filePath == null) {
-                throw new ContractException(TaskitError.NULL_PATH);
-            }
-        }
-
-        private void validatePathNotDuplicate(Path filePath) {
-            if (this.data.inputFilePathMap.containsKey(filePath)) {
-                throw new ContractException(TaskitError.DUPLICATE_INPUT_PATH);
             }
         }
 
@@ -83,7 +69,7 @@ public final class TaskitController {
         }
 
         /**
-         * Builds the TranslatorController. Calls the initializer on each added
+         * Builds the TaskitController. Calls the initializer on each added
          * {@link Translator}
          * 
          * @throws ContractException
@@ -108,41 +94,10 @@ public final class TaskitController {
         }
 
         /**
-         * Adds the path and class ref to be read from after building via
-         * {@link TaskitController#readInput()}
-         * 
-         * @throws ContractException
-         *                           <ul>
-         *                           <li>{@linkplain TaskitError#NULL_PATH} if
-         *                           filePath is null</li>
-         *                           <li>{@linkplain TaskitError#NULL_CLASS_REF}
-         *                           if classRef is null</li>
-         *                           <li>{@linkplain TaskitError#DUPLICATE_INPUT_PATH}
-         *                           if filePath has already been added</li>
-         *                           <li>{@linkplain TaskitError#INVALID_INPUT_PATH}
-         *                           if filePath does not exist on the system</li>
-         *                           </ul>
-         */
-        public Builder addInputFilePath(Path filePath, Class<?> classRef, TaskitEngineType taskitEngineType) {
-            validateFilePathNotNull(filePath);
-            validateClassRefNotNull(classRef);
-            validatePathNotDuplicate(filePath);
-
-            if (!filePath.toFile().exists()) {
-                throw new ContractException(TaskitError.INVALID_INPUT_PATH);
-            }
-
-            this.data.inputFilePathMap.put(filePath, classRef);
-            this.data.inputFilePathEngine.put(filePath, taskitEngineType);
-            return this;
-        }
-
-        /**
-         * Adds the given classRef markerInterface mapping.
+         * Adds the given classRef parent class mapping.
          * <p>
-         * explicitly used when calling {@link TaskitController#writeOutput} with a
-         * class for which a classRef ScenarioId pair does not exist and/or the need to
-         * output the given class as the markerInterface instead of the concrete class
+         * explicitly used when calling {@link TaskitController#write} with a need to
+         * output the given class as the parent class instead of the concrete class
          * 
          * @param <M> the childClass
          * @param <U> the parentClass/MarkerInterfaceClass
@@ -211,7 +166,7 @@ public final class TaskitController {
 
     void initTaskitEngines() {
         for (ITaskitEngine taskitEngine : this.data.taskitEngines) {
-            TaskitEngine baseTaskitEngine = taskitEngine.getBaseTaskitEngine();
+            TaskitEngine baseTaskitEngine = taskitEngine.getTaskitEngine();
 
             baseTaskitEngine.translationSpecsAreInitialized();
 
@@ -234,7 +189,7 @@ public final class TaskitController {
          * initTranslators() method, this should never happen, thus it is a
          * RuntimeException and not a ContractException
          */
-        if (!taskitEngine.getBaseTaskitEngine().isInitialized()) {
+        if (!taskitEngine.getTaskitEngine().isInitialized()) {
             throw new RuntimeException("TaskitEngine has been built but has not been initialized.");
         }
     }
@@ -260,122 +215,48 @@ public final class TaskitController {
         if (!(this.taskitEngineClassToTypeMap.keySet().containsAll(taskitEngineClasses)
                 && this.taskitEngines.keySet().containsAll(this.taskitEngineClassToTypeMap.values()))) {
             throw new RuntimeException(
-                    "Not all Translation Engines have an associated Class -> Type -> Engine Mapping. Something went very wrong.");
+                    "Not all Taskit Engines have an associated Class -> Type -> Engine Mapping. Something went very wrong.");
         }
     }
 
     /**
-     * passes every input path and classRef to
-     * the TaskitEngine via
-     * {@link TaskitController#read(Path, Class, TaskitEngine)}
-     */
-    public TaskitController read() {
-        for (Path path : this.data.inputFilePathMap.keySet()) {
-            Class<?> classRef = this.data.inputFilePathMap.get(path);
-            TaskitEngineType type = this.data.inputFilePathEngine.get(path);
-            ITaskitEngine taskitEngine = this.taskitEngines.get(type);
-
-            this.read(path, classRef, taskitEngine);
-        }
-
-        return this;
-    }
-
-    /**
-     * Passes the given reader and inputClassRef to the built
-     * {@link TaskitEngine} to read, parse and translate the inputData.
+     * Using the given {@link TaskitEngineType}'s associated
+     * {@link TaskitEngine}, reads the given file into the given classRef and then
+     * translates it to it's corresponding type as defined by the provided
+     * {@link TranslationSpec}s to the associated TaskitEngine
      * 
-     * @param <U> the classType associated with the reader
-     */
-    <U> void read(Path path, Class<U> inputClassRef, ITaskitEngine taskitEngine) {
-        Object appObject;
-        try {
-            appObject = taskitEngine.read(path, inputClassRef);
-            this.objects.add(appObject);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * writes the given object to the given path using the given translation engine
-     * type
+     * @param <I> the class to read the file as
      * 
-     * @param <M> the classType of the object
      * @throws ContractException
      *                           <ul>
-     *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
-     *                           if the object is null</li>
      *                           <li>{@linkplain TaskitError#NULL_PATH}
      *                           if the path is null</li>
-     *                           <li>{@linkplain TaskitError#INVALID_OUTPUT_PATH}
-     *                           if the path does not exist (specifically the parent
-     *                           directory of the path ie. a/b/c/foo.txt throws this
-     *                           if a/b/c doesn't exist</li>
-     *                           <li>{@linkplain TaskitError#NULL_TASKIT_ENGINE}
-     *                           if taskitEngine is null</li>
-     *                           </ul>
-     */
-    public <M extends U, U> void write(M object, Path path,
-            TaskitEngineType taskitEngineType) {
-
-        Optional<Class<U>> parentClassRef = Optional.empty();
-
-        if (this.data.parentChildClassRelationshipMap.containsKey(object.getClass())) {
-            // can safely cast because of type checking when adding to the
-            // parentChildClassRelationshipMap
-            @SuppressWarnings("unchecked")
-            Class<U> parentClass = (Class<U>) this.data.parentChildClassRelationshipMap.get(object.getClass());
-
-            parentClassRef = Optional.of(parentClass);
-        }
-        this.write(object, parentClassRef, path, taskitEngineType);
-    }
-
-    /**
-     * writes the given object to the given path using the given translation engine
-     * type using the parent class as the actual output type
-     * 
-     * @param <M> the classType of the object
-     * @throws ContractException
-     *                           <ul>
+     *                           <li>{@linkplain ResourceError#FILE_PATH_IS_DIRECTORY}
+     *                           if the path points to a directory instead of a
+     *                           file</li>
      *                           <li>{@linkplain TaskitError#NULL_CLASS_REF}
-     *                           if the parent classref is null</li>
-     *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
      *                           if the object is null</li>
-     *                           <li>{@linkplain TaskitError#NULL_PATH}
-     *                           if the path is null</li>
-     *                           <li>{@linkplain TaskitError#INVALID_OUTPUT_PATH}
-     *                           if the path does not exist (specifically the parent
-     *                           directory of the path ie. a/b/c/foo.txt throws this
-     *                           if a/b/c doesn't exist</li>
+     *                           <li>{@linkplain TaskitError#NULL_TASKIT_ENGINE_TYPE}
+     *                           if taskitEngineType is null</li>
      *                           <li>{@linkplain TaskitError#NULL_TASKIT_ENGINE}
      *                           if taskitEngine is null</li>
      *                           </ul>
+     * @throws RuntimeException  if the reading of the file encounters an
+     *                           IOException
      */
-    public <M extends U, U> void write(M object, Class<U> parentClassRef, Path path,
-            TaskitEngineType taskitEngineType) {
-
-        if (parentClassRef == null) {
-            throw new ContractException(TaskitError.NULL_CLASS_REF);
-        }
-
-        this.write(object, Optional.of(parentClassRef), path, taskitEngineType);
-    }
-
-    <M extends U, U> void write(M object, Optional<Class<U>> parentClassRef, Path path,
-            TaskitEngineType taskitEngineType) {
-
-        if (object == null) {
-            throw new ContractException(TaskitError.NULL_OBJECT_FOR_TRANSLATION);
-        }
-
+    public <I> I read(Path path, Class<I> inputClass, TaskitEngineType taskitEngineType) {
         if (path == null) {
             throw new ContractException(TaskitError.NULL_PATH);
         }
 
-        if (!path.getParent().toFile().exists()) {
-            throw new ContractException(TaskitError.INVALID_OUTPUT_PATH);
+        ResourceHelper.validateFilePath(path);
+
+        if (inputClass == null) {
+            throw new ContractException(TaskitError.NULL_CLASS_REF);
+        }
+
+        if (taskitEngineType == null) {
+            throw new ContractException(TaskitError.NULL_TASKIT_ENGINE_TYPE);
         }
 
         ITaskitEngine taskitEngine = this.taskitEngines.get(taskitEngineType);
@@ -384,91 +265,148 @@ public final class TaskitController {
             throw new ContractException(TaskitError.NULL_TASKIT_ENGINE);
         }
 
-        this.write(path, object, parentClassRef, taskitEngine);
-    }
-
-    /**
-     * Passes the given writer object and optional superClass to the built
-     * {@link TaskitEngine} to translate and write to the outputFile
-     * 
-     * @param <M> the class of the object to write to the outputFile
-     * @param <U> the optional parent class of the object to write to the outputFile
-     */
-    <M extends U, U> void write(Path path, M object, Optional<Class<U>> superClass,
-            ITaskitEngine taskitEngine) {
         try {
-            taskitEngine.write(path, object, superClass);
+            return taskitEngine.read(path, inputClass);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     /**
-     * Searches the list of read in objects and returns the first Object found of
-     * the given classRef
+     * Using the given {@link TaskitEngineType}'s associated
+     * {@link TaskitEngine}, writes the given object to a file.
      * 
-     * @param <T> the type of the object to get
+     * @param <O> the class of the object to write to the outputFile
+     * @param <U> the optional parent class of the object to write to the outputFile
+     * 
      * @throws ContractException
      *                           <ul>
-     *                           <li>{@linkplain TaskitError#UNKNOWN_CLASSREF}
-     *                           if no object with the specified class is found</li>
+     *                           <li>{@linkplain TaskitError#NULL_PATH}
+     *                           if the path is null</li>
+     *                           <li>{@linkplain ResourceError#FILE_PATH_IS_DIRECTORY}
+     *                           if the path points to a directory instead of a
+     *                           file</li>
+     *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
+     *                           if the object is null</li>
+     *                           <li>{@linkplain TaskitError#NULL_TASKIT_ENGINE_TYPE}
+     *                           if taskitEngineType is null</li>
+     *                           <li>{@linkplain TaskitError#NULL_TASKIT_ENGINE}
+     *                           if taskitEngine is null</li>
      *                           </ul>
+     * @throws RuntimeException  if the writing of the file encounters an
+     *                           IOException
      */
-    public <T> T getFirstObject(Class<T> classRef) {
-        int index = -1;
-        for (int i = 0; i < this.objects.size(); i++) {
-            Object object = this.objects.get(i);
-
-            if (classRef.isAssignableFrom(object.getClass())) {
-                index = i;
-                break;
-            }
-
-        }
-
-        if (index > -1) {
-            return classRef.cast(this.objects.remove(index));
-        }
-
-        throw new ContractException(TaskitError.UNKNOWN_CLASSREF);
+    public <O> void write(Path path, O object, TaskitEngineType taskitEngineType) {
+        write(path, object, Optional.empty(), taskitEngineType, false);
     }
 
     /**
-     * Searches the list of read in objects and returns all Objects found with the
-     * given classRef
+     * Using the given {@link TaskitEngineType}'s associated
+     * {@link TaskitEngine}, translates and writes the given object to a file.
      * 
-     * @param <T> the type of the object to get
+     * @param <O> the class of the object to write to the outputFile
+     * @param <U> the optional parent class of the object to write to the outputFile
+     * 
+     * @throws ContractException
+     *                           <ul>
+     *                           <li>{@linkplain TaskitError#NULL_PATH}
+     *                           if the path is null</li>
+     *                           <li>{@linkplain ResourceError#FILE_PATH_IS_DIRECTORY}
+     *                           if the path points to a directory instead of a
+     *                           file</li>
+     *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
+     *                           if the object is null</li>
+     *                           <li>{@linkplain TaskitError#NULL_TASKIT_ENGINE_TYPE}
+     *                           if taskitEngineType is null</li>
+     *                           <li>{@linkplain TaskitError#NULL_TASKIT_ENGINE}
+     *                           if taskitEngine is null</li>
+     *                           </ul>
+     * @throws RuntimeException  if the writing of the file encounters an
+     *                           IOException
      */
-    public <T> List<T> getObjects(Class<T> classRef) {
-        List<T> objects = new ArrayList<>();
-        for (int i = 0; i < this.objects.size(); i++) {
-            Object object = this.objects.get(i);
-
-            if (classRef.isAssignableFrom(object.getClass())) {
-                objects.add(classRef.cast(object));
-            }
-
-        }
-
-        this.objects.removeAll(objects);
-
-        return objects;
+    public <O> void translateAndWrite(Path path, O object, TaskitEngineType taskitEngineType) {
+        write(path, object, Optional.empty(), taskitEngineType, false);
     }
 
     /**
-     * Returns the entire list of read in objects
+     * Using the given {@link TaskitEngineType}'s associated
+     * {@link TaskitEngine}, translates and writes the given object to a file,
+     * using the given class as the output class rather than the class of the
+     * object.
+     * 
+     * @param <O> the class of the object to write to the outputFile
+     * @param <P> the class to write the object as
+     * 
+     * @throws ContractException
+     *                           <ul>
+     *                           <li>{@linkplain TaskitError#NULL_CLASS_REF}
+     *                           if the output classref is null</li>
+     *                           <li>{@linkplain TaskitError#INVALID_OUTPUT_CLASS_OVERRIDE}
+     *                           if the output classref is not known to be a parent
+     *                           of the given object's class</li>
+     *                           <li>{@linkplain TaskitError#NULL_PATH}
+     *                           if the path is null</li>
+     *                           <li>{@linkplain ResourceError#FILE_PATH_IS_DIRECTORY}
+     *                           if the path points to a directory instead of a
+     *                           file</li>
+     *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
+     *                           if the object is null</li>
+     *                           <li>{@linkplain TaskitError#NULL_TASKIT_ENGINE_TYPE}
+     *                           if taskitEngineType is null</li>
+     *                           <li>{@linkplain TaskitError#NULL_TASKIT_ENGINE}
+     *                           if taskitEngine is null</li>
+     *                           </ul>
+     * @throws RuntimeException  if the writing of the file encounters an
+     *                           IOException
      */
-    public List<Object> getObjects() {
-        List<Object> objects = new ArrayList<>(this.objects);
+    public <O extends P, P> void translateAndWrite(Path path, O object, Class<P> outputClass, TaskitEngineType taskitEngineType) {
+        if (outputClass == null) {
+            throw new ContractException(TaskitError.NULL_CLASS_REF);
+        }
 
-        this.objects.clear();
+        if (!this.data.parentChildClassRelationshipMap.values().contains(outputClass)) {
+            throw new ContractException(TaskitError.INVALID_OUTPUT_CLASS_OVERRIDE);
+        }
 
-        return objects;
+        write(path, object, Optional.of(outputClass), taskitEngineType, true);
     }
 
-    // package access for testing
-    int getNumObjects() {
-        return this.objects.size();
-    }
+    <O extends P, P> void write(Path path, O object, Optional<Class<P>> outputClass,
+            TaskitEngineType taskitEngineType, boolean translate) {
 
+        if (path == null) {
+            throw new ContractException(TaskitError.NULL_PATH);
+        }
+
+        ResourceHelper.validateFilePath(path);
+
+        if (object == null) {
+            throw new ContractException(TaskitError.NULL_OBJECT_FOR_TRANSLATION);
+        }
+
+        if (taskitEngineType == null) {
+            throw new ContractException(TaskitError.NULL_TASKIT_ENGINE_TYPE);
+        }
+
+        ITaskitEngine taskitEngine = this.taskitEngines.get(taskitEngineType);
+
+        if (taskitEngine == null) {
+            throw new ContractException(TaskitError.NULL_TASKIT_ENGINE);
+        }
+
+        try {
+            if (!translate) {
+                taskitEngine.write(path, object);
+                return;
+            }
+            if (outputClass.isEmpty()) {
+                taskitEngine.translateAndWrite(path, object);
+                return;
+            }
+            taskitEngine.translateAndWrite(path, object, outputClass.get());
+            return;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

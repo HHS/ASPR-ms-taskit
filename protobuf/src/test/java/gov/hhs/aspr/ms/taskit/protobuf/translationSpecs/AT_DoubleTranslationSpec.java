@@ -47,7 +47,7 @@ public class AT_DoubleTranslationSpec {
         Double appValue = 100.0;
         DoubleValue expectedValue = DoubleValue.of(appValue);
 
-        DoubleValue actualValue = doubleTranslationSpec.convertAppObject(appValue);
+        DoubleValue actualValue = doubleTranslationSpec.translateAppObject(appValue);
 
         assertEquals(expectedValue, actualValue);
     }

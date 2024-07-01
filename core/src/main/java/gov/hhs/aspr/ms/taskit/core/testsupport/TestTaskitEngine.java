@@ -16,7 +16,7 @@ import gov.hhs.aspr.ms.taskit.core.engine.ITaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.engine.ITaskitEngineBuilder;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngineType;
-import gov.hhs.aspr.ms.taskit.core.translation.BaseTranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.translation.ITranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.Translator;
 
@@ -132,9 +132,9 @@ public class TestTaskitEngine implements ITaskitEngine {
             throws IOException {
         Object outputObject;
         if (outputClassRefOverride.isPresent()) {
-            outputObject = convertObjectAsSafeClass(object, outputClassRefOverride.get());
+            outputObject = translateObjectAsClassSafe(object, outputClassRefOverride.get());
         } else {
-            outputObject = convertObject(object);
+            outputObject = translateObject(object);
         }
 
         String stringToWrite = this.data.gson.toJson(outputObject);
@@ -149,7 +149,7 @@ public class TestTaskitEngine implements ITaskitEngine {
         JsonObject jsonObject = JsonParser.parseReader(new JsonReader(new FileReader(inputPath.toFile())))
                 .getAsJsonObject();
 
-        return convertObject(this.data.gson.fromJson(jsonObject.toString(), inputClassRef));
+        return translateObject(this.data.gson.fromJson(jsonObject.toString(), inputClassRef));
     }
 
     @Override
@@ -163,7 +163,7 @@ public class TestTaskitEngine implements ITaskitEngine {
     }
 
     @Override
-    public TaskitEngine getBaseTaskitEngine() {
+    public TaskitEngine getTaskitEngine() {
         return this.data.baseTaskitEngine;
     }
 
@@ -173,23 +173,23 @@ public class TestTaskitEngine implements ITaskitEngine {
     }
 
     @Override
-    public Set<BaseTranslationSpec> getTranslationSpecs() {
+    public Set<ITranslationSpec> getTranslationSpecs() {
         return this.data.baseTaskitEngine.getTranslationSpecs();
     }
 
     @Override
-    public <T> T convertObject(Object object) {
-        return this.data.baseTaskitEngine.convertObject(object);
+    public <T> T translateObject(Object object) {
+        return this.data.baseTaskitEngine.translateObject(object);
     }
 
     @Override
-    public <T, M extends U, U> T convertObjectAsSafeClass(M object, Class<U> classRef) {
-        return this.data.baseTaskitEngine.convertObjectAsSafeClass(object, classRef);
+    public <T, M extends U, U> T translateObjectAsClassSafe(M object, Class<U> classRef) {
+        return this.data.baseTaskitEngine.translateObjectAsClassSafe(object, classRef);
     }
 
     @Override
-    public <T, M, U> T convertObjectAsUnsafeClass(M object, Class<U> classRef) {
-        return this.data.baseTaskitEngine.convertObjectAsUnsafeClass(object, classRef);
+    public <T, M, U> T translateObjectAsClassUnsafe(M object, Class<U> classRef) {
+        return this.data.baseTaskitEngine.translateObjectAsClassUnsafe(object, classRef);
     }
 
 }

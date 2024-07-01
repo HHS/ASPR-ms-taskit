@@ -98,26 +98,26 @@ public class AT_TranslationSpec {
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
         TestInputObject expectedInputObject = TestObjectUtil.getInputFromApp(expectedAppObject);
 
-        TestInputObject actualInputObject = testObjectTranslationSpec.convert(expectedAppObject);
+        TestInputObject actualInputObject = testObjectTranslationSpec.translate(expectedAppObject);
         assertEquals(expectedInputObject, actualInputObject);
 
-        TestAppObject actualAppObject = testObjectTranslationSpec.convert(expectedInputObject);
+        TestAppObject actualAppObject = testObjectTranslationSpec.translate(expectedInputObject);
         assertEquals(expectedAppObject, actualAppObject);
 
         TestAppChildObject expectedAppChildObject = TestObjectUtil.getChildAppFromApp(expectedAppObject);
         TestInputChildObject expectedInputChildObject = TestObjectUtil.getChildInputFromInput(expectedInputObject);
 
-        TestInputObject actualInputChildObject = testObjectTranslationSpec.convert(expectedAppChildObject);
+        TestInputObject actualInputChildObject = testObjectTranslationSpec.translate(expectedAppChildObject);
         assertEquals(expectedInputChildObject, TestObjectUtil.getChildInputFromInput(actualInputChildObject));
 
-        TestAppObject actualAppChildObject = testObjectTranslationSpec.convert(expectedInputChildObject);
+        TestAppObject actualAppChildObject = testObjectTranslationSpec.translate(expectedInputChildObject);
         assertEquals(expectedAppChildObject, TestObjectUtil.getChildAppFromApp(actualAppChildObject));
 
         // precondition
         // TranslationSpec not initialized
         ContractException contractException = assertThrows(ContractException.class, () -> {
             TestObjectTranslationSpec testObjectTranslationSpec2 = new TestObjectTranslationSpec();
-            testObjectTranslationSpec2.convert(new TestAppObject());
+            testObjectTranslationSpec2.translate(new TestAppObject());
         });
 
         assertEquals(TaskitError.UNINITIALIZED_TRANSLATION_SPEC, contractException.getErrorType());
@@ -126,7 +126,7 @@ public class AT_TranslationSpec {
         contractException = assertThrows(ContractException.class, () -> {
             TestObjectTranslationSpec testObjectTranslationSpec2 = new TestObjectTranslationSpec();
             testObjectTranslationSpec2.init(testTaskitEngine);
-            testObjectTranslationSpec2.convert(new TestComplexInputObject());
+            testObjectTranslationSpec2.translate(new TestComplexInputObject());
         });
 
         assertEquals(TaskitError.UNKNOWN_OBJECT, contractException.getErrorType());

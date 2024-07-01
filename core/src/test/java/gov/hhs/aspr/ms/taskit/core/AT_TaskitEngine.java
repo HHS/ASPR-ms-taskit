@@ -33,7 +33,7 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestObjectWrapper;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.input.TestInputChildObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.input.TestInputObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.translationSpecs.TestObjectTranslationSpec;
-import gov.hhs.aspr.ms.taskit.core.translation.BaseTranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.translation.ITranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.Translator;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslatorId;
@@ -116,7 +116,7 @@ public class AT_TaskitEngine {
                 .addTranslationSpec(testObjectTranslationSpec).addTranslationSpec(testComplexObjectTranslationSpec)
                 .build();
 
-        Set<BaseTranslationSpec> actualTranslationSpecs = testTaskitEngine.getTranslationSpecs();
+        Set<ITranslationSpec> actualTranslationSpecs = testTaskitEngine.getTranslationSpecs();
 
         assertTrue(actualTranslationSpecs.contains(testObjectTranslationSpec));
         assertTrue(actualTranslationSpecs.contains(testComplexObjectTranslationSpec));
@@ -154,10 +154,10 @@ public class AT_TaskitEngine {
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
         TestInputObject expectedInputObject = TestObjectUtil.getInputFromApp(expectedAppObject);
 
-        TestInputObject actualInputObject = testTaskitEngine.convertObject(expectedAppObject);
+        TestInputObject actualInputObject = testTaskitEngine.translateObject(expectedAppObject);
         assertEquals(expectedInputObject, actualInputObject);
 
-        TestAppObject actualAppObject = testTaskitEngine.convertObject(expectedInputObject);
+        TestAppObject actualAppObject = testTaskitEngine.translateObject(expectedInputObject);
         assertEquals(expectedAppObject, actualAppObject);
 
         // preconditions
@@ -166,7 +166,7 @@ public class AT_TaskitEngine {
 
         // the passed in object is null
         ContractException contractException = assertThrows(ContractException.class, () -> {
-            testTaskitEngine.convertObject(null);
+            testTaskitEngine.translateObject(null);
         });
 
         assertEquals(TaskitError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
@@ -188,11 +188,11 @@ public class AT_TaskitEngine {
         TestAppChildObject expectedAppChildObject = TestObjectUtil.getChildAppFromApp(expectedAppObject);
         TestInputChildObject expectedInputChildObject = TestObjectUtil.getChildInputFromInput(expectedInputObject);
 
-        TestInputObject actualInputChildObject = testTaskitEngine.convertObjectAsSafeClass(expectedAppChildObject,
+        TestInputObject actualInputChildObject = testTaskitEngine.translateObjectAsClassSafe(expectedAppChildObject,
                 TestAppObject.class);
         assertEquals(expectedInputChildObject, TestObjectUtil.getChildInputFromInput(actualInputChildObject));
 
-        TestAppObject actualAppChildObject = testTaskitEngine.convertObjectAsSafeClass(expectedInputChildObject,
+        TestAppObject actualAppChildObject = testTaskitEngine.translateObjectAsClassSafe(expectedInputChildObject,
                 TestInputObject.class);
         assertEquals(expectedAppChildObject, TestObjectUtil.getChildAppFromApp(actualAppChildObject));
 
@@ -202,14 +202,14 @@ public class AT_TaskitEngine {
 
         // the passed in object is null
         ContractException contractException = assertThrows(ContractException.class, () -> {
-            testTaskitEngine.convertObjectAsSafeClass(null, Object.class);
+            testTaskitEngine.translateObjectAsClassSafe(null, Object.class);
         });
 
         assertEquals(TaskitError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
 
         // the passed in parentClassRef is null
         contractException = assertThrows(ContractException.class, () -> {
-            testTaskitEngine.convertObjectAsSafeClass(expectedAppChildObject, null);
+            testTaskitEngine.translateObjectAsClassSafe(expectedAppChildObject, null);
         });
 
         assertEquals(TaskitError.NULL_CLASS_REF, contractException.getErrorType());
@@ -259,12 +259,12 @@ public class AT_TaskitEngine {
         TestObjectWrapper expectedWrapper = new TestObjectWrapper();
         expectedWrapper.setWrappedObject(expectedAppObject);
 
-        TestObjectWrapper actualWrapper = testTaskitEngine.convertObjectAsUnsafeClass(expectedAppObject,
+        TestObjectWrapper actualWrapper = testTaskitEngine.translateObjectAsClassUnsafe(expectedAppObject,
                 TestObjectWrapper.class);
 
         assertEquals(expectedWrapper, actualWrapper);
 
-        Object actualAppObject = testTaskitEngine.convertObject(actualWrapper);
+        Object actualAppObject = testTaskitEngine.translateObject(actualWrapper);
 
         assertEquals(expectedAppObject, actualAppObject);
 
@@ -274,14 +274,14 @@ public class AT_TaskitEngine {
 
         // the passed in object is null
         ContractException contractException = assertThrows(ContractException.class, () -> {
-            testTaskitEngine.convertObjectAsUnsafeClass(null, Object.class);
+            testTaskitEngine.translateObjectAsClassUnsafe(null, Object.class);
         });
 
         assertEquals(TaskitError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
 
         // the passed in parentClassRef is null
         contractException = assertThrows(ContractException.class, () -> {
-            testTaskitEngine.convertObjectAsUnsafeClass(expectedAppObject, null);
+            testTaskitEngine.translateObjectAsClassUnsafe(expectedAppObject, null);
         });
 
         assertEquals(TaskitError.NULL_CLASS_REF, contractException.getErrorType());

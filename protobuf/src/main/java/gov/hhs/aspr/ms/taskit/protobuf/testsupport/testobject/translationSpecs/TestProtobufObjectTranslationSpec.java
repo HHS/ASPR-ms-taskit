@@ -14,17 +14,17 @@ public class TestProtobufObjectTranslationSpec extends ProtobufTranslationSpec<T
         testAppObject.setInteger(inputObject.getInteger());
         testAppObject.setString(inputObject.getString());
         testAppObject
-                .setTestComplexAppObject(this.taskitEngine.convertObject(inputObject.getTestComplexInputObject()));
+                .setTestComplexAppObject(this.taskitEngine.translateObject(inputObject.getTestComplexInputObject()));
 
         return testAppObject;
     }
 
     @Override
-    protected TestInputObject convertAppObject(TestAppObject appObject) {
+    protected TestInputObject translateAppObject(TestAppObject appObject) {
         TestInputObject testInputObject = TestInputObject.newBuilder().setBool(appObject.isBool())
                 .setInteger(appObject.getInteger()).setString(appObject.getString())
                 .setTestComplexInputObject((TestComplexInputObject) this.taskitEngine
-                        .convertObject(appObject.getTestComplexAppObject()))
+                        .translateObject(appObject.getTestComplexAppObject()))
                 .build();
 
         return testInputObject;

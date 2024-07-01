@@ -85,7 +85,7 @@ public class AT_TaskitController {
         });
 
         assertEquals(
-                "Not all Translation Engines have an associated Class -> Type -> Engine Mapping. Something went very wrong.",
+                "Not all Taskit Engines have an associated Class -> Type -> Engine Mapping. Something went very wrong.",
                 runtimeException.getMessage());
 
         runtimeException = assertThrows(RuntimeException.class, () -> {
@@ -98,7 +98,7 @@ public class AT_TaskitController {
         });
 
         assertEquals(
-                "Not all Translation Engines have an associated Class -> Type -> Engine Mapping. Something went very wrong.",
+                "Not all Taskit Engines have an associated Class -> Type -> Engine Mapping. Something went very wrong.",
                 runtimeException.getMessage());
     }
 
@@ -106,7 +106,7 @@ public class AT_TaskitController {
     @UnitTestForCoverage
     /*
      * purpose of this test is to show that if there isn't a valid TaskitEngine
-     * class -> Translation Engine Type -> Translation Engine mapping, an exception
+     * class -> Taskit Engine Type -> Taskit Engine mapping, an exception
      * is thrown
      */
     public void testValidateTaskitEngines() {
@@ -134,7 +134,7 @@ public class AT_TaskitController {
         });
 
         assertEquals(
-                "Not all Translation Engines have an associated Class -> Type -> Engine Mapping. Something went very wrong.",
+                "Not all Taskit Engines have an associated Class -> Type -> Engine Mapping. Something went very wrong.",
                 runtimeException.getMessage());
 
         // class to type map not fully mapped
@@ -153,7 +153,7 @@ public class AT_TaskitController {
         });
 
         assertEquals(
-                "Not all Translation Engines have an associated Class -> Type -> Engine Mapping. Something went very wrong.",
+                "Not all Taskit Engines have an associated Class -> Type -> Engine Mapping. Something went very wrong.",
                 runtimeException.getMessage());
 
     }

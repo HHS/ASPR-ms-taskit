@@ -16,7 +16,7 @@ public class LongTranslationSpec extends ProtobufTranslationSpec<Int64Value, Lon
     }
 
     @Override
-    protected Int64Value convertAppObject(Long appObject) {
+    protected Int64Value translateAppObject(Long appObject) {
         return Int64Value.of(appObject);
     }
 

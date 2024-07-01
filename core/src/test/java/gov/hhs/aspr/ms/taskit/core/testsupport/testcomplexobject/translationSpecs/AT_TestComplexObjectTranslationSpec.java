@@ -35,7 +35,7 @@ public class AT_TestComplexObjectTranslationSpec {
                 .addTranslationSpec(testObjectTranslationSpec).addTranslationSpec(complexObjectTranslationSpec).build();
 
         TestComplexAppObject actualComplexAppObject = complexObjectTranslationSpec
-                .convertInputObject(testComplexInputObject);
+                .translateInputObject(testComplexInputObject);
 
         assertEquals(expectedComplexAppObject, actualComplexAppObject);
     }
@@ -53,7 +53,7 @@ public class AT_TestComplexObjectTranslationSpec {
                 .addTranslationSpec(testObjectTranslationSpec).addTranslationSpec(complexObjectTranslationSpec).build();
 
         TestComplexInputObject actualComplexInputObject = complexObjectTranslationSpec
-                .convertAppObject(testComplexAppObject);
+                .translateAppObject(testComplexAppObject);
 
         assertEquals(expectedComplexInputObject, actualComplexInputObject);
     }

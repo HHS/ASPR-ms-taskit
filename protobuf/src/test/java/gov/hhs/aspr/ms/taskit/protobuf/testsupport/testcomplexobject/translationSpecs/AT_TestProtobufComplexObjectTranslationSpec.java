@@ -50,7 +50,7 @@ public class AT_TestProtobufComplexObjectTranslationSpec {
         TestComplexAppObject appValue = TestObjectUtil.generateTestComplexAppObject();
         TestComplexInputObject expectedValue = TestObjectUtil.getComplexInputFromComplexApp(appValue);
 
-        TestComplexInputObject actualValue = complexObjectTranslationSpec.convertAppObject(appValue);
+        TestComplexInputObject actualValue = complexObjectTranslationSpec.translateAppObject(appValue);
 
         assertEquals(expectedValue, actualValue);
     }

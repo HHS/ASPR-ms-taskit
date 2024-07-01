@@ -51,7 +51,7 @@ public class AT_DateTranslationSpec {
         Date inputValue = Date.newBuilder().setDay(appValue.getDayOfMonth()).setMonth(appValue.getMonthValue())
                 .setYear(appValue.getYear()).build();
 
-        Date actualValue = dateTranslationSpec.convertAppObject(appValue);
+        Date actualValue = dateTranslationSpec.translateAppObject(appValue);
 
         assertEquals(inputValue, actualValue);
     }

@@ -68,7 +68,7 @@ public class AT_EnumTranslationSpec {
                 .setEnumTypeUrl(TestInputEnum.TEST2.getDescriptorForType().getFullName())
                 .setValue(TestInputEnum.TEST2.name()).build();
 
-        WrapperEnumValue actualValue = enumTranslationSpec.convertAppObject(appValue);
+        WrapperEnumValue actualValue = enumTranslationSpec.translateAppObject(appValue);
 
         assertEquals(expectedValue, actualValue);
     }
