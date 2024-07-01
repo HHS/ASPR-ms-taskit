@@ -5,9 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitError;
-import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppObject;
-import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestObjectTranslator;
-import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestObjectWrapper;
+import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppObject;
+import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestObjectWrapper;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.TestObjectTranslator;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testcomplexobject.translationSpecs.TestProtobufComplexObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testobject.translationSpecs.TestProtobufObjectTranslationSpec;
