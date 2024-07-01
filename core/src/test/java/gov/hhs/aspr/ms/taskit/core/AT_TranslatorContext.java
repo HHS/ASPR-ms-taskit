@@ -7,7 +7,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.ms.taskit.core.testsupport.TestTranslationEngine;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitError;
+import gov.hhs.aspr.ms.taskit.core.testsupport.engine.TestTaskitEngine;
+import gov.hhs.aspr.ms.taskit.core.translation.TranslatorContext;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 import gov.hhs.aspr.ms.util.errors.ContractException;
@@ -15,32 +18,32 @@ import gov.hhs.aspr.ms.util.errors.ContractException;
 public class AT_TranslatorContext {
 
     @Test
-    @UnitTestConstructor(target = TranslatorContext.class, args = { TranslationEngine.Builder.class })
+    @UnitTestConstructor(target = TranslatorContext.class, args = { TaskitEngine.Builder.class })
     public void testConstructor() {
-        TranslatorContext translatorContext = new TranslatorContext(TestTranslationEngine.builder());
+        TranslatorContext translatorContext = new TranslatorContext(TestTaskitEngine.builder());
 
         assertNotNull(translatorContext);
     }
 
     @Test
-    @UnitTestMethod(target = TranslatorContext.class, name = "getTranslationEngineBuilder", args = { Class.class })
-    public void testGetTranslationEngineBuilder() {
-        TestTranslationEngine.Builder expectedBuilder = TestTranslationEngine.builder();
+    @UnitTestMethod(target = TranslatorContext.class, name = "getTaskitEngineBuilder", args = { Class.class })
+    public void testGetTaskitEngineBuilder() {
+        TestTaskitEngine.Builder expectedBuilder = TestTaskitEngine.builder();
         
         TranslatorContext translatorContext = new TranslatorContext(expectedBuilder);
 
-        TestTranslationEngine.Builder actualBuilder = translatorContext
-                .getTranslationEngineBuilder(TestTranslationEngine.Builder.class);
+        TestTaskitEngine.Builder actualBuilder = translatorContext
+                .getTaskitEngineBuilder(TestTaskitEngine.Builder.class);
         assertTrue(expectedBuilder == actualBuilder);
 
         // preconditions
 
         // invalid class ref
         ContractException contractException = assertThrows(ContractException.class, () -> {
-            translatorContext.getTranslationEngineBuilder(TranslationEngine.Builder.class);
+            translatorContext.getTaskitEngineBuilder(TaskitEngine.Builder.class);
         });
 
-        assertEquals(CoreTranslationError.INVALID_TRANSLATION_ENGINE_BUILDER_CLASS_REF, contractException.getErrorType());
+        assertEquals(TaskitError.INVALID_TASKIT_ENGINE_BUILDER_CLASS_REF, contractException.getErrorType());
     }
 
 }

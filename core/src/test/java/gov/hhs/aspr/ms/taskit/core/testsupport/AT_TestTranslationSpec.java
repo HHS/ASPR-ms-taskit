@@ -6,7 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.ms.taskit.core.TranslationEngine;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
+import gov.hhs.aspr.ms.taskit.core.testsupport.engine.TestTaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.input.TestInputObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.translationSpecs.TestObjectTranslationSpec;
@@ -44,15 +45,15 @@ public class AT_TestTranslationSpec {
     }
 
     @Test
-    @UnitTestMethod(target = TestTranslationSpec.class, name = "init", args = { TranslationEngine.class })
+    @UnitTestMethod(target = TestTranslationSpec.class, name = "init", args = { TaskitEngine.class })
     public void testInit() {
-        TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder().build();
+        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder().build();
 
         TestTranslationSpec<TestInputObject, TestAppObject> testTranslationSpec = new TestObjectTranslationSpec();
 
-        testTranslationSpec.init(testTranslationEngine);
+        testTranslationSpec.init(testTaskitEngine);
 
         assertTrue(testTranslationSpec.isInitialized());
-        assertEquals(testTranslationEngine, testTranslationSpec.translationEngine);
+        assertEquals(testTaskitEngine, testTranslationSpec.taskitEngine);
     }
 }

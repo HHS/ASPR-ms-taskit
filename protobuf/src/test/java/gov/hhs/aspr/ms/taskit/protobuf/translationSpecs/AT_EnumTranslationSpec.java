@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import com.google.protobuf.BoolValue;
 
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppEnum;
-import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
+import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTaskitEngine;
 import gov.hhs.aspr.ms.taskit.protobuf.input.WrapperEnumValue;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testobject.input.TestInputEnum;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testobject.translationSpecs.TestProtobufEnumTranslationSpec;
@@ -28,11 +28,11 @@ public class AT_EnumTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertInputObject() {
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder()
+        ProtobufTaskitEngine protobufTaskitEngine = ProtobufTaskitEngine.builder()
                 .addTranslationSpec(new TestProtobufEnumTranslationSpec()).build();
 
         EnumTranslationSpec enumTranslationSpec = new EnumTranslationSpec();
-        enumTranslationSpec.init(protobufTranslationEngine);
+        enumTranslationSpec.init(protobufTaskitEngine);
 
         TestAppEnum expectedValue = TestAppEnum.TEST1;
         WrapperEnumValue inputValue = WrapperEnumValue.newBuilder()
@@ -57,11 +57,11 @@ public class AT_EnumTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertAppObject() {
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder()
+        ProtobufTaskitEngine protobufTaskitEngine = ProtobufTaskitEngine.builder()
                 .addTranslationSpec(new TestProtobufEnumTranslationSpec()).build();
 
         EnumTranslationSpec enumTranslationSpec = new EnumTranslationSpec();
-        enumTranslationSpec.init(protobufTranslationEngine);
+        enumTranslationSpec.init(protobufTaskitEngine);
 
         TestAppEnum appValue = TestAppEnum.TEST2;
         WrapperEnumValue expectedValue = WrapperEnumValue.newBuilder()

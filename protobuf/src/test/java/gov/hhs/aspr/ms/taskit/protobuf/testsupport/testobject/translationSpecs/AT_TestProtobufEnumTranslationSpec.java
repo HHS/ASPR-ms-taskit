@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppEnum;
-import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
+import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTaskitEngine;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testobject.input.TestInputEnum;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestForCoverage;
@@ -23,10 +23,10 @@ public class AT_TestProtobufEnumTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertInputObject() {
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder().build();
+        ProtobufTaskitEngine protobufTaskitEngine = ProtobufTaskitEngine.builder().build();
 
         TestProtobufEnumTranslationSpec enumTranslationSpec = new TestProtobufEnumTranslationSpec();
-        enumTranslationSpec.init(protobufTranslationEngine);
+        enumTranslationSpec.init(protobufTaskitEngine);
 
         TestAppEnum expectedValue = TestAppEnum.TEST1;
         TestInputEnum inputValue = TestInputEnum.TEST1;
@@ -39,10 +39,10 @@ public class AT_TestProtobufEnumTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertAppObject() {
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder().build();
+        ProtobufTaskitEngine protobufTaskitEngine = ProtobufTaskitEngine.builder().build();
 
         TestProtobufEnumTranslationSpec enumTranslationSpec = new TestProtobufEnumTranslationSpec();
-        enumTranslationSpec.init(protobufTranslationEngine);
+        enumTranslationSpec.init(protobufTaskitEngine);
 
         TestAppEnum appValue = TestAppEnum.TEST2;
         TestInputEnum expectedValue = TestInputEnum.TEST2;

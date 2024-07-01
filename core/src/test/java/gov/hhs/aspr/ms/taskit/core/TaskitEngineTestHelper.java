@@ -3,33 +3,37 @@ package gov.hhs.aspr.ms.taskit.core;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitError;
+import gov.hhs.aspr.ms.taskit.core.testsupport.engine.TestTaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testcomplexobject.translationSpecs.TestComplexObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestObjectTranslator;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestObjectWrapper;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.translationSpecs.TestObjectTranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 
-public final class TranslationEngineTestHelper {
-    private TranslationEngineTestHelper() {
+public final class TaskitEngineTestHelper {
+    private TaskitEngineTestHelper() {
     }
 
-    public static void testAddTranslationSpec(TranslationEngine.Builder builder) {
+    public static void testAddTranslationSpec(TestTaskitEngine.Builder builder) {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
-        TranslationEngine testTranslationEngine = builder.addTranslationSpec(testObjectTranslationSpec)
+        TestTaskitEngine testTaskitEngine = (TestTaskitEngine) builder.addTranslationSpec(testObjectTranslationSpec)
                 .addTranslationSpec(testComplexObjectTranslationSpec).build();
 
         // show that the translation specs are retrievable by their own app and input
         // classes
         assertEquals(testObjectTranslationSpec,
-                testTranslationEngine.getTranslationSpecForClass(testObjectTranslationSpec.getAppObjectClass()));
+                testTaskitEngine.getTranslationSpecForClass(testObjectTranslationSpec.getAppObjectClass()));
         assertEquals(testObjectTranslationSpec,
-                testTranslationEngine.getTranslationSpecForClass(testObjectTranslationSpec.getInputObjectClass()));
+                testTaskitEngine.getTranslationSpecForClass(testObjectTranslationSpec.getInputObjectClass()));
 
         assertEquals(testComplexObjectTranslationSpec,
-                testTranslationEngine.getTranslationSpecForClass(testComplexObjectTranslationSpec.getAppObjectClass()));
-        assertEquals(testComplexObjectTranslationSpec, testTranslationEngine
+                testTaskitEngine.getTranslationSpecForClass(testComplexObjectTranslationSpec.getAppObjectClass()));
+        assertEquals(testComplexObjectTranslationSpec, testTaskitEngine
                 .getTranslationSpecForClass(testComplexObjectTranslationSpec.getInputObjectClass()));
 
         builder.clearBuilder();
@@ -39,7 +43,7 @@ public final class TranslationEngineTestHelper {
             builder.addTranslationSpec(null);
         });
 
-        assertEquals(CoreTranslationError.NULL_TRANSLATION_SPEC, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_TRANSLATION_SPEC, contractException.getErrorType());
 
         builder.clearBuilder();
         // the translation spec getAppClass method returns null
@@ -73,7 +77,7 @@ public final class TranslationEngineTestHelper {
             builder.addTranslationSpec(wrapperTranslationSpec);
         });
 
-        assertEquals(CoreTranslationError.NULL_TRANSLATION_SPEC_APP_CLASS, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_TRANSLATION_SPEC_APP_CLASS, contractException.getErrorType());
 
         builder.clearBuilder();
         // the translation spec getInputClass method returns null
@@ -107,7 +111,7 @@ public final class TranslationEngineTestHelper {
             builder.addTranslationSpec(wrapperTranslationSpec);
         });
 
-        assertEquals(CoreTranslationError.NULL_TRANSLATION_SPEC_INPUT_CLASS, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_TRANSLATION_SPEC_INPUT_CLASS, contractException.getErrorType());
 
         builder.clearBuilder();
         // if the translation spec has already been added (same, but different
@@ -119,7 +123,7 @@ public final class TranslationEngineTestHelper {
             builder.addTranslationSpec(testObjectTranslationSpec1).addTranslationSpec(testObjectTranslationSpec2);
         });
 
-        assertEquals(CoreTranslationError.DUPLICATE_TRANSLATION_SPEC, contractException.getErrorType());
+        assertEquals(TaskitError.DUPLICATE_TRANSLATION_SPEC, contractException.getErrorType());
 
         builder.clearBuilder();
         // if the translation spec has already been added (exact same instance)
@@ -129,10 +133,10 @@ public final class TranslationEngineTestHelper {
             builder.addTranslationSpec(testObjectTranslationSpec1).addTranslationSpec(testObjectTranslationSpec1);
         });
 
-        assertEquals(CoreTranslationError.DUPLICATE_TRANSLATION_SPEC, contractException.getErrorType());
+        assertEquals(TaskitError.DUPLICATE_TRANSLATION_SPEC, contractException.getErrorType());
     }
 
-    public static void testAddTranslator(TranslationEngine.Builder builder) {
+    public static void testAddTranslator(TaskitEngine.Builder builder) {
         builder.addTranslator(TestObjectTranslator.getTranslator());
 
         // preconditions
@@ -140,17 +144,17 @@ public final class TranslationEngineTestHelper {
             builder.addTranslator(null);
         });
 
-        assertEquals(CoreTranslationError.NULL_TRANSLATOR, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_TRANSLATOR, contractException.getErrorType());
 
         contractException = assertThrows(ContractException.class, () -> {
             builder.addTranslator(TestObjectTranslator.getTranslator())
                     .addTranslator(TestObjectTranslator.getTranslator());
         });
 
-        assertEquals(CoreTranslationError.DUPLICATE_TRANSLATOR, contractException.getErrorType());
+        assertEquals(TaskitError.DUPLICATE_TRANSLATOR, contractException.getErrorType());
     }
 
-    public static void testAddParentChildClassRelationship(TranslationEngine.Builder builder) {
+    public static void testAddParentChildClassRelationship(TaskitEngine.Builder builder) {
         builder.addParentChildClassRelationship(TestAppObject.class, Object.class);
 
         // preconditions
@@ -158,19 +162,19 @@ public final class TranslationEngineTestHelper {
             builder.addParentChildClassRelationship(null, Object.class);
         });
 
-        assertEquals(CoreTranslationError.NULL_CLASS_REF, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_CLASS_REF, contractException.getErrorType());
 
         contractException = assertThrows(ContractException.class, () -> {
             builder.addParentChildClassRelationship(TestAppObject.class, null);
         });
 
-        assertEquals(CoreTranslationError.NULL_CLASS_REF, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_CLASS_REF, contractException.getErrorType());
 
         contractException = assertThrows(ContractException.class, () -> {
             builder.addParentChildClassRelationship(TestAppObject.class, Object.class)
                     .addParentChildClassRelationship(TestAppObject.class, Object.class);
         });
 
-        assertEquals(CoreTranslationError.DUPLICATE_CLASSREF, contractException.getErrorType());
+        assertEquals(TaskitError.DUPLICATE_CLASSREF, contractException.getErrorType());
     }
 }

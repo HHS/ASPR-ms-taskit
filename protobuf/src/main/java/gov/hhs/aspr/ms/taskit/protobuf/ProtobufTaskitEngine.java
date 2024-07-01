@@ -28,29 +28,33 @@ import com.google.protobuf.util.JsonFormat.Parser;
 import com.google.protobuf.util.JsonFormat.Printer;
 import com.google.protobuf.util.JsonFormat.TypeRegistry;
 
-import gov.hhs.aspr.ms.taskit.core.CoreTranslationError;
-import gov.hhs.aspr.ms.taskit.core.TranslationEngine;
-import gov.hhs.aspr.ms.taskit.core.TranslationEngineType;
-import gov.hhs.aspr.ms.taskit.core.TranslationSpec;
-import gov.hhs.aspr.ms.taskit.core.Translator;
+import gov.hhs.aspr.ms.taskit.core.engine.ITaskitEngine;
+import gov.hhs.aspr.ms.taskit.core.engine.ITaskitEngineBuilder;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngineType;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitError;
+import gov.hhs.aspr.ms.taskit.core.translation.BaseTranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.translation.Translator;
 import gov.hhs.aspr.ms.taskit.protobuf.translationSpecs.AnyTranslationSpec;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
- * Protobuf TranslationEngine that allows for conversion between POJOs and
- * Protobuf Messages, extends {@link TranslationEngine}
+ * Protobuf TaskitEngine that allows for conversion between POJOs and
+ * Protobuf Messages, extends {@link TaskitEngine}
  */
-public final class ProtobufTranslationEngine extends TranslationEngine {
+public final class ProtobufTaskitEngine implements ITaskitEngine {
     private final Data data;
 
-    private ProtobufTranslationEngine(Data data) {
-        super(data);
+    private ProtobufTaskitEngine(Data data) {
         this.data = data;
     }
 
-    private final static class Data extends TranslationEngine.Data {
+    private final static class Data {
         // this is used specifically for Any message types to pack and unpack them
         private final Map<String, Class<?>> typeUrlToClassMap = new LinkedHashMap<>();
+
+        private TaskitEngine baseTaskitEngine;
 
         // these two fields are used for reading and writing Protobuf Messages to/from
         // JSON
@@ -58,43 +62,39 @@ public final class ProtobufTranslationEngine extends TranslationEngine {
         private Printer jsonPrinter;
 
         private Data() {
-            super();
-            /*
-             * automatically include all Primitive TranslationSpecs Note that these
-             * TranslationSpecs are specifically used for converting primitive types that
-             * are packed inside an Any Message for example, a boolean wrapped in an Any
-             * Message is of type BoolValue, and so there is a translationSpec to convert
-             * from a BoolValue to a boolean and vice versa
-             */
-            PrimitiveTranslationSpecs primitiveTranslationSpecs = new PrimitiveTranslationSpecs();
-            this.typeUrlToClassMap.putAll(primitiveTranslationSpecs.getPrimitiveTypeUrlToClassMap());
-            this.classToTranslationSpecMap.putAll(primitiveTranslationSpecs.getPrimitiveInputTranslatorSpecMap());
-            this.classToTranslationSpecMap.putAll(primitiveTranslationSpecs.getPrimitiveObjectTranslatorSpecMap());
-            this.translationSpecs.addAll(primitiveTranslationSpecs.getPrimitiveTranslatorSpecs());
-            this.translationEngineType = TranslationEngineType.PROTOBUF;
         }
     }
 
-    public final static class Builder extends TranslationEngine.Builder {
-        private ProtobufTranslationEngine.Data data;
+    public final static class Builder implements ITaskitEngineBuilder {
+        private ProtobufTaskitEngine.Data data;
         private Set<Descriptor> descriptorSet = new LinkedHashSet<>();
         private final Set<FieldDescriptor> defaultValueFieldsToPrint = new LinkedHashSet<>();
         private boolean ignoringUnknownFields = true;
         private boolean includingDefaultValueFields = false;
 
-        private Builder(ProtobufTranslationEngine.Data data) {
-            super(data);
+        private TaskitEngine.Builder baseTaskitEngineBuilder = TaskitEngine.builder();
+
+        private Builder(ProtobufTaskitEngine.Data data) {
             this.data = data;
         }
 
         /**
-         * returns a new instance of a ProtobufTranslationEngine that has a jsonParser
+         * returns a new instance of a ProtobufTaskitEngine that has a jsonParser
          * and jsonWriter that include all the typeUrls for all added TranslationSpecs
          * and their respective Protobuf Message types
          */
         @Override
-        public ProtobufTranslationEngine build() {
-            initTranslators();
+        public ProtobufTaskitEngine build() {
+            PrimitiveTranslationSpecs primitiveTranslationSpecs = new PrimitiveTranslationSpecs();
+
+            this.data.typeUrlToClassMap.putAll(primitiveTranslationSpecs.getPrimitiveTypeUrlToClassMap());
+
+            primitiveTranslationSpecs.getPrimitiveInputTranslatorSpecMap().values().forEach(
+                    (translationSpec) -> this.baseTaskitEngineBuilder.addTranslationSpec(translationSpec));
+
+            this.baseTaskitEngineBuilder.setTaskitEngineType(TaskitEngineType.PROTOBUF);
+
+            this.data.baseTaskitEngine = this.baseTaskitEngineBuilder.build();
 
             TypeRegistry.Builder typeRegistryBuilder = TypeRegistry.newBuilder();
             this.descriptorSet.addAll(new PrimitiveTranslationSpecs().getPrimitiveDescriptors());
@@ -122,11 +122,11 @@ public final class ProtobufTranslationEngine extends TranslationEngine {
             }
             this.data.jsonPrinter = printer;
 
-            ProtobufTranslationEngine translationEngine = new ProtobufTranslationEngine(this.data);
+            ProtobufTaskitEngine taskitEngine = new ProtobufTaskitEngine(this.data);
 
-            translationEngine.initTranslationSpecs();
+            this.data.baseTaskitEngine.initTranslationSpecs(taskitEngine);
 
-            return translationEngine;
+            return taskitEngine;
         }
 
         /**
@@ -160,9 +160,10 @@ public final class ProtobufTranslationEngine extends TranslationEngine {
         }
 
         /**
-         * Override implementation of
-         * {@link TranslationEngine.Builder#addTranslationSpec(TranslationSpec)} that
-         * also populates the type urls for all Protobuf Message types that exist within
+         * Calls
+         * {@link TaskitEngine.Builder#addTranslationSpec(TranslationSpec)}
+         * <p>
+         * then populates the type urls for all Protobuf Message types that exist within
          * the translationSpec
          * 
          * @throws ContractException
@@ -177,8 +178,8 @@ public final class ProtobufTranslationEngine extends TranslationEngine {
          *                           </ul>
          */
         @Override
-        public <I, S> Builder addTranslationSpec(TranslationSpec<I, S> translationSpec) {
-            _addTranslationSpec(translationSpec);
+        public <APP, INPUT> Builder addTranslationSpec(TranslationSpec<APP, INPUT> translationSpec) {
+            this.baseTaskitEngineBuilder.addTranslationSpec(translationSpec);
 
             if (!ProtobufTranslationSpec.class.isAssignableFrom(translationSpec.getClass())) {
                 throw new ContractException(ProtobufCoreTranslationError.INVALID_TRANSLATION_SPEC);
@@ -188,16 +189,34 @@ public final class ProtobufTranslationEngine extends TranslationEngine {
             return this;
         }
 
+        /**
+         * Calls {@link TaskitEngine.Builder#addTranslator(Translator)}
+         */
         @Override
         public Builder addTranslator(Translator translator) {
-            _addTranslator(translator);
+            this.baseTaskitEngineBuilder.addTranslator(translator);
 
             return this;
         }
 
+        /**
+         * Calls
+         * {@link TaskitEngine.Builder#addParentChildClassRelationship(Class, Class)}
+         */
         @Override
         public <M extends U, U> Builder addParentChildClassRelationship(Class<M> classRef, Class<U> markerInterface) {
-            _addParentChildClassRelationship(classRef, markerInterface);
+            this.baseTaskitEngineBuilder.addParentChildClassRelationship(classRef, markerInterface);
+
+            return this;
+        }
+
+        /**
+         * Calls
+         * {@link TaskitEngine.Builder#setTaskitEngineType(TaskitEngineType)}
+         */
+        @Override
+        public ITaskitEngineBuilder setTaskitEngineType(TaskitEngineType taskitEngineType) {
+            this.baseTaskitEngineBuilder.setTaskitEngineType(taskitEngineType);
 
             return this;
         }
@@ -280,63 +299,33 @@ public final class ProtobufTranslationEngine extends TranslationEngine {
         return this.data.jsonPrinter;
     }
 
-    void setDebug(boolean debug) {
-        this.debug = debug;
-    }
-
     /**
      * write output implementation
      * <p>
-     * Will first convert the object, if needed and then use the jsonPrinter to take
-     * the the converted object and write it to a JSON string and then pass that
-     * string to the writer to writer the JSON to an output file
+     * Will first convert the object, if needed, and then use the jsonPrinter to
+     * take
+     * the the converted object and write it to an output file using a
+     * BufferedWriter wrapping a FileWriter
      * 
      * @param <U> the type of the optional parent class of the appObject
      * @param <M> the type of the appObject
      * @throws RuntimeException if there is an IOException during writing
      */
-    protected <U, M extends U> void writeOutput(Path path, M appObject, Optional<Class<U>> superClass)
+    public <U, M extends U> void write(Path outputPath, M outputObject, Optional<Class<U>> outputClassRefOverride)
             throws IOException {
         Message message;
-        if (Message.class.isAssignableFrom(appObject.getClass())) {
-            message = Message.class.cast(appObject);
-        } else if (superClass.isPresent()) {
-            message = convertObjectAsSafeClass(appObject, superClass.get());
+        if (Message.class.isAssignableFrom(outputObject.getClass())) {
+            message = Message.class.cast(outputObject);
+        } else if (outputClassRefOverride.isPresent()) {
+            message = convertObjectAsSafeClass(outputObject, outputClassRefOverride.get());
         } else {
-            message = convertObject(appObject);
+            message = convertObject(outputObject);
         }
-        writeOutput(path, message);
-    }
 
-    /**
-     * takes a protobuf message, parses it into a JSON string and then writes the
-     * JSON string to the output file for which the writer is defined.
-     * <p>
-     * if debug is enabled in this class, it will also print the resulting output to
-     * the console
-     * </p>
-     * 
-     * @param <U> the type of the Message
-     * @throws RuntimeException if there is an IOException during writing
-     */
-    private <U extends Message> void writeOutput(Path path, U message) {
-        try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(path.toFile()));
-            this.data.jsonPrinter.appendTo(message, writer);
+        BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath.toFile()));
+        this.data.jsonPrinter.appendTo(message, writer);
 
-            if (debug) {
-                String messageToWrite = this.data.jsonPrinter.print(message);
-                printJsonToConsole(messageToWrite);
-            }
-
-            writer.flush();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void printJsonToConsole(String jsonString) {
-        System.out.println(jsonString);
+        writer.flush();
     }
 
     /**
@@ -368,49 +357,20 @@ public final class ProtobufTranslationEngine extends TranslationEngine {
      *                               from
      *                               {@linkplain Message}
      */
-    protected <T, U> T readInput(Path path, Class<U> inputClassRef) throws IOException {
+    public <T, U> T read(Path path, Class<U> inputClassRef) throws IOException {
         if (!Message.class.isAssignableFrom(inputClassRef)) {
             throw new ContractException(ProtobufCoreTranslationError.INVALID_READ_INPUT_CLASS_REF);
         }
 
-        return parseJson(new BufferedReader(new FileReader(path.toFile())), inputClassRef.asSubclass(Message.class));
-    }
+        Reader reader = new BufferedReader(new FileReader(path.toFile()));
 
-    /**
-     * Given a jsonObject and a inputClassRef, creates a builder for the inputClass
-     * type and then merges the JSON object into the resulting builder
-     * <p>
-     * if debug is set on this class, will also print the resulting read in Protobuf
-     * Message to console
-     * </p>
-     * 
-     * @param <T> the return type
-     * @param <U> the type of the inputClass, that is a child of {@link Message}
-     * @throws RuntimeException
-     *                          <ul>
-     *                          <li>if there is an issue getting the builder method
-     *                          from the inputClassRef</li>
-     *                          <li>if there is an issue merging the read in JSON
-     *                          object into the resulting Protobuf Message builder
-     *                          </li>
-     *                          </ul>
-     */
-    <T, U extends Message> T parseJson(Reader reader, Class<U> inputClassRef) {
+        Message.Builder builder = getBuilderForMessage(inputClassRef.asSubclass(Message.class));
 
-        Message.Builder builder = getBuilderForMessage(inputClassRef);
+        this.data.jsonParser.merge(reader, builder);
 
-        try {
-            this.data.jsonParser.merge(reader, builder);
+        Message message = builder.build();
 
-            Message message = builder.build();
-            if (debug) {
-                printJsonToConsole(this.data.jsonPrinter.print(message));
-            }
-
-            return convertObject(message);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return convertObject(message);
     }
 
     <U> Message.Builder getBuilderForMessage(Class<U> messageClass) {
@@ -476,7 +436,7 @@ public final class ProtobufTranslationEngine extends TranslationEngine {
      * 
      * @param <U> the parent Class
      * @param <M> the object class
-     * @throws ContractException {@linkplain CoreTranslationError#UNKNOWN_TRANSLATION_SPEC}
+     * @throws ContractException {@linkplain TaskitError#UNKNOWN_TRANSLATION_SPEC}
      *                           if no translationSpec was provided for the given
      *                           parentClassRef
      */
@@ -484,6 +444,94 @@ public final class ProtobufTranslationEngine extends TranslationEngine {
         U convertedObject = convertObjectAsSafeClass(object, parentClassRef);
 
         return convertObjectAsUnsafeClass(convertedObject, Any.class);
+    }
+
+    /**
+     * Given an object, uses the class of the object to obtain the translationSpec
+     * and then calls {@link TranslationSpec#convert(Object)}
+     * <p>
+     * this conversion method will be used approx ~90% of the time
+     * </p>
+     * 
+     * @param <T> the return type after converting
+     * @throws ContractException
+     *                           <ul>
+     *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
+     *                           if the passed in object is null</li>
+     *                           <li>{@linkplain TaskitError#UNKNOWN_TRANSLATION_SPEC}
+     *                           if no translationSpec was provided for the given
+     *                           objects class</li>
+     *                           </ul>
+     */
+    @Override
+    public <T> T convertObject(Object object) {
+        return this.data.baseTaskitEngine.convertObject(object);
+    }
+
+    /**
+     * Given an object, uses the parent class of the object to obtain the
+     * translationSpec and then calls {@link TranslationSpec#convert(Object)}
+     * <p>
+     * This method call is safe in the sense that the type parameters ensure that
+     * the passed in object is actually a child of the passed in parentClassRef
+     * </p>
+     * <p>
+     * this conversion method will be used approx ~7% of the time
+     * </p>
+     * 
+     * @param <T> the return type after converting
+     * @param <M> the type of the object; extends U
+     * @param <U> the parent type of the object and the class for which
+     *            translationSpec you want to use
+     * @throws ContractException
+     *                           <ul>
+     *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
+     *                           if the passed in object is null</li>
+     *                           <li>{@linkplain TaskitError#NULL_CLASS_REF}
+     *                           if the passed in parentClassRef is null</li>
+     *                           <li>{@linkplain TaskitError#UNKNOWN_TRANSLATION_SPEC}
+     *                           if no translationSpec was provided for the given
+     *                           objects class</li>
+     *                           </ul>
+     */
+    @Override
+    public <T, M extends U, U> T convertObjectAsSafeClass(M object, Class<U> classRef) {
+        return this.data.baseTaskitEngine.convertObjectAsSafeClass(object, classRef);
+    }
+
+    /**
+     * Given an object, uses the passed in class to obtain the translationSpec and
+     * then calls {@link TranslationSpec#convert(Object)}
+     * <p>
+     * This method call is unsafe in the sense that the type parameters do not
+     * ensure any relationship between the passed in object and the passed in
+     * classRef.
+     * </p>
+     * <p>
+     * A common use case for using this conversion method would be to call a
+     * translationSpec that will wrap the given object in another object.
+     * </p>
+     * <p>
+     * this conversion method will be used approx ~3% of the time
+     * </p>
+     * 
+     * @param <T> the return type after converting
+     * @param <M> the type of the object
+     * @param <U> the type of the class for which translationSpec you want to use
+     * @throws ContractException
+     *                           <ul>
+     *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
+     *                           if the passed in object is null</li>
+     *                           <li>{@linkplain TaskitError#NULL_CLASS_REF}
+     *                           if the passed in objectClassRef is null</li>
+     *                           <li>{@linkplain TaskitError#UNKNOWN_TRANSLATION_SPEC}
+     *                           if no translationSpec was provided for the given
+     *                           objects class</li>
+     *                           </ul>
+     */
+    @Override
+    public <T, M, U> T convertObjectAsUnsafeClass(M object, Class<U> classRef) {
+        return this.data.baseTaskitEngine.convertObjectAsUnsafeClass(object, classRef);
     }
 
     /**
@@ -502,6 +550,33 @@ public final class ProtobufTranslationEngine extends TranslationEngine {
 
         throw new ContractException(ProtobufCoreTranslationError.UNKNOWN_TYPE_URL,
                 "Unable to find corresponding class for: " + typeUrl);
+    }
+
+    /**
+     * Returns an instance of the BaseTaskitEngine for this translation engine
+     */
+    @Override
+    public TaskitEngine getBaseTaskitEngine() {
+        return this.data.baseTaskitEngine;
+    }
+
+    /**
+     * returns the {@link TaskitEngineType} of this TaskitEngine
+     * 
+     * guaranteed to NOT be {@link TaskitEngineType#UNKNOWN}
+     */
+    @Override
+    public TaskitEngineType getTaskitEngineType() {
+        return this.data.baseTaskitEngine.getTaskitEngineType();
+    }
+
+    /**
+     * Returns a set of all {@link TranslationSpec}s associated with this
+     * TaskitEngine
+     */
+    @Override
+    public Set<BaseTranslationSpec> getTranslationSpecs() {
+        return this.data.baseTaskitEngine.getTranslationSpecs();
     }
 
 }

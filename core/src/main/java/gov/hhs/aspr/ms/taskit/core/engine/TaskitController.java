@@ -1,4 +1,4 @@
-package gov.hhs.aspr.ms.taskit.core;
+package gov.hhs.aspr.ms.taskit.core.engine;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import gov.hhs.aspr.ms.taskit.core.translation.Translator;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
@@ -19,21 +20,21 @@ import gov.hhs.aspr.ms.util.errors.ContractException;
  * between two types of objects. Additionally, it has the ability to distribute
  * Input/Output files for reading and writing.
  */
-public final class TranslationController {
+public final class TaskitController {
     protected final Data data;
-    protected final Map<TranslationEngineType, TranslationEngine> translationEngines = new LinkedHashMap<>();
-    protected final Map<Class<? extends TranslationEngine>, TranslationEngineType> translationEngineClassToTypeMap = new LinkedHashMap<>();
+    protected final Map<TaskitEngineType, ITaskitEngine> taskitEngines = new LinkedHashMap<>();
+    protected final Map<Class<? extends ITaskitEngine>, TaskitEngineType> taskitEngineClassToTypeMap = new LinkedHashMap<>();
     protected final List<Object> objects = Collections.synchronizedList(new ArrayList<>());
 
-    TranslationController(Data data) {
+    TaskitController(Data data) {
         this.data = data;
     }
 
     final static class Data {
-        protected Set<TranslationEngine> translationEngines = new LinkedHashSet<>();
+        protected Set<ITaskitEngine> taskitEngines = new LinkedHashSet<>();
         protected final List<Translator> translators = new ArrayList<>();
         protected final Map<Path, Class<?>> inputFilePathMap = new LinkedHashMap<>();
-        protected final Map<Path, TranslationEngineType> inputFilePathEngine = new LinkedHashMap<>();
+        protected final Map<Path, TaskitEngineType> inputFilePathEngine = new LinkedHashMap<>();
         protected final Map<Class<?>, Class<?>> parentChildClassRelationshipMap = new LinkedHashMap<>();
 
         Data() {
@@ -49,35 +50,35 @@ public final class TranslationController {
 
         private void validateClassRefNotNull(Class<?> classRef) {
             if (classRef == null) {
-                throw new ContractException(CoreTranslationError.NULL_CLASS_REF);
+                throw new ContractException(TaskitError.NULL_CLASS_REF);
             }
         }
 
         private void validateFilePathNotNull(Path filePath) {
             if (filePath == null) {
-                throw new ContractException(CoreTranslationError.NULL_PATH);
+                throw new ContractException(TaskitError.NULL_PATH);
             }
         }
 
         private void validatePathNotDuplicate(Path filePath) {
             if (this.data.inputFilePathMap.containsKey(filePath)) {
-                throw new ContractException(CoreTranslationError.DUPLICATE_INPUT_PATH);
+                throw new ContractException(TaskitError.DUPLICATE_INPUT_PATH);
             }
         }
 
-        private void validateTranslationEngineNotNull(TranslationEngine translationEngine) {
-            if (translationEngine == null) {
-                throw new ContractException(CoreTranslationError.NULL_TRANSLATION_ENGINE);
+        private void validateTaskitEngineNotNull(ITaskitEngine taskitEngine) {
+            if (taskitEngine == null) {
+                throw new ContractException(TaskitError.NULL_TASKIT_ENGINE);
             }
         }
 
-        private void validateTranslationEnginesNotNull() {
-            if (this.data.translationEngines.isEmpty()) {
-                throw new ContractException(CoreTranslationError.NULL_TRANSLATION_ENGINE,
-                        "No TranslationEngine Builders were added");
+        private void validateTaskitEnginesNotNull() {
+            if (this.data.taskitEngines.isEmpty()) {
+                throw new ContractException(TaskitError.NULL_TASKIT_ENGINE,
+                        "No TaskitEngine Builders were added");
             }
-            for (TranslationEngine engine : this.data.translationEngines) {
-                validateTranslationEngineNotNull(engine);
+            for (ITaskitEngine engine : this.data.taskitEngines) {
+                validateTaskitEngineNotNull(engine);
             }
         }
 
@@ -87,59 +88,59 @@ public final class TranslationController {
          * 
          * @throws ContractException
          *                           <ul>
-         *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATION_ENGINE}
-         *                           if translationEngineBuilder has not been set</li>
+         *                           <li>{@linkplain TaskitError#NULL_TASKIT_ENGINE}
+         *                           if taskitEngineBuilder has not been set</li>
          *                           </ul>
          */
-        public TranslationController build() {
-            validateTranslationEnginesNotNull();
+        public TaskitController build() {
+            validateTaskitEnginesNotNull();
 
-            TranslationController translatorController = new TranslationController(this.data);
+            TaskitController translatorController = new TaskitController(this.data);
 
-            translatorController.initTranslationEngines();
-            translatorController.validateTranslationEngines();
+            translatorController.initTaskitEngines();
+            translatorController.validateTaskitEngines();
 
             return translatorController;
         }
 
-        TranslationController buildWithoutInitAndChecks() {
-            return new TranslationController(this.data);
+        TaskitController buildWithoutInitAndChecks() {
+            return new TaskitController(this.data);
         }
 
         /**
          * Adds the path and class ref to be read from after building via
-         * {@link TranslationController#readInput()}
+         * {@link TaskitController#readInput()}
          * 
          * @throws ContractException
          *                           <ul>
-         *                           <li>{@linkplain CoreTranslationError#NULL_PATH} if
+         *                           <li>{@linkplain TaskitError#NULL_PATH} if
          *                           filePath is null</li>
-         *                           <li>{@linkplain CoreTranslationError#NULL_CLASS_REF}
+         *                           <li>{@linkplain TaskitError#NULL_CLASS_REF}
          *                           if classRef is null</li>
-         *                           <li>{@linkplain CoreTranslationError#DUPLICATE_INPUT_PATH}
+         *                           <li>{@linkplain TaskitError#DUPLICATE_INPUT_PATH}
          *                           if filePath has already been added</li>
-         *                           <li>{@linkplain CoreTranslationError#INVALID_INPUT_PATH}
+         *                           <li>{@linkplain TaskitError#INVALID_INPUT_PATH}
          *                           if filePath does not exist on the system</li>
          *                           </ul>
          */
-        public Builder addInputFilePath(Path filePath, Class<?> classRef, TranslationEngineType translationEngineType) {
+        public Builder addInputFilePath(Path filePath, Class<?> classRef, TaskitEngineType taskitEngineType) {
             validateFilePathNotNull(filePath);
             validateClassRefNotNull(classRef);
             validatePathNotDuplicate(filePath);
 
             if (!filePath.toFile().exists()) {
-                throw new ContractException(CoreTranslationError.INVALID_INPUT_PATH);
+                throw new ContractException(TaskitError.INVALID_INPUT_PATH);
             }
 
             this.data.inputFilePathMap.put(filePath, classRef);
-            this.data.inputFilePathEngine.put(filePath, translationEngineType);
+            this.data.inputFilePathEngine.put(filePath, taskitEngineType);
             return this;
         }
 
         /**
          * Adds the given classRef markerInterface mapping.
          * <p>
-         * explicitly used when calling {@link TranslationController#writeOutput} with a
+         * explicitly used when calling {@link TaskitController#writeOutput} with a
          * class for which a classRef ScenarioId pair does not exist and/or the need to
          * output the given class as the markerInterface instead of the concrete class
          * 
@@ -147,10 +148,10 @@ public final class TranslationController {
          * @param <U> the parentClass/MarkerInterfaceClass
          * @throws ContractException
          *                           <ul>
-         *                           <li>{@linkplain CoreTranslationError#NULL_CLASS_REF}
+         *                           <li>{@linkplain TaskitError#NULL_CLASS_REF}
          *                           if classRef is null or if markerInterface is
          *                           null</li>
-         *                           <li>{@linkplain CoreTranslationError#DUPLICATE_CLASSREF}
+         *                           <li>{@linkplain TaskitError#DUPLICATE_CLASSREF}
          *                           if child parent relationship has already been
          *                           added</li>
          *                           </ul>
@@ -160,7 +161,7 @@ public final class TranslationController {
             validateClassRefNotNull(parentClassRef);
 
             if (this.data.parentChildClassRelationshipMap.containsKey(classRef)) {
-                throw new ContractException(CoreTranslationError.DUPLICATE_CLASSREF);
+                throw new ContractException(TaskitError.DUPLICATE_CLASSREF);
             }
 
             this.data.parentChildClassRelationshipMap.put(classRef, parentClassRef);
@@ -168,20 +169,20 @@ public final class TranslationController {
         }
 
         /**
-         * Adds a {@link TranslationEngine.Builder}
+         * Adds a {@link TaskitEngine.Builder}
          * 
          * @throws ContractException
          *                           <ul>
-         *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATION_ENGINE}
-         *                           if translationEngineBuilder is null</li>
+         *                           <li>{@linkplain TaskitError#NULL_TASKIT_ENGINE}
+         *                           if taskitEngineBuilder is null</li>
          *                           </ul>
          */
-        public Builder addTranslationEngine(TranslationEngine translationEngine) {
-            validateTranslationEngineNotNull(translationEngine);
+        public Builder addTaskitEngine(TaskitEngine taskitEngine) {
+            validateTaskitEngineNotNull(taskitEngine);
 
-            this.data.translationEngines.add(translationEngine);
+            this.data.taskitEngines.add(taskitEngine);
 
-            Map<Class<?>, Class<?>> childToParentClassMap = translationEngine.getChildParentClassMap();
+            Map<Class<?>, Class<?>> childToParentClassMap = taskitEngine.getChildParentClassMap();
 
             for (Class<?> childClassRef : childToParentClassMap.keySet()) {
                 // Need to duplicate code here because the map doesn't provide the type safety
@@ -191,7 +192,7 @@ public final class TranslationController {
                 // Note: no 'class is not null' validation here because it was validated prior
                 // to being put into the engine
                 if (this.data.parentChildClassRelationshipMap.containsKey(childClassRef)) {
-                    throw new ContractException(CoreTranslationError.DUPLICATE_CLASSREF);
+                    throw new ContractException(TaskitError.DUPLICATE_CLASSREF);
                 }
 
                 this.data.parentChildClassRelationshipMap.put(childClassRef, parentClassRef);
@@ -208,45 +209,47 @@ public final class TranslationController {
         return new Builder(new Data());
     }
 
-    void initTranslationEngines() {
-        for (TranslationEngine translationEngine : this.data.translationEngines) {
-            translationEngine.translationSpecsAreInitialized();
+    void initTaskitEngines() {
+        for (ITaskitEngine taskitEngine : this.data.taskitEngines) {
+            TaskitEngine baseTaskitEngine = taskitEngine.getBaseTaskitEngine();
 
-            this.translationEngines.put(translationEngine.getTranslationEngineType(), translationEngine);
-            this.translationEngineClassToTypeMap.put(translationEngine.getClass(),
-                    translationEngine.getTranslationEngineType());
+            baseTaskitEngine.translationSpecsAreInitialized();
+
+            this.taskitEngines.put(taskitEngine.getTaskitEngineType(), taskitEngine);
+            this.taskitEngineClassToTypeMap.put(taskitEngine.getClass(),
+                    taskitEngine.getTaskitEngineType());
         }
 
         // since we are making a new mapping, clear the original set in the data
-        this.data.translationEngines.clear();
+        this.data.taskitEngines.clear();
     }
 
-    void validateTranslationEngine(TranslationEngine translationEngine) {
-        if (translationEngine == null) {
-            throw new ContractException(CoreTranslationError.NULL_TRANSLATION_ENGINE);
+    void validateTaskitEngine(ITaskitEngine taskitEngine) {
+        if (taskitEngine == null) {
+            throw new ContractException(TaskitError.NULL_TASKIT_ENGINE);
         }
 
         /*
-         * Because the translationEngine's init method is called within the
+         * Because the taskitEngine's init method is called within the
          * initTranslators() method, this should never happen, thus it is a
          * RuntimeException and not a ContractException
          */
-        if (!translationEngine.isInitialized()) {
-            throw new RuntimeException("TranslationEngine has been built but has not been initialized.");
+        if (!taskitEngine.getBaseTaskitEngine().isInitialized()) {
+            throw new RuntimeException("TaskitEngine has been built but has not been initialized.");
         }
     }
 
-    void validateTranslationEngines() {
-        Set<Class<? extends TranslationEngine>> translationEngineClasses = new HashSet<>();
+    void validateTaskitEngines() {
+        Set<Class<? extends ITaskitEngine>> taskitEngineClasses = new HashSet<>();
 
-        if (this.translationEngines.keySet().isEmpty()) {
-            throw new ContractException(CoreTranslationError.NO_TRANSLATION_ENGINES);
+        if (this.taskitEngines.keySet().isEmpty()) {
+            throw new ContractException(TaskitError.NO_TASKIT_ENGINES);
         }
 
         // validate each engine that exists irrespective of any mapping
-        for (TranslationEngine translationEngine : this.translationEngines.values()) {
-            validateTranslationEngine(translationEngine);
-            translationEngineClasses.add(translationEngine.getClass());
+        for (ITaskitEngine taskitEngine : this.taskitEngines.values()) {
+            validateTaskitEngine(taskitEngine);
+            taskitEngineClasses.add(taskitEngine.getClass());
         }
 
         // if the class to type map doesn't contain all of the classes of the engines in
@@ -254,8 +257,8 @@ public final class TranslationController {
         // and
         // if the engine map doesn't contain all of the types from the class to type map
         // this ensures that every engine has a valid class -> type -> engine mapping
-        if (!(this.translationEngineClassToTypeMap.keySet().containsAll(translationEngineClasses)
-                && this.translationEngines.keySet().containsAll(this.translationEngineClassToTypeMap.values()))) {
+        if (!(this.taskitEngineClassToTypeMap.keySet().containsAll(taskitEngineClasses)
+                && this.taskitEngines.keySet().containsAll(this.taskitEngineClassToTypeMap.values()))) {
             throw new RuntimeException(
                     "Not all Translation Engines have an associated Class -> Type -> Engine Mapping. Something went very wrong.");
         }
@@ -263,16 +266,16 @@ public final class TranslationController {
 
     /**
      * passes every input path and classRef to
-     * the TranslationEngine via
-     * {@link TranslationController#readInput(Path, Class, TranslationEngine)}
+     * the TaskitEngine via
+     * {@link TaskitController#read(Path, Class, TaskitEngine)}
      */
-    public TranslationController readInput() {
+    public TaskitController read() {
         for (Path path : this.data.inputFilePathMap.keySet()) {
             Class<?> classRef = this.data.inputFilePathMap.get(path);
-            TranslationEngineType type = this.data.inputFilePathEngine.get(path);
-            TranslationEngine translationEngine = this.translationEngines.get(type);
+            TaskitEngineType type = this.data.inputFilePathEngine.get(path);
+            ITaskitEngine taskitEngine = this.taskitEngines.get(type);
 
-            this.readInput(path, classRef, translationEngine);
+            this.read(path, classRef, taskitEngine);
         }
 
         return this;
@@ -280,14 +283,14 @@ public final class TranslationController {
 
     /**
      * Passes the given reader and inputClassRef to the built
-     * {@link TranslationEngine} to read, parse and translate the inputData.
+     * {@link TaskitEngine} to read, parse and translate the inputData.
      * 
      * @param <U> the classType associated with the reader
      */
-    <U> void readInput(Path path, Class<U> inputClassRef, TranslationEngine translationEngine) {
+    <U> void read(Path path, Class<U> inputClassRef, ITaskitEngine taskitEngine) {
         Object appObject;
         try {
-            appObject = translationEngine.readInput(path, inputClassRef);
+            appObject = taskitEngine.read(path, inputClassRef);
             this.objects.add(appObject);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -301,20 +304,20 @@ public final class TranslationController {
      * @param <M> the classType of the object
      * @throws ContractException
      *                           <ul>
-     *                           <li>{@linkplain CoreTranslationError#NULL_OBJECT_FOR_TRANSLATION}
+     *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
      *                           if the object is null</li>
-     *                           <li>{@linkplain CoreTranslationError#NULL_PATH}
+     *                           <li>{@linkplain TaskitError#NULL_PATH}
      *                           if the path is null</li>
-     *                           <li>{@linkplain CoreTranslationError#INVALID_OUTPUT_PATH}
+     *                           <li>{@linkplain TaskitError#INVALID_OUTPUT_PATH}
      *                           if the path does not exist (specifically the parent
      *                           directory of the path ie. a/b/c/foo.txt throws this
      *                           if a/b/c doesn't exist</li>
-     *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATION_ENGINE}
-     *                           if translationEngine is null</li>
+     *                           <li>{@linkplain TaskitError#NULL_TASKIT_ENGINE}
+     *                           if taskitEngine is null</li>
      *                           </ul>
      */
-    public <M extends U, U> void writeOutput(M object, Path path,
-            TranslationEngineType translationEngineType) {
+    public <M extends U, U> void write(M object, Path path,
+            TaskitEngineType taskitEngineType) {
 
         Optional<Class<U>> parentClassRef = Optional.empty();
 
@@ -326,7 +329,7 @@ public final class TranslationController {
 
             parentClassRef = Optional.of(parentClass);
         }
-        this.writeOutput(object, parentClassRef, path, translationEngineType);
+        this.write(object, parentClassRef, path, taskitEngineType);
     }
 
     /**
@@ -336,65 +339,65 @@ public final class TranslationController {
      * @param <M> the classType of the object
      * @throws ContractException
      *                           <ul>
-     *                           <li>{@linkplain CoreTranslationError#NULL_CLASS_REF}
+     *                           <li>{@linkplain TaskitError#NULL_CLASS_REF}
      *                           if the parent classref is null</li>
-     *                           <li>{@linkplain CoreTranslationError#NULL_OBJECT_FOR_TRANSLATION}
+     *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
      *                           if the object is null</li>
-     *                           <li>{@linkplain CoreTranslationError#NULL_PATH}
+     *                           <li>{@linkplain TaskitError#NULL_PATH}
      *                           if the path is null</li>
-     *                           <li>{@linkplain CoreTranslationError#INVALID_OUTPUT_PATH}
+     *                           <li>{@linkplain TaskitError#INVALID_OUTPUT_PATH}
      *                           if the path does not exist (specifically the parent
      *                           directory of the path ie. a/b/c/foo.txt throws this
      *                           if a/b/c doesn't exist</li>
-     *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATION_ENGINE}
-     *                           if translationEngine is null</li>
+     *                           <li>{@linkplain TaskitError#NULL_TASKIT_ENGINE}
+     *                           if taskitEngine is null</li>
      *                           </ul>
      */
-    public <M extends U, U> void writeOutput(M object, Class<U> parentClassRef, Path path,
-            TranslationEngineType translationEngineType) {
+    public <M extends U, U> void write(M object, Class<U> parentClassRef, Path path,
+            TaskitEngineType taskitEngineType) {
 
         if (parentClassRef == null) {
-            throw new ContractException(CoreTranslationError.NULL_CLASS_REF);
+            throw new ContractException(TaskitError.NULL_CLASS_REF);
         }
 
-        this.writeOutput(object, Optional.of(parentClassRef), path, translationEngineType);
+        this.write(object, Optional.of(parentClassRef), path, taskitEngineType);
     }
 
-    <M extends U, U> void writeOutput(M object, Optional<Class<U>> parentClassRef, Path path,
-            TranslationEngineType translationEngineType) {
+    <M extends U, U> void write(M object, Optional<Class<U>> parentClassRef, Path path,
+            TaskitEngineType taskitEngineType) {
 
         if (object == null) {
-            throw new ContractException(CoreTranslationError.NULL_OBJECT_FOR_TRANSLATION);
+            throw new ContractException(TaskitError.NULL_OBJECT_FOR_TRANSLATION);
         }
 
         if (path == null) {
-            throw new ContractException(CoreTranslationError.NULL_PATH);
+            throw new ContractException(TaskitError.NULL_PATH);
         }
 
         if (!path.getParent().toFile().exists()) {
-            throw new ContractException(CoreTranslationError.INVALID_OUTPUT_PATH);
+            throw new ContractException(TaskitError.INVALID_OUTPUT_PATH);
         }
 
-        TranslationEngine translationEngine = this.translationEngines.get(translationEngineType);
+        ITaskitEngine taskitEngine = this.taskitEngines.get(taskitEngineType);
 
-        if (translationEngine == null) {
-            throw new ContractException(CoreTranslationError.NULL_TRANSLATION_ENGINE);
+        if (taskitEngine == null) {
+            throw new ContractException(TaskitError.NULL_TASKIT_ENGINE);
         }
 
-        this.writeOutput(path, object, parentClassRef, translationEngine);
+        this.write(path, object, parentClassRef, taskitEngine);
     }
 
     /**
      * Passes the given writer object and optional superClass to the built
-     * {@link TranslationEngine} to translate and write to the outputFile
+     * {@link TaskitEngine} to translate and write to the outputFile
      * 
      * @param <M> the class of the object to write to the outputFile
      * @param <U> the optional parent class of the object to write to the outputFile
      */
-    <M extends U, U> void writeOutput(Path path, M object, Optional<Class<U>> superClass,
-            TranslationEngine translationEngine) {
+    <M extends U, U> void write(Path path, M object, Optional<Class<U>> superClass,
+            ITaskitEngine taskitEngine) {
         try {
-            translationEngine.writeOutput(path, object, superClass);
+            taskitEngine.write(path, object, superClass);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -407,7 +410,7 @@ public final class TranslationController {
      * @param <T> the type of the object to get
      * @throws ContractException
      *                           <ul>
-     *                           <li>{@linkplain CoreTranslationError#UNKNOWN_CLASSREF}
+     *                           <li>{@linkplain TaskitError#UNKNOWN_CLASSREF}
      *                           if no object with the specified class is found</li>
      *                           </ul>
      */
@@ -427,7 +430,7 @@ public final class TranslationController {
             return classRef.cast(this.objects.remove(index));
         }
 
-        throw new ContractException(CoreTranslationError.UNKNOWN_CLASSREF);
+        throw new ContractException(TaskitError.UNKNOWN_CLASSREF);
     }
 
     /**
@@ -457,7 +460,7 @@ public final class TranslationController {
      */
     public List<Object> getObjects() {
         List<Object> objects = new ArrayList<>(this.objects);
-        
+
         this.objects.clear();
 
         return objects;

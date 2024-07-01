@@ -22,7 +22,7 @@ public class AnyTranslationSpec extends ProtobufTranslationSpec<Any, Object> {
         }
 
         String typeUrl = parts[1];
-        Class<?> classRef = this.translationEngine.getClassFromTypeUrl(typeUrl);
+        Class<?> classRef = this.taskitEngine.getClassFromTypeUrl(typeUrl);
         Class<? extends Message> messageClassRef;
 
         if (!(Message.class.isAssignableFrom(classRef))) {
@@ -38,7 +38,7 @@ public class AnyTranslationSpec extends ProtobufTranslationSpec<Any, Object> {
         try {
             Message unpackedMessage = inputObject.unpack(messageClassRef);
 
-            return this.translationEngine.convertObject(unpackedMessage);
+            return this.taskitEngine.convertObject(unpackedMessage);
         } catch (InvalidProtocolBufferException e) {
             throw new RuntimeException("Unable To unpack any type to given class: " + messageClassRef.getName(), e);
         }
@@ -50,7 +50,7 @@ public class AnyTranslationSpec extends ProtobufTranslationSpec<Any, Object> {
         Message message;
 
         if (Enum.class.isAssignableFrom(appObject.getClass())) {
-            message = this.translationEngine.convertObjectAsSafeClass(Enum.class.cast(appObject), Enum.class);
+            message = this.taskitEngine.convertObjectAsSafeClass(Enum.class.cast(appObject), Enum.class);
         }
 
         // in the event that the object was converted BEFORE calling this
@@ -58,7 +58,7 @@ public class AnyTranslationSpec extends ProtobufTranslationSpec<Any, Object> {
         else if (Message.class.isAssignableFrom(appObject.getClass())) {
             message = Message.class.cast(appObject);
         } else {
-            message = this.translationEngine.convertObject(appObject);
+            message = this.taskitEngine.convertObject(appObject);
         }
 
         return Any.pack(message);

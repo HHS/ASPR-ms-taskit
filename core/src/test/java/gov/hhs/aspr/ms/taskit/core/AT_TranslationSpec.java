@@ -9,8 +9,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitError;
 import gov.hhs.aspr.ms.taskit.core.testsupport.TestObjectUtil;
-import gov.hhs.aspr.ms.taskit.core.testsupport.TestTranslationEngine;
+import gov.hhs.aspr.ms.taskit.core.testsupport.engine.TestTaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testcomplexobject.input.TestComplexInputObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testcomplexobject.translationSpecs.TestComplexObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppChildObject;
@@ -18,6 +20,7 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.input.TestInputChildObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.input.TestInputObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.translationSpecs.TestObjectTranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 import gov.hhs.aspr.ms.util.errors.ContractException;
@@ -55,13 +58,13 @@ public class AT_TranslationSpec {
     }
 
     @Test
-    @UnitTestMethod(target = TranslationSpec.class, name = "init", args = { TranslationEngine.class })
+    @UnitTestMethod(target = TranslationSpec.class, name = "init", args = { TaskitEngine.class })
     public void testInit() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
-        TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder()
+        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
                 .addTranslationSpec(testObjectTranslationSpec).build();
 
-        testObjectTranslationSpec.init(testTranslationEngine);
+        testObjectTranslationSpec.init(testTaskitEngine);
 
         assertTrue(testObjectTranslationSpec.isInitialized());
 
@@ -71,10 +74,10 @@ public class AT_TranslationSpec {
     @UnitTestMethod(target = TranslationSpec.class, name = "isInitialized", args = {})
     public void testIsInitialized() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
-        TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder()
+        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
                 .addTranslationSpec(testObjectTranslationSpec).build();
 
-        testObjectTranslationSpec.init(testTranslationEngine);
+        testObjectTranslationSpec.init(testTaskitEngine);
 
         assertTrue(testObjectTranslationSpec.isInitialized());
 
@@ -86,11 +89,11 @@ public class AT_TranslationSpec {
     public void testConvert() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
-        TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder()
+        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
                 .addTranslationSpec(testObjectTranslationSpec).addTranslationSpec(complexObjectTranslationSpec).build();
 
-        testObjectTranslationSpec.init(testTranslationEngine);
-        complexObjectTranslationSpec.init(testTranslationEngine);
+        testObjectTranslationSpec.init(testTaskitEngine);
+        complexObjectTranslationSpec.init(testTaskitEngine);
 
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
         TestInputObject expectedInputObject = TestObjectUtil.getInputFromApp(expectedAppObject);
@@ -117,22 +120,22 @@ public class AT_TranslationSpec {
             testObjectTranslationSpec2.convert(new TestAppObject());
         });
 
-        assertEquals(CoreTranslationError.UNINITIALIZED_TRANSLATION_SPEC, contractException.getErrorType());
+        assertEquals(TaskitError.UNINITIALIZED_TRANSLATION_SPEC, contractException.getErrorType());
 
         // unknown object
         contractException = assertThrows(ContractException.class, () -> {
             TestObjectTranslationSpec testObjectTranslationSpec2 = new TestObjectTranslationSpec();
-            testObjectTranslationSpec2.init(testTranslationEngine);
+            testObjectTranslationSpec2.init(testTaskitEngine);
             testObjectTranslationSpec2.convert(new TestComplexInputObject());
         });
 
-        assertEquals(CoreTranslationError.UNKNOWN_OBJECT, contractException.getErrorType());
+        assertEquals(TaskitError.UNKNOWN_OBJECT, contractException.getErrorType());
     }
 
     @Test
     @UnitTestMethod(target = TranslationSpec.class, name = "hashCode", args = {})
     public void testHashCode() {
-        TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder().build();
+        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder().build();
         // base
         TranslationSpec<TestInputObject, TestAppObject> translationSpecA = new TranslationSpec<>() {
 
@@ -259,7 +262,7 @@ public class AT_TranslationSpec {
         };
 
         // init the duplicate base
-        translationSpecE.init(testTranslationEngine);
+        translationSpecE.init(testTaskitEngine);
 
         // same exact object should be equal
         assertEquals(translationSpecA.hashCode(), translationSpecA.hashCode());
@@ -280,7 +283,7 @@ public class AT_TranslationSpec {
         assertNotEquals(translationSpecA.hashCode(), translationSpecE.hashCode());
 
         // init base
-        translationSpecA.init(testTranslationEngine);
+        translationSpecA.init(testTaskitEngine);
 
         // if all above are equal, then the two specs are equal
         assertEquals(translationSpecA.hashCode(), translationSpecE.hashCode());
@@ -289,7 +292,7 @@ public class AT_TranslationSpec {
     @Test
     @UnitTestMethod(target = TranslationSpec.class, name = "equals", args = { Object.class })
     public void testEquals() {
-        TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder().build();
+        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder().build();
         // base
         TranslationSpec<TestInputObject, TestAppObject> translationSpecA = new TranslationSpec<>() {
 
@@ -416,7 +419,7 @@ public class AT_TranslationSpec {
         };
 
         // init the duplicate base
-        translationSpecE.init(testTranslationEngine);
+        translationSpecE.init(testTaskitEngine);
 
         // same exact object should be equal
         assertEquals(translationSpecA, translationSpecA);
@@ -440,7 +443,7 @@ public class AT_TranslationSpec {
         assertNotEquals(translationSpecA, translationSpecE);
 
         // init base
-        translationSpecA.init(testTranslationEngine);
+        translationSpecA.init(testTaskitEngine);
 
         // if all above are equal, then the two specs are equal
         assertEquals(translationSpecA, translationSpecE);

@@ -14,7 +14,7 @@ public class TestProtobufObjectTranslationSpec extends ProtobufTranslationSpec<T
         testAppObject.setInteger(inputObject.getInteger());
         testAppObject.setString(inputObject.getString());
         testAppObject
-                .setTestComplexAppObject(this.translationEngine.convertObject(inputObject.getTestComplexInputObject()));
+                .setTestComplexAppObject(this.taskitEngine.convertObject(inputObject.getTestComplexInputObject()));
 
         return testAppObject;
     }
@@ -23,7 +23,7 @@ public class TestProtobufObjectTranslationSpec extends ProtobufTranslationSpec<T
     protected TestInputObject convertAppObject(TestAppObject appObject) {
         TestInputObject testInputObject = TestInputObject.newBuilder().setBool(appObject.isBool())
                 .setInteger(appObject.getInteger()).setString(appObject.getString())
-                .setTestComplexInputObject((TestComplexInputObject) this.translationEngine
+                .setTestComplexInputObject((TestComplexInputObject) this.taskitEngine
                         .convertObject(appObject.getTestComplexAppObject()))
                 .build();
 

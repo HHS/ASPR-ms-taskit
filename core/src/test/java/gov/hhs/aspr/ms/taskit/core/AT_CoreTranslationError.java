@@ -8,22 +8,23 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitError;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 
 public class AT_CoreTranslationError {
 
     @Test
-    @UnitTestMethod(target = CoreTranslationError.class, name = "getDescription", args = {})
+    @UnitTestMethod(target = TaskitError.class, name = "getDescription", args = {})
     public void testGetDescription() {
         // show that each ErrorType has a non-null, non-empty description
-        for (CoreTranslationError coreTranslationError : CoreTranslationError.values()) {
+        for (TaskitError coreTranslationError : TaskitError.values()) {
             assertNotNull(coreTranslationError.getDescription());
             assertTrue(coreTranslationError.getDescription().length() > 0);
         }
 
         // show that each description is unique (ignoring case as well)
         Set<String> descriptions = new LinkedHashSet<>();
-        for (CoreTranslationError coreTranslationError : CoreTranslationError.values()) {
+        for (TaskitError coreTranslationError : TaskitError.values()) {
             boolean isUnique = descriptions.add(coreTranslationError.getDescription().toLowerCase());
             assertTrue(isUnique, coreTranslationError + " duplicates the description of another member");
         }

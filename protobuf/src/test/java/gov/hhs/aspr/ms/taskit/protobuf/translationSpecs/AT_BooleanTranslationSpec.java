@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import com.google.protobuf.BoolValue;
 
-import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
+import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTaskitEngine;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestForCoverage;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
@@ -23,10 +23,10 @@ public class AT_BooleanTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertInputObject() {
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder().build();
+        ProtobufTaskitEngine protobufTaskitEngine = ProtobufTaskitEngine.builder().build();
 
         BooleanTranslationSpec booleanTranslationSpec = new BooleanTranslationSpec();
-        booleanTranslationSpec.init(protobufTranslationEngine);
+        booleanTranslationSpec.init(protobufTaskitEngine);
 
         Boolean expectedValue = false;
         BoolValue inputValue = BoolValue.of(false);
@@ -39,10 +39,10 @@ public class AT_BooleanTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertAppObject() {
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder().build();
+        ProtobufTaskitEngine protobufTaskitEngine = ProtobufTaskitEngine.builder().build();
 
         BooleanTranslationSpec booleanTranslationSpec = new BooleanTranslationSpec();
-        booleanTranslationSpec.init(protobufTranslationEngine);
+        booleanTranslationSpec.init(protobufTaskitEngine);
 
         Boolean appValue = false;
         BoolValue expectedValue = BoolValue.of(false);

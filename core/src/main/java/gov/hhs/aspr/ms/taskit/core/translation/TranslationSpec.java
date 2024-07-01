@@ -1,14 +1,17 @@
-package gov.hhs.aspr.ms.taskit.core;
+package gov.hhs.aspr.ms.taskit.core.translation;
 
 import java.util.Objects;
 
+import gov.hhs.aspr.ms.taskit.core.engine.ITaskitEngine;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitError;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
  * Core implementation of the {@link BaseTranslationSpec} that must be
  * implemented by each needed translationSpec.
  * <p>
- * Note: No reference to a {@link TranslationEngine} exists in this class, and
+ * Note: No reference to a {@link TaskitEngine} exists in this class, and
  * must be implemented by the implementing class.
  */
 public abstract class TranslationSpec<I, A> implements BaseTranslationSpec {
@@ -16,9 +19,9 @@ public abstract class TranslationSpec<I, A> implements BaseTranslationSpec {
 
     /**
      * Initializes this translationSpec. All child TranslationSpecs must call
-     * super() otherwise there will be an exception throw in the TranslationEngine
+     * super() otherwise there will be an exception throw in the TaskitEngine
      */
-    public <T extends TranslationEngine> void init(T translationEngine) {
+    public <T extends ITaskitEngine> void init(T taskitEngine) {
         this.initialized = true;
     }
 
@@ -45,7 +48,7 @@ public abstract class TranslationSpec<I, A> implements BaseTranslationSpec {
      * </p>
      * 
      * @param <T> the expected return type after translation/conversion
-     * @throws ContractException {@linkplain CoreTranslationError#UNKNOWN_OBJECT} if
+     * @throws ContractException {@linkplain TaskitError#UNKNOWN_OBJECT} if
      *                           no match can be found between the passed in object
      *                           and the given appClass and InputClass
      */
@@ -69,7 +72,7 @@ public abstract class TranslationSpec<I, A> implements BaseTranslationSpec {
             return (T) this.convertInputObject((I) obj);
         }
 
-        throw new ContractException(CoreTranslationError.UNKNOWN_OBJECT, "Object is not a "
+        throw new ContractException(TaskitError.UNKNOWN_OBJECT, "Object is not a "
                 + this.getAppObjectClass().getName() + " and it is not a " + this.getInputObjectClass().getName());
 
     }
@@ -133,7 +136,7 @@ public abstract class TranslationSpec<I, A> implements BaseTranslationSpec {
 
     void checkInit() {
         if (!this.initialized) {
-            throw new ContractException(CoreTranslationError.UNINITIALIZED_TRANSLATION_SPEC);
+            throw new ContractException(TaskitError.UNINITIALIZED_TRANSLATION_SPEC);
         }
     }
 }

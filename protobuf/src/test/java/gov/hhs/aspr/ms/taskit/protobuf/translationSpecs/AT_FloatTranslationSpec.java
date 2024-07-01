@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import com.google.protobuf.FloatValue;
 
-import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
+import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTaskitEngine;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestForCoverage;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
@@ -23,10 +23,10 @@ public class AT_FloatTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertInputObject() {
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder().build();
+        ProtobufTaskitEngine protobufTaskitEngine = ProtobufTaskitEngine.builder().build();
 
         FloatTranslationSpec floatTranslationSpec = new FloatTranslationSpec();
-        floatTranslationSpec.init(protobufTranslationEngine);
+        floatTranslationSpec.init(protobufTaskitEngine);
 
         Float expectedValue = 10.0f;
         FloatValue inputValue = FloatValue.of(expectedValue);
@@ -39,10 +39,10 @@ public class AT_FloatTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertAppObject() {
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder().build();
+        ProtobufTaskitEngine protobufTaskitEngine = ProtobufTaskitEngine.builder().build();
 
         FloatTranslationSpec floatTranslationSpec = new FloatTranslationSpec();
-        floatTranslationSpec.init(protobufTranslationEngine);
+        floatTranslationSpec.init(protobufTaskitEngine);
 
         Float appValue = 10.01f;
         FloatValue expectedValue = FloatValue.of(appValue);

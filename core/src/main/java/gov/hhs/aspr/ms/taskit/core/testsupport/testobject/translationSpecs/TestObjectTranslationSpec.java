@@ -14,7 +14,7 @@ public class TestObjectTranslationSpec extends TestTranslationSpec<TestInputObje
         testAppObject.setInteger(inputObject.getInteger());
         testAppObject.setString(inputObject.getString());
         testAppObject
-                .setTestComplexAppObject(this.translationEngine.convertObject(inputObject.getTestComplexInputObject()));
+                .setTestComplexAppObject(this.taskitEngine.convertObject(inputObject.getTestComplexInputObject()));
 
         return testAppObject;
     }
@@ -27,7 +27,7 @@ public class TestObjectTranslationSpec extends TestTranslationSpec<TestInputObje
         testInputObject.setInteger(appObject.getInteger());
         testInputObject.setString(appObject.getString());
         testInputObject
-                .setTestComplexInputObject(this.translationEngine.convertObject(appObject.getTestComplexAppObject()));
+                .setTestComplexInputObject(this.taskitEngine.convertObject(appObject.getTestComplexAppObject()));
 
         return testInputObject;
     }

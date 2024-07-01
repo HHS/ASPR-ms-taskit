@@ -13,8 +13,12 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitController;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngineType;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitError;
 import gov.hhs.aspr.ms.taskit.core.testsupport.TestObjectUtil;
-import gov.hhs.aspr.ms.taskit.core.testsupport.TestTranslationEngine;
+import gov.hhs.aspr.ms.taskit.core.testsupport.TestTaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testcomplexobject.TestComplexAppObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testcomplexobject.TestComplexObjectTranslator;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testcomplexobject.input.TestComplexInputObject;
@@ -27,57 +31,57 @@ import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 import gov.hhs.aspr.ms.util.resourcehelper.ResourceHelper;
 
-public class AT_TranslationController {
+public class AT_TaskitController {
 
     Path basePath = ResourceHelper.getResourceDir(this.getClass());
     Path filePath = ResourceHelper.createDirectory(basePath, "test-output");
 
     @Test
     @UnitTestForCoverage
-    public void testValidateTranslationEngine() {
-        TranslationController translationController = TranslationController.builder()
-                .addTranslationEngine(TestTranslationEngine.builder().build())
+    public void testValidateTaskitEngine() {
+        TaskitController translationController = TaskitController.builder()
+                .addTaskitEngine(TestTaskitEngine.builder().build())
                 .buildWithoutInitAndChecks();
 
         // preconditions
         ContractException contractException = assertThrows(ContractException.class, () -> {
-            translationController.validateTranslationEngines();
+            translationController.validateTaskitEngines();
         });
 
-        assertEquals(CoreTranslationError.NO_TRANSLATION_ENGINES, contractException.getErrorType());
+        assertEquals(TaskitError.NO_TASKIT_ENGINES, contractException.getErrorType());
 
         contractException = assertThrows(ContractException.class, () -> {
-            for (TranslationEngine translationEngine : translationController.data.translationEngines) {
-                translationController.translationEngines
-                        .put(translationEngine.getTranslationEngineType(), null);
+            for (TaskitEngine taskitEngine : translationController.data.taskitEngines) {
+                translationController.taskitEngines
+                        .put(taskitEngine.getTaskitEngineType(), null);
             }
-            translationController.validateTranslationEngines();
+            translationController.validateTaskitEngines();
         });
 
-        assertEquals(CoreTranslationError.NULL_TRANSLATION_ENGINE, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_TASKIT_ENGINE, contractException.getErrorType());
 
         RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> {
-            TestTranslationEngine translationEngine2 = TestTranslationEngine.builder()
+            TestTaskitEngine taskitEngine2 = TestTaskitEngine.builder()
                     .buildWithoutSpecInit();
 
-            translationController.translationEngines.put(translationEngine2.getTranslationEngineType(),
-                    translationEngine2);
+            translationController.taskitEngines.put(taskitEngine2.getTaskitEngineType(),
+                    taskitEngine2);
 
-            translationController.validateTranslationEngines();
+            translationController.validateTaskitEngines();
         });
 
-        assertEquals("TranslationEngine has been built but has not been initialized.",
+        assertEquals("TaskitEngine has been built but has not been initialized.",
                 runtimeException.getMessage());
 
         runtimeException = assertThrows(RuntimeException.class, () -> {
-            for (TranslationEngine translationEngine : translationController.data.translationEngines) {
-                translationController.translationEngines.put(
-                        translationEngine.getTranslationEngineType(),
-                        translationEngine);
-                translationController.translationEngineClassToTypeMap.put(translationEngine.getClass(),
+            for (TaskitEngine taskitEngine : translationController.data.taskitEngines) {
+                translationController.taskitEngines.put(
+                        taskitEngine.getTaskitEngineType(),
+                        taskitEngine);
+                translationController.taskitEngineClassToTypeMap.put(taskitEngine.getClass(),
                         null);
             }
-            translationController.validateTranslationEngines();
+            translationController.validateTaskitEngines();
         });
 
         assertEquals(
@@ -85,12 +89,12 @@ public class AT_TranslationController {
                 runtimeException.getMessage());
 
         runtimeException = assertThrows(RuntimeException.class, () -> {
-            for (TranslationEngine translationEngine : translationController.data.translationEngines) {
-                translationController.translationEngines.put(
-                        translationEngine.getTranslationEngineType(),
-                        translationEngine);
+            for (TaskitEngine taskitEngine : translationController.data.taskitEngines) {
+                translationController.taskitEngines.put(
+                        taskitEngine.getTaskitEngineType(),
+                        taskitEngine);
             }
-            translationController.validateTranslationEngines();
+            translationController.validateTaskitEngines();
         });
 
         assertEquals(
@@ -101,32 +105,32 @@ public class AT_TranslationController {
     @Test
     @UnitTestForCoverage
     /*
-     * purpose of this test is to show that if there isn't a valid TranslationEngine
+     * purpose of this test is to show that if there isn't a valid TaskitEngine
      * class -> Translation Engine Type -> Translation Engine mapping, an exception
      * is thrown
      */
-    public void testValidateTranslationEngines() {
-        TranslationController translationController = TranslationController.builder()
+    public void testValidateTaskitEngines() {
+        TaskitController translationController = TaskitController.builder()
                 .buildWithoutInitAndChecks();
 
         // preconditions
         ContractException contractException = assertThrows(ContractException.class, () -> {
-            translationController.validateTranslationEngines();
+            translationController.validateTaskitEngines();
         });
 
-        assertEquals(CoreTranslationError.NO_TRANSLATION_ENGINES, contractException.getErrorType());
+        assertEquals(TaskitError.NO_TASKIT_ENGINES, contractException.getErrorType());
 
         // class to type map not populated
         RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> {
-            TranslationController translationController2 = TranslationController.builder()
-                    .addTranslationEngine(TestTranslationEngine.builder().build())
+            TaskitController translationController2 = TaskitController.builder()
+                    .addTaskitEngine(TestTaskitEngine.builder().build())
                     .buildWithoutInitAndChecks();
-            for (TranslationEngine translationEngine : translationController2.data.translationEngines) {
-                translationController2.translationEngines.put(
-                        translationEngine.getTranslationEngineType(),
-                        translationEngine);
+            for (TaskitEngine taskitEngine : translationController2.data.taskitEngines) {
+                translationController2.taskitEngines.put(
+                        taskitEngine.getTaskitEngineType(),
+                        taskitEngine);
             }
-            translationController2.validateTranslationEngines();
+            translationController2.validateTaskitEngines();
         });
 
         assertEquals(
@@ -135,17 +139,17 @@ public class AT_TranslationController {
 
         // class to type map not fully mapped
         runtimeException = assertThrows(RuntimeException.class, () -> {
-            TranslationController translationController2 = TranslationController.builder()
-                    .addTranslationEngine(TestTranslationEngine.builder().build())
+            TaskitController translationController2 = TaskitController.builder()
+                    .addTaskitEngine(TestTaskitEngine.builder().build())
                     .buildWithoutInitAndChecks();
-            for (TranslationEngine translationEngine : translationController2.data.translationEngines) {
-                translationController2.translationEngines.put(
-                        translationEngine.getTranslationEngineType(),
-                        translationEngine);
-                translationController2.translationEngineClassToTypeMap.put(translationEngine.getClass(),
+            for (TaskitEngine taskitEngine : translationController2.data.taskitEngines) {
+                translationController2.taskitEngines.put(
+                        taskitEngine.getTaskitEngineType(),
+                        taskitEngine);
+                translationController2.taskitEngineClassToTypeMap.put(taskitEngine.getClass(),
                         null);
             }
-            translationController2.validateTranslationEngines();
+            translationController2.validateTaskitEngines();
         });
 
         assertEquals(
@@ -155,25 +159,25 @@ public class AT_TranslationController {
     }
 
     @Test
-    @UnitTestMethod(target = TranslationController.class, name = "readInput", args = {})
+    @UnitTestMethod(target = TaskitController.class, name = "readInput", args = {})
     public void testReadInput() {
         String fileName = "readInput-testOutput.json";
 
         ResourceHelper.createFile(filePath, fileName);
 
-        TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder()
+        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
                 .addTranslator(TestComplexObjectTranslator.getTranslator()).build();
 
-        TranslationController translationController = TranslationController.builder()
+        TaskitController translationController = TaskitController.builder()
                 .addInputFilePath(filePath.resolve(fileName), TestInputObject.class,
-                        TranslationEngineType.CUSTOM)
-                .addTranslationEngine(testTranslationEngine).build();
+                        TaskitEngineType.CUSTOM)
+                .addTaskitEngine(testTaskitEngine).build();
 
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
 
         translationController.writeOutput(expectedAppObject, filePath.resolve(fileName),
-                TranslationEngineType.CUSTOM);
+                TaskitEngineType.CUSTOM);
 
         translationController.readInput();
 
@@ -188,7 +192,7 @@ public class AT_TranslationController {
         // invalid file path
         RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> {
             translationController.readInput(filePath.resolve("badPath"), TestInputObject.class,
-                    TestTranslationEngine.builder().build());
+                    TestTaskitEngine.builder().build());
         });
 
         assertTrue(runtimeException.getCause() instanceof IOException);
@@ -200,11 +204,11 @@ public class AT_TranslationController {
         String fileName = "badFilePath-testOutput.json";
 
         ResourceHelper.createFile(filePath, fileName);
-        TestTranslationEngine engine = TestTranslationEngine.builder()
+        TestTaskitEngine engine = TestTaskitEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
                 .addTranslator(TestComplexObjectTranslator.getTranslator()).build();
-        TranslationController translationController = TranslationController.builder()
-                .addTranslationEngine(engine)
+        TaskitController translationController = TaskitController.builder()
+                .addTaskitEngine(engine)
                 .build();
 
         // preconditions
@@ -220,31 +224,31 @@ public class AT_TranslationController {
     }
 
     @Test
-    @UnitTestMethod(target = TranslationController.class, name = "writeOutput", args = { Object.class,
-            Path.class, TranslationEngineType.class })
+    @UnitTestMethod(target = TaskitController.class, name = "writeOutput", args = { Object.class,
+            Path.class, TaskitEngineType.class })
     public void testWriteOutput() {
         String fileName = "writeOutput-testOutput.json";
 
         ResourceHelper.createFile(filePath, fileName);
 
-        TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder()
+        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
                 .addTranslator(TestComplexObjectTranslator.getTranslator())
                 .addParentChildClassRelationship(TestAppChildObject.class, TestAppObject.class)
                 .build();
 
-        TranslationController translationController = TranslationController.builder()
-                .addTranslationEngine(testTranslationEngine).build();
+        TaskitController translationController = TaskitController.builder()
+                .addTaskitEngine(testTaskitEngine).build();
 
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
 
         translationController.writeOutput(expectedAppObject, filePath.resolve(fileName),
-                TranslationEngineType.CUSTOM);
+                TaskitEngineType.CUSTOM);
 
         TestAppChildObject testAppChildObject = TestObjectUtil.getChildAppFromApp(expectedAppObject);
 
         translationController.writeOutput(testAppChildObject, filePath.resolve(fileName),
-                TranslationEngineType.CUSTOM);
+                TaskitEngineType.CUSTOM);
         // preconditions
         // CoreTranslationError.NULL_OBJECT_FOR_TRANSLATION is tested by
         // testWriteOutput_Base()
@@ -255,35 +259,35 @@ public class AT_TranslationController {
     }
 
     @Test
-    @UnitTestMethod(target = TranslationController.class, name = "writeOutput", args = { Object.class, Class.class,
-            Path.class, TranslationEngineType.class })
+    @UnitTestMethod(target = TaskitController.class, name = "writeOutput", args = { Object.class, Class.class,
+            Path.class, TaskitEngineType.class })
     public void testWriteOutput_ParentClass() {
         String fileName = "writeOutput_ParentClass-testOutput.json";
 
         ResourceHelper.createFile(filePath, fileName);
 
-        TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder()
+        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
                 .addTranslator(TestComplexObjectTranslator.getTranslator()).build();
 
-        TranslationController translationController = TranslationController.builder()
-                .addTranslationEngine(testTranslationEngine).build();
+        TaskitController translationController = TaskitController.builder()
+                .addTaskitEngine(testTaskitEngine).build();
 
         TestAppObject appObject = TestObjectUtil.generateTestAppObject();
         TestAppChildObject expectedAppObject = TestObjectUtil.getChildAppFromApp(appObject);
 
         translationController.writeOutput(expectedAppObject, TestAppObject.class, filePath.resolve(fileName),
-                TranslationEngineType.CUSTOM);
+                TaskitEngineType.CUSTOM);
 
         // preconditions
         // the given parent classref is null
         ContractException contractException = assertThrows(ContractException.class, () -> {
             Class<TestAppObject> badClassRef = null;
             translationController.writeOutput(expectedAppObject, badClassRef, filePath.resolve(fileName),
-                    TranslationEngineType.CUSTOM);
+                    TaskitEngineType.CUSTOM);
         });
 
-        assertEquals(CoreTranslationError.NULL_CLASS_REF, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_CLASS_REF, contractException.getErrorType());
 
         // preconditions
         // CoreTranslationError.NULL_OBJECT_FOR_TRANSLATION is tested by
@@ -301,12 +305,12 @@ public class AT_TranslationController {
 
         ResourceHelper.createFile(filePath, fileName);
 
-        TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder()
+        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
                 .addTranslator(TestComplexObjectTranslator.getTranslator()).build();
 
-        TranslationController translationController = TranslationController.builder()
-                .addTranslationEngine(testTranslationEngine).build();
+        TaskitController translationController = TaskitController.builder()
+                .addTaskitEngine(testTaskitEngine).build();
 
         TestAppObject appObject = TestObjectUtil.generateTestAppObject();
         TestAppChildObject expectedAppObject = TestObjectUtil.getChildAppFromApp(appObject);
@@ -315,40 +319,40 @@ public class AT_TranslationController {
         // the given object is null
         ContractException contractException = assertThrows(ContractException.class, () -> {
             translationController.writeOutput(null, Optional.empty(), filePath.resolve(fileName),
-                    TranslationEngineType.CUSTOM);
+                    TaskitEngineType.CUSTOM);
         });
 
-        assertEquals(CoreTranslationError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
 
         // the path is null
         contractException = assertThrows(ContractException.class, () -> {
             translationController.writeOutput(expectedAppObject, Optional.empty(), null,
-                    TranslationEngineType.CUSTOM);
+                    TaskitEngineType.CUSTOM);
         });
 
-        assertEquals(CoreTranslationError.NULL_PATH, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_PATH, contractException.getErrorType());
 
         // if the path is invalid
         contractException = assertThrows(ContractException.class, () -> {
             translationController.writeOutput(expectedAppObject, Optional.empty(),
                     filePath.resolve("badPath").resolve(fileName),
-                    TranslationEngineType.CUSTOM);
+                    TaskitEngineType.CUSTOM);
         });
 
-        assertEquals(CoreTranslationError.INVALID_OUTPUT_PATH, contractException.getErrorType());
+        assertEquals(TaskitError.INVALID_OUTPUT_PATH, contractException.getErrorType());
 
         // if the translation engine is null
         contractException = assertThrows(ContractException.class, () -> {
             translationController.writeOutput(expectedAppObject, Optional.empty(),
                     filePath.resolve(fileName),
-                    TranslationEngineType.UNKNOWN);
+                    TaskitEngineType.UNKNOWN);
         });
 
-        assertEquals(CoreTranslationError.NULL_TRANSLATION_ENGINE, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_TASKIT_ENGINE, contractException.getErrorType());
     }
 
     @Test
-    @UnitTestMethod(target = TranslationController.class, name = "getFirstObject", args = { Class.class })
+    @UnitTestMethod(target = TaskitController.class, name = "getFirstObject", args = { Class.class })
     public void testGetFirstObject() throws IOException {
         String fileName = "getFirstObject-testOutput.json";
         String fileName2 = "getFirstObject-testOutput2.json";
@@ -356,25 +360,25 @@ public class AT_TranslationController {
         ResourceHelper.createFile(filePath, fileName);
         ResourceHelper.createFile(filePath, fileName2);
 
-        TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder()
+        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
                 .addTranslator(TestComplexObjectTranslator.getTranslator()).build();
 
-        TranslationController translationController = TranslationController.builder()
+        TaskitController translationController = TaskitController.builder()
                 .addInputFilePath(filePath.resolve(fileName), TestInputObject.class,
-                        TranslationEngineType.CUSTOM)
+                        TaskitEngineType.CUSTOM)
                 .addInputFilePath(filePath.resolve(fileName2), TestComplexInputObject.class,
-                        TranslationEngineType.CUSTOM)
-                .addTranslationEngine(testTranslationEngine).build();
+                        TaskitEngineType.CUSTOM)
+                .addTaskitEngine(testTaskitEngine).build();
 
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
         TestComplexAppObject expectedComplexAppObject = TestObjectUtil.generateTestComplexAppObject();
 
         translationController.writeOutput(expectedAppObject, filePath.resolve(fileName),
-                TranslationEngineType.CUSTOM);
+                TaskitEngineType.CUSTOM);
 
         translationController.writeOutput(expectedComplexAppObject, filePath.resolve(fileName2),
-                TranslationEngineType.CUSTOM);
+                TaskitEngineType.CUSTOM);
 
         translationController.readInput();
 
@@ -390,11 +394,11 @@ public class AT_TranslationController {
             translationController.getFirstObject(TestInputObject.class);
         });
 
-        assertEquals(CoreTranslationError.UNKNOWN_CLASSREF, contractException.getErrorType());
+        assertEquals(TaskitError.UNKNOWN_CLASSREF, contractException.getErrorType());
     }
 
     @Test
-    @UnitTestMethod(target = TranslationController.class, name = "getObjects", args = { Class.class })
+    @UnitTestMethod(target = TaskitController.class, name = "getObjects", args = { Class.class })
     public void testGetObjects_OfClass() throws IOException {
         String fileName = "GetObjects_OfClass_1-testOutput.json";
         String fileName2 = "GetObjects_OfClass_2-testOutput.json";
@@ -404,28 +408,28 @@ public class AT_TranslationController {
         ResourceHelper.createFile(filePath, fileName2);
         ResourceHelper.createFile(filePath, fileName3);
 
-        TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder()
+        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
                 .addTranslator(TestComplexObjectTranslator.getTranslator()).build();
 
-        TranslationController translationController = TranslationController.builder()
+        TaskitController translationController = TaskitController.builder()
                 .addInputFilePath(filePath.resolve(fileName), TestInputObject.class,
-                        TranslationEngineType.CUSTOM)
+                        TaskitEngineType.CUSTOM)
                 .addInputFilePath(filePath.resolve(fileName2), TestInputObject.class,
-                        TranslationEngineType.CUSTOM)
+                        TaskitEngineType.CUSTOM)
                 .addInputFilePath(filePath.resolve(fileName3), TestComplexInputObject.class,
-                        TranslationEngineType.CUSTOM)
-                .addTranslationEngine(testTranslationEngine).build();
+                        TaskitEngineType.CUSTOM)
+                .addTaskitEngine(testTaskitEngine).build();
 
         List<TestAppObject> expectedObjects = TestObjectUtil.getListOfAppObjects(2);
         TestComplexAppObject expectedComplexAppObject = TestObjectUtil.generateTestComplexAppObject();
 
         translationController.writeOutput(expectedObjects.get(0), filePath.resolve(fileName),
-                TranslationEngineType.CUSTOM);
+                TaskitEngineType.CUSTOM);
         translationController.writeOutput(expectedObjects.get(1), filePath.resolve(fileName2),
-                TranslationEngineType.CUSTOM);
+                TaskitEngineType.CUSTOM);
         translationController.writeOutput(expectedComplexAppObject, filePath.resolve(fileName3),
-                TranslationEngineType.CUSTOM);
+                TaskitEngineType.CUSTOM);
 
         translationController.readInput();
 
@@ -444,7 +448,7 @@ public class AT_TranslationController {
     }
 
     @Test
-    @UnitTestMethod(target = TranslationController.class, name = "getObjects", args = {})
+    @UnitTestMethod(target = TaskitController.class, name = "getObjects", args = {})
     public void testGetObjects() throws IOException {
         String fileName = "GetObjects_1-testOutput.json";
         String fileName2 = "GetObjects_2-testOutput.json";
@@ -452,23 +456,23 @@ public class AT_TranslationController {
         ResourceHelper.createFile(filePath, fileName);
         ResourceHelper.createFile(filePath, fileName2);
 
-        TestTranslationEngine testTranslationEngine = TestTranslationEngine.builder()
+        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
                 .addTranslator(TestComplexObjectTranslator.getTranslator()).build();
 
-        TranslationController translationController = TranslationController.builder()
+        TaskitController translationController = TaskitController.builder()
                 .addInputFilePath(filePath.resolve(fileName), TestInputObject.class,
-                        TranslationEngineType.CUSTOM)
+                        TaskitEngineType.CUSTOM)
                 .addInputFilePath(filePath.resolve(fileName2), TestInputObject.class,
-                        TranslationEngineType.CUSTOM)
-                .addTranslationEngine(testTranslationEngine).build();
+                        TaskitEngineType.CUSTOM)
+                .addTaskitEngine(testTaskitEngine).build();
 
         List<TestAppObject> expectedObjects = TestObjectUtil.getListOfAppObjects(2);
 
         translationController.writeOutput(expectedObjects.get(0), filePath.resolve(fileName),
-                TranslationEngineType.CUSTOM);
+                TaskitEngineType.CUSTOM);
         translationController.writeOutput(expectedObjects.get(1), filePath.resolve(fileName2),
-                TranslationEngineType.CUSTOM);
+                TaskitEngineType.CUSTOM);
 
         translationController.readInput();
 
@@ -482,132 +486,132 @@ public class AT_TranslationController {
     }
 
     @Test
-    @UnitTestMethod(target = TranslationController.class, name = "builder", args = {})
+    @UnitTestMethod(target = TaskitController.class, name = "builder", args = {})
     public void testBuilder() {
-        assertNotNull(TranslationController.builder());
+        assertNotNull(TaskitController.builder());
     }
 
     @Test
-    @UnitTestMethod(target = TranslationController.Builder.class, name = "build", args = {})
+    @UnitTestMethod(target = TaskitController.Builder.class, name = "build", args = {})
     public void testBuild() {
-        TranslationController translationController = TranslationController.builder()
-                .addTranslationEngine(TestTranslationEngine.builder().build()).build();
+        TaskitController translationController = TaskitController.builder()
+                .addTaskitEngine(TestTaskitEngine.builder().build()).build();
 
         assertNotNull(translationController);
 
         // preconditions
         ContractException contractException = assertThrows(ContractException.class, () -> {
-            TranslationController.builder().build();
+            TaskitController.builder().build();
         });
 
-        assertEquals(CoreTranslationError.NULL_TRANSLATION_ENGINE, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_TASKIT_ENGINE, contractException.getErrorType());
     }
 
     @Test
-    @UnitTestMethod(target = TranslationController.Builder.class, name = "addInputFilePath", args = { Path.class,
-            Class.class, TranslationEngineType.class })
+    @UnitTestMethod(target = TaskitController.Builder.class, name = "addInputFilePath", args = { Path.class,
+            Class.class, TaskitEngineType.class })
     public void testAddInputFilePath() {
         String fileName = "addInputFilePath-testOutput.json";
 
         ResourceHelper.createFile(filePath, fileName);
 
-        assertDoesNotThrow(() -> TranslationController.builder()
+        assertDoesNotThrow(() -> TaskitController.builder()
                 .addInputFilePath(filePath.resolve(fileName), TestInputObject.class,
-                        TranslationEngineType.CUSTOM)
-                .addTranslationEngine(TestTranslationEngine.builder().build()).build());
+                        TaskitEngineType.CUSTOM)
+                .addTaskitEngine(TestTaskitEngine.builder().build()).build());
 
         // preconditions
         ContractException contractException = assertThrows(ContractException.class, () -> {
-            TranslationController.builder().addInputFilePath(null, TestInputObject.class,
-                    TranslationEngineType.CUSTOM);
+            TaskitController.builder().addInputFilePath(null, TestInputObject.class,
+                    TaskitEngineType.CUSTOM);
         });
 
-        assertEquals(CoreTranslationError.NULL_PATH, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_PATH, contractException.getErrorType());
 
         contractException = assertThrows(ContractException.class, () -> {
-            TranslationController.builder().addInputFilePath(filePath.resolve(fileName), null,
-                    TranslationEngineType.CUSTOM);
+            TaskitController.builder().addInputFilePath(filePath.resolve(fileName), null,
+                    TaskitEngineType.CUSTOM);
         });
 
-        assertEquals(CoreTranslationError.NULL_CLASS_REF, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_CLASS_REF, contractException.getErrorType());
 
         contractException = assertThrows(ContractException.class, () -> {
-            TranslationController.builder()
+            TaskitController.builder()
                     .addInputFilePath(filePath.resolve(fileName), TestInputObject.class,
-                            TranslationEngineType.CUSTOM)
+                            TaskitEngineType.CUSTOM)
                     .addInputFilePath(filePath.resolve(fileName), TestInputObject.class,
-                            TranslationEngineType.CUSTOM);
+                            TaskitEngineType.CUSTOM);
         });
 
-        assertEquals(CoreTranslationError.DUPLICATE_INPUT_PATH, contractException.getErrorType());
+        assertEquals(TaskitError.DUPLICATE_INPUT_PATH, contractException.getErrorType());
 
         contractException = assertThrows(ContractException.class, () -> {
-            TranslationController.builder().addInputFilePath(filePath.resolve("badPath"),
+            TaskitController.builder().addInputFilePath(filePath.resolve("badPath"),
                     TestInputObject.class,
-                    TranslationEngineType.CUSTOM);
+                    TaskitEngineType.CUSTOM);
         });
 
-        assertEquals(CoreTranslationError.INVALID_INPUT_PATH, contractException.getErrorType());
+        assertEquals(TaskitError.INVALID_INPUT_PATH, contractException.getErrorType());
 
     }
 
     @Test
-    @UnitTestMethod(target = TranslationController.Builder.class, name = "addParentChildClassRelationship", args = {
+    @UnitTestMethod(target = TaskitController.Builder.class, name = "addParentChildClassRelationship", args = {
             Class.class, Class.class })
     public void testAddParentChildClassRelationship() {
-        TranslationController.builder().addParentChildClassRelationship(TestAppObject.class, Object.class);
+        TaskitController.builder().addParentChildClassRelationship(TestAppObject.class, Object.class);
 
         // preconditions
         ContractException contractException = assertThrows(ContractException.class, () -> {
-            TranslationController.builder().addParentChildClassRelationship(null, Object.class);
+            TaskitController.builder().addParentChildClassRelationship(null, Object.class);
         });
 
-        assertEquals(CoreTranslationError.NULL_CLASS_REF, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_CLASS_REF, contractException.getErrorType());
 
         contractException = assertThrows(ContractException.class, () -> {
-            TranslationController.builder().addParentChildClassRelationship(TestAppObject.class, null);
+            TaskitController.builder().addParentChildClassRelationship(TestAppObject.class, null);
         });
 
-        assertEquals(CoreTranslationError.NULL_CLASS_REF, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_CLASS_REF, contractException.getErrorType());
 
         contractException = assertThrows(ContractException.class, () -> {
-            TranslationController.builder()
+            TaskitController.builder()
                     .addParentChildClassRelationship(TestAppObject.class, Object.class)
                     .addParentChildClassRelationship(TestAppObject.class, Object.class);
         });
 
-        assertEquals(CoreTranslationError.DUPLICATE_CLASSREF, contractException.getErrorType());
+        assertEquals(TaskitError.DUPLICATE_CLASSREF, contractException.getErrorType());
     }
 
     @Test
-    @UnitTestMethod(target = TranslationController.Builder.class, name = "addTranslationEngine", args = {
-            TranslationEngine.class })
-    public void testAddTranslationEngine() {
-        TestTranslationEngine translationEngine = TestTranslationEngine.builder()
+    @UnitTestMethod(target = TaskitController.Builder.class, name = "addTaskitEngine", args = {
+            TaskitEngine.class })
+    public void testAddTaskitEngine() {
+        TestTaskitEngine taskitEngine = TestTaskitEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
                 .addTranslator(TestComplexObjectTranslator.getTranslator())
                 .addParentChildClassRelationship(TestAppObject.class, Object.class).build();
 
-        TranslationController.builder().addTranslationEngine(translationEngine).build();
+        TaskitController.builder().addTaskitEngine(taskitEngine).build();
 
         // preconditions
         ContractException contractException = assertThrows(ContractException.class, () -> {
-            TranslationController.builder().addTranslationEngine(null);
+            TaskitController.builder().addTaskitEngine(null);
         });
 
-        assertEquals(CoreTranslationError.NULL_TRANSLATION_ENGINE, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_TASKIT_ENGINE, contractException.getErrorType());
 
         contractException = assertThrows(ContractException.class, () -> {
-            TestTranslationEngine translationEngine2 = TestTranslationEngine.builder()
+            TestTaskitEngine taskitEngine2 = TestTaskitEngine.builder()
                     .addTranslator(TestObjectTranslator.getTranslator())
                     .addTranslator(TestComplexObjectTranslator.getTranslator())
                     .addParentChildClassRelationship(TestAppObject.class, Object.class).build();
 
-            TranslationController.builder()
+            TaskitController.builder()
                     .addParentChildClassRelationship(TestAppObject.class, Object.class)
-                    .addTranslationEngine(translationEngine2);
+                    .addTaskitEngine(taskitEngine2);
         });
 
-        assertEquals(CoreTranslationError.DUPLICATE_CLASSREF, contractException.getErrorType());
+        assertEquals(TaskitError.DUPLICATE_CLASSREF, contractException.getErrorType());
     }
 }

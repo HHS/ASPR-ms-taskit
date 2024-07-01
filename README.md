@@ -40,7 +40,7 @@ Currently Taskit is composed of a Core library and a Protobuf library.
 
 ### Core
 [Core](core) is the base taskit engine and contains the root level functionality that drives the translation and serialization.
-This library contains the base TranslationController class, the base TranslationSpec class and the base TranslationEngine class.
+This library contains the base TranslationController class, the base TranslationSpec class and the base TaskitEngine class.
 
 #### TranslationController
 The TranslationController class handles the delgation of reading/writing from/to input/output files.
@@ -48,12 +48,12 @@ The TranslationController class handles the delgation of reading/writing from/to
 #### TranslationSpec
 The TranslationSpec class is an abstract class that must be impleneted to define how to convert between two Java Types, generally the input Java type and the application Java Type.
 
-#### TranslationEngine
-The TranslationEngine class delgates the converting of one type to another via TranslationSpecs as well as doing the actual reading/writing as delegated by the TranslationController.
+#### TaskitEngine
+The TaskitEngine class delgates the converting of one type to another via TranslationSpecs as well as doing the actual reading/writing as delegated by the TranslationController.
 
 ### Protobuf
 [Protobuf](protobuf) is a version of taskit made specifically to be used with protobuf.
-This library builds on the Core library described above and adds a distinct TranslationEngine and TranslationSpecs needed to fully support protobuf.
+This library builds on the Core library described above and adds a distinct TaskitEngine and TranslationSpecs needed to fully support protobuf.
 
 #### Supported types
 This library supports the following proto message types:

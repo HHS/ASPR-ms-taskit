@@ -11,7 +11,7 @@ import com.google.protobuf.Int32Value;
 import com.google.protobuf.InvalidProtocolBufferException;
 
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppEnum;
-import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
+import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTaskitEngine;
 import gov.hhs.aspr.ms.taskit.protobuf.input.WrapperEnumValue;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testcomplexobject.translationSpecs.TestProtobufComplexObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testobject.input.TestInputEnum;
@@ -37,13 +37,13 @@ public class AT_AnyTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertInputObject() {
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder()
+        ProtobufTaskitEngine protobufTaskitEngine = ProtobufTaskitEngine.builder()
                 .addTranslationSpec(new TestProtobufEnumTranslationSpec())
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
                 .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
 
         AnyTranslationSpec anyTranslationSpec = new AnyTranslationSpec();
-        anyTranslationSpec.init(protobufTranslationEngine);
+        anyTranslationSpec.init(protobufTaskitEngine);
 
         Integer expectedValue = 100;
         Int32Value int32Value = Int32Value.of(expectedValue);
@@ -79,13 +79,13 @@ public class AT_AnyTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testUnpackMessage() {
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder()
+        ProtobufTaskitEngine protobufTaskitEngine = ProtobufTaskitEngine.builder()
                 .addTranslationSpec(new TestProtobufEnumTranslationSpec())
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
                 .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
 
         AnyTranslationSpec anyTranslationSpec = new AnyTranslationSpec();
-        anyTranslationSpec.init(protobufTranslationEngine);
+        anyTranslationSpec.init(protobufTaskitEngine);
 
         Integer expectedValue = 100;
         Int32Value int32Value = Int32Value.of(expectedValue);
@@ -103,11 +103,11 @@ public class AT_AnyTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertAppObject() {
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder()
+        ProtobufTaskitEngine protobufTaskitEngine = ProtobufTaskitEngine.builder()
                 .addTranslationSpec(new TestProtobufEnumTranslationSpec()).build();
 
         AnyTranslationSpec anyTranslationSpec = new AnyTranslationSpec();
-        anyTranslationSpec.init(protobufTranslationEngine);
+        anyTranslationSpec.init(protobufTaskitEngine);
 
         // app object converted into any
         Integer value = 100;
@@ -134,7 +134,7 @@ public class AT_AnyTranslationSpec {
 
         // by calling covert on an object that was already converted
         // this case is specifically used for
-        // ProtobufTranslationEngine.testGetAnyFromObjectAsSafeClass
+        // ProtobufTaskitEngine.testGetAnyFromObjectAsSafeClass
         actualAny = anyTranslationSpec.convertAppObject(wrapperEnumValue);
 
         assertEquals(expectedAny, actualAny);

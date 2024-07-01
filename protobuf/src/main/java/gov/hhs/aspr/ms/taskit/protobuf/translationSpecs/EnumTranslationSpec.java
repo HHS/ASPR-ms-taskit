@@ -28,11 +28,11 @@ public class EnumTranslationSpec extends ProtobufTranslationSpec<WrapperEnumValu
         String typeUrl = inputObject.getEnumTypeUrl();
         String value = inputObject.getValue();
 
-        Class<?> classRef = this.translationEngine.getClassFromTypeUrl(typeUrl);
+        Class<?> classRef = this.taskitEngine.getClassFromTypeUrl(typeUrl);
 
         try {
             Enum inputInput = (Enum<?>) classRef.getMethod("valueOf", String.class).invoke(null, value);
-            return this.translationEngine.convertObject(inputInput);
+            return this.taskitEngine.convertObject(inputInput);
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
                 | SecurityException e) {
             throw new RuntimeException(e);
@@ -42,7 +42,7 @@ public class EnumTranslationSpec extends ProtobufTranslationSpec<WrapperEnumValu
 
     @Override
     protected WrapperEnumValue convertAppObject(Enum appObject) {
-        ProtocolMessageEnum messageEnum = this.translationEngine.convertObject(appObject);
+        ProtocolMessageEnum messageEnum = this.taskitEngine.convertObject(appObject);
 
         WrapperEnumValue wrapperEnumValue = WrapperEnumValue.newBuilder()
                 .setValue(messageEnum.getValueDescriptor().getName())

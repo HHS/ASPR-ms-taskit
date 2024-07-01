@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import com.google.protobuf.StringValue;
 
-import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
+import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTaskitEngine;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestForCoverage;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
@@ -23,10 +23,10 @@ public class AT_StringTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertInputObject() {
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder().build();
+        ProtobufTaskitEngine protobufTaskitEngine = ProtobufTaskitEngine.builder().build();
 
         StringTranslationSpec stringTranslationSpec = new StringTranslationSpec();
-        stringTranslationSpec.init(protobufTranslationEngine);
+        stringTranslationSpec.init(protobufTaskitEngine);
 
         String expectedValue = "testString";
         StringValue inputValue = StringValue.of(expectedValue);
@@ -39,10 +39,10 @@ public class AT_StringTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertAppObject() {
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder().build();
+        ProtobufTaskitEngine protobufTaskitEngine = ProtobufTaskitEngine.builder().build();
 
         StringTranslationSpec stringTranslationSpec = new StringTranslationSpec();
-        stringTranslationSpec.init(protobufTranslationEngine);
+        stringTranslationSpec.init(protobufTaskitEngine);
 
         String appValue = "testString";
         StringValue expectedValue = StringValue.of(appValue);

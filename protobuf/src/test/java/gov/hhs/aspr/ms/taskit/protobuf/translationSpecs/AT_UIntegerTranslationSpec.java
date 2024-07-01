@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import com.google.protobuf.UInt32Value;
 
-import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
+import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTaskitEngine;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestForCoverage;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
@@ -23,10 +23,10 @@ public class AT_UIntegerTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertInputObject() {
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder().build();
+        ProtobufTaskitEngine protobufTaskitEngine = ProtobufTaskitEngine.builder().build();
 
         UIntegerTranslationSpec uIntegerTranslationSpec = new UIntegerTranslationSpec();
-        uIntegerTranslationSpec.init(protobufTranslationEngine);
+        uIntegerTranslationSpec.init(protobufTaskitEngine);
 
         Integer expectedValue = 10;
         UInt32Value inputValue = UInt32Value.of(expectedValue);
@@ -39,10 +39,10 @@ public class AT_UIntegerTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertAppObject() {
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder().build();
+        ProtobufTaskitEngine protobufTaskitEngine = ProtobufTaskitEngine.builder().build();
 
         UIntegerTranslationSpec uIntegerTranslationSpec = new UIntegerTranslationSpec();
-        uIntegerTranslationSpec.init(protobufTranslationEngine);
+        uIntegerTranslationSpec.init(protobufTaskitEngine);
 
         Integer appValue = 100;
         UInt32Value expectedValue = UInt32Value.of(appValue);

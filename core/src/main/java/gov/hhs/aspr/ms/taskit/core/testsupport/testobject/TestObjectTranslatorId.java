@@ -1,6 +1,6 @@
 package gov.hhs.aspr.ms.taskit.core.testsupport.testobject;
 
-import gov.hhs.aspr.ms.taskit.core.TranslatorId;
+import gov.hhs.aspr.ms.taskit.core.translation.TranslatorId;
 
 public class TestObjectTranslatorId implements TranslatorId {
     public final static TranslatorId TRANSLATOR_ID = new TestObjectTranslatorId();

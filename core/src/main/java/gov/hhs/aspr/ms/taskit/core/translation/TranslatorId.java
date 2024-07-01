@@ -1,4 +1,4 @@
-package gov.hhs.aspr.ms.taskit.core;
+package gov.hhs.aspr.ms.taskit.core.translation;
 
 /**
  * Used as a {@link Translator} identifier

@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import com.google.protobuf.Int64Value;
 
-import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
+import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTaskitEngine;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestForCoverage;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
@@ -23,10 +23,10 @@ public class AT_LongTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertInputObject() {
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder().build();
+        ProtobufTaskitEngine protobufTaskitEngine = ProtobufTaskitEngine.builder().build();
 
         LongTranslationSpec longTranslationSpec = new LongTranslationSpec();
-        longTranslationSpec.init(protobufTranslationEngine);
+        longTranslationSpec.init(protobufTaskitEngine);
 
         Long expectedValue = 100L;
         Int64Value inputValue = Int64Value.of(expectedValue);
@@ -39,10 +39,10 @@ public class AT_LongTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertAppObject() {
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder().build();
+        ProtobufTaskitEngine protobufTaskitEngine = ProtobufTaskitEngine.builder().build();
 
         LongTranslationSpec longTranslationSpec = new LongTranslationSpec();
-        longTranslationSpec.init(protobufTranslationEngine);
+        longTranslationSpec.init(protobufTaskitEngine);
 
         Long appValue = 1000L;
         Int64Value expectedValue = Int64Value.of(appValue);

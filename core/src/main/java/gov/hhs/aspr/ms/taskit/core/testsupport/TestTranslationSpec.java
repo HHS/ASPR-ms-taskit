@@ -1,13 +1,13 @@
 package gov.hhs.aspr.ms.taskit.core.testsupport;
 
-import gov.hhs.aspr.ms.taskit.core.TranslationEngine;
-import gov.hhs.aspr.ms.taskit.core.TranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.engine.ITaskitEngine;
+import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
 
 public abstract class TestTranslationSpec<I, A> extends TranslationSpec<I, A> {
-    protected TestTranslationEngine translationEngine;
+    protected TestTaskitEngine taskitEngine;
 
-    public void init(TranslationEngine translationEngine) {
-        super.init(translationEngine);
-        this.translationEngine = (TestTranslationEngine) translationEngine;
+    public void init(ITaskitEngine taskitEngine) {
+        super.init(taskitEngine);
+        this.taskitEngine = (TestTaskitEngine) taskitEngine;
     }
 }

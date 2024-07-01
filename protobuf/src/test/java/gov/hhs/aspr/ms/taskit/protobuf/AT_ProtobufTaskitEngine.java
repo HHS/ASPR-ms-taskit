@@ -23,13 +23,13 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
 import com.google.protobuf.ProtocolMessageEnum;
 
-import gov.hhs.aspr.ms.taskit.core.CoreTranslationError;
-import gov.hhs.aspr.ms.taskit.core.ProtobufTranslationEngineTestHelper;
-import gov.hhs.aspr.ms.taskit.core.TranslationSpec;
-import gov.hhs.aspr.ms.taskit.core.Translator;
+import gov.hhs.aspr.ms.taskit.core.ProtobufTaskitEngineTestHelper;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitError;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppChildObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.translationSpecs.TestObjectTranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.translation.Translator;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.TestObjectUtil;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testClasses.BadMessageBadArguments;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testClasses.BadMessageIllegalAccess;
@@ -45,29 +45,29 @@ import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 import gov.hhs.aspr.ms.util.resourcehelper.ResourceHelper;
 
-public class AT_ProtobufTranslationEngine {
+public class AT_ProtobufTaskitEngine {
     Path basePath = ResourceHelper.getResourceDir(this.getClass());
     Path filePath = ResourceHelper.createDirectory(basePath, "test-output");
 
     @Test
-    @UnitTestMethod(target = ProtobufTranslationEngine.class, name = "getAnyFromObject", args = { Object.class })
+    @UnitTestMethod(target = ProtobufTaskitEngine.class, name = "getAnyFromObject", args = { Object.class })
     public void testGetAnyFromObject() {
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder().build();
+        ProtobufTaskitEngine protobufTaskitEngine = ProtobufTaskitEngine.builder().build();
 
         Integer integer = 1500;
         Int32Value int32Value = Int32Value.of(integer);
         Any expectedAny = Any.pack(int32Value);
 
-        Any actualAny = protobufTranslationEngine.getAnyFromObject(integer);
+        Any actualAny = protobufTaskitEngine.getAnyFromObject(integer);
 
         assertEquals(expectedAny, actualAny);
     }
 
     @Test
-    @UnitTestMethod(target = ProtobufTranslationEngine.class, name = "getAnyFromObjectAsSafeClass", args = {
+    @UnitTestMethod(target = ProtobufTaskitEngine.class, name = "getAnyFromObjectAsSafeClass", args = {
             Object.class, Class.class })
     public void testGetAnyFromObjectAsSafeClass() {
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder()
+        ProtobufTaskitEngine protobufTaskitEngine = ProtobufTaskitEngine.builder()
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
                 .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
 
@@ -77,7 +77,7 @@ public class AT_ProtobufTranslationEngine {
         TestInputObject expectedInputObject = TestObjectUtil.getInputFromApp(testAppChildObject);
         Any expectedAny = Any.pack(expectedInputObject);
 
-        Any actualAny = protobufTranslationEngine.getAnyFromObjectAsSafeClass(testAppChildObject, TestAppObject.class);
+        Any actualAny = protobufTaskitEngine.getAnyFromObjectAsSafeClass(testAppChildObject, TestAppObject.class);
 
         assertEquals(expectedAny, actualAny);
 
@@ -85,22 +85,22 @@ public class AT_ProtobufTranslationEngine {
 
         // no translationSpec was provided for the parent class
         ContractException contractException = assertThrows(ContractException.class, () -> {
-            ProtobufTranslationEngine protobufTranslationEngine2 = ProtobufTranslationEngine.builder()
+            ProtobufTaskitEngine protobufTaskitEngine2 = ProtobufTaskitEngine.builder()
                     .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
 
             TestAppObject testAppObject2 = TestObjectUtil.generateTestAppObject();
             TestAppChildObject testAppChildObject2 = TestObjectUtil.getChildAppFromApp(testAppObject2);
 
-            protobufTranslationEngine2.getAnyFromObjectAsSafeClass(testAppChildObject2, TestAppObject.class);
+            protobufTaskitEngine2.getAnyFromObjectAsSafeClass(testAppChildObject2, TestAppObject.class);
         });
 
-        assertEquals(CoreTranslationError.UNKNOWN_TRANSLATION_SPEC, contractException.getErrorType());
+        assertEquals(TaskitError.UNKNOWN_TRANSLATION_SPEC, contractException.getErrorType());
     }
 
     @Test
-    @UnitTestMethod(target = ProtobufTranslationEngine.class, name = "getObjectFromAny", args = { Any.class })
+    @UnitTestMethod(target = ProtobufTaskitEngine.class, name = "getObjectFromAny", args = { Any.class })
     public void testGetObjectFromAny() {
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder()
+        ProtobufTaskitEngine protobufTaskitEngine = ProtobufTaskitEngine.builder()
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
                 .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
 
@@ -109,16 +109,16 @@ public class AT_ProtobufTranslationEngine {
         TestInputObject expectedInputObject = TestObjectUtil.getInputFromApp(expectedObject);
         Any any = Any.pack(expectedInputObject);
 
-        Object actualObject = protobufTranslationEngine.getObjectFromAny(any);
+        Object actualObject = protobufTaskitEngine.getObjectFromAny(any);
 
         assertTrue(actualObject.getClass() == TestAppObject.class);
         assertEquals(expectedObject, actualObject);
     }
 
     @Test
-    @UnitTestMethod(target = ProtobufTranslationEngine.class, name = "getClassFromTypeUrl", args = { String.class })
+    @UnitTestMethod(target = ProtobufTaskitEngine.class, name = "getClassFromTypeUrl", args = { String.class })
     public void testGetClassFromTypeUrl() {
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder()
+        ProtobufTaskitEngine protobufTaskitEngine = ProtobufTaskitEngine.builder()
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
                 .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
 
@@ -128,17 +128,17 @@ public class AT_ProtobufTranslationEngine {
         String testInputObjectTypeUrl = TestInputObject.getDescriptor().getFullName();
         String testComplexInputObjectTypeUrl = TestComplexInputObject.getDescriptor().getFullName();
 
-        assertEquals(testInputObjectClass, protobufTranslationEngine.getClassFromTypeUrl(testInputObjectTypeUrl));
+        assertEquals(testInputObjectClass, protobufTaskitEngine.getClassFromTypeUrl(testInputObjectTypeUrl));
         assertEquals(testComplexInputObjectClass,
-                protobufTranslationEngine.getClassFromTypeUrl(testComplexInputObjectTypeUrl));
+                protobufTaskitEngine.getClassFromTypeUrl(testComplexInputObjectTypeUrl));
 
         // preconditions
         // no typeUrl was provided and/or malformed typeUrl
         ContractException contractException = assertThrows(ContractException.class, () -> {
-            ProtobufTranslationEngine protobufTranslationEngine2 = ProtobufTranslationEngine.builder()
+            ProtobufTaskitEngine protobufTaskitEngine2 = ProtobufTaskitEngine.builder()
                     .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
 
-            protobufTranslationEngine2.getClassFromTypeUrl("badUrl");
+            protobufTaskitEngine2.getClassFromTypeUrl("badUrl");
         });
 
         assertEquals(ProtobufCoreTranslationError.UNKNOWN_TYPE_URL, contractException.getErrorType());
@@ -151,16 +151,16 @@ public class AT_ProtobufTranslationEngine {
 
         ResourceHelper.createFile(filePath, fileName);
 
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder()
+        ProtobufTaskitEngine protobufTaskitEngine = ProtobufTaskitEngine.builder()
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
                 .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
 
-        protobufTranslationEngine.setDebug(true);
+        protobufTaskitEngine.setDebug(true);
 
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
 
-        protobufTranslationEngine.writeOutput(filePath.resolve(fileName), expectedAppObject, Optional.empty());
-        TestAppObject actualAppObject = protobufTranslationEngine.readInput(filePath.resolve(fileName),
+        protobufTaskitEngine.writeOutput(filePath.resolve(fileName), expectedAppObject, Optional.empty());
+        TestAppObject actualAppObject = protobufTaskitEngine.readInput(filePath.resolve(fileName),
                 TestInputObject.class);
         assertEquals(expectedAppObject, actualAppObject);
     }
@@ -168,7 +168,7 @@ public class AT_ProtobufTranslationEngine {
     @Test
     @UnitTestForCoverage
     public void testParseJson() {
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder()
+        ProtobufTaskitEngine protobufTaskitEngine = ProtobufTaskitEngine.builder()
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
                 .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).setIgnoringUnknownFields(false)
                 .build();
@@ -181,7 +181,7 @@ public class AT_ProtobufTranslationEngine {
         jsonObject.addProperty("unknownProperty", "unknownValue");
 
         RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> {
-            protobufTranslationEngine.parseJson(new StringReader(jsonObject.toString()), TestInputObject.class);
+            protobufTaskitEngine.parseJson(new StringReader(jsonObject.toString()), TestInputObject.class);
         });
 
         assertEquals(InvalidProtocolBufferException.class, runtimeException.getCause().getClass());
@@ -191,7 +191,7 @@ public class AT_ProtobufTranslationEngine {
     @UnitTestForCoverage
     public void testGetBuilderForMessage() {
 
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder()
+        ProtobufTaskitEngine protobufTaskitEngine = ProtobufTaskitEngine.builder()
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
                 .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
 
@@ -204,22 +204,22 @@ public class AT_ProtobufTranslationEngine {
          */
         // class ref does not contain a newBuilder method
         assertThrows(RuntimeException.class, () -> {
-            protobufTranslationEngine.getBuilderForMessage(BadMessageNoMethod.class);
+            protobufTaskitEngine.getBuilderForMessage(BadMessageNoMethod.class);
         });
 
         // class has a newBuilder method but it is not static
         assertThrows(RuntimeException.class, () -> {
-            protobufTranslationEngine.getBuilderForMessage(BadMessageNonStaticMethod.class);
+            protobufTaskitEngine.getBuilderForMessage(BadMessageNonStaticMethod.class);
         });
 
         // class has a static newBuilder method but it takes arguments
         assertThrows(RuntimeException.class, () -> {
-            protobufTranslationEngine.getBuilderForMessage(BadMessageBadArguments.class);
+            protobufTaskitEngine.getBuilderForMessage(BadMessageBadArguments.class);
         });
 
         // class has a newBuilder method but it is not accessible
         assertThrows(RuntimeException.class, () -> {
-            protobufTranslationEngine.getBuilderForMessage(BadMessageIllegalAccess.class);
+            protobufTaskitEngine.getBuilderForMessage(BadMessageIllegalAccess.class);
         });
 
     }
@@ -233,28 +233,28 @@ public class AT_ProtobufTranslationEngine {
         ResourceHelper.createFile(filePath, fileName);
         ResourceHelper.createFile(filePath, fileName2);
 
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder()
+        ProtobufTaskitEngine protobufTaskitEngine = ProtobufTaskitEngine.builder()
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
                 .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
 
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
 
-        protobufTranslationEngine.writeOutput(filePath.resolve(fileName), expectedAppObject, Optional.empty());
-        TestAppObject actualAppObject = protobufTranslationEngine.readInput(filePath.resolve(fileName),
+        protobufTaskitEngine.writeOutput(filePath.resolve(fileName), expectedAppObject, Optional.empty());
+        TestAppObject actualAppObject = protobufTaskitEngine.readInput(filePath.resolve(fileName),
                 TestInputObject.class);
         assertEquals(expectedAppObject, actualAppObject);
 
-        protobufTranslationEngine.writeOutput(filePath.resolve(fileName2),
+        protobufTaskitEngine.writeOutput(filePath.resolve(fileName2),
                 TestObjectUtil.getChildAppFromApp(expectedAppObject),
                 Optional.of(TestAppObject.class));
-        TestAppObject actualAppChildObject = protobufTranslationEngine.readInput(filePath.resolve(fileName2),
+        TestAppObject actualAppChildObject = protobufTaskitEngine.readInput(filePath.resolve(fileName2),
                 TestInputObject.class);
         assertEquals(expectedAppObject, actualAppChildObject);
 
         // preconditions
         // input class is not a Message class
         ContractException contractException = assertThrows(ContractException.class, () -> {
-            protobufTranslationEngine.readInput(filePath.resolve(fileName2), TestAppObject.class);
+            protobufTaskitEngine.readInput(filePath.resolve(fileName2), TestAppObject.class);
         });
 
         assertEquals(ProtobufCoreTranslationError.INVALID_READ_INPUT_CLASS_REF, contractException.getErrorType());
@@ -272,53 +272,53 @@ public class AT_ProtobufTranslationEngine {
         ResourceHelper.createFile(filePath, fileName);
         ResourceHelper.createFile(filePath, fileName2);
 
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder()
+        ProtobufTaskitEngine protobufTaskitEngine = ProtobufTaskitEngine.builder()
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
                 .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
 
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
 
-        protobufTranslationEngine.writeOutput(filePath.resolve(fileName), expectedAppObject, Optional.empty());
-        TestAppObject actualAppObject = protobufTranslationEngine.readInput(filePath.resolve(fileName),
+        protobufTaskitEngine.writeOutput(filePath.resolve(fileName), expectedAppObject, Optional.empty());
+        TestAppObject actualAppObject = protobufTaskitEngine.readInput(filePath.resolve(fileName),
                 TestInputObject.class);
         assertEquals(expectedAppObject, actualAppObject);
 
-        protobufTranslationEngine.writeOutput(filePath.resolve(fileName2),
+        protobufTaskitEngine.writeOutput(filePath.resolve(fileName2),
                 TestObjectUtil.getChildAppFromApp(expectedAppObject),
                 Optional.of(TestAppObject.class));
-        TestAppObject actualAppChildObject = protobufTranslationEngine.readInput(filePath.resolve(fileName2),
+        TestAppObject actualAppChildObject = protobufTaskitEngine.readInput(filePath.resolve(fileName2),
                 TestInputObject.class);
         assertEquals(expectedAppObject, actualAppChildObject);
 
         // this test is just for coverage, but this method should never be directly
         // called
         TestInputObject inputObject = TestObjectUtil.generateTestInputObject();
-        protobufTranslationEngine.writeOutput(filePath.resolve(fileName2), inputObject, Optional.empty());
-        actualAppObject = protobufTranslationEngine.readInput(filePath.resolve(fileName2), TestInputObject.class);
+        protobufTaskitEngine.writeOutput(filePath.resolve(fileName2), inputObject, Optional.empty());
+        actualAppObject = protobufTaskitEngine.readInput(filePath.resolve(fileName2), TestInputObject.class);
         assertEquals(TestObjectUtil.getAppFromInput(inputObject), actualAppObject);
 
         // preconditions
         // IO error occurs
         RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> {
-            protobufTranslationEngine.writeOutput(filePath.resolve("/foo"), expectedAppObject, Optional.empty());
+            protobufTaskitEngine.writeOutput(filePath.resolve("/foo"), expectedAppObject, Optional.empty());
         });
 
         assertTrue(runtimeException.getCause() instanceof IOException);
     }
 
     @Test
-    @UnitTestMethod(target = ProtobufTranslationEngine.class, name = "builder", args = {})
+    @UnitTestMethod(target = ProtobufTaskitEngine.class, name = "builder", args = {})
     public void testBuilder() {
-        assertNotNull(ProtobufTranslationEngine.builder());
+        assertNotNull(ProtobufTaskitEngine.builder());
     }
 
     @Test
-    @UnitTestMethod(target = ProtobufTranslationEngine.Builder.class, name = "build", args = {})
+    @UnitTestMethod(target = ProtobufTaskitEngine.Builder.class, name = "build", args = {})
     public void testBuild() {
 
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder().build();
+        ProtobufTaskitEngine protobufTaskitEngine = ProtobufTaskitEngine.builder().build();
 
-        assertNotNull(protobufTranslationEngine);
+        assertNotNull(protobufTaskitEngine);
 
         // parser and printer do not have equals contracts, so no way to check for
         // equality
@@ -329,7 +329,7 @@ public class AT_ProtobufTranslationEngine {
     @Test
     @UnitTestForCoverage
     public void testGetDefaultMessage() {
-        ProtobufTranslationEngine.Builder pBuilder = ProtobufTranslationEngine.builder();
+        ProtobufTaskitEngine.Builder pBuilder = ProtobufTaskitEngine.builder();
 
         /*
          * Note: because this method is only ever called if the classRef is an instance
@@ -344,7 +344,7 @@ public class AT_ProtobufTranslationEngine {
     @Test
     @UnitTestForCoverage
     public void testGetDefaultEnum() {
-        ProtobufTranslationEngine.Builder pBuilder = ProtobufTranslationEngine.builder();
+        ProtobufTaskitEngine.Builder pBuilder = ProtobufTaskitEngine.builder();
 
         /*
          * Note: because this method is only ever called if the classRef is an instance
@@ -359,7 +359,7 @@ public class AT_ProtobufTranslationEngine {
     @Test
     @UnitTestForCoverage
     public void testPopulate() {
-        ProtobufTranslationEngine.Builder pBuilder = ProtobufTranslationEngine.builder();
+        ProtobufTaskitEngine.Builder pBuilder = ProtobufTaskitEngine.builder();
 
         // Protobuf Message
         pBuilder.populate(TestInputObject.class);
@@ -392,17 +392,17 @@ public class AT_ProtobufTranslationEngine {
     }
 
     @Test
-    @UnitTestMethod(target = ProtobufTranslationEngine.Builder.class, name = "addFieldToIncludeDefaultValue", args = {
+    @UnitTestMethod(target = ProtobufTaskitEngine.Builder.class, name = "addFieldToIncludeDefaultValue", args = {
             FieldDescriptor.class })
     public void testAddFieldToIncludeDefaultValue() throws InvalidProtocolBufferException {
 
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder()
+        ProtobufTaskitEngine protobufTaskitEngine = ProtobufTaskitEngine.builder()
                 .addFieldToIncludeDefaultValue(TestInputObject.getDescriptor().findFieldByName("integer")).build();
 
         TestInputObject expectedInputObject = TestObjectUtil.generateTestInputObject().toBuilder().setInteger(0)
                 .setBool(false).setString("").build();
 
-        String message = protobufTranslationEngine.getJsonPrinter().print(expectedInputObject);
+        String message = protobufTaskitEngine.getJsonPrinter().print(expectedInputObject);
 
         JsonObject jsonObject = JsonParser.parseString(message).getAsJsonObject();
 
@@ -415,25 +415,25 @@ public class AT_ProtobufTranslationEngine {
     }
 
     @Test
-    @UnitTestMethod(target = ProtobufTranslationEngine.Builder.class, name = "addTranslationSpec", args = {
+    @UnitTestMethod(target = ProtobufTaskitEngine.Builder.class, name = "addTranslationSpec", args = {
             TranslationSpec.class })
     public void testAddTranslationSpec() {
-        ProtobufTranslationEngineTestHelper.testAddTranslationSpec(ProtobufTranslationEngine.builder());
+        ProtobufTaskitEngineTestHelper.testAddTranslationSpec(ProtobufTaskitEngine.builder());
 
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder()
+        ProtobufTaskitEngine protobufTaskitEngine = ProtobufTaskitEngine.builder()
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
                 .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
 
         assertDoesNotThrow(() -> {
-            protobufTranslationEngine.getClassFromTypeUrl(TestInputObject.getDescriptor().getFullName());
-            protobufTranslationEngine.getClassFromTypeUrl(TestComplexInputObject.getDescriptor().getFullName());
+            protobufTaskitEngine.getClassFromTypeUrl(TestInputObject.getDescriptor().getFullName());
+            protobufTaskitEngine.getClassFromTypeUrl(TestComplexInputObject.getDescriptor().getFullName());
         });
 
         // precondition
         // translation spec is not a ProtobufTranslationSpec
 
         ContractException contractException = assertThrows(ContractException.class, () -> {
-            ProtobufTranslationEngine.builder().addTranslationSpec(new TestObjectTranslationSpec());
+            ProtobufTaskitEngine.builder().addTranslationSpec(new TestObjectTranslationSpec());
         });
 
         assertEquals(ProtobufCoreTranslationError.INVALID_TRANSLATION_SPEC, contractException.getErrorType());
@@ -442,24 +442,24 @@ public class AT_ProtobufTranslationEngine {
     }
 
     @Test
-    @UnitTestMethod(target = ProtobufTranslationEngine.Builder.class, name = "addTranslator", args = {
+    @UnitTestMethod(target = ProtobufTaskitEngine.Builder.class, name = "addTranslator", args = {
             Translator.class })
     public void testAddTranslator() {
-        ProtobufTranslationEngineTestHelper.testAddTranslator(ProtobufTranslationEngine.builder());
+        ProtobufTaskitEngineTestHelper.testAddTranslator(ProtobufTaskitEngine.builder());
     }
 
     @Test
-    @UnitTestMethod(target = ProtobufTranslationEngine.Builder.class, name = "addParentChildClassRelationship", args = {
+    @UnitTestMethod(target = ProtobufTaskitEngine.Builder.class, name = "addParentChildClassRelationship", args = {
             Class.class, Class.class })
     public void testAddParentChildClassRelationship() {
-        ProtobufTranslationEngineTestHelper.testAddParentChildClassRelationship(ProtobufTranslationEngine.builder());
+        ProtobufTaskitEngineTestHelper.testAddParentChildClassRelationship(ProtobufTaskitEngine.builder());
     }
     
     @Test
-    @UnitTestMethod(target = ProtobufTranslationEngine.Builder.class, name = "setIgnoringUnknownFields", args = {
+    @UnitTestMethod(target = ProtobufTaskitEngine.Builder.class, name = "setIgnoringUnknownFields", args = {
             boolean.class })
     public void testSetIgnoringUnknownFields() {
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder()
+        ProtobufTaskitEngine protobufTaskitEngine = ProtobufTaskitEngine.builder()
                 .setIgnoringUnknownFields(true).build();
 
         JsonObject jsonObject = new JsonObject();
@@ -468,34 +468,34 @@ public class AT_ProtobufTranslationEngine {
         jsonObject.addProperty("unknownField", "unknownField");
 
         assertDoesNotThrow(() -> {
-            protobufTranslationEngine.getJsonParser().merge(jsonObject.toString(), TestInputObject.newBuilder());
+            protobufTaskitEngine.getJsonParser().merge(jsonObject.toString(), TestInputObject.newBuilder());
         });
 
-        ProtobufTranslationEngine protobufTranslationEngine2 = ProtobufTranslationEngine.builder()
+        ProtobufTaskitEngine protobufTaskitEngine2 = ProtobufTaskitEngine.builder()
                 .setIgnoringUnknownFields(false).build();
 
         assertThrows(InvalidProtocolBufferException.class, () -> {
-            protobufTranslationEngine2.getJsonParser().merge(jsonObject.toString(), TestInputObject.newBuilder());
+            protobufTaskitEngine2.getJsonParser().merge(jsonObject.toString(), TestInputObject.newBuilder());
         });
 
         assertDoesNotThrow(() -> {
             jsonObject.remove("unknownField");
-            protobufTranslationEngine.getJsonParser().merge(jsonObject.toString(), TestInputObject.newBuilder());
+            protobufTaskitEngine.getJsonParser().merge(jsonObject.toString(), TestInputObject.newBuilder());
         });
     }
 
     @Test
-    @UnitTestMethod(target = ProtobufTranslationEngine.Builder.class, name = "setIncludingDefaultValueFields", args = {
+    @UnitTestMethod(target = ProtobufTaskitEngine.Builder.class, name = "setIncludingDefaultValueFields", args = {
             boolean.class })
     public void testSetIncludingDefaultValueFields() throws InvalidProtocolBufferException {
 
-        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder()
+        ProtobufTaskitEngine protobufTaskitEngine = ProtobufTaskitEngine.builder()
                 .setIncludingDefaultValueFields(true).build();
 
         TestInputObject expectedInputObject = TestObjectUtil.generateTestInputObject().toBuilder().setInteger(0)
                 .setBool(false).setString("").build();
 
-        String message = protobufTranslationEngine.getJsonPrinter().print(expectedInputObject);
+        String message = protobufTaskitEngine.getJsonPrinter().print(expectedInputObject);
 
         JsonObject jsonObject = JsonParser.parseString(message).getAsJsonObject();
 
@@ -511,9 +511,9 @@ public class AT_ProtobufTranslationEngine {
         assertEquals(false, jsonObject.get("bool").getAsBoolean());
         assertEquals("", jsonObject.get("string").getAsString());
 
-        protobufTranslationEngine = ProtobufTranslationEngine.builder().setIncludingDefaultValueFields(false).build();
+        protobufTaskitEngine = ProtobufTaskitEngine.builder().setIncludingDefaultValueFields(false).build();
 
-        message = protobufTranslationEngine.getJsonPrinter().print(expectedInputObject);
+        message = protobufTaskitEngine.getJsonPrinter().print(expectedInputObject);
 
         jsonObject = JsonParser.parseString(message).getAsJsonObject();
         assertFalse(jsonObject.has("integer"));
