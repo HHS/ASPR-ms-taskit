@@ -51,7 +51,7 @@ public class AT_TaskitEngine {
         TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
         TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
                 .addTranslationSpec(testObjectTranslationSpec).addTranslationSpec(testComplexObjectTranslationSpec)
-                .buildWithoutSpecInit();
+                .buildWithoutInit();
 
         assertFalse(testTaskitEngine.isInitialized);
 
@@ -101,7 +101,7 @@ public class AT_TaskitEngine {
         assertThrows(RuntimeException.class, () -> {
             TestTaskitEngine testTaskitEngine2 = TestTaskitEngine.builder()
                     .addTranslationSpec(new TestObjectTranslationSpec())
-                    .addTranslationSpec(testComplexObjectTranslationSpec).buildWithoutSpecInit();
+                    .addTranslationSpec(testComplexObjectTranslationSpec).buildWithoutInit();
 
             testTaskitEngine2.translationSpecsAreInitialized();
         });
@@ -455,10 +455,10 @@ public class AT_TaskitEngine {
         TestObjectTranslationSpec testObjectTranslationSpec3 = new TestObjectTranslationSpec();
 
         TestTaskitEngine testTaskitEngine6 = TestTaskitEngine.builder()
-                .addTranslationSpec(testObjectTranslationSpec2).buildWithoutSpecInit();
+                .addTranslationSpec(testObjectTranslationSpec2).buildWithoutInit();
 
         TestTaskitEngine testTaskitEngine7 = TestTaskitEngine.builder()
-                .addTranslationSpec(testObjectTranslationSpec3).buildWithoutSpecInit();
+                .addTranslationSpec(testObjectTranslationSpec3).buildWithoutInit();
 
         // exact same
         assertEquals(testTaskitEngine1, testTaskitEngine1);

@@ -33,6 +33,7 @@ public enum TaskitCoreError implements ContractError {
         NULL_TRANSLATION_SPEC_INPUT_CLASS("Null TranslationSpec Input Class"),
         NULL_TRANSLATOR("Null Translator"),
         NULL_TRANSLATOR_ID("Null TranslatorId"),
+        TRANSLATORS_WERE_FOUND_WHEN_NOT_EXPECTED("Translators were added to the Taskit Engine but the normal build method was called. Translators that are added must be"),
         UNINITIALIZED_TRANSLATION_SPEC("TranslationSpec not initialized"),
         UNINITIALIZED_TRANSLATORS(
                         "Translators were added to the builder but were not initialized. Make sure to call super.initTranslators() during your custom engine build method"),

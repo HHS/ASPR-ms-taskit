@@ -181,7 +181,7 @@ public final class TaskitEngineManager {
      *                           if the path points to a directory instead of a
      *                           file</li>
      *                           <li>{@linkplain TaskitCoreError#NULL_CLASS_REF}
-     *                           if the object is null</li>
+     *                           if the classRef is null</li>
      *                           <li>{@linkplain TaskitCoreError#NULL_TASKIT_ENGINE_ID}
      *                           if taskitEngineId is null</li>
      *                           <li>{@linkplain TaskitCoreError#NULL_TASKIT_ENGINE}
@@ -190,9 +190,9 @@ public final class TaskitEngineManager {
      * @throws RuntimeException  if the reading of the file encounters an
      *                           IOException
      */
-    public <I> I read(Path path, Class<I> inputClass, TaskitEngineId taskitEngineId) {
+    public <I> I read(Path path, Class<I> classRef, TaskitEngineId taskitEngineId) {
         validatePath(path);
-        validateClass(inputClass);
+        validateClass(classRef);
         validateTaskitEngineId(taskitEngineId);
 
         ITaskitEngine taskitEngine = this.data.taskitEngineIdToEngineMap.get(taskitEngineId);
@@ -200,7 +200,7 @@ public final class TaskitEngineManager {
         validateTaskitEngine(taskitEngine);
 
         try {
-            return taskitEngine.read(path, inputClass);
+            return taskitEngine.read(path, classRef);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -222,7 +222,7 @@ public final class TaskitEngineManager {
      *                           if the path points to a directory instead of a
      *                           file</li>
      *                           <li>{@linkplain TaskitCoreError#NULL_CLASS_REF}
-     *                           if the object is null</li>
+     *                           if the classRef is null</li>
      *                           <li>{@linkplain TaskitCoreError#NULL_TASKIT_ENGINE_ID}
      *                           if taskitEngineId is null</li>
      *                           <li>{@linkplain TaskitCoreError#NULL_TASKIT_ENGINE}
@@ -231,9 +231,9 @@ public final class TaskitEngineManager {
      * @throws RuntimeException  if the reading of the file encounters an
      *                           IOException
      */
-    public <I, T> T readAndTranslate(Path path, Class<I> inputClass, TaskitEngineId taskitEngineId) {
+    public <I, T> T readAndTranslate(Path path, Class<I> classRef, TaskitEngineId taskitEngineId) {
         validatePath(path);
-        validateClass(inputClass);
+        validateClass(classRef);
         validateTaskitEngineId(taskitEngineId);
 
         ITaskitEngine taskitEngine = this.data.taskitEngineIdToEngineMap.get(taskitEngineId);
@@ -241,7 +241,7 @@ public final class TaskitEngineManager {
         validateTaskitEngine(taskitEngine);
 
         try {
-            return taskitEngine.readAndTranslate(path, inputClass);
+            return taskitEngine.readAndTranslate(path, classRef);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -300,7 +300,7 @@ public final class TaskitEngineManager {
      *                           IOException
      */
     public <O> void translateAndWrite(Path path, O object, TaskitEngineId taskitEngineId) {
-        write(path, object, Optional.empty(), taskitEngineId, false);
+        write(path, object, Optional.empty(), taskitEngineId, true);
     }
 
     /**
@@ -345,7 +345,10 @@ public final class TaskitEngineManager {
         write(path, object, Optional.of(outputClass), taskitEngineId, true);
     }
 
-    private <O extends P, P> void write(Path path, O object, Optional<Class<P>> outputClass,
+    /**
+     * package access for testing
+     */
+    <O extends P, P> void write(Path path, O object, Optional<Class<P>> outputClass,
             TaskitEngineId taskitEngineId, boolean translate) {
 
         validatePath(path);

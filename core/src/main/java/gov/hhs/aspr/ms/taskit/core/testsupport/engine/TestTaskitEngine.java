@@ -4,7 +4,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Set;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -15,9 +14,9 @@ import gov.hhs.aspr.ms.taskit.core.engine.ITaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.engine.ITaskitEngineBuilder;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngineId;
-import gov.hhs.aspr.ms.taskit.core.translation.ITranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.Translator;
+import gov.hhs.aspr.ms.taskit.core.translation.TranslatorContext;
 
 public class TestTaskitEngine implements ITaskitEngine {
     private final Data data;
@@ -69,28 +68,15 @@ public class TestTaskitEngine implements ITaskitEngine {
             TestTaskitEngine taskitEngine = new TestTaskitEngine(this.data);
 
             this.data.taskitEngine.init(taskitEngine);
-            this.data.taskitEngine.validateInit();
             return taskitEngine;
         }
 
-        public TestTaskitEngine buildWithoutSpecInit() {
+        public TestTaskitEngine buildWithoutInit() {
             this.taskitEngineBuilder.setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID);
 
             this.data.taskitEngine = taskitEngineBuilder.build();
 
             return new TestTaskitEngine(this.data);
-        }
-
-        public TestTaskitEngine buildWithUnknownType() {
-            this.taskitEngineBuilder.setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID);
-
-            this.data.taskitEngine = taskitEngineBuilder.build();
-
-            TestTaskitEngine taskitEngine = new TestTaskitEngine(this.data);
-
-            this.data.taskitEngine.init(taskitEngine);
-            this.data.taskitEngine.validateInit();
-            return taskitEngine;
         }
 
         @Override
@@ -102,6 +88,8 @@ public class TestTaskitEngine implements ITaskitEngine {
 
         @Override
         public Builder addTranslator(Translator translator) {
+            translator.initialize(new TranslatorContext(this));
+
             this.taskitEngineBuilder.addTranslator(translator);
 
             return this;
@@ -169,11 +157,6 @@ public class TestTaskitEngine implements ITaskitEngine {
     @Override
     public TaskitEngineId getTaskitEngineId() {
         return this.data.taskitEngine.getTaskitEngineId();
-    }
-
-    @Override
-    public Set<ITranslationSpec> getTranslationSpecs() {
-        return this.data.taskitEngine.getTranslationSpecs();
     }
 
     @Override

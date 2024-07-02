@@ -10,7 +10,7 @@ import gov.hhs.aspr.ms.util.errors.ContractException;
  * Note: This class exists because the subclassed TaskitEngine may have
  * different build methods than the abstract one, preventing the associated
  * consumer that this context is used in from just being a consumer of a
- * TaskitEngine.Builder
+ * ITaskitEngineBuilder
  */
 public final class TranslatorContext {
 

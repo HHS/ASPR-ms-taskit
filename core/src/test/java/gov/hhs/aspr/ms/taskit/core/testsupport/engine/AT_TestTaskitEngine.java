@@ -102,7 +102,7 @@ public class AT_TestTaskitEngine {
     @Test
     @UnitTestMethod(target = TestTaskitEngine.Builder.class, name = "buildWithoutSpecInit", args = {})
     public void testBuildWithoutSpecInit() {
-        assertNotNull(TestTaskitEngine.builder().buildWithoutSpecInit());
+        assertNotNull(TestTaskitEngine.builder().buildWithoutInit());
     }
 
     @Test

@@ -16,6 +16,7 @@ import gov.hhs.aspr.ms.util.errors.ContractException;
  */
 public final class Translator {
     private final Data data;
+    private boolean initialized = false;
 
     private Translator(Data data) {
         this.data = data;
@@ -151,13 +152,6 @@ public final class Translator {
     }
 
     /**
-     * Returns the Initialization Consumer
-     */
-    public Consumer<TranslatorContext> getInitializer() {
-        return this.data.initializer;
-    }
-
-    /**
      * Returns the TranslatorId
      */
     public TranslatorId getTranslatorId() {
@@ -169,6 +163,21 @@ public final class Translator {
      */
     public Set<TranslatorId> getTranslatorDependencies() {
         return this.data.dependencies;
+    }
+
+    /** 
+     * sets the initialized flag on this translator to true
+     */
+    public void initialize(TranslatorContext translatorContext) {
+        this.data.initializer.accept(translatorContext);
+        this.initialized = true;
+    }
+
+    /**
+     * Returns the initialized flag of this translator
+     */
+    public boolean isInitialized() {
+        return this.initialized;
     }
 
     @Override

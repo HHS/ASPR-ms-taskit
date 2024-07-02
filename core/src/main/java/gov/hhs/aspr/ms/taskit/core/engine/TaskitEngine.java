@@ -13,7 +13,6 @@ import java.util.Set;
 import gov.hhs.aspr.ms.taskit.core.translation.ITranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.Translator;
-import gov.hhs.aspr.ms.taskit.core.translation.TranslatorContext;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
@@ -137,15 +136,15 @@ public final class TaskitEngine implements ITaskitEngine {
             }
         }
 
-        private void initTranslators() {
-            TranslatorContext translatorContext = new TranslatorContext(this);
-
+        private void validateTranslatorsInitialized() {
             if (!this.translators.isEmpty()) {
 
                 List<Translator> orderedTranslators = new TaskitEngineHelper(translators).getOrderedTranslators();
 
                 for (Translator translator : orderedTranslators) {
-                    translator.getInitializer().accept(translatorContext);
+                    if (!translator.isInitialized()) {
+                        throw new ContractException(TaskitCoreError.UNINITIALIZED_TRANSLATORS);
+                    }
                 }
             }
 
@@ -159,6 +158,16 @@ public final class TaskitEngine implements ITaskitEngine {
          *                           <ul>
          *                           <li>{@link TaskitCoreError#NULL_TASKIT_ENGINE_ID}
          *                           if the engine id was not set</li>
+         *                           <li>{@link TaskitCoreError#DUPLICATE_TRANSLATOR}
+         *                           if a duplicate translator is found</li>
+         *                           <li>{@link TaskitCoreError#MISSING_TRANSLATOR}
+         *                           if an added translator has a unmet dependency</li>
+         *                           <li>{@link TaskitCoreError#CIRCULAR_TRANSLATOR_DEPENDENCIES}
+         *                           if the added translators have a circular dependency
+         *                           graph</li>
+         *                           <li>{@link TaskitCoreError#UNINITIALIZED_TRANSLATORS}
+         *                           if translators were added to the engine but their
+         *                           initialized flag was still set to false</li>
          *                           <li>{@link TaskitCoreError#NO_TRANSLATION_SPECS} if
          *                           no translation specs were added to the engine</li>
          *                           </ul>
@@ -167,8 +176,9 @@ public final class TaskitEngine implements ITaskitEngine {
             // Engine must have an ID
             validateTaskitEngineIdSet();
 
-            // If any translators were added, initialize them
-            initTranslators();
+            // validate the translators that were added
+            // they should have an acyclic dependency tree and also all be initialized
+            validateTranslatorsInitialized();
 
             // There should be at least 1 translation spec added
             validateTranslationSpecsNotEmpty();
@@ -222,20 +232,11 @@ public final class TaskitEngine implements ITaskitEngine {
         /**
          * Add a {@link Translator}
          * 
-         * @throws ContractException
-         *                           <ul>
-         *                           <li>{@linkplain TaskitCoreError#NULL_TRANSLATOR}
-         *                           if translator is null</li>
-         *                           <li>{@linkplain TaskitCoreError#DUPLICATE_TRANSLATOR}
-         *                           if translator has already been added</li>
-         *                           </ul>
+         * @throws ContractException {@linkplain TaskitCoreError#NULL_TRANSLATOR}
+         *                           if translator is null
          */
         public final Builder addTranslator(Translator translator) {
             validateTranslatorNotNull(translator);
-
-            if (this.translators.contains(translator)) {
-                throw new ContractException(TaskitCoreError.DUPLICATE_TRANSLATOR);
-            }
 
             this.translators.add(translator);
 
