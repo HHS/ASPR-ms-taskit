@@ -41,7 +41,7 @@ import gov.hhs.aspr.ms.taskit.protobuf.translation.specs.ULongTranslationSpec;
  * This is a helper class that encompasses all of the primitive translation
  * specs needed for translating to/from the Protobuf {@link Any} type.
  */
-class ProtobufTaskitEngineHelper {
+final class ProtobufTaskitEngineHelper {
     ProtobufTaskitEngineHelper() {
     }
 

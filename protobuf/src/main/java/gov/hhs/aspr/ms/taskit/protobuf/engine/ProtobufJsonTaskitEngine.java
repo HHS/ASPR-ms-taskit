@@ -12,7 +12,6 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.protobuf.Any;
 import com.google.protobuf.Descriptors.Descriptor;
 import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.Message;
@@ -22,35 +21,27 @@ import com.google.protobuf.util.JsonFormat.Parser;
 import com.google.protobuf.util.JsonFormat.Printer;
 import com.google.protobuf.util.JsonFormat.TypeRegistry;
 
-import gov.hhs.aspr.ms.taskit.core.engine.ITaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.engine.ITaskitEngineBuilder;
-import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
-import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngineId;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitCoreError;
-import gov.hhs.aspr.ms.taskit.core.translation.ITranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.Translator;
 import gov.hhs.aspr.ms.taskit.protobuf.translation.ProtobufTranslationSpec;
-import gov.hhs.aspr.ms.taskit.protobuf.translation.specs.AnyTranslationSpec;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
  * Protobuf TaskitEngine that allows for conversion between POJOs and
  * Protobuf Messages, extends {@link TaskitEngine}
  */
-public final class ProtobufJsonTaskitEngine implements ITaskitEngine {
+public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
     private final Data data;
 
-    private ProtobufJsonTaskitEngine(Data data) {
+    private ProtobufJsonTaskitEngine(Data data, Map<String, Class<?>> typeUrlToClassMap, TaskitEngine taskitEngine) {
+        super(typeUrlToClassMap, taskitEngine);
         this.data = data;
     }
 
     private final static class Data {
-        // this is used specifically for Any message types to pack and unpack them
-        private final Map<String, Class<?>> typeUrlToClassMap = new LinkedHashMap<>();
-
-        private TaskitEngine taskitEngine;
-
         // these two fields are used for reading and writing Protobuf Messages to/from
         // JSON
         private Parser jsonParser;
@@ -67,6 +58,11 @@ public final class ProtobufJsonTaskitEngine implements ITaskitEngine {
         private boolean ignoringUnknownFields = true;
         private boolean includingDefaultValueFields = false;
 
+        // this is used specifically for Any message types to pack and unpack them
+        private final Map<String, Class<?>> typeUrlToClassMap = new LinkedHashMap<>();
+
+        private TaskitEngine taskitEngine;
+
         private TaskitEngine.Builder taskitEngineBuilder = TaskitEngine.builder();
 
         private Builder(ProtobufJsonTaskitEngine.Data data) {
@@ -82,14 +78,14 @@ public final class ProtobufJsonTaskitEngine implements ITaskitEngine {
         public ProtobufJsonTaskitEngine build() {
             ProtobufTaskitEngineHelper primitiveTranslationSpecs = new ProtobufTaskitEngineHelper();
 
-            this.data.typeUrlToClassMap.putAll(primitiveTranslationSpecs.getPrimitiveTypeUrlToClassMap());
+            this.typeUrlToClassMap.putAll(primitiveTranslationSpecs.getPrimitiveTypeUrlToClassMap());
 
             primitiveTranslationSpecs.getPrimitiveInputTranslatorSpecMap().values().forEach(
                     (translationSpec) -> this.taskitEngineBuilder.addTranslationSpec(translationSpec));
 
             this.taskitEngineBuilder.setTaskitEngineId(ProtobufTaskitEngineId.JSON_ENGINE_ID);
 
-            this.data.taskitEngine = this.taskitEngineBuilder.build();
+            this.taskitEngine = this.taskitEngineBuilder.build();
 
             TypeRegistry.Builder typeRegistryBuilder = TypeRegistry.newBuilder();
             this.descriptorSet.addAll(new ProtobufTaskitEngineHelper().getPrimitiveDescriptors());
@@ -117,11 +113,12 @@ public final class ProtobufJsonTaskitEngine implements ITaskitEngine {
             }
             this.data.jsonPrinter = printer;
 
-            ProtobufJsonTaskitEngine taskitEngine = new ProtobufJsonTaskitEngine(this.data);
+            ProtobufJsonTaskitEngine protoJsonTaskitEngine = new ProtobufJsonTaskitEngine(this.data,
+                    this.typeUrlToClassMap, this.taskitEngine);
 
-            this.data.taskitEngine.initTranslationSpecs(taskitEngine);
+            this.taskitEngine.init(protoJsonTaskitEngine);
 
-            return taskitEngine;
+            return protoJsonTaskitEngine;
         }
 
         /**
@@ -227,7 +224,7 @@ public final class ProtobufJsonTaskitEngine implements ITaskitEngine {
                 typeUrl = ProtobufTaskitEngineHelper.getDefaultEnum(classRef.asSubclass(ProtocolMessageEnum.class))
                         .getDescriptorForType()
                         .getFullName();
-                this.data.typeUrlToClassMap.putIfAbsent(typeUrl, classRef);
+                this.typeUrlToClassMap.putIfAbsent(typeUrl, classRef);
                 return;
             }
 
@@ -235,7 +232,7 @@ public final class ProtobufJsonTaskitEngine implements ITaskitEngine {
                 Message message = ProtobufTaskitEngineHelper.getDefaultMessage(classRef.asSubclass(Message.class));
                 typeUrl = message.getDescriptorForType().getFullName();
 
-                this.data.typeUrlToClassMap.putIfAbsent(typeUrl, classRef);
+                this.typeUrlToClassMap.putIfAbsent(typeUrl, classRef);
                 this.descriptorSet.add(message.getDescriptorForType());
                 return;
             }
@@ -383,184 +380,6 @@ public final class ProtobufJsonTaskitEngine implements ITaskitEngine {
         Message message = builder.build();
 
         return classRef.cast(message);
-    }
-
-    /**
-     * Given an object of type {@link Any}, will translate it to the resulting
-     * object
-     * <p>
-     * Will ultimately use the {@link AnyTranslationSpec} to accomplish this
-     * </p>
-     * 
-     * @param <T> the return type
-     */
-    public <T> T getObjectFromAny(Any anyValue) {
-        return translateObject(anyValue);
-    }
-
-    /**
-     * Given an object , will translate it to an {@link Any} type
-     * <p>
-     * Will use the {@link AnyTranslationSpec} to accomplish this
-     * </p>
-     */
-    public Any getAnyFromObject(Object object) {
-        return translateObjectAsClassUnsafe(object, Any.class);
-    }
-
-    /**
-     * Given an object , will translate it to an {@link Any} type
-     * <p>
-     * This method call differs from {@link #getAnyFromObject(Object)} in that it
-     * will first translate the object using the safe parent class by calling
-     * {@link #translateObjectAsClassSafe(Object, Class)} and will then use the
-     * {@link AnyTranslationSpec} to wrap the resulting translated object in an
-     * {@link Any}
-     * </p>
-     * 
-     * @param <U> the parent Class
-     * @param <M> the object class
-     * @throws ContractException {@linkplain TaskitCoreError#UNKNOWN_TRANSLATION_SPEC}
-     *                           if no translationSpec was provided for the given
-     *                           parentClassRef
-     */
-    public <U, M extends U> Any getAnyFromObjectAsClassSafe(M object, Class<U> parentClassRef) {
-        U translatedObject = translateObjectAsClassSafe(object, parentClassRef);
-
-        return translateObjectAsClassUnsafe(translatedObject, Any.class);
-    }
-
-    /**
-     * Given an object, uses the class of the object to obtain the translationSpec
-     * and then calls {@link TranslationSpec#translate(Object)}
-     * <p>
-     * this conversion method will be used approx ~90% of the time
-     * </p>
-     * 
-     * @param <T> the return type after translating
-     * @throws ContractException
-     *                           <ul>
-     *                           <li>{@linkplain TaskitCoreError#NULL_OBJECT_FOR_TRANSLATION}
-     *                           if the passed in object is null</li>
-     *                           <li>{@linkplain TaskitCoreError#UNKNOWN_TRANSLATION_SPEC}
-     *                           if no translationSpec was provided for the given
-     *                           objects class</li>
-     *                           </ul>
-     */
-    @Override
-    public <T> T translateObject(Object object) {
-        return this.data.taskitEngine.translateObject(object);
-    }
-
-    /**
-     * Given an object, uses the parent class of the object to obtain the
-     * translationSpec and then calls {@link TranslationSpec#translate(Object)}
-     * <p>
-     * This method call is safe in the sense that the type parameters ensure that
-     * the passed in object is actually a child of the passed in parentClassRef
-     * </p>
-     * <p>
-     * this conversion method will be used approx ~7% of the time
-     * </p>
-     * 
-     * @param <T> the return type after translating
-     * @param <M> the type of the object; extends U
-     * @param <U> the parent type of the object and the class for which
-     *            translationSpec you want to use
-     * @throws ContractException
-     *                           <ul>
-     *                           <li>{@linkplain TaskitCoreError#NULL_OBJECT_FOR_TRANSLATION}
-     *                           if the passed in object is null</li>
-     *                           <li>{@linkplain TaskitCoreError#NULL_CLASS_REF}
-     *                           if the passed in parentClassRef is null</li>
-     *                           <li>{@linkplain TaskitCoreError#UNKNOWN_TRANSLATION_SPEC}
-     *                           if no translationSpec was provided for the given
-     *                           objects class</li>
-     *                           </ul>
-     */
-    @Override
-    public <T, M extends U, U> T translateObjectAsClassSafe(M object, Class<U> classRef) {
-        return this.data.taskitEngine.translateObjectAsClassSafe(object, classRef);
-    }
-
-    /**
-     * Given an object, uses the passed in class to obtain the translationSpec and
-     * then calls {@link TranslationSpec#translate(Object)}
-     * <p>
-     * This method call is unsafe in the sense that the type parameters do not
-     * ensure any relationship between the passed in object and the passed in
-     * classRef.
-     * </p>
-     * <p>
-     * A common use case for using this conversion method would be to call a
-     * translationSpec that will wrap the given object in another object.
-     * </p>
-     * <p>
-     * this conversion method will be used approx ~3% of the time
-     * </p>
-     * 
-     * @param <T> the return type after translating
-     * @param <M> the type of the object
-     * @param <U> the type of the class for which translationSpec you want to use
-     * @throws ContractException
-     *                           <ul>
-     *                           <li>{@linkplain TaskitCoreError#NULL_OBJECT_FOR_TRANSLATION}
-     *                           if the passed in object is null</li>
-     *                           <li>{@linkplain TaskitCoreError#NULL_CLASS_REF}
-     *                           if the passed in objectClassRef is null</li>
-     *                           <li>{@linkplain TaskitCoreError#UNKNOWN_TRANSLATION_SPEC}
-     *                           if no translationSpec was provided for the given
-     *                           objects class</li>
-     *                           </ul>
-     */
-    @Override
-    public <T, M, U> T translateObjectAsClassUnsafe(M object, Class<U> classRef) {
-        return this.data.taskitEngine.translateObjectAsClassUnsafe(object, classRef);
-    }
-
-    /**
-     * Given a typeUrl, returns the associated Protobuf Message type Class, if it
-     * has been previously provided
-     * 
-     * @throws ContractException {@linkplain ProtobufTaskitError#UNKNOWN_TYPE_URL}
-     *                           if the given type url does not exist. This could be
-     *                           because the type url was never provided or the type
-     *                           url itself is malformed
-     */
-    public Class<?> getClassFromTypeUrl(String typeUrl) {
-        if (this.data.typeUrlToClassMap.containsKey(typeUrl)) {
-            return this.data.typeUrlToClassMap.get(typeUrl);
-        }
-
-        throw new ContractException(ProtobufTaskitError.UNKNOWN_TYPE_URL,
-                "Unable to find corresponding class for: " + typeUrl);
-    }
-
-    /**
-     * Returns an instance of the BaseTaskitEngine for this translation engine
-     */
-    @Override
-    public TaskitEngine getTaskitEngine() {
-        return this.data.taskitEngine;
-    }
-
-    /**
-     * returns the {@link TaskitEngineId} of this TaskitEngine
-     * 
-     * guaranteed to NOT be {@link TaskitEngineId#UNKNOWN}
-     */
-    @Override
-    public TaskitEngineId getTaskitEngineId() {
-        return this.data.taskitEngine.getTaskitEngineId();
-    }
-
-    /**
-     * Returns a set of all {@link TranslationSpec}s associated with this
-     * TaskitEngine
-     */
-    @Override
-    public Set<ITranslationSpec> getTranslationSpecs() {
-        return this.data.taskitEngine.getTranslationSpecs();
     }
 
 }

@@ -53,7 +53,7 @@ public class AnyTranslationSpec extends ProtobufTranslationSpec<Any, Object> {
             message = this.taskitEngine.translateObjectAsClassSafe(Enum.class.cast(appObject), Enum.class);
         }
 
-        // in the event that the object was translateed BEFORE calling this
+        // in the event that the object was translated BEFORE calling this
         // translationSpec, there is no need to translate it again.
         else if (Message.class.isAssignableFrom(appObject.getClass())) {
             message = Message.class.cast(appObject);
