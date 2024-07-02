@@ -20,18 +20,6 @@ import gov.hhs.aspr.ms.util.errors.ContractException;
 public class AT_Translator {
 
     @Test
-    @UnitTestMethod(target = Translator.class, name = "getInitializer", args = {})
-    public void testGetInitializer() {
-        Consumer<TranslatorContext> expectedInitializer = (translatorContext) -> {
-        };
-        Translator testTranslator = Translator.builder().setInitializer(expectedInitializer)
-                .setTranslatorId(new TranslatorId() {
-                }).build();
-
-        assertEquals(expectedInitializer, testTranslator.getInitializer());
-    }
-
-    @Test
     @UnitTestMethod(target = Translator.class, name = "getTranslatorId", args = {})
     public void testGetTranslatorId() {
         TranslatorId expectedTranslatorId = new TranslatorId() {

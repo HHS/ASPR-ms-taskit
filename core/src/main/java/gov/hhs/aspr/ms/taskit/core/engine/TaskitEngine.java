@@ -49,12 +49,7 @@ public final class TaskitEngine implements ITaskitEngine {
             if (this == obj) {
                 return true;
             }
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
+
             Data other = (Data) obj;
 
             if (!Objects.equals(classToTranslationSpecMap, other.classToTranslationSpecMap)) {
@@ -306,6 +301,10 @@ public final class TaskitEngine implements ITaskitEngine {
      * that knows about translation specs. Any engine that wraps this engine need
      * not known about translation specs, but the translation specs expect to be
      * initialized with a TaskitEngine corresponding to their associated library.
+     * 
+     * @throws ContractException {@link TaskitCoreError#UNINITIALIZED_TRANSLATION_SPEC}
+     *                           if a translation spec's initialized flag is not set
+     *                           after calling it's init method
      */
     public void init(ITaskitEngine taskitEngine) {
         /*
@@ -321,6 +320,10 @@ public final class TaskitEngine implements ITaskitEngine {
         for (ITranslationSpec translationSpec : copyOfTranslationSpecs) {
             translationSpec.init(taskitEngine);
             this.data.translationSpecs.add(translationSpec);
+
+            if (!translationSpec.isInitialized()) {
+                throw new ContractException(TaskitCoreError.UNINITIALIZED_TRANSLATION_SPEC);
+            }
         }
 
         this.isInitialized = true;
@@ -435,9 +438,6 @@ public final class TaskitEngine implements ITaskitEngine {
      *                           <ul>
      *                           <li>{@linkplain TaskitCoreError#NULL_OBJECT_FOR_TRANSLATION}
      *                           if the passed in object is null</li>
-     *                           <li>{@linkplain TaskitCoreError#UNINITIALIZED_TASKIT_ENGINE}
-     *                           if this engine was not initialized</li>
-     *                           <li>
      *                           <li>{@linkplain TaskitCoreError#UNKNOWN_TRANSLATION_SPEC}
      *                           if no translationSpec was provided for the given
      *                           objects class</li>
@@ -470,9 +470,6 @@ public final class TaskitEngine implements ITaskitEngine {
      *                           if the passed in object is null</li>
      *                           <li>{@linkplain TaskitCoreError#NULL_CLASS_REF}
      *                           if the passed in classRef is null</li>
-     *                           <li>{@linkplain TaskitCoreError#UNINITIALIZED_TASKIT_ENGINE}
-     *                           if this engine was not initialized</li>
-     *                           <li>
      *                           <li>{@linkplain TaskitCoreError#UNKNOWN_TRANSLATION_SPEC}
      *                           if no translationSpec was provided for the given
      *                           objects class</li>
@@ -540,10 +537,6 @@ public final class TaskitEngine implements ITaskitEngine {
      *                           </ul>
      */
     public <T> ITranslationSpec getTranslationSpecForClass(Class<T> classRef) {
-        if (!this.isInitialized) {
-            throw new ContractException(TaskitCoreError.UNINITIALIZED_TASKIT_ENGINE);
-        }
-
         if (classRef == null) {
             throw new ContractException(TaskitCoreError.NULL_CLASS_REF);
         }

@@ -152,6 +152,13 @@ public final class Translator {
     }
 
     /**
+     * package access for testing
+     */
+    Consumer<TranslatorContext> getInitializer() {
+        return this.data.initializer;
+    }
+
+    /**
      * Returns the TranslatorId
      */
     public TranslatorId getTranslatorId() {
@@ -165,7 +172,7 @@ public final class Translator {
         return this.data.dependencies;
     }
 
-    /** 
+    /**
      * sets the initialized flag on this translator to true
      */
     public void initialize(TranslatorContext translatorContext) {

@@ -27,14 +27,14 @@ public final class TaskitEngineTestHelper {
         // show that the translation specs are retrievable by their own app and input
         // classes
         assertEquals(testObjectTranslationSpec,
-                testTaskitEngine.getTranslationSpecForClass(testObjectTranslationSpec.getAppObjectClass()));
+                testTaskitEngine.getTaskitEngine().getTranslationSpecForClass(testObjectTranslationSpec.getAppObjectClass()));
         assertEquals(testObjectTranslationSpec,
-                testTaskitEngine.getTranslationSpecForClass(testObjectTranslationSpec.getInputObjectClass()));
+                testTaskitEngine.getTaskitEngine().getTranslationSpecForClass(testObjectTranslationSpec.getInputObjectClass()));
 
         assertEquals(testComplexObjectTranslationSpec,
-                testTaskitEngine.getTranslationSpecForClass(testComplexObjectTranslationSpec.getAppObjectClass()));
+                testTaskitEngine.getTaskitEngine().getTranslationSpecForClass(testComplexObjectTranslationSpec.getAppObjectClass()));
         assertEquals(testComplexObjectTranslationSpec, testTaskitEngine
-                .getTranslationSpecForClass(testComplexObjectTranslationSpec.getInputObjectClass()));
+                .getTaskitEngine().getTranslationSpecForClass(testComplexObjectTranslationSpec.getInputObjectClass()));
 
         builder.clearBuilder();
         // preconditions

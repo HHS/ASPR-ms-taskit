@@ -55,7 +55,7 @@ public class TestTaskitEngine implements ITaskitEngine {
             this.data = data;
         }
 
-        void clearBuilder() {
+        public void clearBuilder() {
             this.data = new Data();
         }
 

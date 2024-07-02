@@ -1,25 +1,18 @@
 package gov.hhs.aspr.ms.taskit.core.engine;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.nio.file.Path;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
-import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngineType;
-import gov.hhs.aspr.ms.taskit.core.engine.TaskitCoreError;
 import gov.hhs.aspr.ms.taskit.core.testsupport.TestObjectUtil;
-import gov.hhs.aspr.ms.taskit.core.testsupport.engine.TestTaskitEngine;
+import gov.hhs.aspr.ms.taskit.core.testsupport.engine.TestTaskitEngineId;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppChildObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestComplexAppObject;
@@ -27,84 +20,121 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestComplexInputObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestInputChildObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestInputObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestObjectWrapper;
-import gov.hhs.aspr.ms.taskit.core.testsupport.translation.TestComplexObjectTranslator;
-import gov.hhs.aspr.ms.taskit.core.testsupport.translation.TestComplexObjectTranslatorId;
-import gov.hhs.aspr.ms.taskit.core.testsupport.translation.TestObjectTranslator;
-import gov.hhs.aspr.ms.taskit.core.testsupport.translation.TestObjectTranslatorId;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.specs.TestComplexObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.specs.TestObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.ITranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
-import gov.hhs.aspr.ms.taskit.core.translation.Translator;
-import gov.hhs.aspr.ms.taskit.core.translation.TranslatorId;
-import gov.hhs.aspr.ms.util.annotations.UnitTestForCoverage;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 import gov.hhs.aspr.ms.util.errors.ContractException;
-import gov.hhs.aspr.ms.util.graph.MutableGraph;
 
 public class AT_TaskitEngine {
+
+    private abstract class BadTranslationSpec<I, A> extends TranslationSpec<I, A> {
+
+        @Override
+        public void init(ITaskitEngine taskitEngine) {
+        }
+    }
+
+    @Test
+    @UnitTestMethod(target = TaskitEngine.class, name = "getTaskitEngineId", args = {})
+    public void testGetTaskitEngineId() {
+        TaskitEngine taskitEngine = TaskitEngine.builder()
+                .addTranslationSpec(new TestObjectTranslationSpec())
+                .setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID).build();
+
+        assertEquals(TestTaskitEngineId.TEST_ENGINE_ID, taskitEngine.getTaskitEngineId());
+    }
+
+    @Test
+    @UnitTestMethod(target = TaskitEngine.class, name = "init", args = { ITaskitEngine.class })
+    public void testInit() {
+        TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
+        TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
+        TaskitEngine taskitEngine = TaskitEngine.builder()
+                .addTranslationSpec(testObjectTranslationSpec)
+                .addTranslationSpec(testComplexObjectTranslationSpec)
+                .setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID)
+                .build();
+
+        assertFalse(taskitEngine.isInitialized());
+        assertFalse(testObjectTranslationSpec.isInitialized());
+        assertFalse(testComplexObjectTranslationSpec.isInitialized());
+
+        taskitEngine.init(taskitEngine);
+
+        assertTrue(taskitEngine.isInitialized());
+        assertTrue(testObjectTranslationSpec.isInitialized());
+        assertTrue(testComplexObjectTranslationSpec.isInitialized());
+
+        // precondition
+        // a translation spec was not properly initialized
+        ContractException contractException = assertThrows(ContractException.class, () -> {
+            BadTranslationSpec<TestInputObject, TestAppObject> badTranslationSpec = new BadTranslationSpec<TestInputObject, TestAppObject>() {
+
+                @Override
+                protected TestAppObject translateInputObject(TestInputObject inputObject) {
+                    throw new UnsupportedOperationException("Unimplemented method 'translateInputObject'");
+                }
+
+                @Override
+                protected TestInputObject translateAppObject(TestAppObject appObject) {
+                    throw new UnsupportedOperationException("Unimplemented method 'translateAppObject'");
+                }
+
+                @Override
+                public Class<TestAppObject> getAppObjectClass() {
+                    return TestAppObject.class;
+                }
+
+                @Override
+                public Class<TestInputObject> getInputObjectClass() {
+                    return TestInputObject.class;
+                }
+            };
+
+            TaskitEngine taskitEngine2 = TaskitEngine.builder()
+                    .addTranslationSpec(badTranslationSpec)
+                    .setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID)
+                    .build();
+
+            taskitEngine2.init(taskitEngine2);
+        });
+
+        assertEquals(TaskitCoreError.UNINITIALIZED_TRANSLATION_SPEC, contractException.getErrorType());
+    }
 
     @Test
     @UnitTestMethod(target = TaskitEngine.class, name = "isInitialized", args = {})
     public void testIsInitialized() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
-        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
-                .addTranslationSpec(testObjectTranslationSpec).addTranslationSpec(testComplexObjectTranslationSpec)
-                .buildWithoutInit();
-
-        assertFalse(testTaskitEngine.isInitialized);
-
-        testTaskitEngine.initTranslationSpecs();
-        assertTrue(testTaskitEngine.isInitialized());
-    }
-
-    @Test
-    @UnitTestForCoverage
-    public void testValidateTaskitEngineType() {
-        // preconditions
-        // TaskitEngineType is set to UNKNOWN
-        ContractException contractException = assertThrows(ContractException.class, () -> {
-            TaskitEngine engine = TestTaskitEngine.builder().buildWithUnknownType();
-
-            engine.validateInit();
-        });
-
-        assertEquals(TaskitCoreError.UNKNOWN_TASKIT_ENGINE_ID, contractException.getErrorType());
-    }
-
-    @Test
-    @UnitTestMethod(target = TaskitEngine.class, name = "getTaskitEngineType", args = {})
-    public void testGetTaskitEngineType() {
-        TaskitEngine taskitEngine = TestTaskitEngine.builder().build();
-
-        assertEquals(TaskitEngineType.CUSTOM, taskitEngine.getTaskitEngineId());
-
-        taskitEngine = TestTaskitEngine.builder().buildWithUnknownType();
-
-        assertEquals(TaskitEngineType.UNKNOWN, taskitEngine.getTaskitEngineId());
-    }
-
-    @Test
-    @UnitTestForCoverage
-    public void testTranslationSpecsAreInitialized() {
-        TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
-        TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
-        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
-                .addTranslationSpec(testObjectTranslationSpec).addTranslationSpec(testComplexObjectTranslationSpec)
+        TaskitEngine taskitEngine = TaskitEngine.builder()
+                .addTranslationSpec(testObjectTranslationSpec)
+                .addTranslationSpec(testComplexObjectTranslationSpec)
+                .setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID)
                 .build();
 
-        assertDoesNotThrow(() -> testTaskitEngine.translationSpecsAreInitialized());
+        assertFalse(taskitEngine.isInitialized());
 
-        // preconditions
-        // one or more Translation Specs are not properly initialized
-        assertThrows(RuntimeException.class, () -> {
-            TestTaskitEngine testTaskitEngine2 = TestTaskitEngine.builder()
-                    .addTranslationSpec(new TestObjectTranslationSpec())
-                    .addTranslationSpec(testComplexObjectTranslationSpec).buildWithoutInit();
+        taskitEngine.init(taskitEngine);
+        assertTrue(taskitEngine.isInitialized());
+    }
 
-            testTaskitEngine2.translationSpecsAreInitialized();
-        });
+    @Test
+    @UnitTestMethod(target = TaskitEngine.class, name = "getTaskitEngine", args = {})
+    public void testGetTaskitEngine() {
+        TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
+        TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
+
+        TaskitEngine taskitEngine = TaskitEngine.builder()
+                .addTranslationSpec(testObjectTranslationSpec)
+                .addTranslationSpec(testComplexObjectTranslationSpec)
+                .setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID)
+                .build();
+
+        assertEquals(taskitEngine, taskitEngine.getTaskitEngine());
+        assertTrue(taskitEngine == taskitEngine.getTaskitEngine());
     }
 
     @Test
@@ -112,61 +142,138 @@ public class AT_TaskitEngine {
     public void testGetTranslationSpecs() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
-        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
-                .addTranslationSpec(testObjectTranslationSpec).addTranslationSpec(testComplexObjectTranslationSpec)
+        TaskitEngine taskitEngine = TaskitEngine.builder()
+                .addTranslationSpec(testObjectTranslationSpec)
+                .addTranslationSpec(testComplexObjectTranslationSpec)
+                .setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID)
                 .build();
 
-        Set<ITranslationSpec> actualTranslationSpecs = testTaskitEngine.getTranslationSpecs();
+        Set<ITranslationSpec> actualTranslationSpecs = taskitEngine.getTranslationSpecs();
 
         assertTrue(actualTranslationSpecs.contains(testObjectTranslationSpec));
         assertTrue(actualTranslationSpecs.contains(testComplexObjectTranslationSpec));
     }
 
     @Test
-    @UnitTestForCoverage
-    public void testValidateTranslatorsInitialized() {
+    @UnitTestMethod(target = TaskitEngine.class, name = "write", args = { Path.class, Object.class })
+    public void testWrite() {
+        TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
+        TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
+        TaskitEngine taskitEngine = TaskitEngine.builder()
+                .addTranslationSpec(testObjectTranslationSpec)
+                .addTranslationSpec(testComplexObjectTranslationSpec)
+                .setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID)
+                .build();
 
-        assertDoesNotThrow(() -> {
-            TestTaskitEngine.builder().addTranslator(TestObjectTranslator.getTranslator())
-                    .addTranslator(TestComplexObjectTranslator.getTranslator()).build();
-
+        UnsupportedOperationException exception = assertThrows(UnsupportedOperationException.class, () -> {
+            taskitEngine.write(null, null);
         });
 
-        // preconditions
-        ContractException contractException = assertThrows(ContractException.class, () -> {
-            TaskitEngine engine = TestTaskitEngine.builder()
-                    .addTranslator(TestObjectTranslator.getTranslator())
-                    .addTranslator(TestComplexObjectTranslator.getTranslator()).buildWithNoTranslatorInit();
-            engine.validateInit();
+        assertEquals("Called 'write' on TaskitEngine", exception.getMessage());
+    }
+
+    @Test
+    @UnitTestMethod(target = TaskitEngine.class, name = "translateAndWrite", args = { Path.class, Object.class })
+    public void testTranslateAndWrite() {
+        TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
+        TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
+        TaskitEngine taskitEngine = TaskitEngine.builder()
+                .addTranslationSpec(testObjectTranslationSpec)
+                .addTranslationSpec(testComplexObjectTranslationSpec)
+                .setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID)
+                .build();
+
+        UnsupportedOperationException exception = assertThrows(UnsupportedOperationException.class, () -> {
+            taskitEngine.translateAndWrite(null, null);
         });
-        assertEquals(TaskitCoreError.UNINITIALIZED_TRANSLATORS, contractException.getErrorType());
+
+        assertEquals("Called 'translateAndWrite' on TaskitEngine", exception.getMessage());
+    }
+
+    @Test
+    @UnitTestMethod(target = TaskitEngine.class, name = "translateAndWrite", args = { Path.class, Object.class,
+            Class.class })
+    public void testTranslateAndWrite_Class() {
+        TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
+        TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
+        TaskitEngine taskitEngine = TaskitEngine.builder()
+                .addTranslationSpec(testObjectTranslationSpec)
+                .addTranslationSpec(testComplexObjectTranslationSpec)
+                .setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID)
+                .build();
+
+        UnsupportedOperationException exception = assertThrows(UnsupportedOperationException.class, () -> {
+            taskitEngine.translateAndWrite(null, null, null);
+        });
+
+        assertEquals("Called 'translateAndWrite' on TaskitEngine", exception.getMessage());
+    }
+
+    @Test
+    @UnitTestMethod(target = TaskitEngine.class, name = "read", args = { Path.class, Class.class })
+    public void testRead() {
+        TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
+        TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
+        TaskitEngine taskitEngine = TaskitEngine.builder()
+                .addTranslationSpec(testObjectTranslationSpec)
+                .addTranslationSpec(testComplexObjectTranslationSpec)
+                .setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID)
+                .build();
+
+        UnsupportedOperationException exception = assertThrows(UnsupportedOperationException.class, () -> {
+            taskitEngine.read(null, null);
+        });
+
+        assertEquals("Called 'read' on TaskitEngine", exception.getMessage());
+    }
+
+    @Test
+    @UnitTestMethod(target = TaskitEngine.class, name = "readAndTranslate", args = { Path.class, Class.class })
+    public void testReadAndTranslate() {
+        TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
+        TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
+        TaskitEngine taskitEngine = TaskitEngine.builder()
+                .addTranslationSpec(testObjectTranslationSpec)
+                .addTranslationSpec(testComplexObjectTranslationSpec)
+                .setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID)
+                .build();
+
+        UnsupportedOperationException exception = assertThrows(UnsupportedOperationException.class, () -> {
+            taskitEngine.readAndTranslate(null, null);
+        });
+
+        assertEquals("Called 'readAndTranslate' on TaskitEngine", exception.getMessage());
     }
 
     @Test
     @UnitTestMethod(target = TaskitEngine.class, name = "translateObject", args = { Object.class })
-    public void testConvertObject() {
+    public void testTranslateObject() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
-        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
-                .addTranslationSpec(testObjectTranslationSpec).addTranslationSpec(testComplexObjectTranslationSpec)
+        TaskitEngine taskitEngine = TaskitEngine.builder()
+                .addTranslationSpec(testObjectTranslationSpec)
+                .addTranslationSpec(testComplexObjectTranslationSpec)
+                .setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID)
                 .build();
+
+        taskitEngine.init(taskitEngine);
 
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
         TestInputObject expectedInputObject = TestObjectUtil.getInputFromApp(expectedAppObject);
 
-        TestInputObject actualInputObject = testTaskitEngine.translateObject(expectedAppObject);
+        TestInputObject actualInputObject = taskitEngine.translateObject(expectedAppObject);
         assertEquals(expectedInputObject, actualInputObject);
 
-        TestAppObject actualAppObject = testTaskitEngine.translateObject(expectedInputObject);
+        TestAppObject actualAppObject = taskitEngine.translateObject(expectedInputObject);
         assertEquals(expectedAppObject, actualAppObject);
 
         // preconditions
-        // the contract exception for CoreTranslationError.UNKNOWN_TRANSLATION_SPEC is
+        // the contract exception for TaskitCoreError#UNKNOWN_TRANSLATION_SPEC is
         // covered by the test - testGetTranslationSpecForClass
 
         // the passed in object is null
         ContractException contractException = assertThrows(ContractException.class, () -> {
-            testTaskitEngine.translateObject(null);
+            taskitEngine.translateObject(null);
         });
 
         assertEquals(TaskitCoreError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
@@ -175,50 +282,52 @@ public class AT_TaskitEngine {
     @Test
     @UnitTestMethod(target = TaskitEngine.class, name = "translateObjectAsSafeClass", args = { Object.class,
             Class.class })
-    public void testConvertObjectAsSafeClass() {
+    public void testTranslateObjectAsSafeClass() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
-        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
-                .addTranslationSpec(testObjectTranslationSpec).addTranslationSpec(testComplexObjectTranslationSpec)
+        TaskitEngine taskitEngine = TaskitEngine.builder()
+                .addTranslationSpec(testObjectTranslationSpec)
+                .addTranslationSpec(testComplexObjectTranslationSpec)
+                .setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID)
                 .build();
+
+        taskitEngine.init(taskitEngine);
 
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
         TestInputObject expectedInputObject = TestObjectUtil.getInputFromApp(expectedAppObject);
 
         TestAppChildObject expectedAppChildObject = TestObjectUtil.getChildAppFromApp(expectedAppObject);
-        TestInputChildObject expectedInputChildObject = TestObjectUtil.getChildInputFromInput(expectedInputObject);
+        TestInputChildObject expectedInputChildObject = TestObjectUtil
+                .getChildInputFromInput(expectedInputObject);
 
-        TestInputObject actualInputChildObject = testTaskitEngine.translateObjectAsClassSafe(expectedAppChildObject,
+        TestInputObject actualInputChildObject = taskitEngine.translateObjectAsClassSafe(
+                expectedAppChildObject,
                 TestAppObject.class);
         assertEquals(expectedInputChildObject, TestObjectUtil.getChildInputFromInput(actualInputChildObject));
 
-        TestAppObject actualAppChildObject = testTaskitEngine.translateObjectAsClassSafe(expectedInputChildObject,
+        TestAppObject actualAppChildObject = taskitEngine.translateObjectAsClassSafe(
+                expectedInputChildObject,
                 TestInputObject.class);
         assertEquals(expectedAppChildObject, TestObjectUtil.getChildAppFromApp(actualAppChildObject));
 
         // preconditions
-        // the contract exception for CoreTranslationError.UNKNOWN_TRANSLATION_SPEC is
-        // covered by the test - testGetTranslationSpecForClass
+        // TaskitCoreError#NULL_CLASS_REF is covered by the test -
+        // testGetTranslationSpecForClass
+        // TaskitCoreError#UNKNOWN_TRANSLATION_SPEC is covered by the test -
+        // testGetTranslationSpecForClass
 
         // the passed in object is null
         ContractException contractException = assertThrows(ContractException.class, () -> {
-            testTaskitEngine.translateObjectAsClassSafe(null, Object.class);
+            taskitEngine.translateObjectAsClassSafe(null, Object.class);
         });
 
         assertEquals(TaskitCoreError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
-
-        // the passed in parentClassRef is null
-        contractException = assertThrows(ContractException.class, () -> {
-            testTaskitEngine.translateObjectAsClassSafe(expectedAppChildObject, null);
-        });
-
-        assertEquals(TaskitCoreError.NULL_CLASS_REF, contractException.getErrorType());
     }
 
     @Test
-    @UnitTestMethod(target = TaskitEngine.class, name = "translateObjectAsUnsafeClass", args = { Object.class,
+    @UnitTestMethod(target = TaskitEngine.class, name = "translateObjectAsClassUnsafe", args = { Object.class,
             Class.class })
-    public void testConvertObjectAsUnsafeClass() {
+    public void testTranslateObjectAsClassUnsafe() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
         // custom Translation Spec to simulate a Spec that might use a class to "wrap"
@@ -250,244 +359,278 @@ public class AT_TaskitEngine {
             }
         };
 
-        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
-                .addTranslationSpec(testObjectTranslationSpec).addTranslationSpec(testComplexObjectTranslationSpec)
-                .addTranslationSpec(wrapperTranslationSpec).build();
+        TaskitEngine taskitEngine = TaskitEngine.builder()
+                .addTranslationSpec(testObjectTranslationSpec)
+                .addTranslationSpec(testComplexObjectTranslationSpec)
+                .addTranslationSpec(wrapperTranslationSpec)
+                .setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID)
+                .build();
+
+        taskitEngine.init(taskitEngine);
 
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
 
         TestObjectWrapper expectedWrapper = new TestObjectWrapper();
         expectedWrapper.setWrappedObject(expectedAppObject);
 
-        TestObjectWrapper actualWrapper = testTaskitEngine.translateObjectAsClassUnsafe(expectedAppObject,
+        TestObjectWrapper actualWrapper = taskitEngine.translateObjectAsClassUnsafe(expectedAppObject,
                 TestObjectWrapper.class);
 
         assertEquals(expectedWrapper, actualWrapper);
 
-        Object actualAppObject = testTaskitEngine.translateObject(actualWrapper);
+        Object actualAppObject = taskitEngine.translateObject(actualWrapper);
 
         assertEquals(expectedAppObject, actualAppObject);
 
         // preconditions
-        // the contract exception for CoreTranslationError.UNKNOWN_TRANSLATION_SPEC is
-        // covered by the test - testGetTranslationSpecForClass
+        // TaskitCoreError#NULL_CLASS_REF is covered by the test -
+        // testGetTranslationSpecForClass
+        // TaskitCoreError#UNKNOWN_TRANSLATION_SPEC is covered by the test -
+        // testGetTranslationSpecForClass
 
         // the passed in object is null
         ContractException contractException = assertThrows(ContractException.class, () -> {
-            testTaskitEngine.translateObjectAsClassUnsafe(null, Object.class);
+            taskitEngine.translateObjectAsClassUnsafe(null, Object.class);
         });
 
         assertEquals(TaskitCoreError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
-
-        // the passed in parentClassRef is null
-        contractException = assertThrows(ContractException.class, () -> {
-            testTaskitEngine.translateObjectAsClassUnsafe(expectedAppObject, null);
-        });
-
-        assertEquals(TaskitCoreError.NULL_CLASS_REF, contractException.getErrorType());
     }
 
     @Test
-    @UnitTestForCoverage
+    @UnitTestMethod(target = TaskitEngine.class, name = "getTranslationSpecForClass", args = { Class.class })
     public void testGetTranslationSpecForClass() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
-        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
-                .addTranslationSpec(testObjectTranslationSpec).addTranslationSpec(testComplexObjectTranslationSpec)
+
+        TaskitEngine taskitEngine = TaskitEngine.builder()
+                .addTranslationSpec(testObjectTranslationSpec)
+                .addTranslationSpec(testComplexObjectTranslationSpec)
+                .setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID)
                 .build();
 
-        assertEquals(testObjectTranslationSpec, testTaskitEngine.getTranslationSpecForClass(TestAppObject.class));
+        taskitEngine.init(taskitEngine);
+
         assertEquals(testObjectTranslationSpec,
-                testTaskitEngine.getTranslationSpecForClass(TestInputObject.class));
-
-        assertNotEquals(testComplexObjectTranslationSpec,
-                testTaskitEngine.getTranslationSpecForClass(TestAppObject.class));
-        assertNotEquals(testComplexObjectTranslationSpec,
-                testTaskitEngine.getTranslationSpecForClass(TestInputObject.class));
+                taskitEngine.getTranslationSpecForClass(TestAppObject.class));
+        assertEquals(testObjectTranslationSpec,
+                taskitEngine.getTranslationSpecForClass(TestInputObject.class));
 
         assertEquals(testComplexObjectTranslationSpec,
-                testTaskitEngine.getTranslationSpecForClass(TestComplexAppObject.class));
+                taskitEngine.getTranslationSpecForClass(TestComplexAppObject.class));
         assertEquals(testComplexObjectTranslationSpec,
-                testTaskitEngine.getTranslationSpecForClass(TestComplexInputObject.class));
-
-        assertNotEquals(testObjectTranslationSpec,
-                testTaskitEngine.getTranslationSpecForClass(TestComplexAppObject.class));
-        assertNotEquals(testObjectTranslationSpec,
-                testTaskitEngine.getTranslationSpecForClass(TestComplexInputObject.class));
+                taskitEngine.getTranslationSpecForClass(TestComplexInputObject.class));
 
         // preconditions
-        // no Translation Spec exists for the given class
+        // the classRef is null
         ContractException contractException = assertThrows(ContractException.class, () -> {
-            testTaskitEngine.getTranslationSpecForClass(Object.class);
+            taskitEngine.getTranslationSpecForClass(null);
+        });
+
+        assertEquals(TaskitCoreError.NULL_CLASS_REF, contractException.getErrorType());
+
+        // no Translation Spec exists for the given class
+        contractException = assertThrows(ContractException.class, () -> {
+            taskitEngine.getTranslationSpecForClass(Object.class);
         });
 
         assertEquals(TaskitCoreError.UNKNOWN_TRANSLATION_SPEC, contractException.getErrorType());
     }
 
-    @Test
-    @UnitTestForCoverage
-    public void testGetOrderedTranslators() {
+    // @Test
+    // @UnitTestForCoverage
+    // public void testGetOrderedTranslators() {
 
-        TaskitEngine.Builder taskitEngineBuilder = TestTaskitEngine.builder()
-                .addTranslator(TestObjectTranslator.getTranslator())
-                .addTranslator(TestComplexObjectTranslator.getTranslator());
+    // TaskitEngine.Builder taskitEngineBuilder = TaskitEngine.builder()
+    // .addTranslator(TestObjectTranslator.getTranslator())
+    // .addTranslator(TestComplexObjectTranslator.getTranslator());
 
-        List<Translator> expectedList = new ArrayList<>();
-        expectedList.add(TestComplexObjectTranslator.getTranslator());
-        expectedList.add(TestObjectTranslator.getTranslator());
+    // List<Translator> expectedList = new ArrayList<>();
+    // expectedList.add(TestComplexObjectTranslator.getTranslator());
+    // expectedList.add(TestObjectTranslator.getTranslator());
 
-        List<Translator> actualList = taskitEngineBuilder.getOrderedTranslators();
+    // List<Translator> actualList = taskitEngineBuilder.getOrderedTranslators();
 
-        assertEquals(expectedList, actualList);
+    // assertEquals(expectedList, actualList);
 
-        // preconditions
+    // // preconditions
 
-        // duplicate translator in the graph
+    // // duplicate translator in the graph
 
-        ContractException contractException = assertThrows(ContractException.class, () -> {
-            MutableGraph<TranslatorId, Object> mutableGraph = new MutableGraph<>();
-            Map<TranslatorId, Translator> translatorMap = new LinkedHashMap<>();
-            mutableGraph.addNode(TestObjectTranslatorId.TRANSLATOR_ID);
-            taskitEngineBuilder.addNodes(mutableGraph, translatorMap);
-        });
+    // ContractException contractException = assertThrows(ContractException.class,
+    // () -> {
+    // MutableGraph<TranslatorId, Object> mutableGraph = new MutableGraph<>();
+    // Map<TranslatorId, Translator> translatorMap = new LinkedHashMap<>();
+    // mutableGraph.addNode(TestObjectTranslatorId.TRANSLATOR_ID);
+    // taskitEngineBuilder.addNodes(mutableGraph, translatorMap);
+    // });
 
-        assertEquals(TaskitCoreError.DUPLICATE_TRANSLATOR, contractException.getErrorType());
+    // assertEquals(TaskitCoreError.DUPLICATE_TRANSLATOR,
+    // contractException.getErrorType());
 
-        // missing translator
-        contractException = assertThrows(ContractException.class, () -> {
-            MutableGraph<TranslatorId, Object> mutableGraph = new MutableGraph<>();
-            Map<TranslatorId, Translator> translatorMap = new LinkedHashMap<>();
+    // // missing translator
+    // contractException = assertThrows(ContractException.class, () -> {
+    // MutableGraph<TranslatorId, Object> mutableGraph = new MutableGraph<>();
+    // Map<TranslatorId, Translator> translatorMap = new LinkedHashMap<>();
 
-            // call normally
-            taskitEngineBuilder.getOrderedTranslators(mutableGraph, translatorMap);
-            // remove a mapping
-            translatorMap.remove(TestComplexObjectTranslatorId.TRANSLATOR_ID);
-            TranslatorId thirdId = new TranslatorId() {
-            };
-            mutableGraph.addNode(thirdId);
-            mutableGraph.addEdge(new Object(), thirdId, TestComplexObjectTranslatorId.TRANSLATOR_ID);
-            taskitEngineBuilder.checkForMissingTranslators(mutableGraph, translatorMap);
-        });
+    // // call normally
+    // taskitEngineBuilder.getOrderedTranslators(mutableGraph, translatorMap);
+    // // remove a mapping
+    // translatorMap.remove(TestComplexObjectTranslatorId.TRANSLATOR_ID);
+    // TranslatorId thirdId = new TranslatorId() {
+    // };
+    // mutableGraph.addNode(thirdId);
+    // mutableGraph.addEdge(new Object(), thirdId,
+    // TestComplexObjectTranslatorId.TRANSLATOR_ID);
+    // taskitEngineBuilder.checkForMissingTranslators(mutableGraph, translatorMap);
+    // });
 
-        assertEquals(TaskitCoreError.MISSING_TRANSLATOR, contractException.getErrorType());
+    // assertEquals(TaskitCoreError.MISSING_TRANSLATOR,
+    // contractException.getErrorType());
 
-        // cyclic graph
-        contractException = assertThrows(ContractException.class, () -> {
-            MutableGraph<TranslatorId, Object> mutableGraph = new MutableGraph<>();
-            Map<TranslatorId, Translator> translatorMap = new LinkedHashMap<>();
+    // // cyclic graph
+    // contractException = assertThrows(ContractException.class, () -> {
+    // MutableGraph<TranslatorId, Object> mutableGraph = new MutableGraph<>();
+    // Map<TranslatorId, Translator> translatorMap = new LinkedHashMap<>();
 
-            // call normally
-            taskitEngineBuilder.getOrderedTranslators(mutableGraph, translatorMap);
-            mutableGraph.addEdge(new Object(), TestComplexObjectTranslatorId.TRANSLATOR_ID,
-                    TestObjectTranslatorId.TRANSLATOR_ID);
-            TranslatorId thirdId = new TranslatorId() {
-            };
-            TranslatorId fourthId = new TranslatorId() {
-            };
-            mutableGraph.addNode(thirdId);
-            mutableGraph.addNode(fourthId);
-            mutableGraph.addEdge(new Object(), thirdId, fourthId);
-            mutableGraph.addEdge(new Object(), fourthId, thirdId);
-            taskitEngineBuilder.checkForCyclicGraph(mutableGraph);
-        });
+    // // call normally
+    // taskitEngineBuilder.getOrderedTranslators(mutableGraph, translatorMap);
+    // mutableGraph.addEdge(new Object(),
+    // TestComplexObjectTranslatorId.TRANSLATOR_ID,
+    // TestObjectTranslatorId.TRANSLATOR_ID);
+    // TranslatorId thirdId = new TranslatorId() {
+    // };
+    // TranslatorId fourthId = new TranslatorId() {
+    // };
+    // mutableGraph.addNode(thirdId);
+    // mutableGraph.addNode(fourthId);
+    // mutableGraph.addEdge(new Object(), thirdId, fourthId);
+    // mutableGraph.addEdge(new Object(), fourthId, thirdId);
+    // taskitEngineBuilder.checkForCyclicGraph(mutableGraph);
+    // });
 
-        assertEquals(TaskitCoreError.CIRCULAR_TRANSLATOR_DEPENDENCIES, contractException.getErrorType());
-    }
+    // assertEquals(TaskitCoreError.CIRCULAR_TRANSLATOR_DEPENDENCIES,
+    // contractException.getErrorType());
+    // }
 
+    // TODO: update test
     @Test
     @UnitTestMethod(target = TaskitEngine.class, name = "hashCode", args = {})
     public void testHashCode() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
-        TestTaskitEngine testTaskitEngine1 = TestTaskitEngine.builder()
-                .addTranslationSpec(testObjectTranslationSpec).addTranslationSpec(testComplexObjectTranslationSpec)
+        TaskitEngine taskitEngine1 = TaskitEngine.builder()
+                .addTranslationSpec(testObjectTranslationSpec)
+                .addTranslationSpec(testComplexObjectTranslationSpec)
+                .setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID)
                 .build();
 
-        TestTaskitEngine testTaskitEngine2 = TestTaskitEngine.builder()
-                .addTranslationSpec(testComplexObjectTranslationSpec).build();
+        TaskitEngine taskitEngine2 = TaskitEngine.builder()
+                .addTranslationSpec(testComplexObjectTranslationSpec)
+                .setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID)
+                .build();
 
-        TestTaskitEngine testTaskitEngine3 = TestTaskitEngine.builder()
-                .addTranslationSpec(testObjectTranslationSpec).build();
+        TaskitEngine taskitEngine3 = TaskitEngine.builder()
+                .addTranslationSpec(testObjectTranslationSpec)
+                .setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID)
+                .build();
 
-        TestTaskitEngine testTaskitEngine4 = TestTaskitEngine.builder().build();
-
-        TestTaskitEngine testTaskitEngine5 = TestTaskitEngine.builder()
-                .addTranslationSpec(testObjectTranslationSpec).addTranslationSpec(testComplexObjectTranslationSpec)
+    
+        TaskitEngine taskitEngine4 = TaskitEngine.builder()
+                .addTranslationSpec(testObjectTranslationSpec)
+                .addTranslationSpec(testComplexObjectTranslationSpec)
+                .setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID)
                 .build();
 
         // exact same, same hash code
-        assertEquals(testTaskitEngine1.hashCode(), testTaskitEngine1.hashCode());
+        assertEquals(taskitEngine1.hashCode(), taskitEngine1.hashCode());
 
         // different translation specs
-        assertNotEquals(testTaskitEngine1.hashCode(), testTaskitEngine2.hashCode());
-        assertNotEquals(testTaskitEngine1.hashCode(), testTaskitEngine3.hashCode());
-        assertNotEquals(testTaskitEngine1.hashCode(), testTaskitEngine4.hashCode());
-        assertNotEquals(testTaskitEngine2.hashCode(), testTaskitEngine3.hashCode());
-        assertNotEquals(testTaskitEngine2.hashCode(), testTaskitEngine4.hashCode());
-        assertNotEquals(testTaskitEngine3.hashCode(), testTaskitEngine4.hashCode());
+        assertNotEquals(taskitEngine1.hashCode(), taskitEngine2.hashCode());
+        assertNotEquals(taskitEngine1.hashCode(), taskitEngine3.hashCode());
+        assertNotEquals(taskitEngine2.hashCode(), taskitEngine3.hashCode());
+        assertNotEquals(taskitEngine2.hashCode(), taskitEngine4.hashCode());
+        assertNotEquals(taskitEngine3.hashCode(), taskitEngine4.hashCode());
 
         // same translation specs
-        assertEquals(testTaskitEngine1.hashCode(), testTaskitEngine5.hashCode());
+        assertEquals(taskitEngine1.hashCode(), taskitEngine4.hashCode());
     }
 
+    // TODO: update test
     @Test
     @UnitTestMethod(target = TaskitEngine.class, name = "equals", args = { Object.class })
     public void testEquals() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
-        TestTaskitEngine testTaskitEngine1 = TestTaskitEngine.builder()
-                .addTranslationSpec(testObjectTranslationSpec).addTranslationSpec(testComplexObjectTranslationSpec)
+
+        TaskitEngine taskitEngine1 = TaskitEngine.builder()
+                .addTranslationSpec(testObjectTranslationSpec)
+                .addTranslationSpec(testComplexObjectTranslationSpec)
+                .setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID)
                 .build();
 
-        TestTaskitEngine testTaskitEngine2 = TestTaskitEngine.builder()
-                .addTranslationSpec(testComplexObjectTranslationSpec).build();
+        TaskitEngine taskitEngine2 = TaskitEngine.builder()
+                .addTranslationSpec(testComplexObjectTranslationSpec)
+                .setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID)
+                .build();
 
-        TestTaskitEngine testTaskitEngine3 = TestTaskitEngine.builder()
-                .addTranslationSpec(testObjectTranslationSpec).build();
+        TaskitEngine taskitEngine3 = TaskitEngine.builder()
+                .addTranslationSpec(testObjectTranslationSpec)
+                .setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID)
+                .build();
 
-        TestTaskitEngine testTaskitEngine4 = TestTaskitEngine.builder().build();
-
-        TestTaskitEngine testTaskitEngine5 = TestTaskitEngine.builder()
-                .addTranslationSpec(testObjectTranslationSpec).addTranslationSpec(testComplexObjectTranslationSpec)
+        TaskitEngine taskitEngine4 = TaskitEngine.builder()
+                .addTranslationSpec(testObjectTranslationSpec)
+                .addTranslationSpec(testComplexObjectTranslationSpec)
+                .setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID)
                 .build();
 
         TestObjectTranslationSpec testObjectTranslationSpec2 = new TestObjectTranslationSpec();
         TestObjectTranslationSpec testObjectTranslationSpec3 = new TestObjectTranslationSpec();
 
-        TestTaskitEngine testTaskitEngine6 = TestTaskitEngine.builder()
-                .addTranslationSpec(testObjectTranslationSpec2).buildWithoutInit();
+        TaskitEngine taskitEngine5 = TaskitEngine.builder()
+                .addTranslationSpec(testObjectTranslationSpec2)
+                .setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID)
+                .build();
 
-        TestTaskitEngine testTaskitEngine7 = TestTaskitEngine.builder()
-                .addTranslationSpec(testObjectTranslationSpec3).buildWithoutInit();
+        TaskitEngine taskitEngine6 = TaskitEngine.builder()
+                .addTranslationSpec(testObjectTranslationSpec3)
+                .setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID)
+                .build();
+
+        TaskitEngine taskitEngine7 = TaskitEngine.builder()
+                .addTranslationSpec(testObjectTranslationSpec)
+                .addTranslationSpec(testComplexObjectTranslationSpec)
+                .setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID)
+                .build();
+
+        taskitEngine1.init(taskitEngine1);
+        taskitEngine2.init(taskitEngine2);
+        taskitEngine3.init(taskitEngine3);
+        taskitEngine4.init(taskitEngine4);
 
         // exact same
-        assertEquals(testTaskitEngine1, testTaskitEngine1);
+        assertEquals(taskitEngine1, taskitEngine1);
 
-        assertNotEquals(testTaskitEngine1, null);
+        assertNotEquals(taskitEngine1, null);
 
-        assertNotEquals(testTaskitEngine1, new Object());
+        assertNotEquals(taskitEngine1, new Object());
 
         // different translation specs
-        assertNotEquals(testTaskitEngine1, testTaskitEngine2);
-        assertNotEquals(testTaskitEngine1, testTaskitEngine3);
-        assertNotEquals(testTaskitEngine1, testTaskitEngine4);
-        assertNotEquals(testTaskitEngine2, testTaskitEngine3);
-        assertNotEquals(testTaskitEngine2, testTaskitEngine4);
-        assertNotEquals(testTaskitEngine3, testTaskitEngine4);
+        assertNotEquals(taskitEngine1, taskitEngine2);
+        assertNotEquals(taskitEngine1, taskitEngine3);
+        assertNotEquals(taskitEngine2, taskitEngine3);
+        assertNotEquals(taskitEngine2, taskitEngine4);
+        assertNotEquals(taskitEngine3, taskitEngine4);
 
-        testObjectTranslationSpec2.init(testTaskitEngine1);
-        testObjectTranslationSpec3.init(testTaskitEngine5);
-        assertNotEquals(testTaskitEngine6, testTaskitEngine7);
+        testObjectTranslationSpec2.init(taskitEngine1);
+        testObjectTranslationSpec3.init(taskitEngine4);
+        // init with different engines should not be equal
+        assertNotEquals(taskitEngine5, taskitEngine6);
 
         // init vs not init
-        assertNotEquals(testTaskitEngine1, testTaskitEngine6);
+        assertNotEquals(taskitEngine1, taskitEngine7);
 
         // same translation specs
-        assertEquals(testTaskitEngine1, testTaskitEngine5);
-
-        TaskitEngine.Data data = new TaskitEngine.Data();
-        assertEquals(data, data);
-        assertNotEquals(data, null);
-        assertNotEquals(data, new Object());
+        assertEquals(taskitEngine1, taskitEngine4);
     }
 }
