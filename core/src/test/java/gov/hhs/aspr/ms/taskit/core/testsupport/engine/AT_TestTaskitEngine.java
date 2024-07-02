@@ -96,7 +96,7 @@ public class AT_TestTaskitEngine {
     public void testBuildWithUnknownType() {
         assertNotNull(TestTaskitEngine.builder().buildWithUnknownType());
 
-        assertEquals(TaskitEngineType.UNKNOWN, TestTaskitEngine.builder().buildWithUnknownType().getTaskitEngineType());
+        assertEquals(TaskitEngineType.UNKNOWN, TestTaskitEngine.builder().buildWithUnknownType().getTaskitEngineId());
     }
 
     @Test

@@ -12,6 +12,4 @@ public interface ITaskitEngineBuilder {
 
     public <M extends U, U> ITaskitEngineBuilder addParentChildClassRelationship(Class<M> classRef,
             Class<U> parentClassRef);
-
-    public ITaskitEngineBuilder setTaskitEngineType(TaskitEngineType taskitEngineType);
 }

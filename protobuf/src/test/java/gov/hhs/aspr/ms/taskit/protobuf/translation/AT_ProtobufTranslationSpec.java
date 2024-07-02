@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import com.google.protobuf.BoolValue;
 
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
-import gov.hhs.aspr.ms.taskit.protobuf.engine.ProtobufTaskitEngine;
+import gov.hhs.aspr.ms.taskit.protobuf.engine.ProtobufJsonTaskitEngine;
 import gov.hhs.aspr.ms.taskit.protobuf.translation.specs.BooleanTranslationSpec;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 
@@ -16,7 +16,7 @@ public class AT_ProtobufTranslationSpec {
     @Test
     @UnitTestMethod(target = ProtobufTranslationSpec.class, name = "init", args = { TaskitEngine.class })
     public void testInit() {
-        ProtobufTaskitEngine protobufTaskitEngine = ProtobufTaskitEngine.builder().build();
+        ProtobufJsonTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder().build();
 
         ProtobufTranslationSpec<BoolValue, Boolean> booleanTranslationSpec = new BooleanTranslationSpec();
 

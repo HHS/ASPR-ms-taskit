@@ -11,7 +11,7 @@ import com.google.protobuf.Int32Value;
 import com.google.protobuf.InvalidProtocolBufferException;
 
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppEnum;
-import gov.hhs.aspr.ms.taskit.protobuf.engine.ProtobufTaskitEngine;
+import gov.hhs.aspr.ms.taskit.protobuf.engine.ProtobufJsonTaskitEngine;
 import gov.hhs.aspr.ms.taskit.protobuf.input.WrapperEnumValue;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testobject.input.TestInputEnum;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testobject.input.TestInputObject;
@@ -37,7 +37,7 @@ public class AT_AnyTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertInputObject() {
-        ProtobufTaskitEngine protobufTaskitEngine = ProtobufTaskitEngine.builder()
+        ProtobufJsonTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder()
                 .addTranslationSpec(new TestProtobufEnumTranslationSpec())
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
                 .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
@@ -79,7 +79,7 @@ public class AT_AnyTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testUnpackMessage() {
-        ProtobufTaskitEngine protobufTaskitEngine = ProtobufTaskitEngine.builder()
+        ProtobufJsonTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder()
                 .addTranslationSpec(new TestProtobufEnumTranslationSpec())
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
                 .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
@@ -103,7 +103,7 @@ public class AT_AnyTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertAppObject() {
-        ProtobufTaskitEngine protobufTaskitEngine = ProtobufTaskitEngine.builder()
+        ProtobufJsonTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder()
                 .addTranslationSpec(new TestProtobufEnumTranslationSpec()).build();
 
         AnyTranslationSpec anyTranslationSpec = new AnyTranslationSpec();

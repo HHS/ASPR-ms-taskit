@@ -10,7 +10,7 @@ public interface ITaskitEngine {
 
     public TaskitEngine getTaskitEngine();
 
-    public TaskitEngineType getTaskitEngineType();
+    public TaskitEngineId getTaskitEngineId();
 
     public Set<ITranslationSpec> getTranslationSpecs();
 

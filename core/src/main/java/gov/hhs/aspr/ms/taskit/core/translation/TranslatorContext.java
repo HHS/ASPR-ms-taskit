@@ -1,7 +1,6 @@
 package gov.hhs.aspr.ms.taskit.core.translation;
 
 import gov.hhs.aspr.ms.taskit.core.engine.ITaskitEngineBuilder;
-import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitCoreError;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 
@@ -15,9 +14,9 @@ import gov.hhs.aspr.ms.util.errors.ContractException;
  */
 public final class TranslatorContext {
 
-    private final TaskitEngine.Builder builder;
+    private final ITaskitEngineBuilder builder;
 
-    public TranslatorContext(final TaskitEngine.Builder builder) {
+    public TranslatorContext(ITaskitEngineBuilder builder) {
         this.builder = builder;
     }
 

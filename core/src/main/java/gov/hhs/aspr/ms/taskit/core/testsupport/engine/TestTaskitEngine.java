@@ -14,7 +14,7 @@ import com.google.gson.stream.JsonReader;
 import gov.hhs.aspr.ms.taskit.core.engine.ITaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.engine.ITaskitEngineBuilder;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
-import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngineType;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngineId;
 import gov.hhs.aspr.ms.taskit.core.translation.ITranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.Translator;
@@ -62,7 +62,7 @@ public class TestTaskitEngine implements ITaskitEngine {
 
         @Override
         public TestTaskitEngine build() {
-            this.taskitEngineBuilder.setTaskitEngineType(TaskitEngineType.CUSTOM);
+            this.taskitEngineBuilder.setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID);
 
             this.data.taskitEngine = taskitEngineBuilder.build();
 
@@ -74,7 +74,7 @@ public class TestTaskitEngine implements ITaskitEngine {
         }
 
         public TestTaskitEngine buildWithoutSpecInit() {
-            this.taskitEngineBuilder.setTaskitEngineType(TaskitEngineType.CUSTOM);
+            this.taskitEngineBuilder.setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID);
 
             this.data.taskitEngine = taskitEngineBuilder.build();
 
@@ -82,7 +82,7 @@ public class TestTaskitEngine implements ITaskitEngine {
         }
 
         public TestTaskitEngine buildWithUnknownType() {
-            this.taskitEngineBuilder.setTaskitEngineType(TaskitEngineType.UNKNOWN);
+            this.taskitEngineBuilder.setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID);
 
             this.data.taskitEngine = taskitEngineBuilder.build();
 
@@ -110,13 +110,6 @@ public class TestTaskitEngine implements ITaskitEngine {
         @Override
         public <M extends U, U> Builder addParentChildClassRelationship(Class<M> classRef, Class<U> markerInterface) {
             this.taskitEngineBuilder.addParentChildClassRelationship(classRef, markerInterface);
-
-            return this;
-        }
-
-        @Override
-        public ITaskitEngineBuilder setTaskitEngineType(TaskitEngineType taskitEngineType) {
-            this.taskitEngineBuilder.setTaskitEngineType(taskitEngineType);
 
             return this;
         }
@@ -174,8 +167,8 @@ public class TestTaskitEngine implements ITaskitEngine {
     }
 
     @Override
-    public TaskitEngineType getTaskitEngineType() {
-        return this.data.taskitEngine.getTaskitEngineType();
+    public TaskitEngineId getTaskitEngineId() {
+        return this.data.taskitEngine.getTaskitEngineId();
     }
 
     @Override

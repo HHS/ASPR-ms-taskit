@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import com.google.type.Date;
 
-import gov.hhs.aspr.ms.taskit.protobuf.engine.ProtobufTaskitEngine;
+import gov.hhs.aspr.ms.taskit.protobuf.engine.ProtobufJsonTaskitEngine;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestForCoverage;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
@@ -25,7 +25,7 @@ public class AT_DateTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertInputObject() {
-        ProtobufTaskitEngine protobufTaskitEngine = ProtobufTaskitEngine.builder().build();
+        ProtobufJsonTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder().build();
 
         DateTranslationSpec dateTranslationSpec = new DateTranslationSpec();
         dateTranslationSpec.init(protobufTaskitEngine);
@@ -42,7 +42,7 @@ public class AT_DateTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertAppObject() {
-        ProtobufTaskitEngine protobufTaskitEngine = ProtobufTaskitEngine.builder().build();
+        ProtobufJsonTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder().build();
 
         DateTranslationSpec dateTranslationSpec = new DateTranslationSpec();
         dateTranslationSpec.init(protobufTaskitEngine);

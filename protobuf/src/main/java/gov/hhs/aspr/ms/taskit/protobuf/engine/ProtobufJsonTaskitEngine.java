@@ -25,7 +25,7 @@ import com.google.protobuf.util.JsonFormat.TypeRegistry;
 import gov.hhs.aspr.ms.taskit.core.engine.ITaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.engine.ITaskitEngineBuilder;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
-import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngineType;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngineId;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitCoreError;
 import gov.hhs.aspr.ms.taskit.core.translation.ITranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
@@ -38,10 +38,10 @@ import gov.hhs.aspr.ms.util.errors.ContractException;
  * Protobuf TaskitEngine that allows for conversion between POJOs and
  * Protobuf Messages, extends {@link TaskitEngine}
  */
-public final class ProtobufTaskitEngine implements ITaskitEngine {
+public final class ProtobufJsonTaskitEngine implements ITaskitEngine {
     private final Data data;
 
-    private ProtobufTaskitEngine(Data data) {
+    private ProtobufJsonTaskitEngine(Data data) {
         this.data = data;
     }
 
@@ -61,7 +61,7 @@ public final class ProtobufTaskitEngine implements ITaskitEngine {
     }
 
     public final static class Builder implements ITaskitEngineBuilder {
-        private ProtobufTaskitEngine.Data data;
+        private ProtobufJsonTaskitEngine.Data data;
         private Set<Descriptor> descriptorSet = new LinkedHashSet<>();
         private final Set<FieldDescriptor> defaultValueFieldsToPrint = new LinkedHashSet<>();
         private boolean ignoringUnknownFields = true;
@@ -69,7 +69,7 @@ public final class ProtobufTaskitEngine implements ITaskitEngine {
 
         private TaskitEngine.Builder taskitEngineBuilder = TaskitEngine.builder();
 
-        private Builder(ProtobufTaskitEngine.Data data) {
+        private Builder(ProtobufJsonTaskitEngine.Data data) {
             this.data = data;
         }
 
@@ -79,7 +79,7 @@ public final class ProtobufTaskitEngine implements ITaskitEngine {
          * and their respective Protobuf Message types
          */
         @Override
-        public ProtobufTaskitEngine build() {
+        public ProtobufJsonTaskitEngine build() {
             ProtobufTaskitEngineHelper primitiveTranslationSpecs = new ProtobufTaskitEngineHelper();
 
             this.data.typeUrlToClassMap.putAll(primitiveTranslationSpecs.getPrimitiveTypeUrlToClassMap());
@@ -87,7 +87,7 @@ public final class ProtobufTaskitEngine implements ITaskitEngine {
             primitiveTranslationSpecs.getPrimitiveInputTranslatorSpecMap().values().forEach(
                     (translationSpec) -> this.taskitEngineBuilder.addTranslationSpec(translationSpec));
 
-            this.taskitEngineBuilder.setTaskitEngineType(TaskitEngineType.PROTOBUF);
+            this.taskitEngineBuilder.setTaskitEngineId(ProtobufTaskitEngineId.JSON_ENGINE_ID);
 
             this.data.taskitEngine = this.taskitEngineBuilder.build();
 
@@ -117,7 +117,7 @@ public final class ProtobufTaskitEngine implements ITaskitEngine {
             }
             this.data.jsonPrinter = printer;
 
-            ProtobufTaskitEngine taskitEngine = new ProtobufTaskitEngine(this.data);
+            ProtobufJsonTaskitEngine taskitEngine = new ProtobufJsonTaskitEngine(this.data);
 
             this.data.taskitEngine.initTranslationSpecs(taskitEngine);
 
@@ -201,17 +201,6 @@ public final class ProtobufTaskitEngine implements ITaskitEngine {
         @Override
         public <M extends U, U> Builder addParentChildClassRelationship(Class<M> classRef, Class<U> parentClassRef) {
             this.taskitEngineBuilder.addParentChildClassRelationship(classRef, parentClassRef);
-
-            return this;
-        }
-
-        /**
-         * Calls
-         * {@link TaskitEngine.Builder#setTaskitEngineType(TaskitEngineType)}
-         */
-        @Override
-        public ITaskitEngineBuilder setTaskitEngineType(TaskitEngineType taskitEngineType) {
-            this.taskitEngineBuilder.setTaskitEngineType(taskitEngineType);
 
             return this;
         }
@@ -556,13 +545,13 @@ public final class ProtobufTaskitEngine implements ITaskitEngine {
     }
 
     /**
-     * returns the {@link TaskitEngineType} of this TaskitEngine
+     * returns the {@link TaskitEngineId} of this TaskitEngine
      * 
-     * guaranteed to NOT be {@link TaskitEngineType#UNKNOWN}
+     * guaranteed to NOT be {@link TaskitEngineId#UNKNOWN}
      */
     @Override
-    public TaskitEngineType getTaskitEngineType() {
-        return this.data.taskitEngine.getTaskitEngineType();
+    public TaskitEngineId getTaskitEngineId() {
+        return this.data.taskitEngine.getTaskitEngineId();
     }
 
     /**

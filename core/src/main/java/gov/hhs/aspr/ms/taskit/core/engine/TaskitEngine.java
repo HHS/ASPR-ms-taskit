@@ -43,7 +43,7 @@ public final class TaskitEngine implements ITaskitEngine {
         protected final Map<Class<?>, ITranslationSpec> classToTranslationSpecMap = new LinkedHashMap<>();
         protected final Set<ITranslationSpec> translationSpecs = new LinkedHashSet<>();
         protected Map<Class<?>, Class<?>> childToParentClassMap = new LinkedHashMap<>();
-        protected TaskitEngineType taskitEngineType = TaskitEngineType.UNKNOWN;
+        protected TaskitEngineId taskitEngineId;
         protected boolean translatorsInitialized = false;
 
         protected Data() {
@@ -154,8 +154,8 @@ public final class TaskitEngine implements ITaskitEngine {
         /**
          * Sets the type for this Taskit Engine
          */
-        public final Builder setTaskitEngineType(TaskitEngineType taskitEngineType) {
-            this.data.taskitEngineType = taskitEngineType;
+        public final Builder setTaskitEngineId(TaskitEngineId taskitEngineId) {
+            this.data.taskitEngineId = taskitEngineId;
 
             return this;
         }
@@ -217,7 +217,7 @@ public final class TaskitEngine implements ITaskitEngine {
         /**
          * Adds the given classRef markerInterface mapping.
          * <p>
-         * explicitly used when calling {@link TaskitController#writeOutput} with a
+         * explicitly used when calling {@link TaskitEngineManager#writeOutput} with a
          * class for which a classRef ScenarioId pair does not exist and/or the need to
          * output the given class as the markerInterface instead of the concrete class
          * 
@@ -404,8 +404,8 @@ public final class TaskitEngine implements ITaskitEngine {
     }
 
     private void validateTaskitEngineType() {
-        if (this.data.taskitEngineType == TaskitEngineType.UNKNOWN) {
-            throw new ContractException(TaskitCoreError.UNKNOWN_TASKIT_ENGINE_TYPE);
+        if (this.data.taskitEngineId == null) {
+            throw new ContractException(TaskitCoreError.UNKNOWN_TASKIT_ENGINE_ID);
         }
     }
 
@@ -426,10 +426,10 @@ public final class TaskitEngine implements ITaskitEngine {
     /**
      * returns the {@link TaskitEngineType} of this TaskitEngine
      * 
-     * guaranteed to NOT be {@link TaskitEngineType#UNKNOWN}
+     * guaranteed to NOT be null
      */
-    public TaskitEngineType getTaskitEngineType() {
-        return this.data.taskitEngineType;
+    public TaskitEngineId getTaskitEngineId() {
+        return this.data.taskitEngineId;
     }
 
     /**
@@ -523,7 +523,7 @@ public final class TaskitEngine implements ITaskitEngine {
     @Override
     public <U, M extends U> void translateAndWrite(Path path, M appObject, Class<U> outputClass)
             throws IOException {
-        throw new UnsupportedOperationException("Called 'translateAndWriteAs' on TaskitEngine");
+        throw new UnsupportedOperationException("Called 'translateAndWrite' on TaskitEngine");
     }
 
     /**
@@ -557,7 +557,7 @@ public final class TaskitEngine implements ITaskitEngine {
      */
     @Override
     public <T, U> T readAndTranslate(Path path, Class<U> inputClassRef) throws IOException {
-        throw new UnsupportedOperationException("Called 'readAndConvert' on TaskitEngine");
+        throw new UnsupportedOperationException("Called 'readAndTranslate' on TaskitEngine");
     }
 
     /**

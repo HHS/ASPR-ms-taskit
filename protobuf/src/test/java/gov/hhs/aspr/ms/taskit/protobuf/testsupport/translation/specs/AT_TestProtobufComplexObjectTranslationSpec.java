@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestComplexAppObject;
-import gov.hhs.aspr.ms.taskit.protobuf.engine.ProtobufTaskitEngine;
+import gov.hhs.aspr.ms.taskit.protobuf.engine.ProtobufJsonTaskitEngine;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.TestObjectUtil;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testcomplexobject.input.TestComplexInputObject;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
@@ -24,7 +24,7 @@ public class AT_TestProtobufComplexObjectTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertInputObject() {
-        ProtobufTaskitEngine protobufTaskitEngine = ProtobufTaskitEngine.builder()
+        ProtobufJsonTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder()
                 .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
 
         TestProtobufComplexObjectTranslationSpec complexObjectTranslationSpec = new TestProtobufComplexObjectTranslationSpec();
@@ -41,7 +41,7 @@ public class AT_TestProtobufComplexObjectTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertAppObject() {
-        ProtobufTaskitEngine protobufTaskitEngine = ProtobufTaskitEngine.builder()
+        ProtobufJsonTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder()
                 .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
 
         TestProtobufComplexObjectTranslationSpec complexObjectTranslationSpec = new TestProtobufComplexObjectTranslationSpec();

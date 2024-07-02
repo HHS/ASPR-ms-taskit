@@ -18,15 +18,15 @@ import gov.hhs.aspr.ms.util.resourcehelper.ResourceError;
 import gov.hhs.aspr.ms.util.resourcehelper.ResourceHelper;
 
 /**
- * The TaskitController allows {@link ITaskitEngine}s to be added to it, and
+ * The TaskitEngineManager allows {@link ITaskitEngine}s to be added to it, and
  * acts as a wrapper around the TaskitEngine read/write/translate methods.
  */
-public final class TaskitController {
+public final class TaskitEngineManager {
     protected final Data data;
-    protected final Map<TaskitEngineType, ITaskitEngine> taskitEngines = new LinkedHashMap<>();
-    protected final Map<Class<? extends ITaskitEngine>, TaskitEngineType> taskitEngineClassToTypeMap = new LinkedHashMap<>();
+    protected final Map<TaskitEngineId, ITaskitEngine> taskitEngines = new LinkedHashMap<>();
+    protected final Map<Class<? extends ITaskitEngine>, TaskitEngineId> taskitEngineClassToIdMap = new LinkedHashMap<>();
 
-    TaskitController(Data data) {
+    TaskitEngineManager(Data data) {
         this.data = data;
     }
 
@@ -78,10 +78,10 @@ public final class TaskitController {
          *                           if taskitEngineBuilder has not been set</li>
          *                           </ul>
          */
-        public TaskitController build() {
+        public TaskitEngineManager build() {
             validateTaskitEnginesNotNull();
 
-            TaskitController translatorController = new TaskitController(this.data);
+            TaskitEngineManager translatorController = new TaskitEngineManager(this.data);
 
             translatorController.initTaskitEngines();
             translatorController.validateTaskitEngines();
@@ -89,14 +89,14 @@ public final class TaskitController {
             return translatorController;
         }
 
-        TaskitController buildWithoutInitAndChecks() {
-            return new TaskitController(this.data);
+        TaskitEngineManager buildWithoutInitAndChecks() {
+            return new TaskitEngineManager(this.data);
         }
 
         /**
          * Adds the given classRef parent class mapping.
          * <p>
-         * explicitly used when calling {@link TaskitController#write} with a need to
+         * explicitly used when calling {@link TaskitEngineManager#write} with a need to
          * output the given class as the parent class instead of the concrete class
          * 
          * @param <M> the childClass
@@ -170,9 +170,9 @@ public final class TaskitController {
 
             baseTaskitEngine.translationSpecsAreInitialized();
 
-            this.taskitEngines.put(taskitEngine.getTaskitEngineType(), taskitEngine);
-            this.taskitEngineClassToTypeMap.put(taskitEngine.getClass(),
-                    taskitEngine.getTaskitEngineType());
+            this.taskitEngines.put(taskitEngine.getTaskitEngineId(), taskitEngine);
+            this.taskitEngineClassToIdMap.put(taskitEngine.getClass(),
+                    taskitEngine.getTaskitEngineId());
         }
 
         // since we are making a new mapping, clear the original set in the data
@@ -212,15 +212,15 @@ public final class TaskitController {
         // and
         // if the engine map doesn't contain all of the types from the class to type map
         // this ensures that every engine has a valid class -> type -> engine mapping
-        if (!(this.taskitEngineClassToTypeMap.keySet().containsAll(taskitEngineClasses)
-                && this.taskitEngines.keySet().containsAll(this.taskitEngineClassToTypeMap.values()))) {
+        if (!(this.taskitEngineClassToIdMap.keySet().containsAll(taskitEngineClasses)
+                && this.taskitEngines.keySet().containsAll(this.taskitEngineClassToIdMap.values()))) {
             throw new RuntimeException(
                     "Not all Taskit Engines have an associated Class -> Type -> Engine Mapping. Something went very wrong.");
         }
     }
 
     /**
-     * Using the given {@link TaskitEngineType}'s associated
+     * Using the given {@link TaskitEngineId}'s associated
      * {@link TaskitEngine}, reads the given file into the given classRef and then
      * translates it to it's corresponding type as defined by the provided
      * {@link TranslationSpec}s to the associated TaskitEngine
@@ -236,15 +236,15 @@ public final class TaskitController {
      *                           file</li>
      *                           <li>{@linkplain TaskitCoreError#NULL_CLASS_REF}
      *                           if the object is null</li>
-     *                           <li>{@linkplain TaskitCoreError#NULL_TASKIT_ENGINE_TYPE}
-     *                           if taskitEngineType is null</li>
+     *                           <li>{@linkplain TaskitCoreError#NULL_TASKIT_ENGINE_ID}
+     *                           if taskitEngineId is null</li>
      *                           <li>{@linkplain TaskitCoreError#NULL_TASKIT_ENGINE}
      *                           if taskitEngine is null</li>
      *                           </ul>
      * @throws RuntimeException  if the reading of the file encounters an
      *                           IOException
      */
-    public <I> I read(Path path, Class<I> inputClass, TaskitEngineType taskitEngineType) {
+    public <I> I read(Path path, Class<I> inputClass, TaskitEngineId taskitEngineId) {
         if (path == null) {
             throw new ContractException(TaskitCoreError.NULL_PATH);
         }
@@ -255,11 +255,11 @@ public final class TaskitController {
             throw new ContractException(TaskitCoreError.NULL_CLASS_REF);
         }
 
-        if (taskitEngineType == null) {
-            throw new ContractException(TaskitCoreError.NULL_TASKIT_ENGINE_TYPE);
+        if (taskitEngineId == null) {
+            throw new ContractException(TaskitCoreError.NULL_TASKIT_ENGINE_ID);
         }
 
-        ITaskitEngine taskitEngine = this.taskitEngines.get(taskitEngineType);
+        ITaskitEngine taskitEngine = this.taskitEngines.get(taskitEngineId);
 
         if (taskitEngine == null) {
             throw new ContractException(TaskitCoreError.NULL_TASKIT_ENGINE);
@@ -273,7 +273,7 @@ public final class TaskitController {
     }
 
     /**
-     * Using the given {@link TaskitEngineType}'s associated
+     * Using the given {@link TaskitEngineId}'s associated
      * {@link TaskitEngine}, writes the given object to a file.
      * 
      * @param <O> the class of the object to write to the outputFile
@@ -288,20 +288,20 @@ public final class TaskitController {
      *                           file</li>
      *                           <li>{@linkplain TaskitCoreError#NULL_OBJECT_FOR_TRANSLATION}
      *                           if the object is null</li>
-     *                           <li>{@linkplain TaskitCoreError#NULL_TASKIT_ENGINE_TYPE}
-     *                           if taskitEngineType is null</li>
+     *                           <li>{@linkplain TaskitCoreError#NULL_TASKIT_ENGINE_ID}
+     *                           if taskitEngineId is null</li>
      *                           <li>{@linkplain TaskitCoreError#NULL_TASKIT_ENGINE}
      *                           if taskitEngine is null</li>
      *                           </ul>
      * @throws RuntimeException  if the writing of the file encounters an
      *                           IOException
      */
-    public <O> void write(Path path, O object, TaskitEngineType taskitEngineType) {
-        write(path, object, Optional.empty(), taskitEngineType, false);
+    public <O> void write(Path path, O object, TaskitEngineId taskitEngineId) {
+        write(path, object, Optional.empty(), taskitEngineId, false);
     }
 
     /**
-     * Using the given {@link TaskitEngineType}'s associated
+     * Using the given {@link TaskitEngineId}'s associated
      * {@link TaskitEngine}, translates and writes the given object to a file.
      * 
      * @param <O> the class of the object to write to the outputFile
@@ -316,20 +316,20 @@ public final class TaskitController {
      *                           file</li>
      *                           <li>{@linkplain TaskitCoreError#NULL_OBJECT_FOR_TRANSLATION}
      *                           if the object is null</li>
-     *                           <li>{@linkplain TaskitCoreError#NULL_TASKIT_ENGINE_TYPE}
-     *                           if taskitEngineType is null</li>
+     *                           <li>{@linkplain TaskitCoreError#NULL_TASKIT_ENGINE_ID}
+     *                           if taskitEngineId is null</li>
      *                           <li>{@linkplain TaskitCoreError#NULL_TASKIT_ENGINE}
      *                           if taskitEngine is null</li>
      *                           </ul>
      * @throws RuntimeException  if the writing of the file encounters an
      *                           IOException
      */
-    public <O> void translateAndWrite(Path path, O object, TaskitEngineType taskitEngineType) {
-        write(path, object, Optional.empty(), taskitEngineType, false);
+    public <O> void translateAndWrite(Path path, O object, TaskitEngineId taskitEngineId) {
+        write(path, object, Optional.empty(), taskitEngineId, false);
     }
 
     /**
-     * Using the given {@link TaskitEngineType}'s associated
+     * Using the given {@link TaskitEngineId}'s associated
      * {@link TaskitEngine}, translates and writes the given object to a file,
      * using the given class as the output class rather than the class of the
      * object.
@@ -351,15 +351,15 @@ public final class TaskitController {
      *                           file</li>
      *                           <li>{@linkplain TaskitCoreError#NULL_OBJECT_FOR_TRANSLATION}
      *                           if the object is null</li>
-     *                           <li>{@linkplain TaskitCoreError#NULL_TASKIT_ENGINE_TYPE}
-     *                           if taskitEngineType is null</li>
+     *                           <li>{@linkplain TaskitCoreError#NULL_TASKIT_ENGINE_ID}
+     *                           if taskitEngineId is null</li>
      *                           <li>{@linkplain TaskitCoreError#NULL_TASKIT_ENGINE}
      *                           if taskitEngine is null</li>
      *                           </ul>
      * @throws RuntimeException  if the writing of the file encounters an
      *                           IOException
      */
-    public <O extends P, P> void translateAndWrite(Path path, O object, Class<P> outputClass, TaskitEngineType taskitEngineType) {
+    public <O extends P, P> void translateAndWrite(Path path, O object, Class<P> outputClass, TaskitEngineId taskitEngineId) {
         if (outputClass == null) {
             throw new ContractException(TaskitCoreError.NULL_CLASS_REF);
         }
@@ -368,27 +368,27 @@ public final class TaskitController {
             throw new ContractException(TaskitCoreError.INVALID_PARENT_OUTPUT_CLASS);
         }
 
-        write(path, object, Optional.of(outputClass), taskitEngineType, true);
+        write(path, object, Optional.of(outputClass), taskitEngineId, true);
     }
 
-    <O extends P, P> void write(Path path, O object, Optional<Class<P>> outputClass,
-            TaskitEngineType taskitEngineType, boolean translate) {
+    private <O extends P, P> void write(Path path, O object, Optional<Class<P>> outputClass,
+            TaskitEngineId taskitEngineId, boolean translate) {
 
-        if (path == null) {
-            throw new ContractException(TaskitCoreError.NULL_PATH);
+        // if (path == null) {
+        //     throw new ContractException(TaskitCoreError.NULL_PATH);
+        // }
+
+        // ResourceHelper.validateFilePath(path);
+
+        // if (object == null) {
+        //     throw new ContractException(TaskitCoreError.NULL_OBJECT_FOR_TRANSLATION);
+        // }
+
+        if (taskitEngineId == null) {
+            throw new ContractException(TaskitCoreError.NULL_TASKIT_ENGINE_ID);
         }
 
-        ResourceHelper.validateFilePath(path);
-
-        if (object == null) {
-            throw new ContractException(TaskitCoreError.NULL_OBJECT_FOR_TRANSLATION);
-        }
-
-        if (taskitEngineType == null) {
-            throw new ContractException(TaskitCoreError.NULL_TASKIT_ENGINE_TYPE);
-        }
-
-        ITaskitEngine taskitEngine = this.taskitEngines.get(taskitEngineType);
+        ITaskitEngine taskitEngine = this.taskitEngines.get(taskitEngineId);
 
         if (taskitEngine == null) {
             throw new ContractException(TaskitCoreError.NULL_TASKIT_ENGINE);

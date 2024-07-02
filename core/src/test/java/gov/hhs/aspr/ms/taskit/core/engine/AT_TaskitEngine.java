@@ -70,7 +70,7 @@ public class AT_TaskitEngine {
             engine.validateInit();
         });
 
-        assertEquals(TaskitCoreError.UNKNOWN_TASKIT_ENGINE_TYPE, contractException.getErrorType());
+        assertEquals(TaskitCoreError.UNKNOWN_TASKIT_ENGINE_ID, contractException.getErrorType());
     }
 
     @Test
@@ -78,11 +78,11 @@ public class AT_TaskitEngine {
     public void testGetTaskitEngineType() {
         TaskitEngine taskitEngine = TestTaskitEngine.builder().build();
 
-        assertEquals(TaskitEngineType.CUSTOM, taskitEngine.getTaskitEngineType());
+        assertEquals(TaskitEngineType.CUSTOM, taskitEngine.getTaskitEngineId());
 
         taskitEngine = TestTaskitEngine.builder().buildWithUnknownType();
 
-        assertEquals(TaskitEngineType.UNKNOWN, taskitEngine.getTaskitEngineType());
+        assertEquals(TaskitEngineType.UNKNOWN, taskitEngine.getTaskitEngineId());
     }
 
     @Test

@@ -26,7 +26,7 @@ public enum TaskitCoreError implements ContractError {
         NULL_PATH("Null Path"),
         NULL_TASKIT_ENGINE("Null Taskit Engine"),
         NULL_TASKIT_ENGINE_BUILDER("Null Taskit Engine Builder"),
-        NULL_TASKIT_ENGINE_TYPE("Null Taskit Engine Type"),
+        NULL_TASKIT_ENGINE_ID("Null Taskit Engine Type"),
         NULL_TRANSLATION_SPEC("Null TranslationSpec"),
         NULL_TRANSLATION_SPEC_APP_CLASS("Null TranslationSpec App Class"),
         NULL_TRANSLATION_SPEC_INPUT_CLASS("Null TranslationSpec Input Class"),
@@ -37,7 +37,7 @@ public enum TaskitCoreError implements ContractError {
                         "Translators were added to the builder but were not initialized. Make sure to call super.initTranslators() during your custom engine build method"),
         UNKNOWN_CLASSREF("No object has been read in with the specified classRef"),
         UNKNOWN_OBJECT("Object is not Translatable by this TranslationSpec"),
-        UNKNOWN_TASKIT_ENGINE_TYPE("Taskit Engine Type was not set"),
+        UNKNOWN_TASKIT_ENGINE_ID("Taskit Engine ID was not set"),
         UNKNOWN_TRANSLATION_SPEC("No translation spec was provided for the given class"),
         UNSUPPORTED_VERSION("The given version is not supported");
 
