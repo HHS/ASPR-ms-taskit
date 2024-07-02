@@ -68,7 +68,7 @@ public class TestTaskitEngine implements ITaskitEngine {
 
             TestTaskitEngine taskitEngine = new TestTaskitEngine(this.data);
 
-            this.data.taskitEngine.initTranslationSpecs(taskitEngine);
+            this.data.taskitEngine.init(taskitEngine);
             this.data.taskitEngine.validateInit();
             return taskitEngine;
         }
@@ -88,7 +88,7 @@ public class TestTaskitEngine implements ITaskitEngine {
 
             TestTaskitEngine taskitEngine = new TestTaskitEngine(this.data);
 
-            this.data.taskitEngine.initTranslationSpecs(taskitEngine);
+            this.data.taskitEngine.init(taskitEngine);
             this.data.taskitEngine.validateInit();
             return taskitEngine;
         }

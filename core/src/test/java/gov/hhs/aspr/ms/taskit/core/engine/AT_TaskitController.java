@@ -52,7 +52,7 @@ public class AT_TaskitController {
 
         contractException = assertThrows(ContractException.class, () -> {
             for (TaskitEngine taskitEngine : translationController.data.taskitEngines) {
-                translationController.taskitEngines
+                translationController.taskitEngineIdToEngineMap
                         .put(taskitEngine.getTaskitEngineId(), null);
             }
             translationController.validateTaskitEngines();
@@ -64,7 +64,7 @@ public class AT_TaskitController {
             TestTaskitEngine taskitEngine2 = TestTaskitEngine.builder()
                     .buildWithoutSpecInit();
 
-            translationController.taskitEngines.put(taskitEngine2.getTaskitEngineId(),
+            translationController.taskitEngineIdToEngineMap.put(taskitEngine2.getTaskitEngineId(),
                     taskitEngine2);
 
             translationController.validateTaskitEngines();
@@ -75,7 +75,7 @@ public class AT_TaskitController {
 
         runtimeException = assertThrows(RuntimeException.class, () -> {
             for (TaskitEngine taskitEngine : translationController.data.taskitEngines) {
-                translationController.taskitEngines.put(
+                translationController.taskitEngineIdToEngineMap.put(
                         taskitEngine.getTaskitEngineId(),
                         taskitEngine);
                 translationController.taskitEngineClassToIdMap.put(taskitEngine.getClass(),
@@ -90,7 +90,7 @@ public class AT_TaskitController {
 
         runtimeException = assertThrows(RuntimeException.class, () -> {
             for (TaskitEngine taskitEngine : translationController.data.taskitEngines) {
-                translationController.taskitEngines.put(
+                translationController.taskitEngineIdToEngineMap.put(
                         taskitEngine.getTaskitEngineId(),
                         taskitEngine);
             }
@@ -126,7 +126,7 @@ public class AT_TaskitController {
                     .addTaskitEngine(TestTaskitEngine.builder().build())
                     .buildWithoutInitAndChecks();
             for (TaskitEngine taskitEngine : translationController2.data.taskitEngines) {
-                translationController2.taskitEngines.put(
+                translationController2.taskitEngineIdToEngineMap.put(
                         taskitEngine.getTaskitEngineId(),
                         taskitEngine);
             }
@@ -143,7 +143,7 @@ public class AT_TaskitController {
                     .addTaskitEngine(TestTaskitEngine.builder().build())
                     .buildWithoutInitAndChecks();
             for (TaskitEngine taskitEngine : translationController2.data.taskitEngines) {
-                translationController2.taskitEngines.put(
+                translationController2.taskitEngineIdToEngineMap.put(
                         taskitEngine.getTaskitEngineId(),
                         taskitEngine);
                 translationController2.taskitEngineClassToIdMap.put(taskitEngine.getClass(),

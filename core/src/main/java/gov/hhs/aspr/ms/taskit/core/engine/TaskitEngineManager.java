@@ -2,17 +2,11 @@ package gov.hhs.aspr.ms.taskit.core.engine;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
-import gov.hhs.aspr.ms.taskit.core.translation.Translator;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 import gov.hhs.aspr.ms.util.resourcehelper.ResourceError;
 import gov.hhs.aspr.ms.util.resourcehelper.ResourceHelper;
@@ -22,18 +16,15 @@ import gov.hhs.aspr.ms.util.resourcehelper.ResourceHelper;
  * acts as a wrapper around the TaskitEngine read/write/translate methods.
  */
 public final class TaskitEngineManager {
-    protected final Data data;
-    protected final Map<TaskitEngineId, ITaskitEngine> taskitEngines = new LinkedHashMap<>();
-    protected final Map<Class<? extends ITaskitEngine>, TaskitEngineId> taskitEngineClassToIdMap = new LinkedHashMap<>();
+    private final Data data;
 
     TaskitEngineManager(Data data) {
         this.data = data;
     }
 
     final static class Data {
-        protected Set<ITaskitEngine> taskitEngines = new LinkedHashSet<>();
-        protected final List<Translator> translators = new ArrayList<>();
-        protected final Map<Class<?>, Class<?>> parentChildClassRelationshipMap = new LinkedHashMap<>();
+        private final Map<TaskitEngineId, ITaskitEngine> taskitEngineIdToEngineMap = new LinkedHashMap<>();
+        private final Map<Class<?>, Class<?>> parentChildClassRelationshipMap = new LinkedHashMap<>();
 
         Data() {
         }
@@ -46,112 +37,90 @@ public final class TaskitEngineManager {
             this.data = data;
         }
 
-        private void validateClassRefNotNull(Class<?> classRef) {
-            if (classRef == null) {
-                throw new ContractException(TaskitCoreError.NULL_CLASS_REF);
-            }
-        }
-
-        private void validateTaskitEngineNotNull(ITaskitEngine taskitEngine) {
+        private void validateTaskitEngine(ITaskitEngine taskitEngine) {
             if (taskitEngine == null) {
                 throw new ContractException(TaskitCoreError.NULL_TASKIT_ENGINE);
             }
+
+            if (!taskitEngine.getTaskitEngine().isInitialized()) {
+                throw new ContractException(TaskitCoreError.UNINITIALIZED_TASKIT_ENGINE);
+            }
         }
 
-        private void validateTaskitEnginesNotNull() {
-            if (this.data.taskitEngines.isEmpty()) {
-                throw new ContractException(TaskitCoreError.NULL_TASKIT_ENGINE,
-                        "No TaskitEngine Builders were added");
-            }
-            for (ITaskitEngine engine : this.data.taskitEngines) {
-                validateTaskitEngineNotNull(engine);
+        private void validateTaskitEngineAdded() {
+            if (this.data.taskitEngineIdToEngineMap.isEmpty()) {
+                throw new ContractException(TaskitCoreError.NO_TASKIT_ENGINES);
             }
         }
 
         /**
-         * Builds the TaskitController. Calls the initializer on each added
-         * {@link Translator}
+         * Builds the TaskitEngineManager.
          * 
          * @throws ContractException
          *                           <ul>
-         *                           <li>{@linkplain TaskitCoreError#NULL_TASKIT_ENGINE}
-         *                           if taskitEngineBuilder has not been set</li>
+         *                           <li>{@linkplain TaskitCoreError#NO_TASKIT_ENGINES}
+         *                           if no taskit engines were added</li>
          *                           </ul>
          */
         public TaskitEngineManager build() {
-            validateTaskitEnginesNotNull();
+            validateTaskitEngineAdded();
 
-            TaskitEngineManager translatorController = new TaskitEngineManager(this.data);
-
-            translatorController.initTaskitEngines();
-            translatorController.validateTaskitEngines();
-
-            return translatorController;
+            return new TaskitEngineManager(this.data);
         }
 
+        /**
+         * package access for testing
+         */
         TaskitEngineManager buildWithoutInitAndChecks() {
             return new TaskitEngineManager(this.data);
         }
 
         /**
-         * Adds the given classRef parent class mapping.
+         * Adds a {@link TaskitEngine} and also adds all of it's child -> parent class
+         * ref mappings
          * <p>
-         * explicitly used when calling {@link TaskitEngineManager#write} with a need to
-         * output the given class as the parent class instead of the concrete class
-         * 
-         * @param <M> the childClass
-         * @param <U> the parentClass/MarkerInterfaceClass
-         * @throws ContractException
-         *                           <ul>
-         *                           <li>{@linkplain TaskitCoreError#NULL_CLASS_REF}
-         *                           if classRef is null or if markerInterface is
-         *                           null</li>
-         *                           <li>{@linkplain TaskitCoreError#DUPLICATE_CLASSREF}
-         *                           if child parent relationship has already been
-         *                           added</li>
-         *                           </ul>
-         */
-        public <M extends U, U> Builder addParentChildClassRelationship(Class<M> classRef, Class<U> parentClassRef) {
-            validateClassRefNotNull(classRef);
-            validateClassRefNotNull(parentClassRef);
-
-            if (this.data.parentChildClassRelationshipMap.containsKey(classRef)) {
-                throw new ContractException(TaskitCoreError.DUPLICATE_CLASSREF);
-            }
-
-            this.data.parentChildClassRelationshipMap.put(classRef, parentClassRef);
-            return this;
-        }
-
-        /**
-         * Adds a {@link TaskitEngine.Builder}
+         * For those mappings, it is a first come, first served basis, meaning that if
+         * multiple taskit engines define a child -> parent relationship, only the first
+         * relationship encountered is added to the internal mapping of this manager. It
+         * is the responsibility of the user to make sure that there are no ambiguous
+         * mappings, and if there are, that whichever taskitEngine that defines the
+         * correct one gets added first.
+         * <p>
+         * In a future version of Taskit, there is a plan to use reflection to obtain
+         * the list of relationships, which would negate the need for the user to define
+         * such mappings. Until then, the mappings are added to the taskit engine and
+         * then subsequently added to this engine manager.
          * 
          * @throws ContractException
          *                           <ul>
          *                           <li>{@linkplain TaskitCoreError#NULL_TASKIT_ENGINE}
-         *                           if taskitEngineBuilder is null</li>
+         *                           if taskitEngine is null</li>
+         *                           <li>{@linkplain TaskitCoreError#UNINITIALIZED_TASKIT_ENGINE}
+         *                           if the taskit engine was not initialized prior to
+         *                           adding it to the manager</li>
          *                           </ul>
          */
-        public Builder addTaskitEngine(TaskitEngine taskitEngine) {
-            validateTaskitEngineNotNull(taskitEngine);
+        public Builder addTaskitEngine(ITaskitEngine taskitEngine) {
+            validateTaskitEngine(taskitEngine);
 
-            this.data.taskitEngines.add(taskitEngine);
-
-            Map<Class<?>, Class<?>> childToParentClassMap = taskitEngine.getChildParentClassMap();
+            Map<Class<?>, Class<?>> childToParentClassMap = taskitEngine.getTaskitEngine().getChildParentClassMap();
 
             for (Class<?> childClassRef : childToParentClassMap.keySet()) {
                 // Need to duplicate code here because the map doesn't provide the type safety
                 // that is required by the addParentChildClassRelationship method
                 Class<?> parentClassRef = childToParentClassMap.get(childClassRef);
 
-                // Note: no 'class is not null' validation here because it was validated prior
-                // to being put into the engine
-                if (this.data.parentChildClassRelationshipMap.containsKey(childClassRef)) {
-                    throw new ContractException(TaskitCoreError.DUPLICATE_CLASSREF);
-                }
-
-                this.data.parentChildClassRelationshipMap.put(childClassRef, parentClassRef);
+                /*
+                 * the classes in a singular taskitEngine are guaranteed to not have duplicates.
+                 * But this guarantee does not extend to other taskit engines
+                 * As such, only add the relationship if it doesn't already exist
+                 * 
+                 * also, any given class should only have at most one parent. If it has more
+                 */
+                this.data.parentChildClassRelationshipMap.putIfAbsent(childClassRef, parentClassRef);
             }
+
+            this.data.taskitEngineIdToEngineMap.put(taskitEngine.getTaskitEngineId(), taskitEngine);
 
             return this;
         }
@@ -164,58 +133,35 @@ public final class TaskitEngineManager {
         return new Builder(new Data());
     }
 
-    void initTaskitEngines() {
-        for (ITaskitEngine taskitEngine : this.data.taskitEngines) {
-            TaskitEngine baseTaskitEngine = taskitEngine.getTaskitEngine();
-
-            baseTaskitEngine.translationSpecsAreInitialized();
-
-            this.taskitEngines.put(taskitEngine.getTaskitEngineId(), taskitEngine);
-            this.taskitEngineClassToIdMap.put(taskitEngine.getClass(),
-                    taskitEngine.getTaskitEngineId());
-        }
-
-        // since we are making a new mapping, clear the original set in the data
-        this.data.taskitEngines.clear();
-    }
-
-    void validateTaskitEngine(ITaskitEngine taskitEngine) {
+    private void validateTaskitEngine(ITaskitEngine taskitEngine) {
         if (taskitEngine == null) {
             throw new ContractException(TaskitCoreError.NULL_TASKIT_ENGINE);
         }
+    }
 
-        /*
-         * Because the taskitEngine's init method is called within the
-         * initTranslators() method, this should never happen, thus it is a
-         * RuntimeException and not a ContractException
-         */
-        if (!taskitEngine.getTaskitEngine().isInitialized()) {
-            throw new RuntimeException("TaskitEngine has been built but has not been initialized.");
+    private void validatePath(Path path) {
+        if (path == null) {
+            throw new ContractException(TaskitCoreError.NULL_PATH);
+        }
+
+        ResourceHelper.validateFilePath(path);
+    }
+
+    private void validateClass(Class<?> classRef) {
+        if (classRef == null) {
+            throw new ContractException(TaskitCoreError.NULL_CLASS_REF);
         }
     }
 
-    void validateTaskitEngines() {
-        Set<Class<? extends ITaskitEngine>> taskitEngineClasses = new HashSet<>();
-
-        if (this.taskitEngines.keySet().isEmpty()) {
-            throw new ContractException(TaskitCoreError.NO_TASKIT_ENGINES);
+    private void validateObject(Object object) {
+        if (object == null) {
+            throw new ContractException(TaskitCoreError.NULL_OBJECT_FOR_TRANSLATION);
         }
+    }
 
-        // validate each engine that exists irrespective of any mapping
-        for (ITaskitEngine taskitEngine : this.taskitEngines.values()) {
-            validateTaskitEngine(taskitEngine);
-            taskitEngineClasses.add(taskitEngine.getClass());
-        }
-
-        // if the class to type map doesn't contain all of the classes of the engines in
-        // the engine map
-        // and
-        // if the engine map doesn't contain all of the types from the class to type map
-        // this ensures that every engine has a valid class -> type -> engine mapping
-        if (!(this.taskitEngineClassToIdMap.keySet().containsAll(taskitEngineClasses)
-                && this.taskitEngines.keySet().containsAll(this.taskitEngineClassToIdMap.values()))) {
-            throw new RuntimeException(
-                    "Not all Taskit Engines have an associated Class -> Type -> Engine Mapping. Something went very wrong.");
+    private void validateTaskitEngineId(TaskitEngineId taskitEngineId) {
+        if (taskitEngineId == null) {
+            throw new ContractException(TaskitCoreError.NULL_TASKIT_ENGINE_ID);
         }
     }
 
@@ -245,28 +191,57 @@ public final class TaskitEngineManager {
      *                           IOException
      */
     public <I> I read(Path path, Class<I> inputClass, TaskitEngineId taskitEngineId) {
-        if (path == null) {
-            throw new ContractException(TaskitCoreError.NULL_PATH);
-        }
+        validatePath(path);
+        validateClass(inputClass);
+        validateTaskitEngineId(taskitEngineId);
 
-        ResourceHelper.validateFilePath(path);
+        ITaskitEngine taskitEngine = this.data.taskitEngineIdToEngineMap.get(taskitEngineId);
 
-        if (inputClass == null) {
-            throw new ContractException(TaskitCoreError.NULL_CLASS_REF);
-        }
-
-        if (taskitEngineId == null) {
-            throw new ContractException(TaskitCoreError.NULL_TASKIT_ENGINE_ID);
-        }
-
-        ITaskitEngine taskitEngine = this.taskitEngines.get(taskitEngineId);
-
-        if (taskitEngine == null) {
-            throw new ContractException(TaskitCoreError.NULL_TASKIT_ENGINE);
-        }
+        validateTaskitEngine(taskitEngine);
 
         try {
             return taskitEngine.read(path, inputClass);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Using the given {@link TaskitEngineId}'s associated
+     * {@link TaskitEngine}, reads the given file into the given classRef and then
+     * translates it to it's corresponding type as defined by the provided
+     * {@link TranslationSpec}s to the associated TaskitEngine
+     * 
+     * @param <I> the class to read the file as
+     * 
+     * @throws ContractException
+     *                           <ul>
+     *                           <li>{@linkplain TaskitCoreError#NULL_PATH}
+     *                           if the path is null</li>
+     *                           <li>{@linkplain ResourceError#FILE_PATH_IS_DIRECTORY}
+     *                           if the path points to a directory instead of a
+     *                           file</li>
+     *                           <li>{@linkplain TaskitCoreError#NULL_CLASS_REF}
+     *                           if the object is null</li>
+     *                           <li>{@linkplain TaskitCoreError#NULL_TASKIT_ENGINE_ID}
+     *                           if taskitEngineId is null</li>
+     *                           <li>{@linkplain TaskitCoreError#NULL_TASKIT_ENGINE}
+     *                           if taskitEngine is null</li>
+     *                           </ul>
+     * @throws RuntimeException  if the reading of the file encounters an
+     *                           IOException
+     */
+    public <I, T> T readAndTranslate(Path path, Class<I> inputClass, TaskitEngineId taskitEngineId) {
+        validatePath(path);
+        validateClass(inputClass);
+        validateTaskitEngineId(taskitEngineId);
+
+        ITaskitEngine taskitEngine = this.data.taskitEngineIdToEngineMap.get(taskitEngineId);
+
+        validateTaskitEngine(taskitEngine);
+
+        try {
+            return taskitEngine.readAndTranslate(path, inputClass);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -359,10 +334,9 @@ public final class TaskitEngineManager {
      * @throws RuntimeException  if the writing of the file encounters an
      *                           IOException
      */
-    public <O extends P, P> void translateAndWrite(Path path, O object, Class<P> outputClass, TaskitEngineId taskitEngineId) {
-        if (outputClass == null) {
-            throw new ContractException(TaskitCoreError.NULL_CLASS_REF);
-        }
+    public <O extends P, P> void translateAndWrite(Path path, O object, Class<P> outputClass,
+            TaskitEngineId taskitEngineId) {
+        validateClass(outputClass);
 
         if (!this.data.parentChildClassRelationshipMap.values().contains(outputClass)) {
             throw new ContractException(TaskitCoreError.INVALID_PARENT_OUTPUT_CLASS);
@@ -374,25 +348,13 @@ public final class TaskitEngineManager {
     private <O extends P, P> void write(Path path, O object, Optional<Class<P>> outputClass,
             TaskitEngineId taskitEngineId, boolean translate) {
 
-        // if (path == null) {
-        //     throw new ContractException(TaskitCoreError.NULL_PATH);
-        // }
+        validatePath(path);
+        validateObject(object);
+        validateTaskitEngineId(taskitEngineId);
 
-        // ResourceHelper.validateFilePath(path);
+        ITaskitEngine taskitEngine = this.data.taskitEngineIdToEngineMap.get(taskitEngineId);
 
-        // if (object == null) {
-        //     throw new ContractException(TaskitCoreError.NULL_OBJECT_FOR_TRANSLATION);
-        // }
-
-        if (taskitEngineId == null) {
-            throw new ContractException(TaskitCoreError.NULL_TASKIT_ENGINE_ID);
-        }
-
-        ITaskitEngine taskitEngine = this.taskitEngines.get(taskitEngineId);
-
-        if (taskitEngine == null) {
-            throw new ContractException(TaskitCoreError.NULL_TASKIT_ENGINE);
-        }
+        validateTaskitEngine(taskitEngine);
 
         try {
             if (!translate) {

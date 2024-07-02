@@ -18,7 +18,8 @@ public enum TaskitCoreError implements ContractError {
         INVALID_TASKIT_ENGINE_BUILDER_CLASS_REF(
                         "The given Taskit Engine Builder classRef does not match the class of the actual Taskit Engine Builder"),
         MISSING_TRANSLATOR("Missing Translator: "),
-        NO_TASKIT_ENGINES("There are no taskit engines added to this controller."),
+        NO_TASKIT_ENGINES("There are no taskit engines added to this taskit engine manager."),
+        NO_TRANSLATION_SPECS("There are no translation specs added to this taskit engine."),
         NULL_CLASS_REF("Null Class Ref"),
         NULL_DEPENDENCY("Null dependency"),
         NULL_INIT_CONSUMER("Null Initializer Consumer"),
@@ -35,6 +36,7 @@ public enum TaskitCoreError implements ContractError {
         UNINITIALIZED_TRANSLATION_SPEC("TranslationSpec not initialized"),
         UNINITIALIZED_TRANSLATORS(
                         "Translators were added to the builder but were not initialized. Make sure to call super.initTranslators() during your custom engine build method"),
+                        UNINITIALIZED_TASKIT_ENGINE("The taskit engine was not initialized. Be sure to call taskitEngine.init()"),
         UNKNOWN_CLASSREF("No object has been read in with the specified classRef"),
         UNKNOWN_OBJECT("Object is not Translatable by this TranslationSpec"),
         UNKNOWN_TASKIT_ENGINE_ID("Taskit Engine ID was not set"),
