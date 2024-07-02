@@ -33,7 +33,6 @@ public final class TaskitEngine implements ITaskitEngine {
     private static final class Data {
         private final Map<Class<?>, ITranslationSpec> classToTranslationSpecMap = new LinkedHashMap<>();
         private final Set<ITranslationSpec> translationSpecs = new LinkedHashSet<>();
-        private final Map<Class<?>, Class<?>> childToParentClassMap = new LinkedHashMap<>();
         private TaskitEngineId taskitEngineId;
 
         private Data() {
@@ -104,12 +103,6 @@ public final class TaskitEngine implements ITaskitEngine {
         private void validateTranslatorNotNull(Translator translator) {
             if (translator == null) {
                 throw new ContractException(TaskitCoreError.NULL_TRANSLATOR);
-            }
-        }
-
-        private void validateClassRefNotNull(Class<?> classRef) {
-            if (classRef == null) {
-                throw new ContractException(TaskitCoreError.NULL_CLASS_REF);
             }
         }
 
@@ -237,44 +230,6 @@ public final class TaskitEngine implements ITaskitEngine {
 
             return this;
         }
-
-        /**
-         * Adds the given class -> parent mapping.
-         * <p>
-         * explicitly used when calling
-         * {@link TaskitEngineManager#write(Path, Object, Class)} or
-         * {@link ITaskitEngine#translateAndWrite(Path, Object, Class)}
-         * <p>
-         * allows to convert an object as another class before writing it to file.
-         * Useful for when you want to output a child type as it's parent type i.e.
-         * instead of writing out a Dog, you want to write the dog as an animal
-         * 
-         * @param <M> the childClass
-         * @param <U> the parentClass
-         * @throws ContractException
-         *                           <ul>
-         *                           <li>{@linkplain TaskitCoreError#NULL_CLASS_REF}
-         *                           if classRef is null or if parentClassRef is
-         *                           null</li>
-         *                           <li>{@linkplain TaskitCoreError#DUPLICATE_CLASSREF}
-         *                           if child parent relationship has already been
-         *                           added</li>
-         *                           </ul>
-         */
-        public final <M extends U, U> Builder addParentChildClassRelationship(Class<M> classRef,
-                Class<U> parentClassRef) {
-            validateClassRefNotNull(classRef);
-            validateClassRefNotNull(parentClassRef);
-
-            if (this.data.childToParentClassMap.containsKey(classRef)) {
-                throw new ContractException(TaskitCoreError.DUPLICATE_CLASSREF);
-            }
-
-            this.data.childToParentClassMap.put(classRef, parentClassRef);
-
-            return this;
-        }
-
     }
 
     /**
@@ -410,14 +365,6 @@ public final class TaskitEngine implements ITaskitEngine {
     @Override
     public <T, I> T readAndTranslate(Path path, Class<I> inputClassRef) throws IOException {
         throw new UnsupportedOperationException("Called 'readAndTranslate' on TaskitEngine");
-    }
-
-    // This is package access so the TaskitEngineManager can access it but nothing
-    // else.
-    Map<Class<?>, Class<?>> getChildParentClassMap() {
-        Map<Class<?>, Class<?>> copyMap = new LinkedHashMap<>(this.data.childToParentClassMap);
-
-        return copyMap;
     }
 
     private void validateObject(Object object) {

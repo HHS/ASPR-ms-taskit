@@ -103,23 +103,6 @@ public final class TaskitEngineManager {
         public Builder addTaskitEngine(ITaskitEngine taskitEngine) {
             validateTaskitEngine(taskitEngine);
 
-            Map<Class<?>, Class<?>> childToParentClassMap = taskitEngine.getTaskitEngine().getChildParentClassMap();
-
-            for (Class<?> childClassRef : childToParentClassMap.keySet()) {
-                // Need to duplicate code here because the map doesn't provide the type safety
-                // that is required by the addParentChildClassRelationship method
-                Class<?> parentClassRef = childToParentClassMap.get(childClassRef);
-
-                /*
-                 * the classes in a singular taskitEngine are guaranteed to not have duplicates.
-                 * But this guarantee does not extend to other taskit engines
-                 * As such, only add the relationship if it doesn't already exist
-                 * 
-                 * also, any given class should only have at most one parent. If it has more
-                 */
-                this.data.parentChildClassRelationshipMap.putIfAbsent(childClassRef, parentClassRef);
-            }
-
             this.data.taskitEngineIdToEngineMap.put(taskitEngine.getTaskitEngineId(), taskitEngine);
 
             return this;
