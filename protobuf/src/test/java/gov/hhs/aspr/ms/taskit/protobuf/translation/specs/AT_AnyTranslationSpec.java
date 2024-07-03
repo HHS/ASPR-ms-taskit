@@ -12,9 +12,9 @@ import com.google.protobuf.InvalidProtocolBufferException;
 
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppEnum;
 import gov.hhs.aspr.ms.taskit.protobuf.engine.ProtobufJsonTaskitEngine;
-import gov.hhs.aspr.ms.taskit.protobuf.input.WrapperEnumValue;
-import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testobject.input.TestInputEnum;
-import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testobject.input.TestInputObject;
+import gov.hhs.aspr.ms.taskit.protobuf.objects.WrapperEnumValue;
+import gov.hhs.aspr.ms.taskit.protobuf.testsupport.objects.TestInputEnum;
+import gov.hhs.aspr.ms.taskit.protobuf.testsupport.objects.TestInputObject;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.translation.specs.TestProtobufComplexObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.translation.specs.TestProtobufEnumTranslationSpec;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.translation.specs.TestProtobufObjectTranslationSpec;

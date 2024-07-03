@@ -7,9 +7,9 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppChildObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppEnum;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestComplexAppObject;
-import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testcomplexobject.input.TestComplexInputObject;
-import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testobject.input.TestInputEnum;
-import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testobject.input.TestInputObject;
+import gov.hhs.aspr.ms.taskit.protobuf.testsupport.objects.TestComplexInputObject;
+import gov.hhs.aspr.ms.taskit.protobuf.testsupport.objects.TestInputEnum;
+import gov.hhs.aspr.ms.taskit.protobuf.testsupport.objects.TestInputObject;
 import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
 
 public class TestObjectUtil {

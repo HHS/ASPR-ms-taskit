@@ -1,7 +1,7 @@
 package gov.hhs.aspr.ms.taskit.protobuf.testsupport.translation.specs;
 
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppEnum;
-import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testobject.input.TestInputEnum;
+import gov.hhs.aspr.ms.taskit.protobuf.testsupport.objects.TestInputEnum;
 import gov.hhs.aspr.ms.taskit.protobuf.translation.ProtobufTranslationSpec;
 
 public class TestProtobufEnumTranslationSpec extends ProtobufTranslationSpec<TestInputEnum, TestAppEnum> {

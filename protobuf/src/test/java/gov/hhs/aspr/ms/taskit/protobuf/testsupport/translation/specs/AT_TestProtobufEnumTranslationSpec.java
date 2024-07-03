@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppEnum;
 import gov.hhs.aspr.ms.taskit.protobuf.engine.ProtobufJsonTaskitEngine;
-import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testobject.input.TestInputEnum;
+import gov.hhs.aspr.ms.taskit.protobuf.testsupport.objects.TestInputEnum;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestForCoverage;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;

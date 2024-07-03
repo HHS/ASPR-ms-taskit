@@ -8,7 +8,6 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.ms.taskit.protobuf.engine.ProtobufTaskitError;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 
 public class AT_ProtobufCoreTranslationError {

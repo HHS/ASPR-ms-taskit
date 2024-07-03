@@ -23,7 +23,7 @@ import com.google.protobuf.UInt32Value;
 import com.google.protobuf.UInt64Value;
 import com.google.type.Date;
 
-import gov.hhs.aspr.ms.taskit.protobuf.input.WrapperEnumValue;
+import gov.hhs.aspr.ms.taskit.protobuf.objects.WrapperEnumValue;
 import gov.hhs.aspr.ms.taskit.protobuf.translation.ProtobufTranslationSpec;
 import gov.hhs.aspr.ms.taskit.protobuf.translation.specs.AnyTranslationSpec;
 import gov.hhs.aspr.ms.taskit.protobuf.translation.specs.BooleanTranslationSpec;
@@ -34,8 +34,6 @@ import gov.hhs.aspr.ms.taskit.protobuf.translation.specs.FloatTranslationSpec;
 import gov.hhs.aspr.ms.taskit.protobuf.translation.specs.IntegerTranslationSpec;
 import gov.hhs.aspr.ms.taskit.protobuf.translation.specs.LongTranslationSpec;
 import gov.hhs.aspr.ms.taskit.protobuf.translation.specs.StringTranslationSpec;
-import gov.hhs.aspr.ms.taskit.protobuf.translation.specs.UIntegerTranslationSpec;
-import gov.hhs.aspr.ms.taskit.protobuf.translation.specs.ULongTranslationSpec;
 
 /**
  * This is a helper class that encompasses all of the primitive translation
@@ -47,9 +45,7 @@ final class ProtobufTaskitEngineHelper {
 
     final BooleanTranslationSpec BOOLEAN_TRANSLATOR_SPEC = new BooleanTranslationSpec();
     final IntegerTranslationSpec INT32_TRANSLATOR_SPEC = new IntegerTranslationSpec();
-    final UIntegerTranslationSpec UINT32_TRANSLATOR_SPEC = new UIntegerTranslationSpec();
     final LongTranslationSpec INT64_TRANSLATOR_SPEC = new LongTranslationSpec();
-    final ULongTranslationSpec UINT64_TRANSLATOR_SPEC = new ULongTranslationSpec();
     final StringTranslationSpec STRING_TRANSLATOR_SPEC = new StringTranslationSpec();
     final FloatTranslationSpec FLOAT_TRANSLATOR_SPEC = new FloatTranslationSpec();
     final DoubleTranslationSpec DOUBLE_TRANSLATOR_SPEC = new DoubleTranslationSpec();
@@ -112,12 +108,8 @@ final class ProtobufTaskitEngineHelper {
                 BOOLEAN_TRANSLATOR_SPEC.getInputObjectClass());
         map.put(Int32Value.getDefaultInstance().getDescriptorForType().getFullName(),
                 INT32_TRANSLATOR_SPEC.getInputObjectClass());
-        map.put(UInt32Value.getDefaultInstance().getDescriptorForType().getFullName(),
-                UINT32_TRANSLATOR_SPEC.getInputObjectClass());
         map.put(Int64Value.getDefaultInstance().getDescriptorForType().getFullName(),
                 INT64_TRANSLATOR_SPEC.getInputObjectClass());
-        map.put(UInt64Value.getDefaultInstance().getDescriptorForType().getFullName(),
-                UINT64_TRANSLATOR_SPEC.getInputObjectClass());
         map.put(StringValue.getDefaultInstance().getDescriptorForType().getFullName(),
                 STRING_TRANSLATOR_SPEC.getInputObjectClass());
         map.put(FloatValue.getDefaultInstance().getDescriptorForType().getFullName(),
@@ -145,9 +137,7 @@ final class ProtobufTaskitEngineHelper {
 
         map.put(BOOLEAN_TRANSLATOR_SPEC.getInputObjectClass(), BOOLEAN_TRANSLATOR_SPEC);
         map.put(INT32_TRANSLATOR_SPEC.getInputObjectClass(), INT32_TRANSLATOR_SPEC);
-        map.put(UINT32_TRANSLATOR_SPEC.getInputObjectClass(), UINT32_TRANSLATOR_SPEC);
         map.put(INT64_TRANSLATOR_SPEC.getInputObjectClass(), INT64_TRANSLATOR_SPEC);
-        map.put(UINT64_TRANSLATOR_SPEC.getInputObjectClass(), UINT64_TRANSLATOR_SPEC);
         map.put(STRING_TRANSLATOR_SPEC.getInputObjectClass(), STRING_TRANSLATOR_SPEC);
         map.put(FLOAT_TRANSLATOR_SPEC.getInputObjectClass(), FLOAT_TRANSLATOR_SPEC);
         map.put(DOUBLE_TRANSLATOR_SPEC.getInputObjectClass(), DOUBLE_TRANSLATOR_SPEC);

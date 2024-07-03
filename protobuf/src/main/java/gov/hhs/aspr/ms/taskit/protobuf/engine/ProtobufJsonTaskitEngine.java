@@ -69,6 +69,10 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
             this.data = data;
         }
 
+        void clearBuilder() {
+            this.data = new Data();
+        }
+        
         /**
          * returns a new instance of a ProtobufTaskitEngine that has a jsonParser
          * and jsonWriter that include all the typeUrls for all added TranslationSpecs
@@ -251,7 +255,8 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
      * 
      * @param <M> the type of the object
      * 
-     * @throws ContractException if the given object is not assignable from
+     * @throws ContractException {@link TaskitCoreError#INVALID_OUTPUT_CLASS} if the
+     *                           given object is not assignable from
      *                           {@link Message}
      * @throws IOException       if there is an IOException during writing
      */

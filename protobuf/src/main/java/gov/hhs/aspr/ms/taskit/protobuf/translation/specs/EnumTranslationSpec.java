@@ -5,7 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import com.google.protobuf.Any;
 import com.google.protobuf.ProtocolMessageEnum;
 
-import gov.hhs.aspr.ms.taskit.protobuf.input.WrapperEnumValue;
+import gov.hhs.aspr.ms.taskit.protobuf.objects.WrapperEnumValue;
 import gov.hhs.aspr.ms.taskit.protobuf.translation.ProtobufTranslationSpec;
 
 /**
