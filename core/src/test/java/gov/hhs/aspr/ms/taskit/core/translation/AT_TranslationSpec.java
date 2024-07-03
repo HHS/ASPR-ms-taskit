@@ -18,8 +18,8 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestComplexInputObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestInputChildObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestInputObject;
-import gov.hhs.aspr.ms.taskit.core.testsupport.translation.specs.TestComplexObjectTranslationSpec;
-import gov.hhs.aspr.ms.taskit.core.testsupport.translation.specs.TestObjectTranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.complexobject.specs.TestComplexObjectTranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.specs.TestObjectTranslationSpec;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 import gov.hhs.aspr.ms.util.errors.ContractException;
@@ -134,7 +134,7 @@ public class AT_TranslationSpec {
     @Test
     @UnitTestMethod(target = TranslationSpec.class, name = "hashCode", args = {})
     public void testHashCode() {
-        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder().build();
+        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder().addTranslationSpec(new TestComplexObjectTranslationSpec()).build();
         // base
         TranslationSpec<TestInputObject, TestAppObject> translationSpecA = new TranslationSpec<>() {
 
@@ -291,7 +291,7 @@ public class AT_TranslationSpec {
     @Test
     @UnitTestMethod(target = TranslationSpec.class, name = "equals", args = { Object.class })
     public void testEquals() {
-        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder().build();
+        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder().addTranslationSpec(new TestComplexObjectTranslationSpec()).build();
         // base
         TranslationSpec<TestInputObject, TestAppObject> translationSpecA = new TranslationSpec<>() {
 

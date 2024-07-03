@@ -24,7 +24,6 @@ public final class TaskitEngineManager {
 
     final static class Data {
         private final Map<TaskitEngineId, ITaskitEngine> taskitEngineIdToEngineMap = new LinkedHashMap<>();
-        private final Map<Class<?>, Class<?>> parentChildClassRelationshipMap = new LinkedHashMap<>();
 
         Data() {
         }
@@ -299,9 +298,6 @@ public final class TaskitEngineManager {
      *                           <ul>
      *                           <li>{@linkplain TaskitCoreError#NULL_CLASS_REF}
      *                           if the output classref is null</li>
-     *                           <li>{@linkplain TaskitCoreError#INVALID_PARENT_OUTPUT_CLASS}
-     *                           if the output classref is not known to be a parent
-     *                           of the given object's class</li>
      *                           <li>{@linkplain TaskitCoreError#NULL_PATH}
      *                           if the path is null</li>
      *                           <li>{@linkplain ResourceError#FILE_PATH_IS_DIRECTORY}
@@ -320,10 +316,6 @@ public final class TaskitEngineManager {
     public <O extends P, P> void translateAndWrite(Path path, O object, Class<P> outputClass,
             TaskitEngineId taskitEngineId) {
         validateClass(outputClass);
-
-        if (!this.data.parentChildClassRelationshipMap.values().contains(outputClass)) {
-            throw new ContractException(TaskitCoreError.INVALID_PARENT_OUTPUT_CLASS);
-        }
 
         write(path, object, Optional.of(outputClass), taskitEngineId, true);
     }

@@ -1,4 +1,4 @@
-package gov.hhs.aspr.ms.taskit.core.testsupport.translation.specs;
+package gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.specs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -9,6 +9,7 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.TestObjectUtil;
 import gov.hhs.aspr.ms.taskit.core.testsupport.engine.TestTaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestInputObject;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.complexobject.specs.TestComplexObjectTranslationSpec;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestForCoverage;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;

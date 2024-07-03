@@ -1,4 +1,4 @@
-package gov.hhs.aspr.ms.taskit.core.testsupport.translation;
+package gov.hhs.aspr.ms.taskit.core.testsupport.translation.complexobject;
 
 import gov.hhs.aspr.ms.taskit.core.translation.TranslatorId;
 

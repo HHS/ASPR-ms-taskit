@@ -3,14 +3,13 @@ package gov.hhs.aspr.ms.taskit.core;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitCoreError;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.testsupport.engine.TestTaskitEngine;
-import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestObjectWrapper;
-import gov.hhs.aspr.ms.taskit.core.testsupport.translation.TestObjectTranslator;
-import gov.hhs.aspr.ms.taskit.core.testsupport.translation.specs.TestComplexObjectTranslationSpec;
-import gov.hhs.aspr.ms.taskit.core.testsupport.translation.specs.TestObjectTranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.complexobject.specs.TestComplexObjectTranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.TestObjectTranslator;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.specs.TestObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 
@@ -152,29 +151,5 @@ public final class TaskitEngineTestHelper {
         });
 
         assertEquals(TaskitCoreError.DUPLICATE_TRANSLATOR, contractException.getErrorType());
-    }
-
-    public static void testAddParentChildClassRelationship(TaskitEngine.Builder builder) {
-        builder.addParentChildClassRelationship(TestAppObject.class, Object.class);
-
-        // preconditions
-        ContractException contractException = assertThrows(ContractException.class, () -> {
-            builder.addParentChildClassRelationship(null, Object.class);
-        });
-
-        assertEquals(TaskitCoreError.NULL_CLASS_REF, contractException.getErrorType());
-
-        contractException = assertThrows(ContractException.class, () -> {
-            builder.addParentChildClassRelationship(TestAppObject.class, null);
-        });
-
-        assertEquals(TaskitCoreError.NULL_CLASS_REF, contractException.getErrorType());
-
-        contractException = assertThrows(ContractException.class, () -> {
-            builder.addParentChildClassRelationship(TestAppObject.class, Object.class)
-                    .addParentChildClassRelationship(TestAppObject.class, Object.class);
-        });
-
-        assertEquals(TaskitCoreError.DUPLICATE_CLASSREF, contractException.getErrorType());
     }
 }

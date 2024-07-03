@@ -10,7 +10,8 @@ import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.testsupport.engine.TestTaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestInputObject;
-import gov.hhs.aspr.ms.taskit.core.testsupport.translation.specs.TestObjectTranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.complexobject.specs.TestComplexObjectTranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.specs.TestObjectTranslationSpec;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 
@@ -47,7 +48,7 @@ public class AT_TestTranslationSpec {
     @Test
     @UnitTestMethod(target = TestTranslationSpec.class, name = "init", args = { TaskitEngine.class })
     public void testInit() {
-        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder().build();
+        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder().addTranslationSpec(new TestComplexObjectTranslationSpec()).build();
 
         TestTranslationSpec<TestInputObject, TestAppObject> testTranslationSpec = new TestObjectTranslationSpec();
 

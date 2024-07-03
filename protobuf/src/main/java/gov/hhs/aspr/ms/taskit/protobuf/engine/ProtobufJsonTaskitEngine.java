@@ -192,17 +192,6 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
         }
 
         /**
-         * Calls
-         * {@link TaskitEngine.Builder#addParentChildClassRelationship(Class, Class)}
-         */
-        @Override
-        public <M extends U, U> Builder addParentChildClassRelationship(Class<M> classRef, Class<U> parentClassRef) {
-            this.taskitEngineBuilder.addParentChildClassRelationship(classRef, parentClassRef);
-
-            return this;
-        }
-
-        /**
          * checks the class to determine if it is a ProtocolMessageEnum or a Message and
          * if so, gets the Descriptor (which is akin to a class but for a Protobuf
          * Message) for it to get the full name and add the typeUrl to the internal

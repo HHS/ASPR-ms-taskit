@@ -1,4 +1,4 @@
-package gov.hhs.aspr.ms.taskit.core.testsupport.translation;
+package gov.hhs.aspr.ms.taskit.core.testsupport.translation.object;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 

@@ -32,7 +32,7 @@ public class TranslationSpecSupport {
 
         // get the package of the translator class to get its translationSpecs package
         // path
-        String packageName = translatorClassRef.getPackageName() + ".translationSpecs";
+        String packageName = translatorClassRef.getPackageName() + ".specs";
         String packagePath = packageName.replaceAll("[.]", "/");
 
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();

@@ -1,4 +1,4 @@
-package gov.hhs.aspr.ms.taskit.core.testsupport.translation;
+package gov.hhs.aspr.ms.taskit.core.testsupport.translation.complexobject;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

@@ -1,4 +1,4 @@
-package gov.hhs.aspr.ms.taskit.core.testsupport.translation;
+package gov.hhs.aspr.ms.taskit.core.testsupport.translation.object;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.complexobject.TestComplexObjectTranslatorId;
 import gov.hhs.aspr.ms.taskit.core.translation.Translator;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslatorId;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;

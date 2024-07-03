@@ -1,4 +1,4 @@
-package gov.hhs.aspr.ms.taskit.core.testsupport.translation.specs;
+package gov.hhs.aspr.ms.taskit.core.testsupport.translation.complexobject.specs;
 
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestComplexAppObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestComplexInputObject;

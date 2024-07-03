@@ -7,7 +7,7 @@ import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitCoreError;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestObjectWrapper;
-import gov.hhs.aspr.ms.taskit.core.testsupport.translation.TestObjectTranslator;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.TestObjectTranslator;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.translation.specs.TestProtobufComplexObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.translation.specs.TestProtobufObjectTranslationSpec;

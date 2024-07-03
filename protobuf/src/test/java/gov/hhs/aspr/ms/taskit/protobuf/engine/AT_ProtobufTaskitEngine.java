@@ -26,7 +26,7 @@ import com.google.protobuf.ProtocolMessageEnum;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitCoreError;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppChildObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppObject;
-import gov.hhs.aspr.ms.taskit.core.testsupport.translation.specs.TestObjectTranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.specs.TestObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.Translator;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTaskitEngineTestHelper;

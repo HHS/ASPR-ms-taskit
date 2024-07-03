@@ -17,8 +17,8 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.engine.TestTaskitEngineId;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppChildObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestInputObject;
-import gov.hhs.aspr.ms.taskit.core.testsupport.translation.TestComplexObjectTranslator;
-import gov.hhs.aspr.ms.taskit.core.testsupport.translation.TestObjectTranslator;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.complexobject.TestComplexObjectTranslator;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.TestObjectTranslator;
 import gov.hhs.aspr.ms.util.annotations.UnitTestForCoverage;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 import gov.hhs.aspr.ms.util.errors.ContractException;
@@ -186,7 +186,6 @@ public class AT_TaskitEngineManager {
         TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
                 .addTranslator(TestComplexObjectTranslator.getTranslator())
-                .addParentChildClassRelationship(TestAppChildObject.class, TestAppObject.class)
                 .build();
 
         TaskitEngineManager taskitEngineManager = TaskitEngineManager.builder()
@@ -247,7 +246,6 @@ public class AT_TaskitEngineManager {
         TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
                 .addTranslator(TestComplexObjectTranslator.getTranslator())
-                .addParentChildClassRelationship(TestAppChildObject.class, TestAppObject.class)
                 .build();
 
         TaskitEngineManager taskitEngineManager = TaskitEngineManager.builder()
@@ -268,22 +266,6 @@ public class AT_TaskitEngineManager {
 
         assertEquals(TaskitCoreError.NULL_CLASS_REF, contractException.getErrorType());
 
-        // outputClass isn't a valid child -> parent relationship
-        contractException = assertThrows(ContractException.class, () -> {
-            TestTaskitEngine testTaskitEngine2 = TestTaskitEngine.builder()
-                    .addTranslator(TestObjectTranslator.getTranslator())
-                    .addTranslator(TestComplexObjectTranslator.getTranslator())
-                    .build();
-
-            TaskitEngineManager taskitEngineManager2 = TaskitEngineManager.builder()
-                    .addTaskitEngine(testTaskitEngine2).build();
-
-            taskitEngineManager2.translateAndWrite(filePath.resolve(fileName), expectedAppObject, TestAppObject.class,
-                    TestTaskitEngineId.TEST_ENGINE_ID);
-        });
-
-        assertEquals(TaskitCoreError.INVALID_PARENT_OUTPUT_CLASS, contractException.getErrorType());
-
         // TaskitCoreError#NULL_PATH is tested by testWrite_Base()
         // ResourceError#FILE_PATH_IS_DIRECTORY is tested by testWrite_Base()
         // TaskitCoreError#NULL_OBJECT_FOR_TRANSLATION is tested by testWrite_Base()
@@ -302,7 +284,6 @@ public class AT_TaskitEngineManager {
         TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
                 .addTranslator(TestComplexObjectTranslator.getTranslator())
-                .addParentChildClassRelationship(TestAppChildObject.class, TestAppObject.class)
                 .build();
 
         TaskitEngineManager taskitEngineManager = TaskitEngineManager.builder()
@@ -390,7 +371,7 @@ public class AT_TaskitEngineManager {
         TestTaskitEngine taskitEngine = TestTaskitEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
                 .addTranslator(TestComplexObjectTranslator.getTranslator())
-                .addParentChildClassRelationship(TestAppObject.class, Object.class).build();
+                .build();
 
         TaskitEngineManager.builder().addTaskitEngine(taskitEngine).build();
 

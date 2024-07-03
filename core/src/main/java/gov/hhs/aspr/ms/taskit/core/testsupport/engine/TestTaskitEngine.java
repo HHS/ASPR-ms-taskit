@@ -65,10 +65,10 @@ public class TestTaskitEngine implements ITaskitEngine {
 
             this.data.taskitEngine = taskitEngineBuilder.build();
 
-            TestTaskitEngine taskitEngine = new TestTaskitEngine(this.data);
+            TestTaskitEngine testTaskitEngine = new TestTaskitEngine(this.data);
 
-            this.data.taskitEngine.init(taskitEngine);
-            return taskitEngine;
+            this.data.taskitEngine.init(testTaskitEngine);
+            return testTaskitEngine;
         }
 
         public TestTaskitEngine buildWithoutInit() {
@@ -91,13 +91,6 @@ public class TestTaskitEngine implements ITaskitEngine {
             translator.initialize(new TranslatorContext(this));
 
             this.taskitEngineBuilder.addTranslator(translator);
-
-            return this;
-        }
-
-        @Override
-        public <M extends U, U> Builder addParentChildClassRelationship(Class<M> classRef, Class<U> markerInterface) {
-            this.taskitEngineBuilder.addParentChildClassRelationship(classRef, markerInterface);
 
             return this;
         }
@@ -140,16 +133,6 @@ public class TestTaskitEngine implements ITaskitEngine {
     }
 
     @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
-    }
-
-    @Override
     public TaskitEngine getTaskitEngine() {
         return this.data.taskitEngine;
     }
@@ -172,6 +155,16 @@ public class TestTaskitEngine implements ITaskitEngine {
     @Override
     public <T, M, U> T translateObjectAsClassUnsafe(M object, Class<U> classRef) {
         return this.data.taskitEngine.translateObjectAsClassUnsafe(object, classRef);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
     }
 
 }
