@@ -45,10 +45,6 @@ public final class TaskitEngine implements ITaskitEngine {
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-
             Data other = (Data) obj;
 
             if (!Objects.equals(classToTranslationSpecMap, other.classToTranslationSpecMap)) {
@@ -73,13 +69,6 @@ public final class TaskitEngine implements ITaskitEngine {
 
         private Builder(Data data) {
             this.data = data;
-        }
-
-        /*
-         * package access for testing
-         */
-        void clearBuilder() {
-            this.data = new Data();
         }
 
         private <I, A> void validateTranslationSpec(TranslationSpec<I, A> translationSpec) {

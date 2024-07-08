@@ -68,13 +68,6 @@ public final class TaskitEngineManager {
         }
 
         /**
-         * package access for testing
-         */
-        TaskitEngineManager buildWithoutInitAndChecks() {
-            return new TaskitEngineManager(this.data);
-        }
-
-        /**
          * Adds a {@link TaskitEngine} and also adds all of it's child -> parent class
          * ref mappings
          * <p>

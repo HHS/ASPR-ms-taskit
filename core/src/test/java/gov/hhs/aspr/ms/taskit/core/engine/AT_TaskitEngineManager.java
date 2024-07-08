@@ -131,35 +131,35 @@ public class AT_TaskitEngineManager {
         // preconditions
         // null path
         ContractException contractException = assertThrows(ContractException.class, () -> {
-            taskitEngineManager.read(null, TestInputObject.class, TestTaskitEngineId.TEST_ENGINE_ID);
+            taskitEngineManager.readAndTranslate(null, TestInputObject.class, TestTaskitEngineId.TEST_ENGINE_ID);
         });
 
         assertEquals(TaskitCoreError.NULL_PATH, contractException.getErrorType());
 
         // filepath is a directory
         contractException = assertThrows(ContractException.class, () -> {
-            taskitEngineManager.read(filePath, TestInputObject.class, TestTaskitEngineId.TEST_ENGINE_ID);
+            taskitEngineManager.readAndTranslate(filePath, TestInputObject.class, TestTaskitEngineId.TEST_ENGINE_ID);
         });
 
         assertEquals(ResourceError.FILE_PATH_IS_DIRECTORY, contractException.getErrorType());
 
         // null classRef
         contractException = assertThrows(ContractException.class, () -> {
-            taskitEngineManager.read(filePath.resolve(fileName), null, TestTaskitEngineId.TEST_ENGINE_ID);
+            taskitEngineManager.readAndTranslate(filePath.resolve(fileName), null, TestTaskitEngineId.TEST_ENGINE_ID);
         });
 
         assertEquals(TaskitCoreError.NULL_CLASS_REF, contractException.getErrorType());
 
         // null taskit engine id
         contractException = assertThrows(ContractException.class, () -> {
-            taskitEngineManager.read(filePath.resolve(fileName), TestInputObject.class, null);
+            taskitEngineManager.readAndTranslate(filePath.resolve(fileName), TestInputObject.class, null);
         });
 
         assertEquals(TaskitCoreError.NULL_TASKIT_ENGINE_ID, contractException.getErrorType());
 
         // null taskit engine
         contractException = assertThrows(ContractException.class, () -> {
-            taskitEngineManager.read(filePath.resolve(fileName), TestInputObject.class, new TaskitEngineId() {
+            taskitEngineManager.readAndTranslate(filePath.resolve(fileName), TestInputObject.class, new TaskitEngineId() {
 
             });
         });
@@ -168,7 +168,7 @@ public class AT_TaskitEngineManager {
 
         // issue reading file
         RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> {
-            taskitEngineManager.read(filePath.resolve("badPath.json"), TestInputObject.class,
+            taskitEngineManager.readAndTranslate(filePath.resolve("badPath2"), TestInputObject.class,
                     TestTaskitEngineId.TEST_ENGINE_ID);
         });
 

@@ -20,10 +20,14 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestComplexInputObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestInputChildObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestInputObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestObjectWrapper;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.complexobject.TestComplexObjectTranslator;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.complexobject.specs.TestComplexObjectTranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.TestObjectTranslator;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.specs.TestObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.ITranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.translation.Translator;
+import gov.hhs.aspr.ms.taskit.core.translation.TranslatorId;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 
@@ -34,6 +38,111 @@ public class AT_TaskitEngine {
         @Override
         public void init(ITaskitEngine taskitEngine) {
         }
+    }
+
+    @Test
+    @UnitTestMethod(target = TaskitEngine.Builder.class, name = "build", args = {})
+    public void testBuild() {
+        // preconditions:
+        // the engine id was not set
+        ContractException contractException = assertThrows(ContractException.class, () -> {
+            TaskitEngine.builder()
+                    .addTranslationSpec(new TestObjectTranslationSpec()).build();
+        });
+
+        assertEquals(TaskitCoreError.UNKNOWN_TASKIT_ENGINE_ID, contractException.getErrorType());
+
+        // duplicate translator
+        contractException = assertThrows(ContractException.class, () -> {
+            TaskitEngine.builder()
+                    .setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID)
+                    .addTranslator(TestObjectTranslator.getTranslator())
+                    .addTranslator(TestObjectTranslator.getTranslator()).build();
+        });
+
+        assertEquals(TaskitCoreError.DUPLICATE_TRANSLATOR, contractException.getErrorType());
+
+        // missing translator
+        contractException = assertThrows(ContractException.class, () -> {
+            TaskitEngine.builder()
+                    .setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID)
+                    .addTranslator(TestObjectTranslator.getTranslator()).build();
+        });
+
+        assertEquals(TaskitCoreError.MISSING_TRANSLATOR, contractException.getErrorType());
+
+        // circular translator dependencies
+        contractException = assertThrows(ContractException.class, () -> {
+            TranslatorId translatorId1 = new TranslatorId() {
+            };
+            TranslatorId translatorId2 = new TranslatorId() {
+            };
+            Translator translator1 = Translator.builder().setTranslatorId(translatorId1).addDependency(translatorId2)
+                    .setInitializer((c) -> {
+                    }).build();
+            Translator translator2 = Translator.builder().setTranslatorId(translatorId2).addDependency(translatorId1)
+                    .setInitializer((c) -> {
+                    }).build();
+            TaskitEngine.builder()
+                    .setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID)
+                    .addTranslator(translator1)
+                    .addTranslator(translator2).build();
+        });
+
+        assertEquals(TaskitCoreError.CIRCULAR_TRANSLATOR_DEPENDENCIES, contractException.getErrorType());
+
+        // uninitialized translator
+        contractException = assertThrows(ContractException.class, () -> {
+            TaskitEngine.builder()
+                    .setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID)
+                    .addTranslator(TestComplexObjectTranslator.getTranslator()).build();
+        });
+
+        assertEquals(TaskitCoreError.UNINITIALIZED_TRANSLATORS, contractException.getErrorType());
+
+        // no translation specs were added
+        contractException = assertThrows(ContractException.class, () -> {
+            TaskitEngine.builder().setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID).build();
+        });
+
+        assertEquals(TaskitCoreError.NO_TRANSLATION_SPECS, contractException.getErrorType());
+    }
+
+    @Test
+    @UnitTestMethod(target = TaskitEngine.Builder.class, name = "setTaskitEngineId", args = { TaskitEngineId.class })
+    public void testSetTaskitEngineId() {
+        TaskitEngine taskitEngine = TaskitEngine.builder()
+                .addTranslationSpec(new TestObjectTranslationSpec())
+                .setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID).build();
+
+        assertEquals(TestTaskitEngineId.TEST_ENGINE_ID, taskitEngine.getTaskitEngineId());
+
+        // preconditions:
+        // null id
+        ContractException contractException = assertThrows(ContractException.class, () -> {
+            TaskitEngine.builder().setTaskitEngineId(null);
+
+        });
+
+        assertEquals(TaskitCoreError.NULL_TASKIT_ENGINE_ID, contractException.getErrorType());
+    }
+
+    @Test
+    @UnitTestMethod(target = TaskitEngine.Builder.class, name = "addTranslationSpec", args = { TranslationSpec.class })
+    public void testAddTranslationSpec() {
+        TaskitEngineTestHelper.testAddTranslationSpec((c) -> TaskitEngine.builder().setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID));
+    }
+
+    @Test
+    @UnitTestMethod(target = TaskitEngine.Builder.class, name = "addTranslator", args = { Translator.class })
+    public void testAddTranslator() {
+        TaskitEngineTestHelper.testAddTranslator(TaskitEngine.builder().setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID));
+    }
+
+    @Test
+    @UnitTestMethod(target = TaskitEngine.class, name = "builder", args = {})
+    public void testBuilder() {
+        // nothing to test
     }
 
     @Test
@@ -280,7 +389,7 @@ public class AT_TaskitEngine {
     }
 
     @Test
-    @UnitTestMethod(target = TaskitEngine.class, name = "translateObjectAsSafeClass", args = { Object.class,
+    @UnitTestMethod(target = TaskitEngine.class, name = "translateObjectAsClassSafe", args = { Object.class,
             Class.class })
     public void testTranslateObjectAsSafeClass() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
@@ -436,82 +545,6 @@ public class AT_TaskitEngine {
         assertEquals(TaskitCoreError.UNKNOWN_TRANSLATION_SPEC, contractException.getErrorType());
     }
 
-    // @Test
-    // @UnitTestForCoverage
-    // public void testGetOrderedTranslators() {
-
-    // TaskitEngine.Builder taskitEngineBuilder = TaskitEngine.builder()
-    // .addTranslator(TestObjectTranslator.getTranslator())
-    // .addTranslator(TestComplexObjectTranslator.getTranslator());
-
-    // List<Translator> expectedList = new ArrayList<>();
-    // expectedList.add(TestComplexObjectTranslator.getTranslator());
-    // expectedList.add(TestObjectTranslator.getTranslator());
-
-    // List<Translator> actualList = taskitEngineBuilder.getOrderedTranslators();
-
-    // assertEquals(expectedList, actualList);
-
-    // // preconditions
-
-    // // duplicate translator in the graph
-
-    // ContractException contractException = assertThrows(ContractException.class,
-    // () -> {
-    // MutableGraph<TranslatorId, Object> mutableGraph = new MutableGraph<>();
-    // Map<TranslatorId, Translator> translatorMap = new LinkedHashMap<>();
-    // mutableGraph.addNode(TestObjectTranslatorId.TRANSLATOR_ID);
-    // taskitEngineBuilder.addNodes(mutableGraph, translatorMap);
-    // });
-
-    // assertEquals(TaskitCoreError.DUPLICATE_TRANSLATOR,
-    // contractException.getErrorType());
-
-    // // missing translator
-    // contractException = assertThrows(ContractException.class, () -> {
-    // MutableGraph<TranslatorId, Object> mutableGraph = new MutableGraph<>();
-    // Map<TranslatorId, Translator> translatorMap = new LinkedHashMap<>();
-
-    // // call normally
-    // taskitEngineBuilder.getOrderedTranslators(mutableGraph, translatorMap);
-    // // remove a mapping
-    // translatorMap.remove(TestComplexObjectTranslatorId.TRANSLATOR_ID);
-    // TranslatorId thirdId = new TranslatorId() {
-    // };
-    // mutableGraph.addNode(thirdId);
-    // mutableGraph.addEdge(new Object(), thirdId,
-    // TestComplexObjectTranslatorId.TRANSLATOR_ID);
-    // taskitEngineBuilder.checkForMissingTranslators(mutableGraph, translatorMap);
-    // });
-
-    // assertEquals(TaskitCoreError.MISSING_TRANSLATOR,
-    // contractException.getErrorType());
-
-    // // cyclic graph
-    // contractException = assertThrows(ContractException.class, () -> {
-    // MutableGraph<TranslatorId, Object> mutableGraph = new MutableGraph<>();
-    // Map<TranslatorId, Translator> translatorMap = new LinkedHashMap<>();
-
-    // // call normally
-    // taskitEngineBuilder.getOrderedTranslators(mutableGraph, translatorMap);
-    // mutableGraph.addEdge(new Object(),
-    // TestComplexObjectTranslatorId.TRANSLATOR_ID,
-    // TestObjectTranslatorId.TRANSLATOR_ID);
-    // TranslatorId thirdId = new TranslatorId() {
-    // };
-    // TranslatorId fourthId = new TranslatorId() {
-    // };
-    // mutableGraph.addNode(thirdId);
-    // mutableGraph.addNode(fourthId);
-    // mutableGraph.addEdge(new Object(), thirdId, fourthId);
-    // mutableGraph.addEdge(new Object(), fourthId, thirdId);
-    // taskitEngineBuilder.checkForCyclicGraph(mutableGraph);
-    // });
-
-    // assertEquals(TaskitCoreError.CIRCULAR_TRANSLATOR_DEPENDENCIES,
-    // contractException.getErrorType());
-    // }
-
     // TODO: update test
     @Test
     @UnitTestMethod(target = TaskitEngine.class, name = "hashCode", args = {})
@@ -534,7 +567,6 @@ public class AT_TaskitEngine {
                 .setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID)
                 .build();
 
-    
         TaskitEngine taskitEngine4 = TaskitEngine.builder()
                 .addTranslationSpec(testObjectTranslationSpec)
                 .addTranslationSpec(testComplexObjectTranslationSpec)

@@ -26,6 +26,7 @@ import gov.hhs.aspr.ms.taskit.core.engine.TaskitCoreError;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.Translator;
+import gov.hhs.aspr.ms.taskit.core.translation.TranslatorContext;
 import gov.hhs.aspr.ms.taskit.protobuf.translation.ProtobufTranslationSpec;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 
@@ -190,6 +191,8 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
          */
         @Override
         public Builder addTranslator(Translator translator) {
+            translator.initialize(new TranslatorContext(this));
+            
             this.taskitEngineBuilder.addTranslator(translator);
 
             return this;

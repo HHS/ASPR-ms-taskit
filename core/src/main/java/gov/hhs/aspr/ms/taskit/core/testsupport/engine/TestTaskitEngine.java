@@ -4,6 +4,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Objects;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -12,11 +13,13 @@ import com.google.gson.stream.JsonReader;
 
 import gov.hhs.aspr.ms.taskit.core.engine.ITaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.engine.ITaskitEngineBuilder;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitCoreError;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngineId;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.Translator;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslatorContext;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 public class TestTaskitEngine implements ITaskitEngine {
     private final Data data;
@@ -36,12 +39,18 @@ public class TestTaskitEngine implements ITaskitEngine {
 
         @Override
         public int hashCode() {
-            return super.hashCode();
+            return Objects.hash(taskitEngine);
         }
 
         @Override
         public boolean equals(Object obj) {
-            return super.equals(obj);
+            Data other = (Data) obj;
+
+            if (!Objects.equals(taskitEngine, other.taskitEngine)) {
+                return false;
+            }
+
+            return true;
         }
 
     }
@@ -53,10 +62,6 @@ public class TestTaskitEngine implements ITaskitEngine {
 
         private Builder(TestTaskitEngine.Data data) {
             this.data = data;
-        }
-
-        public void clearBuilder() {
-            this.data = new Data();
         }
 
         @Override
@@ -88,6 +93,10 @@ public class TestTaskitEngine implements ITaskitEngine {
 
         @Override
         public Builder addTranslator(Translator translator) {
+            if (translator == null) {
+                throw new ContractException(TaskitCoreError.NULL_TRANSLATOR);
+            }
+
             translator.initialize(new TranslatorContext(this));
 
             this.taskitEngineBuilder.addTranslator(translator);
@@ -159,12 +168,23 @@ public class TestTaskitEngine implements ITaskitEngine {
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return Objects.hash(data);
     }
 
     @Override
     public boolean equals(Object obj) {
-        return super.equals(obj);
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        TestTaskitEngine other = (TestTaskitEngine) obj;
+
+        return Objects.equals(data, other.data);
     }
 
 }
