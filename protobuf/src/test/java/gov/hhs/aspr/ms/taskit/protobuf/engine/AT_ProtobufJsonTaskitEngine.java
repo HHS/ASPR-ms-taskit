@@ -32,6 +32,7 @@ import gov.hhs.aspr.ms.taskit.protobuf.testsupport.objects.BadMessageNonStaticMe
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.objects.TestComplexInputObject;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.objects.TestInputEnum;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.objects.TestInputObject;
+import gov.hhs.aspr.ms.taskit.protobuf.testsupport.translation.TestProtobufComplexObjectTranslator;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.translation.specs.TestProtobufComplexObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.translation.specs.TestProtobufObjectTranslationSpec;
 import gov.hhs.aspr.ms.util.annotations.UnitTestForCoverage;
@@ -329,8 +330,8 @@ public class AT_ProtobufJsonTaskitEngine {
     @UnitTestMethod(target = ProtobufJsonTaskitEngine.Builder.class, name = "addTranslationSpec", args = {
             TranslationSpec.class })
     public void testAddTranslationSpec() {
-        // base functionality tested by AT_TaskitEngine.testAddTranslationSpec(). This
-        // test will only test the things specifically and uniquely done by the
+        // base functionality and preconditions tested by core.
+        // This test will only test the things specifically and uniquely done by the
         // ProtobufJsonTaskitEngine
 
         ProtobufJsonTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder()
@@ -358,7 +359,14 @@ public class AT_ProtobufJsonTaskitEngine {
     @UnitTestMethod(target = ProtobufJsonTaskitEngine.Builder.class, name = "addTranslator", args = {
             Translator.class })
     public void testAddTranslator() {
-        // Nothing to test, tested by AT_TaskitEngine.testAddTranslator()
+        Translator translator = TestProtobufComplexObjectTranslator.getTranslator();
+
+        ProtobufJsonTaskitEngine.builder()
+                .addTranslator(translator).build();
+
+        assertTrue(translator.isInitialized());
+
+        // preconditions tested by core
     }
 
     @Test

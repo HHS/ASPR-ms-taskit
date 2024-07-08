@@ -85,11 +85,11 @@ final class ProtobufTaskitEngineHelper {
      * are exclusively used to facilitate translating to/from a Protobuf {@link Any}
      * type
      */
-    Set<ProtobufTranslationSpec<?, ?>> getPrimitiveTranslatorSpecs() {
+    Set<ProtobufTranslationSpec<?, ?>> getPrimitiveTranslationSpecs() {
         Set<ProtobufTranslationSpec<?, ?>> set = new LinkedHashSet<>();
 
-        set.addAll(getPrimitiveInputTranslatorSpecMap().values());
-        set.addAll(getPrimitiveObjectTranslatorSpecMap().values());
+        set.addAll(getPrimitiveInputTranslationSpecMap().values());
+        set.addAll(getPrimitiveObjectTranslationSpecMap().values());
 
         return set;
     }
@@ -132,7 +132,7 @@ final class ProtobufTaskitEngineHelper {
      * and their inputObjectClasses are exclusively used to facilitate translating
      * to/from a Protobuf {@link Any} type
      */
-    Map<Class<?>, ProtobufTranslationSpec<?, ?>> getPrimitiveInputTranslatorSpecMap() {
+    Map<Class<?>, ProtobufTranslationSpec<?, ?>> getPrimitiveInputTranslationSpecMap() {
         Map<Class<?>, ProtobufTranslationSpec<?, ?>> map = new LinkedHashMap<>();
 
         map.put(BOOLEAN_TRANSLATOR_SPEC.getInputObjectClass(), BOOLEAN_TRANSLATOR_SPEC);
@@ -156,7 +156,7 @@ final class ProtobufTaskitEngineHelper {
      * and their appObjectClasses are exclusively used to facilitate translating
      * to/from a Protobuf {@link Any} type
      */
-    Map<Class<?>, ProtobufTranslationSpec<?, ?>> getPrimitiveObjectTranslatorSpecMap() {
+    Map<Class<?>, ProtobufTranslationSpec<?, ?>> getPrimitiveObjectTranslationSpecMap() {
         Map<Class<?>, ProtobufTranslationSpec<?, ?>> map = new LinkedHashMap<>();
 
         // no java version of unsigned int nor unsigned long

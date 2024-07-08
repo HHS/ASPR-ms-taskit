@@ -21,7 +21,6 @@ import com.google.protobuf.util.JsonFormat.Parser;
 import com.google.protobuf.util.JsonFormat.Printer;
 import com.google.protobuf.util.JsonFormat.TypeRegistry;
 
-import gov.hhs.aspr.ms.taskit.core.engine.ITaskitEngineBuilder;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitCoreError;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
@@ -32,7 +31,7 @@ import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
  * Protobuf TaskitEngine that allows for conversion between POJOs and
- * Protobuf Messages, extends {@link TaskitEngine}
+ * Protobuf Messages, extends {@link ProtobufTaskitEngine}
  */
 public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
     private final Data data;
@@ -52,7 +51,7 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
         }
     }
 
-    public final static class Builder implements ITaskitEngineBuilder {
+    public final static class Builder implements IProtobufTaskitEngineBuilder {
         private ProtobufJsonTaskitEngine.Data data;
         private Set<Descriptor> descriptorSet = new LinkedHashSet<>();
         private final Set<FieldDescriptor> defaultValueFieldsToPrint = new LinkedHashSet<>();
@@ -70,10 +69,6 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
             this.data = data;
         }
 
-        void clearBuilder() {
-            this.data = new Data();
-        }
-        
         /**
          * returns a new instance of a ProtobufTaskitEngine that has a jsonParser
          * and jsonWriter that include all the typeUrls for all added TranslationSpecs
@@ -85,7 +80,7 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
 
             this.typeUrlToClassMap.putAll(primitiveTranslationSpecs.getPrimitiveTypeUrlToClassMap());
 
-            primitiveTranslationSpecs.getPrimitiveInputTranslatorSpecMap().values().forEach(
+            primitiveTranslationSpecs.getPrimitiveTranslationSpecs().forEach(
                     (translationSpec) -> this.taskitEngineBuilder.addTranslationSpec(translationSpec));
 
             this.taskitEngineBuilder.setTaskitEngineId(ProtobufTaskitEngineId.JSON_ENGINE_ID);
@@ -191,9 +186,9 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
          */
         @Override
         public Builder addTranslator(Translator translator) {
-            translator.initialize(new TranslatorContext(this));
-            
             this.taskitEngineBuilder.addTranslator(translator);
+
+            translator.initialize(new TranslatorContext(this));
 
             return this;
         }
