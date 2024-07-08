@@ -10,6 +10,7 @@ import com.google.protobuf.Any;
 import com.google.protobuf.Int32Value;
 
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitCoreError;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppChildObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppObject;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.TestObjectUtil;
@@ -21,8 +22,46 @@ import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 
 public class AT_ProtobufTaskitEngine {
+
     @Test
-    @UnitTestMethod(target = ProtobufJsonTaskitEngine.class, name = "getAnyFromObject", args = { Object.class })
+    @UnitTestMethod(target = ProtobufTaskitEngine.class, name = "getTaskitEngine", args = {})
+    public void testGetTaskitEngine() {
+
+        ProtobufTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder()
+                .addTranslationSpec(new TestProtobufObjectTranslationSpec())
+                .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec())
+                .build();
+
+        TaskitEngine.Builder taskitEngineBuilder = TaskitEngine.builder();
+
+        ProtobufTaskitEngineHelper.getPrimitiveTranslationSpecs().forEach(
+                (translationSpec) -> taskitEngineBuilder.addTranslationSpec(translationSpec));
+
+        taskitEngineBuilder
+                .addTranslationSpec(new TestProtobufObjectTranslationSpec())
+                .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec())
+                .setTaskitEngineId(ProtobufTaskitEngineId.JSON_ENGINE_ID)
+                .build();
+
+        TaskitEngine taskitEngine = taskitEngineBuilder.build();
+
+        taskitEngine.init(protobufTaskitEngine);
+
+        assertEquals(taskitEngine, protobufTaskitEngine.getTaskitEngine());
+    }
+
+    @Test
+    @UnitTestMethod(target = ProtobufTaskitEngine.class, name = "getTaskitEngineId", args = {})
+    public void testGetTaskitEngineId() {
+        ProtobufTaskitEngine taskitEngine = ProtobufJsonTaskitEngine.builder()
+                .addTranslationSpec(new TestProtobufObjectTranslationSpec())
+                .build();
+
+        assertEquals(ProtobufTaskitEngineId.JSON_ENGINE_ID, taskitEngine.getTaskitEngineId());
+    }
+
+    @Test
+    @UnitTestMethod(target = ProtobufTaskitEngine.class, name = "getAnyFromObject", args = { Object.class })
     public void testGetAnyFromObject() {
         ProtobufJsonTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder().build();
 
@@ -36,9 +75,9 @@ public class AT_ProtobufTaskitEngine {
     }
 
     @Test
-    @UnitTestMethod(target = ProtobufJsonTaskitEngine.class, name = "getAnyFromObjectAsSafeClass", args = {
+    @UnitTestMethod(target = ProtobufTaskitEngine.class, name = "getAnyFromObjectAsClassSafe", args = {
             Object.class, Class.class })
-    public void testGetAnyFromObjectAsSafeClass() {
+    public void testGetAnyFromObjectAsClassSafe() {
         ProtobufJsonTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder()
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
                 .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
@@ -70,7 +109,7 @@ public class AT_ProtobufTaskitEngine {
     }
 
     @Test
-    @UnitTestMethod(target = ProtobufJsonTaskitEngine.class, name = "getObjectFromAny", args = { Any.class })
+    @UnitTestMethod(target = ProtobufTaskitEngine.class, name = "getObjectFromAny", args = { Any.class })
     public void testGetObjectFromAny() {
         ProtobufJsonTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder()
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
@@ -88,7 +127,7 @@ public class AT_ProtobufTaskitEngine {
     }
 
     @Test
-    @UnitTestMethod(target = ProtobufJsonTaskitEngine.class, name = "getClassFromTypeUrl", args = { String.class })
+    @UnitTestMethod(target = ProtobufTaskitEngine.class, name = "getClassFromTypeUrl", args = { String.class })
     public void testGetClassFromTypeUrl() {
         ProtobufJsonTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder()
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
@@ -114,5 +153,117 @@ public class AT_ProtobufTaskitEngine {
         });
 
         assertEquals(ProtobufTaskitError.UNKNOWN_TYPE_URL, contractException.getErrorType());
+    }
+
+    @Test
+    @UnitTestMethod(target = ProtobufTaskitEngine.class, name = "translateObject", args = { Object.class })
+    public void testTranslateObject() {
+        TestProtobufObjectTranslationSpec testObjectTranslationSpec = new TestProtobufObjectTranslationSpec();
+        TestProtobufComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestProtobufComplexObjectTranslationSpec();
+
+        ProtobufJsonTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder()
+                .addTranslationSpec(testObjectTranslationSpec)
+                .addTranslationSpec(testComplexObjectTranslationSpec)
+                .build();
+
+        TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
+        TestInputObject expectedInputObject = TestObjectUtil.getInputFromApp(expectedAppObject);
+
+        TestInputObject actualInputObject = protobufTaskitEngine.translateObject(expectedAppObject);
+        assertEquals(expectedInputObject, actualInputObject);
+
+        TestAppObject actualAppObject = protobufTaskitEngine.translateObject(expectedInputObject);
+        assertEquals(expectedAppObject, actualAppObject);
+
+        // preconditions
+        // the contract exception for TaskitCoreError#UNKNOWN_TRANSLATION_SPEC is
+        // covered by the test - testGetTranslationSpecForClass
+
+        // the passed in object is null
+        ContractException contractException = assertThrows(ContractException.class, () -> {
+            protobufTaskitEngine.translateObject(null);
+        });
+
+        assertEquals(TaskitCoreError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
+    }
+
+    @Test
+    @UnitTestMethod(target = ProtobufTaskitEngine.class, name = "translateObjectAsClassSafe", args = { Object.class,
+            Class.class })
+    public void testTranslateObjectAsSafeClass() {
+        TestProtobufObjectTranslationSpec testObjectTranslationSpec = new TestProtobufObjectTranslationSpec();
+        TestProtobufComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestProtobufComplexObjectTranslationSpec();
+
+        ProtobufJsonTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder()
+                .addTranslationSpec(testObjectTranslationSpec)
+                .addTranslationSpec(testComplexObjectTranslationSpec)
+                .build();
+
+        TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
+        TestInputObject expectedInputObject = TestObjectUtil.getInputFromApp(expectedAppObject);
+
+        TestAppChildObject expectedAppChildObject = TestObjectUtil.getChildAppFromApp(expectedAppObject);
+
+        TestInputObject actualInputObject = protobufTaskitEngine.translateObjectAsClassSafe(
+                expectedAppChildObject,
+                TestAppObject.class);
+        assertEquals(expectedInputObject, actualInputObject);
+
+        TestAppObject actualAppChildObject = protobufTaskitEngine.translateObjectAsClassSafe(
+                expectedInputObject,
+                TestInputObject.class);
+        assertEquals(expectedAppChildObject, TestObjectUtil.getChildAppFromApp(actualAppChildObject));
+
+        // preconditions
+        // TaskitCoreError#NULL_CLASS_REF is covered by the test -
+        // testGetTranslationSpecForClass
+        // TaskitCoreError#UNKNOWN_TRANSLATION_SPEC is covered by the test -
+        // testGetTranslationSpecForClass
+
+        // the passed in object is null
+        ContractException contractException = assertThrows(ContractException.class, () -> {
+            protobufTaskitEngine.translateObjectAsClassSafe(null, Object.class);
+        });
+
+        assertEquals(TaskitCoreError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
+    }
+
+    @Test
+    @UnitTestMethod(target = ProtobufTaskitEngine.class, name = "translateObjectAsClassUnsafe", args = { Object.class,
+            Class.class })
+    public void testTranslateObjectAsClassUnsafe() {
+        TestProtobufObjectTranslationSpec testObjectTranslationSpec = new TestProtobufObjectTranslationSpec();
+        TestProtobufComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestProtobufComplexObjectTranslationSpec();
+
+        ProtobufJsonTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder()
+                .addTranslationSpec(testObjectTranslationSpec)
+                .addTranslationSpec(testComplexObjectTranslationSpec)
+                .build();
+
+        Integer integer = 2500;
+        Int32Value int32Value = Int32Value.of(integer);
+        Any expectedAny = Any.pack(int32Value);
+
+        Any actualAny = protobufTaskitEngine.translateObjectAsClassUnsafe(integer,
+                Any.class);
+
+        assertEquals(expectedAny, actualAny);
+
+        Object actualAppObject = protobufTaskitEngine.translateObject(actualAny);
+
+        assertEquals(integer, actualAppObject);
+
+        // preconditions
+        // TaskitCoreError#NULL_CLASS_REF is covered by the test -
+        // testGetTranslationSpecForClass
+        // TaskitCoreError#UNKNOWN_TRANSLATION_SPEC is covered by the test -
+        // testGetTranslationSpecForClass
+
+        // the passed in object is null
+        ContractException contractException = assertThrows(ContractException.class, () -> {
+            protobufTaskitEngine.translateObjectAsClassUnsafe(null, Object.class);
+        });
+
+        assertEquals(TaskitCoreError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
     }
 }

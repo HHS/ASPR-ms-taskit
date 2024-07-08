@@ -76,11 +76,10 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
          */
         @Override
         public ProtobufJsonTaskitEngine build() {
-            ProtobufTaskitEngineHelper primitiveTranslationSpecs = new ProtobufTaskitEngineHelper();
 
-            this.typeUrlToClassMap.putAll(primitiveTranslationSpecs.getPrimitiveTypeUrlToClassMap());
+            this.typeUrlToClassMap.putAll(ProtobufTaskitEngineHelper.getPrimitiveTypeUrlToClassMap());
 
-            primitiveTranslationSpecs.getPrimitiveTranslationSpecs().forEach(
+            ProtobufTaskitEngineHelper.getPrimitiveTranslationSpecs().forEach(
                     (translationSpec) -> this.taskitEngineBuilder.addTranslationSpec(translationSpec));
 
             this.taskitEngineBuilder.setTaskitEngineId(ProtobufTaskitEngineId.JSON_ENGINE_ID);
@@ -88,7 +87,7 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
             this.taskitEngine = this.taskitEngineBuilder.build();
 
             TypeRegistry.Builder typeRegistryBuilder = TypeRegistry.newBuilder();
-            this.descriptorSet.addAll(new ProtobufTaskitEngineHelper().getPrimitiveDescriptors());
+            this.descriptorSet.addAll(ProtobufTaskitEngineHelper.getPrimitiveDescriptors());
 
             this.descriptorSet.forEach((descriptor) -> {
                 typeRegistryBuilder.add(descriptor);

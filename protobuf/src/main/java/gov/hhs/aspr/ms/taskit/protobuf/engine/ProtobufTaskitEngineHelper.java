@@ -40,28 +40,19 @@ import gov.hhs.aspr.ms.taskit.protobuf.translation.specs.StringTranslationSpec;
  * specs needed for translating to/from the Protobuf {@link Any} type.
  */
 final class ProtobufTaskitEngineHelper {
-    ProtobufTaskitEngineHelper() {
+    private ProtobufTaskitEngineHelper() {
     }
-
-    final BooleanTranslationSpec BOOLEAN_TRANSLATOR_SPEC = new BooleanTranslationSpec();
-    final IntegerTranslationSpec INT32_TRANSLATOR_SPEC = new IntegerTranslationSpec();
-    final LongTranslationSpec INT64_TRANSLATOR_SPEC = new LongTranslationSpec();
-    final StringTranslationSpec STRING_TRANSLATOR_SPEC = new StringTranslationSpec();
-    final FloatTranslationSpec FLOAT_TRANSLATOR_SPEC = new FloatTranslationSpec();
-    final DoubleTranslationSpec DOUBLE_TRANSLATOR_SPEC = new DoubleTranslationSpec();
-    final DateTranslationSpec DATE_TRANSLATOR_SPEC = new DateTranslationSpec();
-    final EnumTranslationSpec ENUM_TRANSLATOR_SPEC = new EnumTranslationSpec();
-    final AnyTranslationSpec ANY_TRANSLATOR_SPEC = new AnyTranslationSpec();
 
     /**
      * Returns a set of Protobuf Message {@link Descriptor}s for each of the
      * Primitive TranslationSpecs. A Descriptor is to a Protobuf Message as Class is
      * to a Java Object.
      * <li>Note: as mentioned in the Class javadoc, these Primitive TranslationSpecs
-     * and their Descriptors are exclusively used to facilitate translating to/from a
+     * and their Descriptors are exclusively used to facilitate translating to/from
+     * a
      * Protobuf {@link Any} type
      */
-    Set<Descriptor> getPrimitiveDescriptors() {
+    static Set<Descriptor> getPrimitiveDescriptors() {
         Set<Descriptor> set = new LinkedHashSet<>();
 
         set.add(BoolValue.getDefaultInstance().getDescriptorForType());
@@ -85,11 +76,18 @@ final class ProtobufTaskitEngineHelper {
      * are exclusively used to facilitate translating to/from a Protobuf {@link Any}
      * type
      */
-    Set<ProtobufTranslationSpec<?, ?>> getPrimitiveTranslationSpecs() {
+    static Set<ProtobufTranslationSpec<?, ?>> getPrimitiveTranslationSpecs() {
         Set<ProtobufTranslationSpec<?, ?>> set = new LinkedHashSet<>();
 
-        set.addAll(getPrimitiveInputTranslationSpecMap().values());
-        set.addAll(getPrimitiveObjectTranslationSpecMap().values());
+        set.add(new BooleanTranslationSpec());
+        set.add(new IntegerTranslationSpec());
+        set.add(new LongTranslationSpec());
+        set.add(new StringTranslationSpec());
+        set.add(new FloatTranslationSpec());
+        set.add(new DoubleTranslationSpec());
+        set.add(new DateTranslationSpec());
+        set.add(new EnumTranslationSpec());
+        set.add(new AnyTranslationSpec());
 
         return set;
     }
@@ -101,73 +99,25 @@ final class ProtobufTaskitEngineHelper {
      * and their typeUrls are exclusively used to facilitate translating to/from a
      * Protobuf {@link Any} type
      */
-    Map<String, Class<?>> getPrimitiveTypeUrlToClassMap() {
+    static Map<String, Class<?>> getPrimitiveTypeUrlToClassMap() {
         Map<String, Class<?>> map = new LinkedHashMap<>();
 
         map.put(BoolValue.getDefaultInstance().getDescriptorForType().getFullName(),
-                BOOLEAN_TRANSLATOR_SPEC.getInputObjectClass());
+                BoolValue.class);
         map.put(Int32Value.getDefaultInstance().getDescriptorForType().getFullName(),
-                INT32_TRANSLATOR_SPEC.getInputObjectClass());
+                Int32Value.class);
         map.put(Int64Value.getDefaultInstance().getDescriptorForType().getFullName(),
-                INT64_TRANSLATOR_SPEC.getInputObjectClass());
+                Int64Value.class);
         map.put(StringValue.getDefaultInstance().getDescriptorForType().getFullName(),
-                STRING_TRANSLATOR_SPEC.getInputObjectClass());
+                StringValue.class);
         map.put(FloatValue.getDefaultInstance().getDescriptorForType().getFullName(),
-                FLOAT_TRANSLATOR_SPEC.getInputObjectClass());
+                FloatValue.class);
         map.put(DoubleValue.getDefaultInstance().getDescriptorForType().getFullName(),
-                DOUBLE_TRANSLATOR_SPEC.getInputObjectClass());
+                DoubleValue.class);
         map.put(Date.getDefaultInstance().getDescriptorForType().getFullName(),
-                DATE_TRANSLATOR_SPEC.getInputObjectClass());
+                Date.class);
         map.put(WrapperEnumValue.getDefaultInstance().getDescriptorForType().getFullName(),
-                ENUM_TRANSLATOR_SPEC.getInputObjectClass());
-
-        return map;
-    }
-
-    /**
-     * Returns a map of {@link Class} to {@link ProtobufTranslationSpec} that
-     * includes each of the Primitive TranslationSpecs. This map is exclusively a
-     * map of the inputObjectClass to the TranslationSpec.
-     * <li>Note: as mentioned in the Class javadoc, these Primitive TranslationSpecs
-     * and their inputObjectClasses are exclusively used to facilitate translating
-     * to/from a Protobuf {@link Any} type
-     */
-    Map<Class<?>, ProtobufTranslationSpec<?, ?>> getPrimitiveInputTranslationSpecMap() {
-        Map<Class<?>, ProtobufTranslationSpec<?, ?>> map = new LinkedHashMap<>();
-
-        map.put(BOOLEAN_TRANSLATOR_SPEC.getInputObjectClass(), BOOLEAN_TRANSLATOR_SPEC);
-        map.put(INT32_TRANSLATOR_SPEC.getInputObjectClass(), INT32_TRANSLATOR_SPEC);
-        map.put(INT64_TRANSLATOR_SPEC.getInputObjectClass(), INT64_TRANSLATOR_SPEC);
-        map.put(STRING_TRANSLATOR_SPEC.getInputObjectClass(), STRING_TRANSLATOR_SPEC);
-        map.put(FLOAT_TRANSLATOR_SPEC.getInputObjectClass(), FLOAT_TRANSLATOR_SPEC);
-        map.put(DOUBLE_TRANSLATOR_SPEC.getInputObjectClass(), DOUBLE_TRANSLATOR_SPEC);
-        map.put(DATE_TRANSLATOR_SPEC.getInputObjectClass(), DATE_TRANSLATOR_SPEC);
-        map.put(ENUM_TRANSLATOR_SPEC.getInputObjectClass(), ENUM_TRANSLATOR_SPEC);
-        map.put(ANY_TRANSLATOR_SPEC.getInputObjectClass(), ANY_TRANSLATOR_SPEC);
-
-        return map;
-    }
-
-    /**
-     * Returns a map of {@link Class} to {@link ProtobufTranslationSpec} that
-     * includes each of the Primitive TranslationSpecs. This map is exclusively a
-     * map of the appObjectClass to the TranslationSpec.
-     * <li>Note: as mentioned in the Class javadoc, these Primitive TranslationSpecs
-     * and their appObjectClasses are exclusively used to facilitate translating
-     * to/from a Protobuf {@link Any} type
-     */
-    Map<Class<?>, ProtobufTranslationSpec<?, ?>> getPrimitiveObjectTranslationSpecMap() {
-        Map<Class<?>, ProtobufTranslationSpec<?, ?>> map = new LinkedHashMap<>();
-
-        // no java version of unsigned int nor unsigned long
-        map.put(BOOLEAN_TRANSLATOR_SPEC.getAppObjectClass(), BOOLEAN_TRANSLATOR_SPEC);
-        map.put(INT32_TRANSLATOR_SPEC.getAppObjectClass(), INT32_TRANSLATOR_SPEC);
-        map.put(INT64_TRANSLATOR_SPEC.getAppObjectClass(), INT64_TRANSLATOR_SPEC);
-        map.put(STRING_TRANSLATOR_SPEC.getAppObjectClass(), STRING_TRANSLATOR_SPEC);
-        map.put(FLOAT_TRANSLATOR_SPEC.getAppObjectClass(), FLOAT_TRANSLATOR_SPEC);
-        map.put(DOUBLE_TRANSLATOR_SPEC.getAppObjectClass(), DOUBLE_TRANSLATOR_SPEC);
-        map.put(DATE_TRANSLATOR_SPEC.getAppObjectClass(), DATE_TRANSLATOR_SPEC);
-        map.put(ENUM_TRANSLATOR_SPEC.getAppObjectClass(), ENUM_TRANSLATOR_SPEC);
+                WrapperEnumValue.class);
 
         return map;
     }
@@ -203,7 +153,7 @@ final class ProtobufTaskitEngineHelper {
 
     /**
      * uses reflection to obtain a builder for the given classRef
-    */
+     */
     static <U> Message.Builder getBuilderForMessage(Class<U> classRef) {
 
         Method[] messageMethods = classRef.getDeclaredMethods();
