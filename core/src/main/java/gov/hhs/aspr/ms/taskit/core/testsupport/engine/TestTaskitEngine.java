@@ -13,13 +13,11 @@ import com.google.gson.stream.JsonReader;
 
 import gov.hhs.aspr.ms.taskit.core.engine.ITaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.engine.ITaskitEngineBuilder;
-import gov.hhs.aspr.ms.taskit.core.engine.TaskitCoreError;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngineId;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.Translator;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslatorContext;
-import gov.hhs.aspr.ms.util.errors.ContractException;
 
 public class TestTaskitEngine implements ITaskitEngine {
     private final Data data;
@@ -93,13 +91,9 @@ public class TestTaskitEngine implements ITaskitEngine {
 
         @Override
         public Builder addTranslator(Translator translator) {
-            if (translator == null) {
-                throw new ContractException(TaskitCoreError.NULL_TRANSLATOR);
-            }
+            this.taskitEngineBuilder.addTranslator(translator);
 
             translator.initialize(new TranslatorContext(this));
-
-            this.taskitEngineBuilder.addTranslator(translator);
 
             return this;
         }
