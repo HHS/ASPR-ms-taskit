@@ -21,6 +21,7 @@ import com.google.protobuf.ProtocolMessageEnum;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitCoreError;
 import gov.hhs.aspr.ms.taskit.core.testsupport.engine.TestTaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppObject;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.complexobject.TestComplexObjectTranslatorId;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.specs.TestObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.Translator;
@@ -32,7 +33,6 @@ import gov.hhs.aspr.ms.taskit.protobuf.testsupport.objects.BadMessageNonStaticMe
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.objects.TestComplexInputObject;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.objects.TestInputEnum;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.objects.TestInputObject;
-import gov.hhs.aspr.ms.taskit.protobuf.testsupport.translation.TestProtobufComplexObjectTranslator;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.translation.specs.TestProtobufComplexObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.translation.specs.TestProtobufObjectTranslationSpec;
 import gov.hhs.aspr.ms.util.annotations.UnitTestForCoverage;
@@ -359,7 +359,13 @@ public class AT_ProtobufJsonTaskitEngine {
     @UnitTestMethod(target = ProtobufJsonTaskitEngine.Builder.class, name = "addTranslator", args = {
             Translator.class })
     public void testAddTranslator() {
-        Translator translator = TestProtobufComplexObjectTranslator.getTranslator();
+        Translator translator = Translator.builder()
+                .setTranslatorId(TestComplexObjectTranslatorId.TRANSLATOR_ID)
+                .setInitializer(translatorContext -> {
+                    translatorContext.getTaskitEngineBuilder(IProtobufTaskitEngineBuilder.class)
+                            .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec());
+                })
+                .build();
 
         ProtobufJsonTaskitEngine.builder()
                 .addTranslator(translator).build();
