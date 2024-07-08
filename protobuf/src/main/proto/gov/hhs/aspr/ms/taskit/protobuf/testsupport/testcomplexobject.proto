@@ -6,13 +6,9 @@ option java_package = "gov.hhs.aspr.ms.taskit.protobuf.testsupport.objects";
 
 import "google/protobuf/any.proto";
 
-message TestComplexInputObjectSubObject {
-}
-
 message TestComplexInputObject {
     string testString = 1;
     double startTime = 2;
     int32 numEntities = 3;
-    TestComplexInputObjectSubObject subObject = 4;
-    google.protobuf.Any id = 5;
+    google.protobuf.Any id = 4;
 }
