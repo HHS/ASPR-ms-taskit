@@ -10,7 +10,7 @@ public class AT_TestTaskitEngineId {
 
     @Test
     @UnitTestField(target = TestTaskitEngineId.class, name = "TEST_ENGINE_ID")
-    public void testPluginId() {
+    public void testTestTaskitEngineId() {
         assertNotNull(TestTaskitEngineId.TEST_ENGINE_ID);
     }
 }
