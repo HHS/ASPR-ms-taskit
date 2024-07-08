@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
+import gov.hhs.aspr.ms.taskit.core.engine.ITaskitEngineBuilder;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitCoreError;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.testsupport.engine.TestTaskitEngine;
@@ -17,7 +18,7 @@ import gov.hhs.aspr.ms.util.errors.ContractException;
 public class AT_TranslatorContext {
 
     @Test
-    @UnitTestConstructor(target = TranslatorContext.class, args = { TaskitEngine.Builder.class })
+    @UnitTestConstructor(target = TranslatorContext.class, args = { ITaskitEngineBuilder.class })
     public void testConstructor() {
         TranslatorContext translatorContext = new TranslatorContext(TestTaskitEngine.builder());
 

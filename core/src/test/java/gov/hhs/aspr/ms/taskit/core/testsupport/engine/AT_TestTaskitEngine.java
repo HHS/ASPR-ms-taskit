@@ -195,7 +195,7 @@ public class AT_TestTaskitEngine {
     }
 
     @Test
-    @UnitTestMethod(target = TestTaskitEngine.Builder.class, name = "getTaskitEngine", args = {})
+    @UnitTestMethod(target = TestTaskitEngine.class, name = "getTaskitEngine", args = {})
     public void testGetTaskitEngine() {
         TaskitEngine taskitEngine = TaskitEngine.builder().addTranslationSpec(new TestObjectTranslationSpec())
                 .setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID).build();
@@ -209,14 +209,14 @@ public class AT_TestTaskitEngine {
     }
 
     @Test
-    @UnitTestMethod(target = TestTaskitEngine.Builder.class, name = "getTaskitEngineId", args = {})
+    @UnitTestMethod(target = TestTaskitEngine.class, name = "getTaskitEngineId", args = {})
     public void testGetTaskitEngineId() {
         assertEquals(TestTaskitEngineId.TEST_ENGINE_ID, TestTaskitEngine.builder()
                 .addTranslationSpec(new TestObjectTranslationSpec()).build().getTaskitEngineId());
     }
 
     @Test
-    @UnitTestMethod(target = TestTaskitEngine.Builder.class, name = "translateObject", args = { Object.class })
+    @UnitTestMethod(target = TestTaskitEngine.class, name = "translateObject", args = { Object.class })
     public void testTranslateObject() {
         // see AT_TaskitEngine.testTranslateObject()
         // code here is strictly for coverage, and coverage alone
@@ -238,7 +238,7 @@ public class AT_TestTaskitEngine {
     }
 
     @Test
-    @UnitTestMethod(target = TestTaskitEngine.Builder.class, name = "translateObjectAsClassSafe", args = {
+    @UnitTestMethod(target = TestTaskitEngine.class, name = "translateObjectAsClassSafe", args = {
             Object.class,
             Class.class })
     public void testTranslateObjectAsClassSafe() {
@@ -270,7 +270,7 @@ public class AT_TestTaskitEngine {
     }
 
     @Test
-    @UnitTestMethod(target = TestTaskitEngine.Builder.class, name = "translateObjectAsClassUnsafe", args = {
+    @UnitTestMethod(target = TestTaskitEngine.class, name = "translateObjectAsClassUnsafe", args = {
             Object.class, Class.class })
     public void testTranslateObjectAsClassUnsafe() {
         // see AT_TaskitEngine.testTranslateObjectAsClassUnsafe()

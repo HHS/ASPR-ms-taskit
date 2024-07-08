@@ -11,10 +11,12 @@ import org.junit.jupiter.api.Test;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.TestObjectTranslator;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.specs.TestObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
+import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 
 public class AT_TranslationSpecSupport {
 
     @Test
+    @UnitTestMethod(target = TranslationSpecSupport.class, name = "testGetTranslationSpecs", args = {Class.class, List.class})
     public void testTestGetTranslationSpecs() throws ClassNotFoundException {
         List<TranslationSpec<?, ?>> translationSpecs = new ArrayList<>();
 

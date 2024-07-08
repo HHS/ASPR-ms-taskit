@@ -1,9 +1,11 @@
 package gov.hhs.aspr.ms.taskit.core.translation;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -12,10 +14,14 @@ import java.util.function.Consumer;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitCoreError;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
+import gov.hhs.aspr.ms.taskit.core.testsupport.engine.TestTaskitEngineId;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.complexobject.TestComplexObjectTranslatorId;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.TestObjectTranslatorId;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.specs.TestObjectTranslationSpec;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 import gov.hhs.aspr.ms.util.errors.ContractException;
+import gov.hhs.aspr.ms.util.wrappers.MutableBoolean;
 
 public class AT_Translator {
 
@@ -46,6 +52,51 @@ public class AT_Translator {
         Set<TranslatorId> actualDependencies = testTranslator.getTranslatorDependencies();
 
         assertEquals(expectedDependencies, actualDependencies);
+    }
+
+    @Test
+    @UnitTestMethod(target = Translator.class, name = "initialize", args = { TranslatorContext.class })
+    public void testInitialize() {
+        TranslatorId expectedTranslatorId = new TranslatorId() {
+        };
+
+        MutableBoolean initBool = new MutableBoolean(false);
+
+        Translator testTranslator = Translator.builder()
+                .setInitializer((c) -> {
+                    initBool.setValue(true);
+                })
+                .setTranslatorId(expectedTranslatorId)
+                .build();
+
+        testTranslator.initialize(new TranslatorContext(TaskitEngine.builder()
+                .setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID)
+                .addTranslationSpec(new TestObjectTranslationSpec())));
+
+        assertTrue(initBool.getValue());
+        assertTrue(testTranslator.isInitialized());
+    }
+
+    @Test
+    @UnitTestMethod(target = Translator.class, name = "isInitialized", args = {})
+    public void testIsInitialized() {
+        TranslatorId expectedTranslatorId = new TranslatorId() {
+        };
+
+        Translator testTranslator = Translator.builder()
+                .setInitializer((c) -> {
+                })
+                .setTranslatorId(expectedTranslatorId)
+                .build();
+
+        assertFalse(testTranslator.isInitialized());
+
+        // initialize
+        testTranslator.initialize(new TranslatorContext(TaskitEngine.builder()
+                .setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID)
+                .addTranslationSpec(new TestObjectTranslationSpec())));
+
+        assertTrue(testTranslator.isInitialized());
     }
 
     @Test

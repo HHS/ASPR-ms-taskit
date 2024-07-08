@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
+import gov.hhs.aspr.ms.taskit.core.engine.ITaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitCoreError;
 import gov.hhs.aspr.ms.taskit.core.testsupport.TestObjectUtil;
 import gov.hhs.aspr.ms.taskit.core.testsupport.engine.TestTaskitEngine;
@@ -57,7 +57,7 @@ public class AT_TranslationSpec {
     }
 
     @Test
-    @UnitTestMethod(target = TranslationSpec.class, name = "init", args = { TaskitEngine.class })
+    @UnitTestMethod(target = TranslationSpec.class, name = "init", args = { ITaskitEngine.class })
     public void testInit() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
