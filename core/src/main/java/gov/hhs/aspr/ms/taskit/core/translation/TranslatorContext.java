@@ -29,7 +29,7 @@ public final class TranslatorContext {
      *                           the taskitEngineBuilder is null
      */
     public <T extends ITaskitEngineBuilder> T getTaskitEngineBuilder(final Class<T> classRef) {
-        if (this.builder.getClass().isAssignableFrom(classRef)) {
+        if (classRef.isAssignableFrom(this.builder.getClass())) {
             return classRef.cast(this.builder);
         }
 
