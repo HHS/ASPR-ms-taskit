@@ -22,7 +22,8 @@ public final class Translator {
         this.data = data;
     }
 
-    private final static class Data {
+    // package access for testing
+    final static class Data {
         private TranslatorId translatorId;
         private Consumer<TranslatorContext> initializer;
         private final Set<TranslatorId> dependencies = new LinkedHashSet<>();
