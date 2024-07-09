@@ -30,8 +30,8 @@ import gov.hhs.aspr.ms.taskit.protobuf.translation.ProtobufTranslationSpec;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
- * Protobuf TaskitEngine that allows for conversion between POJOs and
- * Protobuf Messages, extends {@link ProtobufTaskitEngine}
+ * Protobuf TaskitEngine that reads/writes from/to JSON files into Protobuf
+ * {@link Message} types
  */
 public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
     private final Data data;
@@ -51,6 +51,9 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
         }
     }
 
+    /**
+     * Builder for the ProtobufJsonTaskitEngine
+     */
     public final static class Builder implements IProtobufTaskitEngineBuilder {
         private ProtobufJsonTaskitEngine.Data data;
         private Set<Descriptor> descriptorSet = new LinkedHashSet<>();
@@ -121,8 +124,13 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
         }
 
         /**
-         * Whether the jsonParser should ignore fields in the JSON that don't exist in
-         * the Protobuf Message. defaults to true
+         * Set the flag indicating whether the jsonParser should ignore fields in the
+         * JSON file that don't exist in the associated Proto Message.
+         * <p>
+         * Defaults to true
+         * 
+         * @param ignoringUnknownFields the flag
+         * @return the builder instance
          */
         public Builder setIgnoringUnknownFields(boolean ignoringUnknownFields) {
             this.ignoringUnknownFields = ignoringUnknownFields;
@@ -130,19 +138,33 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
         }
 
         /**
-         * Whether the jsonWriter should blanket print all values that are default. The
-         * default values can be found here:
-         * https://protobuf.dev/programming-guides/proto3/#default defaults to false
+         * Set the flag indicating whether the jsonWrite should print all default
+         * values.
+         * <p>
+         * The default values can be found here:
+         * https://protobuf.dev/programming-guides/proto3/#default
+         * <p>
+         * Defaults to false
+         * 
+         * @param includingDefaultValueFields the flag
+         * @return the builder instance
          */
         public Builder setIncludingDefaultValueFields(boolean includingDefaultValueFields) {
             this.includingDefaultValueFields = includingDefaultValueFields;
             return this;
         }
 
+        // TODO: add null check for addFieldToIncludeDefaultValue
         /**
          * Contrary to {@link Builder#setIncludingDefaultValueFields(boolean)} which
-         * will either print all default values or not, this will set a specific field
-         * to print the default value for
+         * will set the flag globally for all default values, this will set the flag for
+         * a specific default field
+         * <p>
+         * all fields default to false
+         * 
+         * @param fieldDescriptor the descriptor of the field to print the default value
+         *                        for
+         * @return the builder instance
          */
         public Builder addFieldToIncludeDefaultValue(FieldDescriptor fieldDescriptor) {
             this.defaultValueFieldsToPrint.add(fieldDescriptor);
@@ -151,37 +173,46 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
         }
 
         /**
-         * Calls
-         * {@link TaskitEngine.Builder#addTranslationSpec(TranslationSpec)}
-         * <p>
-         * then populates the type urls for all Protobuf Message types that exist within
-         * the translationSpec
+         * @implNote populates the type urls for all Protobuf Message types that exist
+         *           within
+         *           the translationSpec
          * 
          * @throws ContractException
          *                           <ul>
+         *                           <li>{@linkplain TaskitCoreError#NULL_TRANSLATION_SPEC}
+         *                           if the given translationSpec is null</li>
+         *                           <li>{@linkplain TaskitCoreError#NULL_TRANSLATION_SPEC_APP_CLASS}
+         *                           if the given translationSpecs getAppClass method
+         *                           returns null</li>
+         *                           <li>{@linkplain TaskitCoreError#NULL_TRANSLATION_SPEC_INPUT_CLASS}
+         *                           if the given translationSpecs getInputClass method
+         *                           returns null</li>
+         *                           <li>{@linkplain TaskitCoreError#DUPLICATE_TRANSLATION_SPEC}
+         *                           if the given translationSpec is already known</li>
+         *                           <li>{@link ProtobufTaskitError#INVALID_TRANSLATION_SPEC}
+         *                           if the given translation spec is not assignable
+         *                           from {@linkplain ProtobufTranslationSpec}</li>
          *                           <li>{@link ProtobufTaskitError#INVALID_TRANSLATION_SPEC_INPUT_CLASS}
          *                           if the given inputClassRef is not assignable from
          *                           {@linkplain Message} nor
          *                           {@linkplain ProtocolMessageEnum}</li>
-         *                           <li>{@link ProtobufTaskitError#INVALID_TRANSLATION_SPEC}
-         *                           if the given translation spec is not assignable
-         *                           from {@linkplain ProtobufTranslationSpec}</li>
          *                           </ul>
          */
         @Override
-        public <APP, INPUT> Builder addTranslationSpec(TranslationSpec<APP, INPUT> translationSpec) {
+        public <I, A> Builder addTranslationSpec(TranslationSpec<I, A> translationSpec) {
+            this.taskitEngineBuilder.addTranslationSpec(translationSpec);
+
             if (!ProtobufTranslationSpec.class.isAssignableFrom(translationSpec.getClass())) {
                 throw new ContractException(ProtobufTaskitError.INVALID_TRANSLATION_SPEC);
             }
-
-            this.taskitEngineBuilder.addTranslationSpec(translationSpec);
-
             populate(translationSpec.getInputObjectClass());
             return this;
         }
 
         /**
-         * Calls {@link TaskitEngine.Builder#addTranslator(Translator)}
+         * @implNote initializes the translator with this builder
+         * @throws ContractException {@linkplain TaskitCoreError#NULL_TRANSLATOR}
+         *                           if translator is null
          */
         @Override
         public Builder addTranslator(Translator translator) {
@@ -193,10 +224,16 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
         }
 
         /**
-         * checks the class to determine if it is a ProtocolMessageEnum or a Message and
+         * checks the class to determine if it is a ProtocolMessageEnum or a Message
+         * <p>
          * if so, gets the Descriptor (which is akin to a class but for a Protobuf
          * Message) for it to get the full name and add the typeUrl to the internal
          * descriptorMap and typeUrlToClassMap
+         * <p>
+         * package access for testing
+         * 
+         * @param <U>      the type of the classRef
+         * @param classRef the classRef to use
          * 
          * @throws ContractException {@link ProtobufTaskitError#INVALID_TRANSLATION_SPEC_INPUT_CLASS}
          *                           if the given inputClassRef is not assignable from
@@ -233,32 +270,40 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
     }
 
     /**
-     * Returns a new builder
+     * Returns a new builder for the Protobuf Json taskit engine
      */
     public static Builder builder() {
         return new Builder(new Data());
     }
 
+    /**
+     * package access for testing
+     * 
+     * @return the JSONParser instance for this engine
+     */
     Parser getJsonParser() {
         return this.data.jsonParser;
     }
 
+    /**
+     * package access for testing
+     * 
+     * @return the JSONPrinter instance for this engine
+     */
     Printer getJsonPrinter() {
         return this.data.jsonPrinter;
     }
 
     /**
-     * writes the given object to the path provided.
-     * 
-     * @param <M> the type of the object
-     * 
+     * @implNote object must be of a {@link Message} type
+     *           <p>
+     *           uses a BufferedWriter
      * @throws ContractException {@link TaskitCoreError#INVALID_OUTPUT_CLASS} if the
      *                           given object is not assignable from
      *                           {@link Message}
-     * @throws IOException       if there is an IOException during writing
      */
     @Override
-    public <M> void write(Path path, M object) throws IOException {
+    public <O> void write(Path path, O object) throws IOException {
         if (!Message.class.isAssignableFrom(object.getClass())) {
             throw new ContractException(TaskitCoreError.INVALID_OUTPUT_CLASS, Message.class.getName());
         }
@@ -271,93 +316,35 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
         writer.flush();
     }
 
-    /**
-     * translates the given object as the given classRef and then writes that
-     * object to the path provided
-     * 
-     * @param <M> the type of the object
-     * @param <U> the class to translate the object as
-     * 
-     * @throws ContractException if the given object is not assignable from
-     *                           {@link Message}
-     * @throws IOException       if there is an IOException during writing
-     */
     @Override
-    public <U, M extends U> void translateAndWrite(Path path, M object, Class<U> classRef) throws IOException {
+    public <O> void translateAndWrite(Path path, O object) throws IOException {
+        write(path, translateObject(object));
+    }
+
+    @Override
+    public <C, O extends C> void translateAndWrite(Path path, O object, Class<C> classRef) throws IOException {
         write(path, translateObjectAsClassSafe(object, classRef));
     }
 
     /**
-     * translates the given object and then writes that
-     * object to the path provided
-     * 
-     * @param <M> the type of the object
-     * 
-     * @throws ContractException if the given object is not assignable from
-     *                           {@link Message}
-     * @throws IOException       if there is an IOException during writing
-     */
-    @Override
-    public <M> void translateAndWrite(Path path, M object) throws IOException {
-        write(path, translateObject(object));
-    }
-
-    /**
-     * Reads the file at the given path into an object of the type of the classRef.
-     * Then translates the resulting object into it's corresponding object using the
-     * object's {@link TranslationSpec}
-     * 
-     * 
-     * @param <U> the type of the inputClass
-     * @param <T> the return type
-     * @throws ContractException {@linkplain TaskitCoreError#INVALID_INPUT_CLASS}
-     *                           if the given inputClassRef is not assignable
-     *                           from
+     * @implNote the classRef must be a {@link Message} type
+     *           <p>
+     *           uses a BufferedReader
+     * @throws ContractException {@linkplain TaskitCoreError#INVALID_INPUT_CLASS} if
+     *                           the given inputClassRef is not assignable from
      *                           {@linkplain Message}
-     * @throws RuntimeException
-     *                           <ul>
-     *                           <li>if there is an issue getting the builder
-     *                           method from the inputClassRef</li>
-     *                           </ul>
-     * 
+     * @throws RuntimeException  if there is an issue getting the builder method
+     *                           from the inputClassRef
      * @throws IOException
      *                           <ul>
-     *                           <li>if there is an IOException during reading</li>
      *                           <li>if there is an issue merging the file into the
      *                           resulting Protobuf Message builder
      *                           </li>
+     *                           <li>if there is an issue reading the file</li>
      *                           </ul>
      */
     @Override
-    public <T, U> T readAndTranslate(Path path, Class<U> classRef) throws IOException {
-        return translateObject(read(path, classRef));
-    }
-
-    /**
-     * Reads the file at the given path into an object of the type of the classRef.
-     * 
-     * @param <U> the type of the inputClass
-     * 
-     * @throws ContractException {@linkplain TaskitCoreError#INVALID_INPUT_CLASS}
-     *                           if the given inputClassRef is not assignable
-     *                           from
-     *                           {@linkplain Message}
-     * @throws RuntimeException
-     *                           <ul>
-     *                           <li>if there is an issue getting the builder
-     *                           method from the inputClassRef</li>
-     *                           </ul>
-     * 
-     * @throws IOException
-     *                           <ul>
-     *                           <li>if there is an IOException during reading</li>
-     *                           <li>if there is an issue merging the file into the
-     *                           resulting Protobuf Message builder
-     *                           </li>
-     *                           </ul>
-     */
-    @Override
-    public <U> U read(Path path, Class<U> classRef) throws IOException {
+    public <I> I read(Path path, Class<I> classRef) throws IOException {
         if (!Message.class.isAssignableFrom(classRef)) {
             throw new ContractException(TaskitCoreError.INVALID_INPUT_CLASS, Message.class.getName());
         }
@@ -371,6 +358,28 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
         Message message = builder.build();
 
         return classRef.cast(message);
+    }
+
+    /**
+     * @implNote the classRef must be a {@link Message} type
+     *           <p>
+     *           uses a buffered reader
+     * @throws ContractException {@linkplain TaskitCoreError#INVALID_INPUT_CLASS} if
+     *                           the given inputClassRef is not assignable from
+     *                           {@linkplain Message}
+     * @throws RuntimeException  if there is an issue getting the builder method
+     *                           from the inputClassRef
+     * @throws IOException
+     *                           <ul>
+     *                           <li>if there is an issue merging the file into the
+     *                           resulting Protobuf Message builder
+     *                           </li>
+     *                           <li>if there is an issue reading the file</li>
+     *                           </ul>
+     */
+    @Override
+    public <T, I> T readAndTranslate(Path path, Class<I> classRef) throws IOException {
+        return translateObject(read(path, classRef));
     }
 
 }

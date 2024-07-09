@@ -38,6 +38,8 @@ import gov.hhs.aspr.ms.taskit.protobuf.translation.specs.StringTranslationSpec;
 /**
  * This is a helper class that encompasses all of the primitive translation
  * specs needed for translating to/from the Protobuf {@link Any} type.
+ * <p>
+ * package access for testing and use in ProtobufTaskitEngines
  */
 final class ProtobufTaskitEngineHelper {
     private ProtobufTaskitEngineHelper() {
@@ -51,6 +53,8 @@ final class ProtobufTaskitEngineHelper {
      * and their Descriptors are exclusively used to facilitate translating to/from
      * a
      * Protobuf {@link Any} type
+     * <p>
+     * package access for testing and use in ProtobufTaskitEngines
      */
     static Set<Descriptor> getPrimitiveDescriptors() {
         Set<Descriptor> set = new LinkedHashSet<>();
@@ -75,6 +79,8 @@ final class ProtobufTaskitEngineHelper {
      * <li>Note: as mentioned in the Class javadoc, these Primitive TranslationSpecs
      * are exclusively used to facilitate translating to/from a Protobuf {@link Any}
      * type
+     * <p>
+     * package access for testing and use in ProtobufTaskitEngines
      */
     static Set<ProtobufTranslationSpec<?, ?>> getPrimitiveTranslationSpecs() {
         Set<ProtobufTranslationSpec<?, ?>> set = new LinkedHashSet<>();
@@ -98,6 +104,8 @@ final class ProtobufTaskitEngineHelper {
      * <li>Note: as mentioned in the Class javadoc, these Primitive TranslationSpecs
      * and their typeUrls are exclusively used to facilitate translating to/from a
      * Protobuf {@link Any} type
+     * <p>
+     * package access for testing and use in ProtobufTaskitEngines
      */
     static Map<String, Class<?>> getPrimitiveTypeUrlToClassMap() {
         Map<String, Class<?>> map = new LinkedHashMap<>();
@@ -124,6 +132,8 @@ final class ProtobufTaskitEngineHelper {
 
     /**
      * given a Class ref to a Protobuf Message, get the defaultInstance of it
+     * <p>
+     * package access for testing and use in ProtobufTaskitEngines
      */
     static <U extends Message> U getDefaultMessage(Class<U> classRef) {
         try {
@@ -139,6 +149,8 @@ final class ProtobufTaskitEngineHelper {
     /**
      * given a Class ref to a ProtocolMessageEnum, get the default value for it,
      * enum number 0 within the proto enum
+     * <p>
+     * package access for testing and use in ProtobufTaskitEngines
      */
     static <U extends ProtocolMessageEnum> U getDefaultEnum(Class<U> classRef) {
         try {
@@ -153,6 +165,8 @@ final class ProtobufTaskitEngineHelper {
 
     /**
      * uses reflection to obtain a builder for the given classRef
+     * <p>
+     * package access for testing and use in ProtobufTaskitEngines
      */
     static <U> Message.Builder getBuilderForMessage(Class<U> classRef) {
 

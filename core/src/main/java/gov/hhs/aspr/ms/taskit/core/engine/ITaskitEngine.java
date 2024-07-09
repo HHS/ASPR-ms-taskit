@@ -48,9 +48,10 @@ public interface ITaskitEngine {
      * Translates the object as the provided class and then writes the translated
      * object to the file referenced by the Path
      * <p>
-     * The type params ensure that the object can be written as the provided class
+     * This method call is safe in the sense that the type parameters ensure that
+     * the passed in object is actually a child of the passed in classRef type
      * 
-     * @param <C>     the type to translate the object as
+     * @param <C>      the type to translate the object as
      * @param <O>      the type of the object
      * @param path     the path of the file to write to
      * @param object   the object to write
@@ -73,7 +74,7 @@ public interface ITaskitEngine {
 
     /**
      * Reads the given path into the provided class type and then translates it to
-     * the corresponding type associated with the input type
+     * the corresponding app type associated with the input type
      * 
      * @param <T>      the translated type
      * @param <I>      the input type
@@ -103,7 +104,7 @@ public interface ITaskitEngine {
      * translationSpec and then calls {@link TranslationSpec#translate(Object)}
      * <p>
      * This method call is safe in the sense that the type parameters ensure that
-     * the passed in object is actually a child of the passed in classRef
+     * the passed in object is actually a child of the passed in classRef type
      * </p>
      * <p>
      * this conversion method will be used approx ~7% of the time

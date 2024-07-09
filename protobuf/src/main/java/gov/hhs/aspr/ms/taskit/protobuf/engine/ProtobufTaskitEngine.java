@@ -6,13 +6,15 @@ import java.util.Map;
 import com.google.protobuf.Any;
 
 import gov.hhs.aspr.ms.taskit.core.engine.ITaskitEngine;
-import gov.hhs.aspr.ms.taskit.core.engine.TaskitCoreError;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngineId;
-import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
 import gov.hhs.aspr.ms.taskit.protobuf.translation.specs.AnyTranslationSpec;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 
+/**
+ * Abstract ProtobufTaskitEngine that defines the common methods that are shared
+ * between a JSON engine and a Binary Engine
+ */
 public abstract class ProtobufTaskitEngine implements ITaskitEngine {
 
     // this is used specifically for Any message types to pack and unpack them
@@ -26,144 +28,81 @@ public abstract class ProtobufTaskitEngine implements ITaskitEngine {
     }
 
     /**
-     * Given an object of type {@link Any}, will translate it to the resulting
-     * object
+     * Translate a object of type {@link Any} to the wrapped object's corresponding
+     * app type
      * <p>
-     * Will ultimately use the {@link AnyTranslationSpec} to accomplish this
-     * </p>
+     * this will call {@link AnyTranslationSpec#translate(Object)} via
+     * {@link #translateObject(Object)}
      * 
-     * @param <T> the return type
+     * @param <T>      the translated type
+     * @param anyValue the object to translate
+     * @return the translate object
      */
     public final <T> T getObjectFromAny(Any anyValue) {
         return translateObject(anyValue);
     }
 
     /**
-     * Given an object , will translate it to an {@link Any} type
+     * Translate an Object into a {@link Any} type
      * <p>
-     * Will use the {@link AnyTranslationSpec} to accomplish this
-     * </p>
+     * this will call {@link AnyTranslationSpec#translate(Object)} via
+     * {@link #translateObjectAsClassUnsafe(Object, Class)}
+     * 
+     * @param object the object to translate
+     * @return the resulting Any
      */
     public final Any getAnyFromObject(Object object) {
         return translateObjectAsClassUnsafe(object, Any.class);
     }
 
     /**
-     * Given an object , will translate it to an {@link Any} type
+     * Translate an object into an {@link Any} type
      * <p>
      * This method call differs from {@link #getAnyFromObject(Object)} in that it
-     * will first translate the object using the safe parent class by calling
-     * {@link #translateObjectAsClassSafe(Object, Class)} and will then use the
-     * {@link AnyTranslationSpec} to wrap the resulting translated object in an
-     * {@link Any}
+     * will first translate the object using the classRef by calling
+     * {@link #translateObjectAsClassSafe(Object, Class)} and will then call
+     * {@link #translateObjectAsClassUnsafe(Object, Class)} to translate the
+     * translated object into an {@link Any} type using
+     * {@link AnyTranslationSpec#translate(Object)}
      * </p>
      * 
-     * @param <U> the parent Class
-     * @param <M> the object class
-     * @throws ContractException {@linkplain TaskitCoreError#UNKNOWN_TRANSLATION_SPEC}
-     *                           if no translationSpec was provided for the given
-     *                           parentClassRef
+     * @param <O>      the type of the object
+     * @param <C>      the type to translate the object as
+     * @param object   the object to translate
+     * @param classRef the classRef of the type to translate the object as
+     * @return the translated object translated into an Any type
+     *         K
      */
-    public final <U, M extends U> Any getAnyFromObjectAsClassSafe(M object, Class<U> parentClassRef) {
-        U translatedObject = translateObjectAsClassSafe(object, parentClassRef);
+    public final <C, O extends C> Any getAnyFromObjectAsClassSafe(O object, Class<C> classRef) {
+        C translatedObject = translateObjectAsClassSafe(object, classRef);
 
         return translateObjectAsClassUnsafe(translatedObject, Any.class);
     }
 
-    /**
-     * Given an object, uses the class of the object to obtain the translationSpec
-     * and then calls {@link TranslationSpec#translate(Object)}
-     * <p>
-     * this conversion method will be used approx ~90% of the time
-     * </p>
-     * 
-     * @param <T> the return type after translating
-     * @throws ContractException
-     *                           <ul>
-     *                           <li>{@linkplain TaskitCoreError#NULL_OBJECT_FOR_TRANSLATION}
-     *                           if the passed in object is null</li>
-     *                           <li>{@linkplain TaskitCoreError#UNKNOWN_TRANSLATION_SPEC}
-     *                           if no translationSpec was provided for the given
-     *                           objects class</li>
-     *                           </ul>
-     */
     @Override
     public final <T> T translateObject(Object object) {
         return this.taskitEngine.translateObject(object);
     }
 
-    /**
-     * Given an object, uses the parent class of the object to obtain the
-     * translationSpec and then calls {@link TranslationSpec#translate(Object)}
-     * <p>
-     * This method call is safe in the sense that the type parameters ensure that
-     * the passed in object is actually a child of the passed in parentClassRef
-     * </p>
-     * <p>
-     * this conversion method will be used approx ~7% of the time
-     * </p>
-     * 
-     * @param <T> the return type after translating
-     * @param <O> the type of the object; extends U
-     * @param <P> the parent type of the object and the class for which
-     *            translationSpec you want to use
-     * @throws ContractException
-     *                           <ul>
-     *                           <li>{@linkplain TaskitCoreError#NULL_OBJECT_FOR_TRANSLATION}
-     *                           if the passed in object is null</li>
-     *                           <li>{@linkplain TaskitCoreError#NULL_CLASS_REF}
-     *                           if the passed in parentClassRef is null</li>
-     *                           <li>{@linkplain TaskitCoreError#UNKNOWN_TRANSLATION_SPEC}
-     *                           if no translationSpec was provided for the given
-     *                           objects class</li>
-     *                           </ul>
-     */
     @Override
-    public final <T, O extends P, P> T translateObjectAsClassSafe(O object, Class<P> classRef) {
+    public final <T, O extends C, C> T translateObjectAsClassSafe(O object, Class<C> classRef) {
         return this.taskitEngine.translateObjectAsClassSafe(object, classRef);
     }
 
-    /**
-     * Given an object, uses the passed in class to obtain the translationSpec and
-     * then calls {@link TranslationSpec#translate(Object)}
-     * <p>
-     * This method call is unsafe in the sense that the type parameters do not
-     * ensure any relationship between the passed in object and the passed in
-     * classRef.
-     * </p>
-     * <p>
-     * A common use case for using this conversion method would be to call a
-     * translationSpec that will wrap the given object in another object.
-     * </p>
-     * <p>
-     * this conversion method will be used approx ~3% of the time
-     * </p>
-     * 
-     * @param <T> the return type after translating
-     * @param <O> the type of the object
-     * @param <P> the type of the class for which translationSpec you want to use
-     * @throws ContractException
-     *                           <ul>
-     *                           <li>{@linkplain TaskitCoreError#NULL_OBJECT_FOR_TRANSLATION}
-     *                           if the passed in object is null</li>
-     *                           <li>{@linkplain TaskitCoreError#NULL_CLASS_REF}
-     *                           if the passed in objectClassRef is null</li>
-     *                           <li>{@linkplain TaskitCoreError#UNKNOWN_TRANSLATION_SPEC}
-     *                           if no translationSpec was provided for the given
-     *                           objects class</li>
-     *                           </ul>
-     */
     @Override
-    public final <T, O, P> T translateObjectAsClassUnsafe(O object, Class<P> classRef) {
+    public final <T, O, C> T translateObjectAsClassUnsafe(O object, Class<C> classRef) {
         return this.taskitEngine.translateObjectAsClassUnsafe(object, classRef);
     }
 
     /**
-     * Given a typeUrl, returns the associated Protobuf Message type Class, if it
-     * has been previously provided
+     * Obtain a classRef from a given typeUrl
      * 
+     * @param typeUrl the typeUrl to use to obtain a classRef for
+     * @return the classRef associated with the given typeUrl
      * @throws ContractException {@linkplain ProtobufTaskitError#UNKNOWN_TYPE_URL}
-     *                           if the given type url does not exist. This could be
+     *                           if the given type url does not exist.
+     *                           <p>
+     *                           This could be
      *                           because the type url was never provided or the type
      *                           url itself is malformed
      */
@@ -176,19 +115,11 @@ public abstract class ProtobufTaskitEngine implements ITaskitEngine {
                 "Unable to find corresponding class for: " + typeUrl);
     }
 
-    /**
-     * Returns an instance of the BaseTaskitEngine for this translation engine
-     */
     @Override
     public final TaskitEngine getTaskitEngine() {
         return this.taskitEngine;
     }
 
-    /**
-     * returns the {@link TaskitEngineId} of this TaskitEngine
-     * 
-     * guaranteed to NOT be {@link TaskitEngineId#UNKNOWN}
-     */
     @Override
     public final TaskitEngineId getTaskitEngineId() {
         return this.taskitEngine.getTaskitEngineId();
