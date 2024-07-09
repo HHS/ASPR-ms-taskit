@@ -13,20 +13,20 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.specs.TestObje
 import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 
-public class AT_TranslationSpecSupport {
+public class AT_TranslatorTestSupport {
 
     @Test
-    @UnitTestMethod(target = TranslationSpecSupport.class, name = "testGetTranslationSpecs", args = {Class.class, List.class})
+    @UnitTestMethod(target = TranslatorTestSupport.class, name = "testGetTranslationSpecs", args = {Class.class, List.class})
     public void testTestGetTranslationSpecs() throws ClassNotFoundException {
         List<TranslationSpec<?, ?>> translationSpecs = new ArrayList<>();
 
         translationSpecs.add(new TestObjectTranslationSpec());
 
-        Set<String> missingSpecs = TranslationSpecSupport.testGetTranslationSpecs(TestObjectTranslator.class, translationSpecs);
+        Set<String> missingSpecs = TranslatorTestSupport.testGetTranslationSpecs(TestObjectTranslator.class, translationSpecs);
 
         assertTrue(missingSpecs.isEmpty());
 
-        missingSpecs = TranslationSpecSupport.testGetTranslationSpecs(TestObjectTranslator.class, new ArrayList<>());
+        missingSpecs = TranslatorTestSupport.testGetTranslationSpecs(TestObjectTranslator.class, new ArrayList<>());
 
         assertTrue(missingSpecs.size() == 1);
         assertTrue(missingSpecs.contains(TestObjectTranslationSpec.class.getSimpleName()));

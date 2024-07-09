@@ -22,7 +22,7 @@ public final class Translator {
         this.data = data;
     }
 
-    final static class Data {
+    private final static class Data {
         private TranslatorId translatorId;
         private Consumer<TranslatorContext> initializer;
         private final Set<TranslatorId> dependencies = new LinkedHashSet<>();
@@ -52,6 +52,9 @@ public final class Translator {
 
     }
 
+    /**
+     * Builder for the Translator
+     */
     public final static class Builder {
         private Data data;
 
@@ -71,6 +74,8 @@ public final class Translator {
         /**
          * Builds the Translator
          * 
+         * @return the built translator
+         * 
          * @throws ContractException
          *                           <ul>
          *                           <li>{@linkplain TaskitCoreError#NULL_TRANSLATOR_ID}
@@ -86,8 +91,10 @@ public final class Translator {
         }
 
         /**
-         * Sets the translatorId
+         * Sets the translatorId for this Translator
          * 
+         * @param translatorId the translatorId to set
+         * @return the builder instance
          * @throws ContractException {@linkplain TaskitCoreError#NULL_TRANSLATOR_ID}
          *                           if the translatorId is null
          */
@@ -102,8 +109,10 @@ public final class Translator {
         }
 
         /**
-         * Sets the initialization callback for the translator
+         * Sets the initialization consumer for this translator
          * 
+         * @param initConsumer the consumer to use for initialization
+         * @return the builder instance
          * @throws ContractException {@linkplain TaskitCoreError#NULL_INIT_CONSUMER}
          *                           if the initConsumer is null
          */
@@ -118,7 +127,11 @@ public final class Translator {
         }
 
         /**
-         * Adds the given TranslatorId as a dependency for this Translator
+         * Adds a dependency for this Translator
+         * 
+         * @param dependency the translatorId of the translator this translator should
+         *                   depend on
+         * @return the builder instance
          * 
          * @throws ContractException
          *                           <ul>
@@ -146,6 +159,8 @@ public final class Translator {
 
     /**
      * Creates a new Builder for a Translator
+     * 
+     * @return a new Builder for a Translator
      */
     public static Builder builder() {
         return new Builder(new Data());
@@ -159,21 +174,24 @@ public final class Translator {
     }
 
     /**
-     * Returns the TranslatorId
+     * @return the TranslatorId for this Translator
      */
     public TranslatorId getTranslatorId() {
         return this.data.translatorId;
     }
 
     /**
-     * Returns the set of Dependencies
+     * @return the set of dependencies for this Translator
      */
     public Set<TranslatorId> getTranslatorDependencies() {
         return this.data.dependencies;
     }
 
     /**
-     * sets the initialized flag on this translator to true
+     * Initializes this translator using its initialization consumer
+     * 
+     * @param translatorContext the translator context to pass to the initialization
+     *                          consumer
      */
     public void initialize(TranslatorContext translatorContext) {
         this.data.initializer.accept(translatorContext);
@@ -181,7 +199,7 @@ public final class Translator {
     }
 
     /**
-     * Returns the initialized flag of this translator
+     * @return the initialized flag of this translator
      */
     public boolean isInitialized() {
         return this.initialized;

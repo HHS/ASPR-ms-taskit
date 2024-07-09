@@ -10,15 +10,29 @@ import java.util.Set;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
 import gov.hhs.aspr.ms.util.resourcehelper.ResourceHelper;
 
-public class TranslationSpecSupport {
+/** 
+ * Class to help test Translators and their internal list of translation specs
+ */
+public class TranslatorTestSupport {
 
-    private TranslationSpecSupport() {}
-    /*
+    private TranslatorTestSupport() {
+    }
+
+    /**
      * This method is to ensure that every translationSpec that is supposed to be
      * tied to a Translator is defined in its list of translationSpecs. If a
      * translationSpec is added and not subsequently added to the list in the
      * Translator, then this test will fail and provide the name of the missing
      * TranslationSpec
+     * 
+     * @param <T>                the type of the translator
+     * @param translatorClassRef the classRef of the translator
+     * @param translationSpecs   the list of translation specs defined in the
+     *                           translator
+     * @return a set containing any missing translationSpecs defined in the
+     *         translation.spec package for which the translator is located
+     * @throws ClassNotFoundException if the class loader cannot load a class
+     * 
      */
     public static <T> Set<String> testGetTranslationSpecs(Class<T> translatorClassRef,
             List<TranslationSpec<?, ?>> translationSpecs) throws ClassNotFoundException {
@@ -58,7 +72,7 @@ public class TranslationSpecSupport {
                 className = packageName + "." + className.substring(0, className.length() - 6);
                 Class<?> classRef = classLoader.loadClass(className);
 
-                if(!translationSpecClasses.contains(classRef)) {
+                if (!translationSpecClasses.contains(classRef)) {
                     missingTranslationSpecs.add(classRef.getSimpleName());
                 }
             }

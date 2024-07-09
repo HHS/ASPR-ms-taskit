@@ -18,36 +18,34 @@ public abstract class TranslationSpec<I, A> implements ITranslationSpec {
     private boolean initialized = false;
 
     /**
-     * Initializes this translationSpec. All child TranslationSpecs must call
-     * super() otherwise there will be an exception throw in the TaskitEngine
+     * @implNote All child TranslationSpecs must call
+     *           super() otherwise there will be an exception throw in the
+     *           TaskitEngine
      */
     public <T extends ITaskitEngine> void init(T taskitEngine) {
         this.initialized = true;
     }
 
-    /**
-     * Returns the initialization state of this TranslationSpec
-     */
     public boolean isInitialized() {
         return this.initialized;
     }
 
     /**
-     * The implementation of the {@link ITranslationSpec#translate(Object)} method
-     * Given the object, determines which method should be called.
-     * <p>
-     * It first checks if the object class is exactly equal to either the App or
-     * Input Class and if so, calls the related method
-     * </p>
-     * <p>
-     * It then checks if the the object class is assignable from either the App or
-     * Input Class and if so, calls the related method
-     * </p>
-     * <p>
-     * If no match can be found, an exception is thrown
-     * </p>
-     * 
-     * @param <T> the expected return type after translation/conversion
+     * @implNote The implementation of the
+     *           {@link ITranslationSpec#translate(Object)} method
+     *           <p>
+     *           It first checks if the object class is exactly equal to either the
+     *           App or
+     *           Input Class and if so, calls the related method
+     *           </p>
+     *           <p>
+     *           It then checks if the the object class is assignable from either
+     *           the App or
+     *           Input Class and if so, calls the related method
+     *           </p>
+     *           <p>
+     *           If no match can be found, an exception is thrown
+     *           </p>
      * @throws ContractException {@linkplain TaskitCoreError#UNKNOWN_OBJECT} if
      *                           no match can be found between the passed in object
      *                           and the given appClass and InputClass
@@ -84,15 +82,14 @@ public abstract class TranslationSpec<I, A> implements ITranslationSpec {
 
     @Override
     public boolean equals(Object obj) {
-        // if same object, then equal
         if (this == obj) {
             return true;
         }
-        // if obj is null, not equal
+
         if (obj == null) {
             return false;
         }
-        // if obj is not an instance of TranslationSpec, not equal
+
         if (!(obj instanceof TranslationSpec)) {
             return false;
         }
@@ -115,26 +112,36 @@ public abstract class TranslationSpec<I, A> implements ITranslationSpec {
     }
 
     /**
-     * Given an inputObject, translates it to it's appObject equivalent
+     * Translates the given object to its corresponding app type
+     * 
+     * @param inputObject the input object to translate
+     * @return the translated object
      */
     protected abstract A translateInputObject(I inputObject);
 
     /**
-     * Given an appObject, translates it to it's inputObject equivalent
+     * Translates the given object to its corresponding input type
+     * 
+     * @param appObject the app object to translate
+     * @return the translated object
      */
     protected abstract I translateAppObject(A appObject);
 
     /**
-     * Returns the class of the app object
+     * @return the class of the app type
      */
     public abstract Class<A> getAppObjectClass();
 
     /**
-     * Returns the class of the input object
+     * @return the class of the input type
      */
     public abstract Class<I> getInputObjectClass();
 
-    void checkInit() {
+    /*
+     * checks the initialized flag on this translation spec and throws an exception
+     * if it has not been initialized
+     */
+    private void checkInit() {
         if (!this.initialized) {
             throw new ContractException(TaskitCoreError.UNINITIALIZED_TRANSLATION_SPEC);
         }

@@ -1,7 +1,7 @@
 package gov.hhs.aspr.ms.taskit.core.translation;
 
 /**
- * Used as a {@link Translator} identifier
+ * a {@link Translator} identifier
  */
 public interface TranslatorId {
     /**
