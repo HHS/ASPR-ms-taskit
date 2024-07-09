@@ -59,7 +59,6 @@ public final class TaskitEngine implements ITaskitEngine {
         }
     }
 
-    // TODO update javadoc
     /**
      * This class builds a TaskitEngine.
      */
@@ -165,6 +164,9 @@ public final class TaskitEngine implements ITaskitEngine {
 
         /**
          * Sets the type for this Taskit Engine
+         * 
+         * @param taskitEngineId the taskitEngineId to set
+         * @return the builder instance
          */
         public final Builder setTaskitEngineId(TaskitEngineId taskitEngineId) {
             validateTaskitEngineId(taskitEngineId);
@@ -179,8 +181,6 @@ public final class TaskitEngine implements ITaskitEngine {
          * there is a bidirectional mapping that arises from this. The Engine needs to
          * know that class A translates to class B and vice versa.
          * 
-         * @param <I> the input object type
-         * @param <A> the app object type
          * @throws ContractException
          *                           <ul>
          *                           <li>{@linkplain TaskitCoreError#NULL_TRANSLATION_SPEC}
@@ -207,8 +207,6 @@ public final class TaskitEngine implements ITaskitEngine {
         }
 
         /**
-         * Add a {@link Translator}
-         * 
          * @throws ContractException {@linkplain TaskitCoreError#NULL_TRANSLATOR}
          *                           if translator is null
          */
@@ -222,17 +220,12 @@ public final class TaskitEngine implements ITaskitEngine {
     }
 
     /**
-     * Returns a new builder for a Base TaskitEngine
+     * @return a new builder for a TaskitEngine
      */
     public static TaskitEngine.Builder builder() {
         return new Builder(new Data());
     }
 
-    /**
-     * returns the {@link TaskitEngineType} of this TaskitEngine
-     * 
-     * guaranteed to NOT be null
-     */
     public TaskitEngineId getTaskitEngineId() {
         return this.data.taskitEngineId;
     }
@@ -254,7 +247,8 @@ public final class TaskitEngine implements ITaskitEngine {
         /*
          * Calling init on a translationSpec causes the hashCode of the translationSpec
          * to change. Because of this, before calling init, we need to remove them from
-         * the translationSpecs Set then initialize them, then add them back to the set.
+         * the translationSpecs Set, then initialize them, then add them back to the
+         * set.
          * Set's aren't happy when the hash code of the objects in them change
          */
         List<ITranslationSpec> copyOfTranslationSpecs = new ArrayList<>(this.data.translationSpecs);
@@ -274,16 +268,14 @@ public final class TaskitEngine implements ITaskitEngine {
     }
 
     /**
-     * returns whether this taskitEngine is initialized or not
+     * @return the initialized flag of the TaskitEngine
      */
     public boolean isInitialized() {
         return this.isInitialized;
     }
 
     /**
-     * Returns an instance of the Base Taskit Engine
-     * 
-     * NOTE: for {@link TaskitEngine} it returns itself
+     * Returns this TaskitEngine
      */
     @Override
     public TaskitEngine getTaskitEngine() {
@@ -291,18 +283,19 @@ public final class TaskitEngine implements ITaskitEngine {
     }
 
     /**
-     * Returns a set of all {@link TranslationSpec}s associated with this
-     * TaskitEngine
+     * @return a set of all {@link TranslationSpec}s associated with this
+     *         TaskitEngine
      */
     public Set<ITranslationSpec> getTranslationSpecs() {
         return this.data.translationSpecs;
     }
 
     /**
-     * writing to files must be defined in explicit TaskitEngines, the base taskit
-     * engine knows nothing about writing to files
-     * 
-     * THIS METHOD SHOULD NEVER BE CALLED DIRECTLY
+     * @implNote writing to files must be defined in explicit TaskitEngines, this
+     *           taskit
+     *           engine knows nothing about writing to files
+     *           <p>
+     *           THIS METHOD SHOULD NEVER BE CALLED DIRECTLY
      */
     @Override
     public <O> void write(Path path, O object)
@@ -311,22 +304,11 @@ public final class TaskitEngine implements ITaskitEngine {
     }
 
     /**
-     * writing to files must be defined in explicit TaskitEngines, the base taskit
-     * engine knows nothing about writing to files
-     * 
-     * THIS METHOD SHOULD NEVER BE CALLED DIRECTLY
-     */
-    @Override
-    public <T, O extends T> void translateAndWrite(Path path, O object, Class<T> classRef)
-            throws IOException {
-        throw new UnsupportedOperationException("Called 'translateAndWrite' on TaskitEngine");
-    }
-
-    /**
-     * writing to files must be defined in explicit TaskitEngines, the base taskit
-     * engine knows nothing about writing to files
-     * 
-     * THIS METHOD SHOULD NEVER BE CALLED DIRECTLY
+     * @implNote writing to files must be defined in explicit TaskitEngines, this
+     *           taskit
+     *           engine knows nothing about writing to files
+     *           <p>
+     *           THIS METHOD SHOULD NEVER BE CALLED DIRECTLY
      */
     @Override
     public <O> void translateAndWrite(Path path, O object)
@@ -335,10 +317,24 @@ public final class TaskitEngine implements ITaskitEngine {
     }
 
     /**
-     * reading files must be defined in explicit TaskitEngines, the base taskit
-     * engine knows nothing about reading files
-     * 
-     * THIS METHOD SHOULD NEVER BE CALLED DIRECTLY
+     * @implNote writing to files must be defined in explicit TaskitEngines, this
+     *           taskit
+     *           engine knows nothing about writing to files
+     *           <p>
+     *           THIS METHOD SHOULD NEVER BE CALLED DIRECTLY
+     */
+    @Override
+    public <C, O extends C> void translateAndWrite(Path path, O object, Class<C> classRef)
+            throws IOException {
+        throw new UnsupportedOperationException("Called 'translateAndWrite' on TaskitEngine");
+    }
+
+    /**
+     * @implNote reading files must be defined in explicit TaskitEngines, this
+     *           taskit
+     *           engine knows nothing about reading files
+     *           <p>
+     *           THIS METHOD SHOULD NEVER BE CALLED DIRECTLY
      */
     @Override
     public <I> I read(Path path, Class<I> classRef) throws IOException {
@@ -346,10 +342,11 @@ public final class TaskitEngine implements ITaskitEngine {
     }
 
     /**
-     * reading files must be defined in explicit TaskitEngines, the base taskit
-     * engine knows nothing about reading files
-     * 
-     * THIS METHOD SHOULD NEVER BE CALLED DIRECTLY
+     * @implNote reading files must be defined in explicit TaskitEngines, this
+     *           taskit
+     *           engine knows nothing about reading files
+     *           <p>
+     *           THIS METHOD SHOULD NEVER BE CALLED DIRECTLY
      */
     @Override
     public <T, I> T readAndTranslate(Path path, Class<I> inputClassRef) throws IOException {
@@ -363,13 +360,6 @@ public final class TaskitEngine implements ITaskitEngine {
     }
 
     /**
-     * Given an object, uses the class of the object to obtain the translationSpec
-     * and then calls {@link TranslationSpec#translate(Object)}
-     * <p>
-     * this conversion method will be used approx ~90% of the time
-     * </p>
-     * 
-     * @param <T> the return type after translating
      * @throws ContractException
      *                           <ul>
      *                           <li>{@linkplain TaskitCoreError#NULL_OBJECT_FOR_TRANSLATION}
@@ -386,20 +376,6 @@ public final class TaskitEngine implements ITaskitEngine {
     }
 
     /**
-     * Given an object, uses the parent class of the object to obtain the
-     * translationSpec and then calls {@link TranslationSpec#translate(Object)}
-     * <p>
-     * This method call is safe in the sense that the type parameters ensure that
-     * the passed in object is actually a child of the passed in parentClassRef
-     * </p>
-     * <p>
-     * this conversion method will be used approx ~7% of the time
-     * </p>
-     * 
-     * @param <T> the return type after translating
-     * @param <O> the type of the object; extends U
-     * @param <P> the parent type of the object and the class for which
-     *            translationSpec you want to use
      * @throws ContractException
      *                           <ul>
      *                           <li>{@linkplain TaskitCoreError#NULL_OBJECT_FOR_TRANSLATION}
@@ -411,31 +387,13 @@ public final class TaskitEngine implements ITaskitEngine {
      *                           objects class</li>
      *                           </ul>
      */
-    public <T, O extends P, P> T translateObjectAsClassSafe(O object, Class<P> classRef) {
+    public <T, O extends C, C> T translateObjectAsClassSafe(O object, Class<C> classRef) {
         validateObject(object);
 
         return getTranslationSpecForClass(classRef).translate(object);
     }
 
     /**
-     * Given an object, uses the passed in class to obtain the translationSpec and
-     * then calls {@link TranslationSpec#translate(Object)}
-     * <p>
-     * This method call is unsafe in the sense that the type parameters do not
-     * ensure any relationship between the passed in object and the passed in
-     * classRef.
-     * </p>
-     * <p>
-     * A common use case for using this conversion method would be to call a
-     * translationSpec that will wrap the given object in another object.
-     * </p>
-     * <p>
-     * this conversion method will be used approx ~3% of the time
-     * </p>
-     * 
-     * @param <T> the return type after translating
-     * @param <O> the type of the object
-     * @param <P> the type of the class for which translationSpec you want to use
      * @throws ContractException
      *                           <ul>
      *                           <li>{@linkplain TaskitCoreError#NULL_OBJECT_FOR_TRANSLATION}
@@ -450,23 +408,21 @@ public final class TaskitEngine implements ITaskitEngine {
      *                           objects class</li>
      *                           </ul>
      */
-    public <T, O, P> T translateObjectAsClassUnsafe(O object, Class<P> classRef) {
+    public <T, O, C> T translateObjectAsClassUnsafe(O object, Class<C> classRef) {
         validateObject(object);
 
         return getTranslationSpecForClass(classRef).translate(object);
     }
 
     /**
-     * Given a classRef, returns the translationSpec associated with that class, if
-     * it is known
-     * 
+     * @param <T>      the type of the classRef
+     * @param classRef the classRef to find a translation spec for
+     * @return the translation spec for the given classRef, if found
      * @throws ContractException
      *                           <ul>
-     *                           <li>{@linkplain TaskitCoreError#UNINITIALIZED_TASKIT_ENGINE}
-     *                           if this engine was not initialized</li>
-     *                           <li>
      *                           <li>{@linkplain TaskitCoreError#NULL_CLASS_REF}
      *                           if the passed in classRef is null</li>
+     *                           <li>
      *                           {@linkplain TaskitCoreError#UNKNOWN_TRANSLATION_SPEC}
      *                           if no translationSpec for the given class was
      *                           found</li>

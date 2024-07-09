@@ -6,7 +6,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 import gov.hhs.aspr.ms.util.resourcehelper.ResourceError;
 import gov.hhs.aspr.ms.util.resourcehelper.ResourceHelper;
@@ -18,17 +17,20 @@ import gov.hhs.aspr.ms.util.resourcehelper.ResourceHelper;
 public final class TaskitEngineManager {
     private final Data data;
 
-    TaskitEngineManager(Data data) {
+    private TaskitEngineManager(Data data) {
         this.data = data;
     }
 
-    final static class Data {
+    private final static class Data {
         private final Map<TaskitEngineId, ITaskitEngine> taskitEngineIdToEngineMap = new LinkedHashMap<>();
 
         Data() {
         }
     }
 
+    /**
+     * Builder for the TaskitEngineManager
+     */
     public final static class Builder {
         Data data;
 
@@ -68,20 +70,10 @@ public final class TaskitEngineManager {
         }
 
         /**
-         * Adds a {@link TaskitEngine} and also adds all of it's child -> parent class
-         * ref mappings
-         * <p>
-         * For those mappings, it is a first come, first served basis, meaning that if
-         * multiple taskit engines define a child -> parent relationship, only the first
-         * relationship encountered is added to the internal mapping of this manager. It
-         * is the responsibility of the user to make sure that there are no ambiguous
-         * mappings, and if there are, that whichever taskitEngine that defines the
-         * correct one gets added first.
-         * <p>
-         * In a future version of Taskit, there is a plan to use reflection to obtain
-         * the list of relationships, which would negate the need for the user to define
-         * such mappings. Until then, the mappings are added to the taskit engine and
-         * then subsequently added to this engine manager.
+         * Adds a {@link TaskitEngine} to this TaskitEngineManager
+         * 
+         * @param taskitEngine the taskit engine to add
+         * @return the builder instance
          * 
          * @throws ContractException
          *                           <ul>
@@ -102,7 +94,7 @@ public final class TaskitEngineManager {
     }
 
     /**
-     * Returns a new instance of Builder
+     * Returns a new instance of TaskitEngineManager Builder
      */
     public static Builder builder() {
         return new Builder(new Data());
@@ -142,11 +134,13 @@ public final class TaskitEngineManager {
 
     /**
      * Using the given {@link TaskitEngineId}'s associated
-     * {@link TaskitEngine}, reads the given file into the given classRef and then
-     * translates it to it's corresponding type as defined by the provided
-     * {@link TranslationSpec}s to the associated TaskitEngine
+     * {@link TaskitEngine}, reads the given file into the provided class type
      * 
-     * @param <I> the class to read the file as
+     * @param <I>            the input type
+     * @param path           the path of the file to read
+     * @param classRef       the to read the file as
+     * @param taskitEngineId the taskitEngineId to use to read the file
+     * @return the resulting object from reading the file as the class
      * 
      * @throws ContractException
      *                           <ul>
@@ -183,11 +177,16 @@ public final class TaskitEngineManager {
 
     /**
      * Using the given {@link TaskitEngineId}'s associated
-     * {@link TaskitEngine}, reads the given file into the given classRef and then
-     * translates it to it's corresponding type as defined by the provided
-     * {@link TranslationSpec}s to the associated TaskitEngine
+     * {@link TaskitEngine}, reads the given file into the provided class type and
+     * then translates it to
+     * the corresponding type associated with the input type
      * 
-     * @param <I> the class to read the file as
+     * @param <I>            the input type
+     * @param <T>            the translated type
+     * @param path           the path of the file to read
+     * @param classRef       the to read the file as
+     * @param taskitEngineId the taskitEngineId to use to read the file
+     * @return the resulting object from reading the file as the class
      * 
      * @throws ContractException
      *                           <ul>
@@ -224,10 +223,37 @@ public final class TaskitEngineManager {
 
     /**
      * Using the given {@link TaskitEngineId}'s associated
-     * {@link TaskitEngine}, writes the given object to a file.
+     * {@link TaskitEngine}, Writes the object to the file referenced by the Path.
      * 
      * @param <O> the class of the object to write to the outputFile
      * @param <U> the optional parent class of the object to write to the outputFile
+     * 
+     * @throws ContractException
+     *                           <ul>
+     *                           <li>{@linkplain TaskitCoreError#NULL_PATH}
+     *                           if the path is null</li>
+     *                           <li>{@linkplain ResourceError#FILE_PATH_IS_DIRECTORY}
+     *                           if the path points to a directory instead of a
+     *                           file</li>
+     *                           <li>{@linkplain TaskitCoreError#NULL_OBJECT_FOR_TRANSLATION}
+     *                           if the object is null</li>
+     *                           <li>{@linkplain TaskitCoreError#NULL_TASKIT_ENGINE_ID}
+     *                           if taskitEngineId is null</li>
+     *                           <li>{@linkplain TaskitCoreError#NULL_TASKIT_ENGINE}
+     *                           if taskitEngine is null</li>
+     *                           </ul>
+     * @throws RuntimeException  if the writing of the file encounters an
+     *                           IOException
+     */
+
+    /**
+     * Using the given {@link TaskitEngineId}'s associated
+     * {@link TaskitEngine}, writes the object to the file referenced by the Path.
+     * 
+     * @param <O>            the type of the object to write
+     * @param path           the path of the file to write to
+     * @param object         the object to write
+     * @param taskitEngineId the taskitEngineId to use to write the object
      * 
      * @throws ContractException
      *                           <ul>
@@ -252,10 +278,14 @@ public final class TaskitEngineManager {
 
     /**
      * Using the given {@link TaskitEngineId}'s associated
-     * {@link TaskitEngine}, translates and writes the given object to a file.
+     * {@link TaskitEngine}, translates the object and then writes the translated
+     * object to the file
+     * reference by the Path
      * 
-     * @param <O> the class of the object to write to the outputFile
-     * @param <U> the optional parent class of the object to write to the outputFile
+     * @param <O>            the type of the object to write
+     * @param path           the path of the file to write to
+     * @param object         the object to write
+     * @param taskitEngineId the taskitEngineId to use to write the object
      * 
      * @throws ContractException
      *                           <ul>
@@ -280,12 +310,18 @@ public final class TaskitEngineManager {
 
     /**
      * Using the given {@link TaskitEngineId}'s associated
-     * {@link TaskitEngine}, translates and writes the given object to a file,
-     * using the given class as the output class rather than the class of the
-     * object.
+     * {@link TaskitEngine}, translates the object as the provided class and then
+     * writes the translated
+     * object to the file referenced by the Path
+     * <p>
+     * The type params ensure that the object can be written as the provided class
      * 
-     * @param <O> the class of the object to write to the outputFile
-     * @param <P> the class to write the object as
+     * @param <C>            the type to translate the object as
+     * @param <O>            the type of the object
+     * @param path           the path of the file to write to
+     * @param object         the object to write
+     * @param classRef       the class to translate the object as
+     * @param taskitEngineId the taskitEngineId to use to write the object
      * 
      * @throws ContractException
      *                           <ul>
@@ -306,17 +342,21 @@ public final class TaskitEngineManager {
      * @throws RuntimeException  if the writing of the file encounters an
      *                           IOException
      */
-    public <O extends P, P> void translateAndWrite(Path path, O object, Class<P> outputClass,
+    public <C, O extends C> void translateAndWrite(Path path, O object, Class<C> classRef,
             TaskitEngineId taskitEngineId) {
-        validateClass(outputClass);
+        validateClass(classRef);
 
-        write(path, object, Optional.of(outputClass), taskitEngineId, true);
+        write(path, object, Optional.of(classRef), taskitEngineId, true);
     }
 
     /**
      * package access for testing
+     * 
+     * calls the associated taskitengine write method depending on whether the
+     * translate flag is set and whether there is a classRef provided to translate
+     * the object as
      */
-    <O extends P, P> void write(Path path, O object, Optional<Class<P>> outputClass,
+    <C, O extends C> void write(Path path, O object, Optional<Class<C>> classRef,
             TaskitEngineId taskitEngineId, boolean translate) {
 
         validatePath(path);
@@ -332,11 +372,11 @@ public final class TaskitEngineManager {
                 taskitEngine.write(path, object);
                 return;
             }
-            if (outputClass.isEmpty()) {
+            if (classRef.isEmpty()) {
                 taskitEngine.translateAndWrite(path, object);
                 return;
             }
-            taskitEngine.translateAndWrite(path, object, outputClass.get());
+            taskitEngine.translateAndWrite(path, object, classRef.get());
             return;
         } catch (IOException e) {
             throw new RuntimeException(e);

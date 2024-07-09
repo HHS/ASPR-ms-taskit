@@ -2,6 +2,9 @@ package gov.hhs.aspr.ms.taskit.core.engine;
 
 import gov.hhs.aspr.ms.util.errors.ContractError;
 
+/** 
+ * Errors that describe contract exceptions within Taskit
+ */
 public enum TaskitCoreError implements ContractError {
 
         CIRCULAR_TRANSLATOR_DEPENDENCIES("Circular translator dependencies: "),
