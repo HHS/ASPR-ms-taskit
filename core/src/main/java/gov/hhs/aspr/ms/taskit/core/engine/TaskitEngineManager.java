@@ -352,7 +352,7 @@ public final class TaskitEngineManager {
     /**
      * package access for testing
      * 
-     * calls the associated taskitengine write method depending on whether the
+     * calls the associated TaskitEngine write method depending on whether the
      * translate flag is set and whether there is a classRef provided to translate
      * the object as
      */
