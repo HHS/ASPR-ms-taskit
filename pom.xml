@@ -313,6 +313,14 @@
                                 <additionalJOption>-Xmaxwarns</additionalJOption>
                                 <additionalJOption>65536</additionalJOption>
                             </additionalJOptions>
+                            <tags>
+                                <tag>
+                                    <name>implNote</name>
+                                    <placement>a</placement>
+                                    <head>Implementation Note:</head>
+                                </tag>
+                            </tags>
+                            <sourcepath>${project.build.sourceDirectory}</sourcepath>
                         </configuration>
                         <executions>
                             <execution>

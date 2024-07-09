@@ -191,5 +191,20 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>javadoc</id>
+            <build>
+                <plugins>
+                    <!--Attaches javadoc jar to project -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <configuration>
+                            <sourcepath>${project.build.sourceDirectory}:${project.build.directory}/generated-sources/protobuf/java</sourcepath>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 </project>

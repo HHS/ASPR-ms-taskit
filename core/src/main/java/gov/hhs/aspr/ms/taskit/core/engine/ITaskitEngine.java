@@ -136,7 +136,7 @@ public interface ITaskitEngine {
      * this conversion method will be used approx ~3% of the time
      * </p>
      * 
-     * @param <T>      the corresponding type
+     * @param <T>      the translated type
      * @param <O>      the type of the object
      * @param <C>      the type to translate the object as
      * @param object   the object to translate
