@@ -22,13 +22,13 @@ import gov.hhs.aspr.ms.util.graph.MutableGraph;
 
 public final class TaskitEngineData {
     // package access for use in TaskitEngine
-    final Map<Class<?>, ITranslationSpec> classToTranslationSpecMap;
-    final Set<ITranslationSpec> translationSpecs;
+    final Map<Class<?>, ITranslationSpec> classToTranslationSpecMap = new LinkedHashMap<>();
+    final Set<ITranslationSpec> translationSpecs = new LinkedHashSet<>();
 
     private TaskitEngineData(Map<Class<?>, ITranslationSpec> classToTranslationSpecMap,
             Set<ITranslationSpec> translationSpecs) {
-        this.classToTranslationSpecMap = new LinkedHashMap<>(classToTranslationSpecMap);
-        this.translationSpecs = new LinkedHashSet<>(translationSpecs);
+        this.classToTranslationSpecMap.putAll(classToTranslationSpecMap);
+        this.translationSpecs.addAll(translationSpecs);
     }
 
     public static class Builder {
@@ -43,11 +43,11 @@ public final class TaskitEngineData {
             }
 
             if (translationSpec.getTranslationSpecClassMapping() == null) {
-                // throw exception
+                // TODO: throw exception
             }
 
             if (translationSpec.getTranslationSpecClassMapping().isEmpty()) {
-                // throw exception
+                // TODO: throw exception
             }
 
             if (this.translationSpecs.contains(translationSpec)) {
@@ -159,9 +159,6 @@ public final class TaskitEngineData {
          * dependencies
          */
         private void checkTranslatorGraph(boolean checkInit) {
-            // return this.getOrderedTranslators(new MutableGraph<>(), new
-            // LinkedHashMap<>());
-
             MutableGraph<TranslatorId, Object> mutableGraph = new MutableGraph<>();
             Map<TranslatorId, Translator> translatorMap = new LinkedHashMap<>();
             /*

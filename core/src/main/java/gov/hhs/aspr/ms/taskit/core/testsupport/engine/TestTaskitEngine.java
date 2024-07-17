@@ -29,25 +29,25 @@ public final class TestTaskitEngine extends TaskitEngine {
 
     public static class Builder implements ITaskitEngineBuilder {
 
-        private TaskitEngineData.Builder taskitEngineBuilder = TaskitEngineData.builder();
+        private TaskitEngineData.Builder taskitEngineDataBuilder = TaskitEngineData.builder();
 
         private Builder() {
         }
 
         public TestTaskitEngine build() {
-            TestTaskitEngine testTaskitEngine = new TestTaskitEngine(this.taskitEngineBuilder.build());
+            TestTaskitEngine testTaskitEngine = new TestTaskitEngine(this.taskitEngineDataBuilder.build());
             testTaskitEngine.init();
 
             return testTaskitEngine;
         }
 
         public TestTaskitEngine buildWithoutInit() {
-            return new TestTaskitEngine(this.taskitEngineBuilder.build());
+            return new TestTaskitEngine(this.taskitEngineDataBuilder.build());
         }
 
         @Override
         public Builder addTranslationSpec(ITranslationSpec translationSpec) {
-            this.taskitEngineBuilder.addTranslationSpec(translationSpec);
+            this.taskitEngineDataBuilder.addTranslationSpec(translationSpec);
 
             return this;
         }
@@ -59,7 +59,7 @@ public final class TestTaskitEngine extends TaskitEngine {
             }
             translator.initialize(new TranslatorContext(this));
 
-            this.taskitEngineBuilder.addTranslator(translator);
+            this.taskitEngineDataBuilder.addTranslator(translator);
 
             return this;
         }

@@ -19,12 +19,12 @@ import gov.hhs.aspr.ms.util.errors.ContractException;
 public abstract class ProtobufTaskitEngine extends TaskitEngine {
 
     // this is used specifically for Any message types to pack and unpack them
-    protected final Map<String, Class<?>> typeUrlToClassMap;
+    protected final Map<String, Class<?>> typeUrlToClassMap = new LinkedHashMap<>();
 
     protected ProtobufTaskitEngine(Map<String, Class<?>> typeUrlToClassMap, TaskitEngineData taskitEngineData,
             TaskitEngineId taskitEngineId) {
         super(taskitEngineData, taskitEngineId);
-        this.typeUrlToClassMap = new LinkedHashMap<>(typeUrlToClassMap);
+        this.typeUrlToClassMap.putAll(typeUrlToClassMap);
 
     }
 

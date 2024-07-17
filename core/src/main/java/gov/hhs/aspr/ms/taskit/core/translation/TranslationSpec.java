@@ -38,7 +38,7 @@ public abstract class TranslationSpec<I, A, E extends TaskitEngine> implements I
     public final void init(TaskitEngine taskitEngine) {
         // make sure assignable from E
         if(!(taskitEngineClass.isAssignableFrom(taskitEngine.getClass()))) {
-            // throw contract exception
+            // TODO: throw contract exception
         }
 
         this.taskitEngine = this.taskitEngineClass.cast(taskitEngine);
@@ -76,14 +76,6 @@ public abstract class TranslationSpec<I, A, E extends TaskitEngine> implements I
     @SuppressWarnings("unchecked")
     public <T> T translate(Object obj) {
         checkInit();
-
-        if ((this.getAppObjectClass() == obj.getClass())) {
-            return (T) this.translateAppObject((A) obj);
-        }
-
-        if ((this.getInputObjectClass() == obj.getClass())) {
-            return (T) this.translateInputObject((I) obj);
-        }
 
         if ((this.getAppObjectClass().isAssignableFrom(obj.getClass()))) {
             return (T) this.translateAppObject((A) obj);

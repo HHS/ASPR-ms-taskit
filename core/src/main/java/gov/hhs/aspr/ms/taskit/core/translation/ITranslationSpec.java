@@ -32,5 +32,5 @@ public interface ITranslationSpec {
      */
     public boolean isInitialized();
 
-    Map<Class<?>, ITranslationSpec> getTranslationSpecClassMapping();
+    public Map<Class<?>, ITranslationSpec> getTranslationSpecClassMapping();
 }

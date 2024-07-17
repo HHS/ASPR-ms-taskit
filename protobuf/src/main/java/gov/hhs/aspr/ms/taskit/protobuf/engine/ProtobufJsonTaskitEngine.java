@@ -215,6 +215,8 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
         public Builder addTranslationSpec(ITranslationSpec translationSpec) {
             this.taskitEngineDataBuilder.addTranslationSpec(translationSpec);
 
+            // TODO: add back contract exception for adding a non protobuf translation spec
+            
             ProtobufTranslationSpec<?, ?> protobufTranslationSpec = ProtobufTranslationSpec.class.cast(translationSpec);
 
             populate(protobufTranslationSpec.getInputObjectClass());
