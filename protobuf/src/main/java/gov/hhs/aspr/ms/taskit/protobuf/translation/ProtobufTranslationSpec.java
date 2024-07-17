@@ -11,4 +11,8 @@ import gov.hhs.aspr.ms.taskit.protobuf.engine.ProtobufTaskitEngine;
  */
 public abstract class ProtobufTranslationSpec<I, A> extends TranslationSpec<I, A, ProtobufTaskitEngine> {
 
+    protected ProtobufTranslationSpec() {
+        super(ProtobufTaskitEngine.class);
+    }
+
 }

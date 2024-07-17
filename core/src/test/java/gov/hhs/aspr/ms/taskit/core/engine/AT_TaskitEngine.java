@@ -86,7 +86,7 @@ public class AT_TaskitEngine {
                 .addTranslationSpec(testComplexObjectTranslationSpec)
                 .build();
 
-        Set<ITranslationSpec<?>> actualTranslationSpecs = taskitEngine.getTranslationSpecs();
+        Set<ITranslationSpec> actualTranslationSpecs = taskitEngine.getTranslationSpecs();
 
         assertTrue(actualTranslationSpecs.contains(testObjectTranslationSpec));
         assertTrue(actualTranslationSpecs.contains(testComplexObjectTranslationSpec));

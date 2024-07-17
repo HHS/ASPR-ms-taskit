@@ -10,7 +10,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 
-import gov.hhs.aspr.ms.taskit.core.engine.ITypedTaskitEngineBuilder;
+import gov.hhs.aspr.ms.taskit.core.engine.ITaskitEngineBuilder;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngineData;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitError;
@@ -27,7 +27,7 @@ public final class TestTaskitEngine extends TaskitEngine {
         super(taskitEngineData, TestTaskitEngineId.TEST_ENGINE_ID);
     }
 
-    public static class Builder implements ITypedTaskitEngineBuilder<TestTaskitEngine> {
+    public static class Builder implements ITaskitEngineBuilder {
 
         private TaskitEngineData.Builder taskitEngineBuilder = TaskitEngineData.builder();
 
@@ -35,7 +35,6 @@ public final class TestTaskitEngine extends TaskitEngine {
         }
 
         public TestTaskitEngine build() {
-
             TestTaskitEngine testTaskitEngine = new TestTaskitEngine(this.taskitEngineBuilder.build());
             testTaskitEngine.init();
 
@@ -47,7 +46,7 @@ public final class TestTaskitEngine extends TaskitEngine {
         }
 
         @Override
-        public Builder addTranslationSpec(ITranslationSpec<TestTaskitEngine> translationSpec) {
+        public Builder addTranslationSpec(ITranslationSpec translationSpec) {
             this.taskitEngineBuilder.addTranslationSpec(translationSpec);
 
             return this;

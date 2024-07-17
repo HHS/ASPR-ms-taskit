@@ -9,7 +9,6 @@ import java.util.Set;
 
 import gov.hhs.aspr.ms.taskit.core.translation.ITranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
-import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpecContext;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
@@ -45,16 +44,14 @@ public abstract class TaskitEngine {
          * set.
          * Set's aren't happy when the hash code of the objects in them change
          */
-        List<ITranslationSpec<? extends TaskitEngine>> copyOfTranslationSpecs = new ArrayList<>(
+        List<ITranslationSpec> copyOfTranslationSpecs = new ArrayList<>(
                 this.data.translationSpecs);
-
-        TranslationSpecContext<? extends TaskitEngine> translationSpecContext = new TranslationSpecContext<>(this);
 
         this.data.translationSpecs.clear();
 
-        for (ITranslationSpec<? extends TaskitEngine> translationSpec : copyOfTranslationSpecs) {
+        for (ITranslationSpec translationSpec : copyOfTranslationSpecs) {
 
-            translationSpec.init(translationSpecContext);
+            translationSpec.init(this);
             this.data.translationSpecs.add(translationSpec);
         }
 
@@ -72,7 +69,7 @@ public abstract class TaskitEngine {
      * @return a set of all {@link TranslationSpec}s associated with this
      *         TaskitEngine
      */
-    public final Set<ITranslationSpec<?>> getTranslationSpecs() {
+    public final Set<ITranslationSpec> getTranslationSpecs() {
         return this.data.translationSpecs;
     }
 
@@ -260,7 +257,7 @@ public abstract class TaskitEngine {
      *                           found</li>
      *                           </ul>
      */
-    public final <T> ITranslationSpec<?> getTranslationSpecForClass(Class<T> classRef) {
+    public final <T> ITranslationSpec getTranslationSpecForClass(Class<T> classRef) {
         if (classRef == null) {
             throw new ContractException(TaskitError.NULL_CLASS_REF);
         }

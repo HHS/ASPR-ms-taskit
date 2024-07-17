@@ -7,7 +7,7 @@ import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
 /**
  * Interface for TranslationSpecifications (TranslationSpecs)
  */
-public interface ITranslationSpec<E extends TaskitEngine> {
+public interface ITranslationSpec {
 
     /**
      * Initializes the translation spec with the given taskitEngine
@@ -15,7 +15,7 @@ public interface ITranslationSpec<E extends TaskitEngine> {
      * @param taskitEngine the taskitEngine the translationSpec should be
      *                     initialized with
      */
-    public void init(TranslationSpecContext<? extends TaskitEngine> translationSpecContext);
+    public void init(TaskitEngine taskitEngine);
 
     /**
      * Given an object, translates it if the translationSpec knows how to translate
@@ -32,5 +32,5 @@ public interface ITranslationSpec<E extends TaskitEngine> {
      */
     public boolean isInitialized();
 
-    Map<Class<?>, ITranslationSpec<E>> getTranslationSpecClassMapping();
+    Map<Class<?>, ITranslationSpec> getTranslationSpecClassMapping();
 }

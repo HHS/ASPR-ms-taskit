@@ -18,7 +18,7 @@ public class AT_TranslatorTestSupport {
     @Test
     @UnitTestMethod(target = TranslatorTestSupport.class, name = "testGetTranslationSpecs", args = {Class.class, List.class})
     public void testTestGetTranslationSpecs() throws ClassNotFoundException {
-        List<ITranslationSpec<?>> translationSpecs = new ArrayList<>();
+        List<ITranslationSpec> translationSpecs = new ArrayList<>();
 
         translationSpecs.add(new TestObjectTranslationSpec());
 

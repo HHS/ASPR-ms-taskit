@@ -15,9 +15,14 @@ import gov.hhs.aspr.ms.util.errors.ContractException;
  * Note: No reference to a {@link TaskitEngine} exists in this class, and
  * must be implemented by the implementing class.
  */
-public abstract class TranslationSpec<I, A, E extends TaskitEngine> implements ITranslationSpec<E> {
+public abstract class TranslationSpec<I, A, E extends TaskitEngine> implements ITranslationSpec {
     private boolean initialized = false;
     protected E taskitEngine;
+    private final Class<E> taskitEngineClass;
+
+    protected TranslationSpec(Class<E> taskitEngineClass) {
+        this.taskitEngineClass = taskitEngineClass;
+    }
 
     /**
      * Initializes the translation spec with the given taskitEngine
@@ -29,9 +34,14 @@ public abstract class TranslationSpec<I, A, E extends TaskitEngine> implements I
      *                     initialized with
      * 
      */
-    @SuppressWarnings("unchecked")
-    public final void init(TranslationSpecContext<? extends TaskitEngine> translationSpecContext) {
-        this.taskitEngine = (E) translationSpecContext.getTaskitEngine();
+    @Override
+    public final void init(TaskitEngine taskitEngine) {
+        // make sure assignable from E
+        if(!(taskitEngineClass.isAssignableFrom(taskitEngine.getClass()))) {
+            // throw contract exception
+        }
+
+        this.taskitEngine = this.taskitEngineClass.cast(taskitEngine);
         this.initialized = true;
     }
 
@@ -124,8 +134,8 @@ public abstract class TranslationSpec<I, A, E extends TaskitEngine> implements I
         return initialized == other.initialized;
     }
 
-    public Map<Class<?>, ITranslationSpec<E>> getTranslationSpecClassMapping() {
-        final Map<Class<?>, ITranslationSpec<E>> translationSpecClassMap = new LinkedHashMap<>();
+    public Map<Class<?>, ITranslationSpec> getTranslationSpecClassMapping() {
+        final Map<Class<?>, ITranslationSpec> translationSpecClassMap = new LinkedHashMap<>();
 
         translationSpecClassMap.put(getAppObjectClass(), this);
         translationSpecClassMap.put(getInputObjectClass(), this);

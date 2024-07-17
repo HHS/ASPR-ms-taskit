@@ -11,9 +11,7 @@ import com.google.protobuf.Int32Value;
 import com.google.protobuf.InvalidProtocolBufferException;
 
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppEnum;
-import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpecContext;
 import gov.hhs.aspr.ms.taskit.protobuf.engine.ProtobufJsonTaskitEngine;
-import gov.hhs.aspr.ms.taskit.protobuf.engine.ProtobufTaskitEngine;
 import gov.hhs.aspr.ms.taskit.protobuf.objects.WrapperEnumValue;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.objects.TestInputEnum;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.objects.TestInputObject;
@@ -44,12 +42,9 @@ public class AT_AnyTranslationSpec {
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
                 .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
 
-        TranslationSpecContext<ProtobufTaskitEngine> translationSpecContext = new TranslationSpecContext<>(
-                protobufTaskitEngine);
-
         AnyTranslationSpec anyTranslationSpec = new AnyTranslationSpec();
 
-        anyTranslationSpec.init(translationSpecContext);
+        anyTranslationSpec.init(protobufTaskitEngine);
 
         Integer expectedValue = 100;
         Int32Value int32Value = Int32Value.of(expectedValue);
@@ -90,12 +85,9 @@ public class AT_AnyTranslationSpec {
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
                 .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
 
-        TranslationSpecContext<ProtobufTaskitEngine> translationSpecContext = new TranslationSpecContext<>(
-                protobufTaskitEngine);
-
         AnyTranslationSpec anyTranslationSpec = new AnyTranslationSpec();
 
-        anyTranslationSpec.init(translationSpecContext);
+        anyTranslationSpec.init(protobufTaskitEngine);
 
         Integer expectedValue = 100;
         Int32Value int32Value = Int32Value.of(expectedValue);
@@ -116,12 +108,9 @@ public class AT_AnyTranslationSpec {
         ProtobufJsonTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder()
                 .addTranslationSpec(new TestProtobufEnumTranslationSpec()).build();
 
-        TranslationSpecContext<ProtobufTaskitEngine> translationSpecContext = new TranslationSpecContext<>(
-                protobufTaskitEngine);
-
         AnyTranslationSpec anyTranslationSpec = new AnyTranslationSpec();
 
-        anyTranslationSpec.init(translationSpecContext);
+        anyTranslationSpec.init(protobufTaskitEngine);
 
         // app object translateed into any
         Integer value = 100;

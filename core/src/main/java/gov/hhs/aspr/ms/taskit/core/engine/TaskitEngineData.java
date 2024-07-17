@@ -22,22 +22,22 @@ import gov.hhs.aspr.ms.util.graph.MutableGraph;
 
 public final class TaskitEngineData {
     // package access for use in TaskitEngine
-    final Map<Class<?>, ITranslationSpec<? extends TaskitEngine>> classToTranslationSpecMap;
-    final Set<ITranslationSpec<? extends TaskitEngine>> translationSpecs;
+    final Map<Class<?>, ITranslationSpec> classToTranslationSpecMap;
+    final Set<ITranslationSpec> translationSpecs;
 
-    private TaskitEngineData(Map<Class<?>, ITranslationSpec<? extends TaskitEngine>> classToTranslationSpecMap,
-            Set<ITranslationSpec<? extends TaskitEngine>> translationSpecs) {
+    private TaskitEngineData(Map<Class<?>, ITranslationSpec> classToTranslationSpecMap,
+            Set<ITranslationSpec> translationSpecs) {
         this.classToTranslationSpecMap = new LinkedHashMap<>(classToTranslationSpecMap);
         this.translationSpecs = new LinkedHashSet<>(translationSpecs);
     }
 
     public static class Builder {
-        private Map<Class<?>, ITranslationSpec<? extends TaskitEngine>> classToTranslationSpecMap = new LinkedHashMap<>();
-        private Set<ITranslationSpec<? extends TaskitEngine>> translationSpecs = new LinkedHashSet<>();
+        private Map<Class<?>, ITranslationSpec> classToTranslationSpecMap = new LinkedHashMap<>();
+        private Set<ITranslationSpec> translationSpecs = new LinkedHashSet<>();
 
         private List<Translator> translators = new ArrayList<>();
 
-        private void validateTranslationSpec(ITranslationSpec<? extends TaskitEngine> translationSpec) {
+        private void validateTranslationSpec(ITranslationSpec translationSpec) {
             if (translationSpec == null) {
                 throw new ContractException(TaskitError.NULL_TRANSLATION_SPEC);
             }
@@ -129,7 +129,7 @@ public final class TaskitEngineData {
          *                           if the given translationSpec is already known</li>
          *                           </ul>
          */
-        public <E extends TaskitEngine> Builder addTranslationSpec(ITranslationSpec<E> translationSpec) {
+        public Builder addTranslationSpec(ITranslationSpec translationSpec) {
             validateTranslationSpec(translationSpec);
 
             this.classToTranslationSpecMap.putAll(translationSpec.getTranslationSpecClassMapping());

@@ -17,6 +17,8 @@ public final class MammalData {
         private double gestationPeriod;
 
         public MammalData build() {
+            animalDataBuilder.setLactates(true);
+            
             return new MammalData(animalDataBuilder.build(), terrain, gestationPeriod);
         }
 

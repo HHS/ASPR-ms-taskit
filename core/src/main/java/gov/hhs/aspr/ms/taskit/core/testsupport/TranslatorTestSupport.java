@@ -35,12 +35,12 @@ public class TranslatorTestSupport {
      * 
      */
     public static <T> Set<String> testGetTranslationSpecs(Class<T> translatorClassRef,
-            List<ITranslationSpec<?>> translationSpecs) throws ClassNotFoundException {
+            List<ITranslationSpec> translationSpecs) throws ClassNotFoundException {
         Set<String> missingTranslationSpecs = new LinkedHashSet<>();
         List<Class<?>> translationSpecClasses = new ArrayList<>();
 
         // create a list with the translation spec class names
-        for (ITranslationSpec<?> translationSpec : translationSpecs) {
+        for (ITranslationSpec translationSpec : translationSpecs) {
             translationSpecClasses.add(translationSpec.getClass());
         }
 

@@ -74,7 +74,7 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
     /**
      * Builder for the ProtobufJsonTaskitEngine
      */
-    public final static class Builder implements IProtobufTaskitEngineBuilder<ProtobufTaskitEngine> {
+    public final static class Builder implements IProtobufTaskitEngineBuilder {
         private Data data;
         private Set<Descriptor> descriptorSet = new LinkedHashSet<>();
         private final Set<FieldDescriptor> defaultValueFieldsToPrint = new LinkedHashSet<>();
@@ -212,7 +212,7 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
          *                           </ul>
          */
         @Override
-        public Builder addTranslationSpec(ITranslationSpec<ProtobufTaskitEngine> translationSpec) {
+        public Builder addTranslationSpec(ITranslationSpec translationSpec) {
             this.taskitEngineDataBuilder.addTranslationSpec(translationSpec);
 
             ProtobufTranslationSpec<?, ?> protobufTranslationSpec = ProtobufTranslationSpec.class.cast(translationSpec);
