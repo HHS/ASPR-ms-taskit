@@ -9,7 +9,9 @@ import org.junit.jupiter.api.Test;
 import com.google.protobuf.BoolValue;
 
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppEnum;
+import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpecContext;
 import gov.hhs.aspr.ms.taskit.protobuf.engine.ProtobufJsonTaskitEngine;
+import gov.hhs.aspr.ms.taskit.protobuf.engine.ProtobufTaskitEngine;
 import gov.hhs.aspr.ms.taskit.protobuf.objects.WrapperEnumValue;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.objects.TestInputEnum;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.translation.specs.TestProtobufEnumTranslationSpec;
@@ -31,8 +33,11 @@ public class AT_EnumTranslationSpec {
         ProtobufJsonTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder()
                 .addTranslationSpec(new TestProtobufEnumTranslationSpec()).build();
 
+                TranslationSpecContext<ProtobufTaskitEngine> translationSpecContext = new TranslationSpecContext<>(
+                protobufTaskitEngine);
+
         EnumTranslationSpec enumTranslationSpec = new EnumTranslationSpec();
-        enumTranslationSpec.init(protobufTaskitEngine);
+        enumTranslationSpec.init(translationSpecContext);
 
         TestAppEnum expectedValue = TestAppEnum.TEST1;
         WrapperEnumValue inputValue = WrapperEnumValue.newBuilder()
@@ -60,8 +65,11 @@ public class AT_EnumTranslationSpec {
         ProtobufJsonTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder()
                 .addTranslationSpec(new TestProtobufEnumTranslationSpec()).build();
 
+                TranslationSpecContext<ProtobufTaskitEngine> translationSpecContext = new TranslationSpecContext<>(
+                protobufTaskitEngine);
+
         EnumTranslationSpec enumTranslationSpec = new EnumTranslationSpec();
-        enumTranslationSpec.init(protobufTaskitEngine);
+        enumTranslationSpec.init(translationSpecContext);
 
         TestAppEnum appValue = TestAppEnum.TEST2;
         WrapperEnumValue expectedValue = WrapperEnumValue.newBuilder()

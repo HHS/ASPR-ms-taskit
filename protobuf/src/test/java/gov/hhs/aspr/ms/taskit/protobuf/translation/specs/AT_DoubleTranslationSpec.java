@@ -7,7 +7,9 @@ import org.junit.jupiter.api.Test;
 
 import com.google.protobuf.DoubleValue;
 
+import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpecContext;
 import gov.hhs.aspr.ms.taskit.protobuf.engine.ProtobufJsonTaskitEngine;
+import gov.hhs.aspr.ms.taskit.protobuf.engine.ProtobufTaskitEngine;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestForCoverage;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
@@ -25,8 +27,11 @@ public class AT_DoubleTranslationSpec {
     public void testConvertInputObject() {
         ProtobufJsonTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder().build();
 
+        TranslationSpecContext<ProtobufTaskitEngine> translationSpecContext = new TranslationSpecContext<>(
+                protobufTaskitEngine);
+
         DoubleTranslationSpec doubleTranslationSpec = new DoubleTranslationSpec();
-        doubleTranslationSpec.init(protobufTaskitEngine);
+        doubleTranslationSpec.init(translationSpecContext);
 
         Double expectedValue = 100.0;
         DoubleValue inputValue = DoubleValue.of(expectedValue);
@@ -41,8 +46,11 @@ public class AT_DoubleTranslationSpec {
     public void testConvertAppObject() {
         ProtobufJsonTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder().build();
 
+        TranslationSpecContext<ProtobufTaskitEngine> translationSpecContext = new TranslationSpecContext<>(
+                protobufTaskitEngine);
+
         DoubleTranslationSpec doubleTranslationSpec = new DoubleTranslationSpec();
-        doubleTranslationSpec.init(protobufTaskitEngine);
+        doubleTranslationSpec.init(translationSpecContext);
 
         Double appValue = 100.0;
         DoubleValue expectedValue = DoubleValue.of(appValue);

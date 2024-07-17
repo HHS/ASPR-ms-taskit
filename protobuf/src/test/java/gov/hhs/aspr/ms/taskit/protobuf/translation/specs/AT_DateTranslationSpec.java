@@ -9,7 +9,9 @@ import org.junit.jupiter.api.Test;
 
 import com.google.type.Date;
 
+import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpecContext;
 import gov.hhs.aspr.ms.taskit.protobuf.engine.ProtobufJsonTaskitEngine;
+import gov.hhs.aspr.ms.taskit.protobuf.engine.ProtobufTaskitEngine;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestForCoverage;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
@@ -27,8 +29,11 @@ public class AT_DateTranslationSpec {
     public void testConvertInputObject() {
         ProtobufJsonTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder().build();
 
+        TranslationSpecContext<ProtobufTaskitEngine> translationSpecContext = new TranslationSpecContext<>(
+                protobufTaskitEngine);
+
         DateTranslationSpec dateTranslationSpec = new DateTranslationSpec();
-        dateTranslationSpec.init(protobufTaskitEngine);
+        dateTranslationSpec.init(translationSpecContext);
 
         LocalDate expectedValue = LocalDate.now();
         Date inputValue = Date.newBuilder().setDay(expectedValue.getDayOfMonth())
@@ -44,8 +49,11 @@ public class AT_DateTranslationSpec {
     public void testConvertAppObject() {
         ProtobufJsonTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder().build();
 
+        TranslationSpecContext<ProtobufTaskitEngine> translationSpecContext = new TranslationSpecContext<>(
+                protobufTaskitEngine);
+
         DateTranslationSpec dateTranslationSpec = new DateTranslationSpec();
-        dateTranslationSpec.init(protobufTaskitEngine);
+        dateTranslationSpec.init(translationSpecContext);
 
         LocalDate appValue = LocalDate.now();
         Date inputValue = Date.newBuilder().setDay(appValue.getDayOfMonth()).setMonth(appValue.getMonthValue())

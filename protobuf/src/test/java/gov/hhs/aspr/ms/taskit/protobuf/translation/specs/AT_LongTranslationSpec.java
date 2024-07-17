@@ -7,7 +7,9 @@ import org.junit.jupiter.api.Test;
 
 import com.google.protobuf.Int64Value;
 
+import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpecContext;
 import gov.hhs.aspr.ms.taskit.protobuf.engine.ProtobufJsonTaskitEngine;
+import gov.hhs.aspr.ms.taskit.protobuf.engine.ProtobufTaskitEngine;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestForCoverage;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
@@ -25,8 +27,11 @@ public class AT_LongTranslationSpec {
     public void testConvertInputObject() {
         ProtobufJsonTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder().build();
 
+        TranslationSpecContext<ProtobufTaskitEngine> translationSpecContext = new TranslationSpecContext<>(
+                protobufTaskitEngine);
+
         LongTranslationSpec longTranslationSpec = new LongTranslationSpec();
-        longTranslationSpec.init(protobufTaskitEngine);
+        longTranslationSpec.init(translationSpecContext);
 
         Long expectedValue = 100L;
         Int64Value inputValue = Int64Value.of(expectedValue);
@@ -41,8 +46,11 @@ public class AT_LongTranslationSpec {
     public void testConvertAppObject() {
         ProtobufJsonTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder().build();
 
+        TranslationSpecContext<ProtobufTaskitEngine> translationSpecContext = new TranslationSpecContext<>(
+                protobufTaskitEngine);
+
         LongTranslationSpec longTranslationSpec = new LongTranslationSpec();
-        longTranslationSpec.init(protobufTaskitEngine);
+        longTranslationSpec.init(translationSpecContext);
 
         Long appValue = 1000L;
         Int64Value expectedValue = Int64Value.of(appValue);

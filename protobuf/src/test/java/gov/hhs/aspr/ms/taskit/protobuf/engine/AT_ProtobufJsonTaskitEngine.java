@@ -234,7 +234,7 @@ public class AT_ProtobufJsonTaskitEngine {
                 .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
 
         assertEquals(ProtobufTaskitEngineId.JSON_ENGINE_ID, protobufTaskitEngine.getTaskitEngineId());
-        assertTrue(protobufTaskitEngine.getTaskitEngine().isInitialized());
+        assertTrue(protobufTaskitEngine.isInitialized());
 
         // parser and printer do not have equals contracts, so no way to check for
         // equality
@@ -344,13 +344,6 @@ public class AT_ProtobufJsonTaskitEngine {
         });
 
         // precondition
-        // translation spec is not a ProtobufTranslationSpec
-
-        ContractException contractException = assertThrows(ContractException.class, () -> {
-            ProtobufJsonTaskitEngine.builder().addTranslationSpec(new TestObjectTranslationSpec());
-        });
-
-        assertEquals(ProtobufTaskitError.INVALID_TRANSLATION_SPEC, contractException.getErrorType());
         // that the inputClass is not a Message nor a
         // ProtocolMessageEnum, and is tested in the testPopulate() test
     }
@@ -362,7 +355,7 @@ public class AT_ProtobufJsonTaskitEngine {
         Translator translator = Translator.builder()
                 .setTranslatorId(TestComplexObjectTranslatorId.TRANSLATOR_ID)
                 .setInitializer(translatorContext -> {
-                    translatorContext.getTaskitEngineBuilder(IProtobufTaskitEngineBuilder.class)
+                    translatorContext.getTaskitEngineBuilder(ProtobufJsonTaskitEngine.Builder.class)
                             .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec());
                 })
                 .build();

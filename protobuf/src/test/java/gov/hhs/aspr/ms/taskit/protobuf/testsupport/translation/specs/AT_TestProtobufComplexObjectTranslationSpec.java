@@ -24,11 +24,10 @@ public class AT_TestProtobufComplexObjectTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertInputObject() {
-        ProtobufJsonTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder()
-                .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
-
         TestProtobufComplexObjectTranslationSpec complexObjectTranslationSpec = new TestProtobufComplexObjectTranslationSpec();
-        complexObjectTranslationSpec.init(protobufTaskitEngine);
+        ProtobufJsonTaskitEngine.builder()
+                .addTranslationSpec(complexObjectTranslationSpec)
+                .build();
 
         TestComplexAppObject expectedValue = TestObjectUtil.generateTestComplexAppObject();
         TestComplexInputObject inputValue = TestObjectUtil.getComplexInputFromComplexApp(expectedValue);
@@ -41,11 +40,10 @@ public class AT_TestProtobufComplexObjectTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertAppObject() {
-        ProtobufJsonTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder()
-                .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
-
         TestProtobufComplexObjectTranslationSpec complexObjectTranslationSpec = new TestProtobufComplexObjectTranslationSpec();
-        complexObjectTranslationSpec.init(protobufTaskitEngine);
+        ProtobufJsonTaskitEngine.builder()
+                .addTranslationSpec(complexObjectTranslationSpec)
+                .build();
 
         TestComplexAppObject appValue = TestObjectUtil.generateTestComplexAppObject();
         TestComplexInputObject expectedValue = TestObjectUtil.getComplexInputFromComplexApp(appValue);

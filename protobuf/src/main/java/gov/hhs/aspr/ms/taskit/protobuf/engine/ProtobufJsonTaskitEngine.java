@@ -22,7 +22,6 @@ import com.google.protobuf.util.JsonFormat.Parser;
 import com.google.protobuf.util.JsonFormat.Printer;
 import com.google.protobuf.util.JsonFormat.TypeRegistry;
 
-import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngineData;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitError;
 import gov.hhs.aspr.ms.taskit.core.translation.ITranslationSpec;
@@ -75,7 +74,7 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
     /**
      * Builder for the ProtobufJsonTaskitEngine
      */
-    public final static class Builder implements IProtobufTaskitEngineBuilder {
+    public final static class Builder implements IProtobufTaskitEngineBuilder<ProtobufTaskitEngine> {
         private Data data;
         private Set<Descriptor> descriptorSet = new LinkedHashSet<>();
         private final Set<FieldDescriptor> defaultValueFieldsToPrint = new LinkedHashSet<>();
@@ -213,14 +212,10 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
          *                           </ul>
          */
         @Override
-        public <E extends TaskitEngine> Builder addTranslationSpec(ITranslationSpec<E> translationSpec) {
+        public Builder addTranslationSpec(ITranslationSpec<ProtobufTaskitEngine> translationSpec) {
             this.taskitEngineDataBuilder.addTranslationSpec(translationSpec);
 
-            if (!ProtobufTranslationSpec.class.isAssignableFrom(translationSpec.getClass())) {
-                throw new ContractException(ProtobufTaskitError.INVALID_TRANSLATION_SPEC);
-            }
-
-            ProtobufTranslationSpec<?, ?> protobufTranslationSpec = (ProtobufTranslationSpec<?, ?>) translationSpec;
+            ProtobufTranslationSpec<?, ?> protobufTranslationSpec = ProtobufTranslationSpec.class.cast(translationSpec);
 
             populate(protobufTranslationSpec.getInputObjectClass());
             return this;
