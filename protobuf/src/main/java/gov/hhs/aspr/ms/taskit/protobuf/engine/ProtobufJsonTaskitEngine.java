@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import com.google.protobuf.Descriptors.Descriptor;
@@ -21,9 +22,10 @@ import com.google.protobuf.util.JsonFormat.Parser;
 import com.google.protobuf.util.JsonFormat.Printer;
 import com.google.protobuf.util.JsonFormat.TypeRegistry;
 
-import gov.hhs.aspr.ms.taskit.core.engine.TaskitError;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
-import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngineData;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitError;
+import gov.hhs.aspr.ms.taskit.core.translation.ITranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.Translator;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslatorContext;
 import gov.hhs.aspr.ms.taskit.protobuf.translation.ProtobufTranslationSpec;
@@ -36,8 +38,9 @@ import gov.hhs.aspr.ms.util.errors.ContractException;
 public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
     private final Data data;
 
-    private ProtobufJsonTaskitEngine(Data data, Map<String, Class<?>> typeUrlToClassMap, TaskitEngine taskitEngine) {
-        super(typeUrlToClassMap, taskitEngine);
+    private ProtobufJsonTaskitEngine(Data data, Map<String, Class<?>> typeUrlToClassMap,
+            TaskitEngineData taskitEngineData) {
+        super(typeUrlToClassMap, taskitEngineData, ProtobufTaskitEngineId.JSON_ENGINE_ID);
         this.data = data;
     }
 
@@ -49,13 +52,31 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
 
         private Data() {
         }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(jsonParser, jsonPrinter);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (!(obj instanceof Data)) {
+                return false;
+            }
+            Data other = (Data) obj;
+            return Objects.equals(jsonParser, other.jsonParser) && Objects.equals(jsonPrinter, other.jsonPrinter);
+        }
+
     }
 
     /**
      * Builder for the ProtobufJsonTaskitEngine
      */
     public final static class Builder implements IProtobufTaskitEngineBuilder {
-        private ProtobufJsonTaskitEngine.Data data;
+        private Data data;
         private Set<Descriptor> descriptorSet = new LinkedHashSet<>();
         private final Set<FieldDescriptor> defaultValueFieldsToPrint = new LinkedHashSet<>();
         private boolean ignoringUnknownFields = true;
@@ -64,9 +85,7 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
         // this is used specifically for Any message types to pack and unpack them
         private final Map<String, Class<?>> typeUrlToClassMap = new LinkedHashMap<>();
 
-        private TaskitEngine taskitEngine;
-
-        private TaskitEngine.Builder taskitEngineBuilder = TaskitEngine.builder();
+        private TaskitEngineData.Builder taskitEngineDataBuilder = TaskitEngineData.builder();
 
         private Builder(ProtobufJsonTaskitEngine.Data data) {
             this.data = data;
@@ -77,17 +96,12 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
          * and jsonWriter that include all the typeUrls for all added TranslationSpecs
          * and their respective Protobuf Message types
          */
-        @Override
         public ProtobufJsonTaskitEngine build() {
 
             this.typeUrlToClassMap.putAll(ProtobufTaskitEngineHelper.getPrimitiveTypeUrlToClassMap());
 
             ProtobufTaskitEngineHelper.getPrimitiveTranslationSpecs().forEach(
-                    (translationSpec) -> this.taskitEngineBuilder.addTranslationSpec(translationSpec));
-
-            this.taskitEngineBuilder.setTaskitEngineId(ProtobufTaskitEngineId.JSON_ENGINE_ID);
-
-            this.taskitEngine = this.taskitEngineBuilder.build();
+                    (translationSpec) -> this.taskitEngineDataBuilder.addTranslationSpec(translationSpec));
 
             TypeRegistry.Builder typeRegistryBuilder = TypeRegistry.newBuilder();
             this.descriptorSet.addAll(ProtobufTaskitEngineHelper.getPrimitiveDescriptors());
@@ -116,9 +130,9 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
             this.data.jsonPrinter = printer;
 
             ProtobufJsonTaskitEngine protoJsonTaskitEngine = new ProtobufJsonTaskitEngine(this.data,
-                    this.typeUrlToClassMap, this.taskitEngine);
+                    this.typeUrlToClassMap, this.taskitEngineDataBuilder.build());
 
-            this.taskitEngine.init(protoJsonTaskitEngine);
+            protoJsonTaskitEngine.init();
 
             return protoJsonTaskitEngine;
         }
@@ -199,13 +213,16 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
          *                           </ul>
          */
         @Override
-        public <I, A> Builder addTranslationSpec(TranslationSpec<I, A> translationSpec) {
-            this.taskitEngineBuilder.addTranslationSpec(translationSpec);
+        public <E extends TaskitEngine> Builder addTranslationSpec(ITranslationSpec<E> translationSpec) {
+            this.taskitEngineDataBuilder.addTranslationSpec(translationSpec);
 
             if (!ProtobufTranslationSpec.class.isAssignableFrom(translationSpec.getClass())) {
                 throw new ContractException(ProtobufTaskitError.INVALID_TRANSLATION_SPEC);
             }
-            populate(translationSpec.getInputObjectClass());
+
+            ProtobufTranslationSpec<?, ?> protobufTranslationSpec = (ProtobufTranslationSpec<?, ?>) translationSpec;
+
+            populate(protobufTranslationSpec.getInputObjectClass());
             return this;
         }
 
@@ -216,7 +233,7 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
          */
         @Override
         public Builder addTranslator(Translator translator) {
-            this.taskitEngineBuilder.addTranslator(translator);
+            this.taskitEngineDataBuilder.addTranslator(translator);
 
             translator.initialize(new TranslatorContext(this));
 
