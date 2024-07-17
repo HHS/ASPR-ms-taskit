@@ -18,7 +18,7 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
 import com.google.protobuf.ProtocolMessageEnum;
 
-import gov.hhs.aspr.ms.taskit.core.engine.TaskitCoreError;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitError;
 import gov.hhs.aspr.ms.taskit.core.testsupport.engine.TestTaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.complexobject.TestComplexObjectTranslatorId;
@@ -69,7 +69,7 @@ public class AT_ProtobufJsonTaskitEngine {
             protobufTaskitEngine.read(filePath.resolve(fileName), TestAppObject.class);
         });
 
-        assertEquals(TaskitCoreError.INVALID_INPUT_CLASS, contractException.getErrorType());
+        assertEquals(TaskitError.INVALID_INPUT_CLASS, contractException.getErrorType());
 
         // json has unknown property and the ignoringUnknownFields property is set to
         // false
@@ -169,7 +169,7 @@ public class AT_ProtobufJsonTaskitEngine {
             protobufTaskitEngine.write(filePath.resolve(fileName), expectedAppObject);
         });
 
-        assertEquals(TaskitCoreError.INVALID_OUTPUT_CLASS, contractException.getErrorType());
+        assertEquals(TaskitError.INVALID_OUTPUT_CLASS, contractException.getErrorType());
     }
 
     @Test

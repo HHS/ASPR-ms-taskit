@@ -1,7 +1,7 @@
 package gov.hhs.aspr.ms.taskit.core.translation;
 
 import gov.hhs.aspr.ms.taskit.core.engine.ITaskitEngineBuilder;
-import gov.hhs.aspr.ms.taskit.core.engine.TaskitCoreError;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitError;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
@@ -34,7 +34,7 @@ public final class TranslatorContext {
      * @param <T>      the type of the TaskitEngine
      * @param classRef the classRef of the TaskitEngine type
      * @return the taskitEngineBuilder
-     * @throws ContractException {@linkplain TaskitCoreError#INVALID_TASKIT_ENGINE_BUILDER_CLASS_REF}
+     * @throws ContractException {@linkplain TaskitError#INVALID_TASKIT_ENGINE_BUILDER_CLASS_REF}
      *                           if the given classRef does not match the class or
      *                           the taskitEngineBuilder is null
      */
@@ -43,7 +43,7 @@ public final class TranslatorContext {
             return classRef.cast(this.builder);
         }
 
-        throw new ContractException(TaskitCoreError.INVALID_TASKIT_ENGINE_BUILDER_CLASS_REF,
+        throw new ContractException(TaskitError.INVALID_TASKIT_ENGINE_BUILDER_CLASS_REF,
                 "No Taskit Engine Builder was found for the type: " + classRef.getName());
 
     }

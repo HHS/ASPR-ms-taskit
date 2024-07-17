@@ -13,7 +13,7 @@ import java.util.function.Consumer;
 
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.ms.taskit.core.engine.TaskitCoreError;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitError;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.testsupport.engine.TestTaskitEngineId;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.complexobject.TestComplexObjectTranslatorId;
@@ -200,7 +200,7 @@ public class AT_Translator {
             Translator.builder().setTranslatorId(translatorIdA).build();
         });
 
-        assertEquals(TaskitCoreError.NULL_INIT_CONSUMER, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_INIT_CONSUMER, contractException.getErrorType());
 
         // null translatorId
         contractException = assertThrows(ContractException.class, () -> {
@@ -208,7 +208,7 @@ public class AT_Translator {
             }).build();
         });
 
-        assertEquals(TaskitCoreError.NULL_TRANSLATOR_ID, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_TRANSLATOR_ID, contractException.getErrorType());
     }
 
     @Test
@@ -227,7 +227,7 @@ public class AT_Translator {
             Translator.builder().setTranslatorId(null);
         });
 
-        assertEquals(TaskitCoreError.NULL_TRANSLATOR_ID, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_TRANSLATOR_ID, contractException.getErrorType());
     }
 
     @Test
@@ -247,7 +247,7 @@ public class AT_Translator {
             Translator.builder().setInitializer(null);
         });
 
-        assertEquals(TaskitCoreError.NULL_INIT_CONSUMER, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_INIT_CONSUMER, contractException.getErrorType());
     }
 
     @Test
@@ -273,7 +273,7 @@ public class AT_Translator {
             Translator.builder().addDependency(null);
         });
 
-        assertEquals(TaskitCoreError.NULL_DEPENDENCY, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_DEPENDENCY, contractException.getErrorType());
 
         // duplicate dependency
         contractException = assertThrows(ContractException.class, () -> {
@@ -281,6 +281,6 @@ public class AT_Translator {
                     .addDependency(TestObjectTranslatorId.TRANSLATOR_ID);
         });
 
-        assertEquals(TaskitCoreError.DUPLICATE_DEPENDENCY, contractException.getErrorType());
+        assertEquals(TaskitError.DUPLICATE_DEPENDENCY, contractException.getErrorType());
     }
 }

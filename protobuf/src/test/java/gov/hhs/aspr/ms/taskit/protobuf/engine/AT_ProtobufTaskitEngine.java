@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import com.google.protobuf.Any;
 import com.google.protobuf.Int32Value;
 
-import gov.hhs.aspr.ms.taskit.core.engine.TaskitCoreError;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitError;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppChildObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppObject;
@@ -105,7 +105,7 @@ public class AT_ProtobufTaskitEngine {
             protobufTaskitEngine2.getAnyFromObjectAsClassSafe(testAppChildObject2, TestAppObject.class);
         });
 
-        assertEquals(TaskitCoreError.UNKNOWN_TRANSLATION_SPEC, contractException.getErrorType());
+        assertEquals(TaskitError.UNKNOWN_TRANSLATION_SPEC, contractException.getErrorType());
     }
 
     @Test
@@ -184,7 +184,7 @@ public class AT_ProtobufTaskitEngine {
             protobufTaskitEngine.translateObject(null);
         });
 
-        assertEquals(TaskitCoreError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
     }
 
     @Test
@@ -225,7 +225,7 @@ public class AT_ProtobufTaskitEngine {
             protobufTaskitEngine.translateObjectAsClassSafe(null, Object.class);
         });
 
-        assertEquals(TaskitCoreError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
     }
 
     @Test
@@ -264,6 +264,6 @@ public class AT_ProtobufTaskitEngine {
             protobufTaskitEngine.translateObjectAsClassUnsafe(null, Object.class);
         });
 
-        assertEquals(TaskitCoreError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
     }
 }

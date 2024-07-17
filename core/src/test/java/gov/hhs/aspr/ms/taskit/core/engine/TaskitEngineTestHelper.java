@@ -47,7 +47,7 @@ public final class TaskitEngineTestHelper {
             builder.addTranslationSpec(null);
         });
 
-        assertEquals(TaskitCoreError.NULL_TRANSLATION_SPEC, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_TRANSLATION_SPEC, contractException.getErrorType());
 
         // the translation spec getAppClass method returns null
         contractException = assertThrows(ContractException.class, () -> {
@@ -80,7 +80,7 @@ public final class TaskitEngineTestHelper {
             builder.addTranslationSpec(wrapperTranslationSpec);
         });
 
-        assertEquals(TaskitCoreError.NULL_TRANSLATION_SPEC_APP_CLASS, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_TRANSLATION_SPEC_APP_CLASS, contractException.getErrorType());
 
         // the translation spec getInputClass method returns null
         contractException = assertThrows(ContractException.class, () -> {
@@ -113,7 +113,7 @@ public final class TaskitEngineTestHelper {
             builder.addTranslationSpec(wrapperTranslationSpec);
         });
 
-        assertEquals(TaskitCoreError.NULL_TRANSLATION_SPEC_INPUT_CLASS, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_TRANSLATION_SPEC_INPUT_CLASS, contractException.getErrorType());
 
         // if the translation spec has already been added (same, but different
         // instances)
@@ -125,7 +125,7 @@ public final class TaskitEngineTestHelper {
                     .addTranslationSpec(testObjectTranslationSpec2);
         });
 
-        assertEquals(TaskitCoreError.DUPLICATE_TRANSLATION_SPEC, contractException.getErrorType());
+        assertEquals(TaskitError.DUPLICATE_TRANSLATION_SPEC, contractException.getErrorType());
 
         // if the translation spec has already been added (exact same instance)
         contractException = assertThrows(ContractException.class, () -> {
@@ -135,7 +135,7 @@ public final class TaskitEngineTestHelper {
                     .addTranslationSpec(testObjectTranslationSpec1);
         });
 
-        assertEquals(TaskitCoreError.DUPLICATE_TRANSLATION_SPEC, contractException.getErrorType());
+        assertEquals(TaskitError.DUPLICATE_TRANSLATION_SPEC, contractException.getErrorType());
     }
 
     public static void testAddTranslator(ITaskitEngineBuilder builder) {
@@ -146,6 +146,6 @@ public final class TaskitEngineTestHelper {
             builder.addTranslator(null);
         });
 
-        assertEquals(TaskitCoreError.NULL_TRANSLATOR, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_TRANSLATOR, contractException.getErrorType());
     }
 }

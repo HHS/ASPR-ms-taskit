@@ -5,7 +5,7 @@ import gov.hhs.aspr.ms.util.errors.ContractError;
 /** 
  * Errors that describe contract exceptions within Taskit
  */
-public enum TaskitCoreError implements ContractError {
+public enum TaskitError implements ContractError {
 
         CIRCULAR_TRANSLATOR_DEPENDENCIES("Circular translator dependencies: "),
         DUPLICATE_CLASSREF("Duplicate ClassRef"),
@@ -49,7 +49,7 @@ public enum TaskitCoreError implements ContractError {
 
         private final String description;
 
-        private TaskitCoreError(final String description) {
+        private TaskitError(final String description) {
                 this.description = description;
         }
 

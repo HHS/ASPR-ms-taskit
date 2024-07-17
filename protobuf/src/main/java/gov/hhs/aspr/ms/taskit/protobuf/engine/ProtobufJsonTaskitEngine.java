@@ -21,7 +21,7 @@ import com.google.protobuf.util.JsonFormat.Parser;
 import com.google.protobuf.util.JsonFormat.Printer;
 import com.google.protobuf.util.JsonFormat.TypeRegistry;
 
-import gov.hhs.aspr.ms.taskit.core.engine.TaskitCoreError;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitError;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.Translator;
@@ -179,15 +179,15 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
          * 
          * @throws ContractException
          *                           <ul>
-         *                           <li>{@linkplain TaskitCoreError#NULL_TRANSLATION_SPEC}
+         *                           <li>{@linkplain TaskitError#NULL_TRANSLATION_SPEC}
          *                           if the given translationSpec is null</li>
-         *                           <li>{@linkplain TaskitCoreError#NULL_TRANSLATION_SPEC_APP_CLASS}
+         *                           <li>{@linkplain TaskitError#NULL_TRANSLATION_SPEC_APP_CLASS}
          *                           if the given translationSpecs getAppClass method
          *                           returns null</li>
-         *                           <li>{@linkplain TaskitCoreError#NULL_TRANSLATION_SPEC_INPUT_CLASS}
+         *                           <li>{@linkplain TaskitError#NULL_TRANSLATION_SPEC_INPUT_CLASS}
          *                           if the given translationSpecs getInputClass method
          *                           returns null</li>
-         *                           <li>{@linkplain TaskitCoreError#DUPLICATE_TRANSLATION_SPEC}
+         *                           <li>{@linkplain TaskitError#DUPLICATE_TRANSLATION_SPEC}
          *                           if the given translationSpec is already known</li>
          *                           <li>{@link ProtobufTaskitError#INVALID_TRANSLATION_SPEC}
          *                           if the given translation spec is not assignable
@@ -211,7 +211,7 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
 
         /**
          * @implNote initializes the translator with this builder
-         * @throws ContractException {@linkplain TaskitCoreError#NULL_TRANSLATOR}
+         * @throws ContractException {@linkplain TaskitError#NULL_TRANSLATOR}
          *                           if translator is null
          */
         @Override
@@ -298,14 +298,14 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
      * @implNote object must be of a {@link Message} type
      *           <p>
      *           uses a BufferedWriter
-     * @throws ContractException {@link TaskitCoreError#INVALID_OUTPUT_CLASS} if the
+     * @throws ContractException {@link TaskitError#INVALID_OUTPUT_CLASS} if the
      *                           given object is not assignable from
      *                           {@link Message}
      */
     @Override
     public <O> void write(Path path, O object) throws IOException {
         if (!Message.class.isAssignableFrom(object.getClass())) {
-            throw new ContractException(TaskitCoreError.INVALID_OUTPUT_CLASS, Message.class.getName());
+            throw new ContractException(TaskitError.INVALID_OUTPUT_CLASS, Message.class.getName());
         }
 
         Message message = Message.class.cast(object);
@@ -330,7 +330,7 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
      * @implNote the classRef must be a {@link Message} type
      *           <p>
      *           uses a BufferedReader
-     * @throws ContractException {@linkplain TaskitCoreError#INVALID_INPUT_CLASS} if
+     * @throws ContractException {@linkplain TaskitError#INVALID_INPUT_CLASS} if
      *                           the given inputClassRef is not assignable from
      *                           {@linkplain Message}
      * @throws RuntimeException  if there is an issue getting the builder method
@@ -346,7 +346,7 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
     @Override
     public <I> I read(Path path, Class<I> classRef) throws IOException {
         if (!Message.class.isAssignableFrom(classRef)) {
-            throw new ContractException(TaskitCoreError.INVALID_INPUT_CLASS, Message.class.getName());
+            throw new ContractException(TaskitError.INVALID_INPUT_CLASS, Message.class.getName());
         }
 
         Reader reader = new BufferedReader(new FileReader(path.toFile()));
@@ -364,7 +364,7 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
      * @implNote the classRef must be a {@link Message} type
      *           <p>
      *           uses a buffered reader
-     * @throws ContractException {@linkplain TaskitCoreError#INVALID_INPUT_CLASS} if
+     * @throws ContractException {@linkplain TaskitError#INVALID_INPUT_CLASS} if
      *                           the given inputClassRef is not assignable from
      *                           {@linkplain Message}
      * @throws RuntimeException  if there is an issue getting the builder method

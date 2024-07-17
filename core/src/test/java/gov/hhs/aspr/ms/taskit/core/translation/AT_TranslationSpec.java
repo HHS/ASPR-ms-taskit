@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.taskit.core.engine.ITaskitEngine;
-import gov.hhs.aspr.ms.taskit.core.engine.TaskitCoreError;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitError;
 import gov.hhs.aspr.ms.taskit.core.testsupport.TestObjectUtil;
 import gov.hhs.aspr.ms.taskit.core.testsupport.engine.TestTaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppChildObject;
@@ -119,7 +119,7 @@ public class AT_TranslationSpec {
             testObjectTranslationSpec2.translate(new TestAppObject());
         });
 
-        assertEquals(TaskitCoreError.UNINITIALIZED_TRANSLATION_SPEC, contractException.getErrorType());
+        assertEquals(TaskitError.UNINITIALIZED_TRANSLATION_SPEC, contractException.getErrorType());
 
         // unknown object
         contractException = assertThrows(ContractException.class, () -> {
@@ -128,7 +128,7 @@ public class AT_TranslationSpec {
             testObjectTranslationSpec2.translate(new TestComplexInputObject());
         });
 
-        assertEquals(TaskitCoreError.UNKNOWN_OBJECT, contractException.getErrorType());
+        assertEquals(TaskitError.UNKNOWN_OBJECT, contractException.getErrorType());
     }
 
     @Test

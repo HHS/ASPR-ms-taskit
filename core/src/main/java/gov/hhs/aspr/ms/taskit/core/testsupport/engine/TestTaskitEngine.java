@@ -11,80 +11,54 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 
-import gov.hhs.aspr.ms.taskit.core.engine.ITaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.engine.ITaskitEngineBuilder;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
-import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngineId;
-import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngineData;
+import gov.hhs.aspr.ms.taskit.core.translation.ITranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.Translator;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslatorContext;
 
 // TODO: maybe move this class to the test code exclusively, as it's only purpose is to test the TaskitEngineManager read/write/translate methods
-public class TestTaskitEngine implements ITaskitEngine {
+public final class TestTaskitEngine extends TaskitEngine {
     private final Data data;
 
-    private TestTaskitEngine(Data data) {
+    private TestTaskitEngine(Data data, TaskitEngineData taskitEngineData) {
+        super(taskitEngineData, TestTaskitEngineId.TEST_ENGINE_ID);
         this.data = data;
     }
 
     protected static class Data {
         protected Gson gson = new Gson();
 
-        private TaskitEngine taskitEngine;
-
         protected Data() {
 
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(taskitEngine);
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            Data other = (Data) obj;
-
-            if (!Objects.equals(taskitEngine, other.taskitEngine)) {
-                return false;
-            }
-
-            return true;
         }
 
     }
 
     public static class Builder implements ITaskitEngineBuilder {
-        private TestTaskitEngine.Data data;
+        private Data data;
 
-        private TaskitEngine.Builder taskitEngineBuilder = TaskitEngine.builder();
+        private TaskitEngineData.Builder taskitEngineBuilder = TaskitEngineData.builder();
 
         private Builder(TestTaskitEngine.Data data) {
             this.data = data;
         }
 
-        @Override
         public TestTaskitEngine build() {
-            this.taskitEngineBuilder.setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID);
 
-            this.data.taskitEngine = taskitEngineBuilder.build();
+            TestTaskitEngine testTaskitEngine = new TestTaskitEngine(this.data, this.taskitEngineBuilder.build());
+            testTaskitEngine.init();
 
-            TestTaskitEngine testTaskitEngine = new TestTaskitEngine(this.data);
-
-            this.data.taskitEngine.init(testTaskitEngine);
             return testTaskitEngine;
         }
 
         public TestTaskitEngine buildWithoutInit() {
-            this.taskitEngineBuilder.setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID);
-
-            this.data.taskitEngine = taskitEngineBuilder.build();
-
-            return new TestTaskitEngine(this.data);
+            return new TestTaskitEngine(this.data, this.taskitEngineBuilder.build());
         }
 
         @Override
-        public <I, A> Builder addTranslationSpec(TranslationSpec<I, A> translationSpec) {
+        public <E extends TaskitEngine> Builder addTranslationSpec(ITranslationSpec<E> translationSpec) {
             this.taskitEngineBuilder.addTranslationSpec(translationSpec);
 
             return this;
@@ -137,33 +111,11 @@ public class TestTaskitEngine implements ITaskitEngine {
     }
 
     @Override
-    public TaskitEngine getTaskitEngine() {
-        return this.data.taskitEngine;
-    }
-
-    @Override
-    public TaskitEngineId getTaskitEngineId() {
-        return this.data.taskitEngine.getTaskitEngineId();
-    }
-
-    @Override
-    public <T> T translateObject(Object object) {
-        return this.data.taskitEngine.translateObject(object);
-    }
-
-    @Override
-    public <T, M extends U, U> T translateObjectAsClassSafe(M object, Class<U> classRef) {
-        return this.data.taskitEngine.translateObjectAsClassSafe(object, classRef);
-    }
-
-    @Override
-    public <T, M, U> T translateObjectAsClassUnsafe(M object, Class<U> classRef) {
-        return this.data.taskitEngine.translateObjectAsClassUnsafe(object, classRef);
-    }
-
-    @Override
     public int hashCode() {
-        return Objects.hash(data);
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + Objects.hash(data);
+        return result;
     }
 
     @Override
@@ -171,14 +123,13 @@ public class TestTaskitEngine implements ITaskitEngine {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
+        if (!super.equals(obj)) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof TestTaskitEngine)) {
             return false;
         }
         TestTaskitEngine other = (TestTaskitEngine) obj;
-
         return Objects.equals(data, other.data);
     }
 

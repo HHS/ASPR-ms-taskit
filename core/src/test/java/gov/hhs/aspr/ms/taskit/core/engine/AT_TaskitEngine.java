@@ -50,7 +50,7 @@ public class AT_TaskitEngine {
                     .addTranslationSpec(new TestObjectTranslationSpec()).build();
         });
 
-        assertEquals(TaskitCoreError.UNKNOWN_TASKIT_ENGINE_ID, contractException.getErrorType());
+        assertEquals(TaskitError.UNKNOWN_TASKIT_ENGINE_ID, contractException.getErrorType());
 
         // duplicate translator
         contractException = assertThrows(ContractException.class, () -> {
@@ -60,7 +60,7 @@ public class AT_TaskitEngine {
                     .addTranslator(TestObjectTranslator.getTranslator()).build();
         });
 
-        assertEquals(TaskitCoreError.DUPLICATE_TRANSLATOR, contractException.getErrorType());
+        assertEquals(TaskitError.DUPLICATE_TRANSLATOR, contractException.getErrorType());
 
         // missing translator
         contractException = assertThrows(ContractException.class, () -> {
@@ -69,7 +69,7 @@ public class AT_TaskitEngine {
                     .addTranslator(TestObjectTranslator.getTranslator()).build();
         });
 
-        assertEquals(TaskitCoreError.MISSING_TRANSLATOR, contractException.getErrorType());
+        assertEquals(TaskitError.MISSING_TRANSLATOR, contractException.getErrorType());
 
         // circular translator dependencies
         contractException = assertThrows(ContractException.class, () -> {
@@ -89,7 +89,7 @@ public class AT_TaskitEngine {
                     .addTranslator(translator2).build();
         });
 
-        assertEquals(TaskitCoreError.CIRCULAR_TRANSLATOR_DEPENDENCIES, contractException.getErrorType());
+        assertEquals(TaskitError.CIRCULAR_TRANSLATOR_DEPENDENCIES, contractException.getErrorType());
 
         // uninitialized translator
         contractException = assertThrows(ContractException.class, () -> {
@@ -98,14 +98,14 @@ public class AT_TaskitEngine {
                     .addTranslator(TestComplexObjectTranslator.getTranslator()).build();
         });
 
-        assertEquals(TaskitCoreError.UNINITIALIZED_TRANSLATORS, contractException.getErrorType());
+        assertEquals(TaskitError.UNINITIALIZED_TRANSLATORS, contractException.getErrorType());
 
         // no translation specs were added
         contractException = assertThrows(ContractException.class, () -> {
             TaskitEngine.builder().setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID).build();
         });
 
-        assertEquals(TaskitCoreError.NO_TRANSLATION_SPECS, contractException.getErrorType());
+        assertEquals(TaskitError.NO_TRANSLATION_SPECS, contractException.getErrorType());
     }
 
     @Test
@@ -124,7 +124,7 @@ public class AT_TaskitEngine {
 
         });
 
-        assertEquals(TaskitCoreError.NULL_TASKIT_ENGINE_ID, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_TASKIT_ENGINE_ID, contractException.getErrorType());
     }
 
     @Test
@@ -210,7 +210,7 @@ public class AT_TaskitEngine {
             taskitEngine2.init(taskitEngine2);
         });
 
-        assertEquals(TaskitCoreError.UNINITIALIZED_TRANSLATION_SPEC, contractException.getErrorType());
+        assertEquals(TaskitError.UNINITIALIZED_TRANSLATION_SPEC, contractException.getErrorType());
     }
 
     @Test
@@ -385,7 +385,7 @@ public class AT_TaskitEngine {
             taskitEngine.translateObject(null);
         });
 
-        assertEquals(TaskitCoreError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
     }
 
     @Test
@@ -430,7 +430,7 @@ public class AT_TaskitEngine {
             taskitEngine.translateObjectAsClassSafe(null, Object.class);
         });
 
-        assertEquals(TaskitCoreError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
     }
 
     @Test
@@ -502,7 +502,7 @@ public class AT_TaskitEngine {
             taskitEngine.translateObjectAsClassUnsafe(null, Object.class);
         });
 
-        assertEquals(TaskitCoreError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
     }
 
     @Test
@@ -535,14 +535,14 @@ public class AT_TaskitEngine {
             taskitEngine.getTranslationSpecForClass(null);
         });
 
-        assertEquals(TaskitCoreError.NULL_CLASS_REF, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_CLASS_REF, contractException.getErrorType());
 
         // no Translation Spec exists for the given class
         contractException = assertThrows(ContractException.class, () -> {
             taskitEngine.getTranslationSpecForClass(Object.class);
         });
 
-        assertEquals(TaskitCoreError.UNKNOWN_TRANSLATION_SPEC, contractException.getErrorType());
+        assertEquals(TaskitError.UNKNOWN_TRANSLATION_SPEC, contractException.getErrorType());
     }
 
     // TODO: update test
