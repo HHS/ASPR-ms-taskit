@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 
-public class AT_TaskitCoreError {
+public class AT_TaskitError {
 
     @Test
     @UnitTestMethod(target = TaskitError.class, name = "getDescription", args = {})

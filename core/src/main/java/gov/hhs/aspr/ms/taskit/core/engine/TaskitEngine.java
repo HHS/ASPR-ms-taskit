@@ -29,19 +29,15 @@ public abstract class TaskitEngine {
         this.taskitEngineId = taskitEngineId;
     }
 
-    public TaskitEngineId getTaskitEngineId() {
+    public final TaskitEngineId getTaskitEngineId() {
         return this.taskitEngineId;
     }
 
     /**
      * Initializes the taskitEngine by calling init on each translationSpec
      * added in the builder
-     * 
-     * @throws ContractException {@link TaskitError#UNINITIALIZED_TRANSLATION_SPEC}
-     *                           if a translation spec's initialized flag is not set
-     *                           after calling it's init method
      */
-    protected void init() {
+    public final void init() {
         /*
          * Calling init on a translationSpec causes the hashCode of the translationSpec
          * to change. Because of this, before calling init, we need to remove them from
@@ -60,10 +56,6 @@ public abstract class TaskitEngine {
 
             translationSpec.init(translationSpecContext);
             this.data.translationSpecs.add(translationSpec);
-
-            if (!translationSpec.isInitialized()) {
-                throw new ContractException(TaskitError.UNINITIALIZED_TRANSLATION_SPEC);
-            }
         }
 
         this.isInitialized = true;
@@ -72,7 +64,7 @@ public abstract class TaskitEngine {
     /**
      * @return the initialized flag of the TaskitEngine
      */
-    public boolean isInitialized() {
+    public final boolean isInitialized() {
         return this.isInitialized;
     }
 
@@ -80,7 +72,7 @@ public abstract class TaskitEngine {
      * @return a set of all {@link TranslationSpec}s associated with this
      *         TaskitEngine
      */
-    public Set<ITranslationSpec<?>> getTranslationSpecs() {
+    public final Set<ITranslationSpec<?>> getTranslationSpecs() {
         return this.data.translationSpecs;
     }
 
@@ -268,7 +260,7 @@ public abstract class TaskitEngine {
      *                           found</li>
      *                           </ul>
      */
-    <T> ITranslationSpec<?> getTranslationSpecForClass(Class<T> classRef) {
+    public final <T> ITranslationSpec<?> getTranslationSpecForClass(Class<T> classRef) {
         if (classRef == null) {
             throw new ContractException(TaskitError.NULL_CLASS_REF);
         }

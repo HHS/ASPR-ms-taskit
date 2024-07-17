@@ -8,8 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.taskit.core.engine.ITaskitEngineBuilder;
+import gov.hhs.aspr.ms.taskit.core.engine.ITypedTaskitEngineBuilder;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitError;
-import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.testsupport.engine.TestTaskitEngine;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
@@ -17,8 +17,12 @@ import gov.hhs.aspr.ms.util.errors.ContractException;
 
 public class AT_TranslatorContext {
 
+    private class UnknownBuilder implements ITaskitEngineBuilder {
+
+    }
+    
     @Test
-    @UnitTestConstructor(target = TranslatorContext.class, args = { ITaskitEngineBuilder.class })
+    @UnitTestConstructor(target = TranslatorContext.class, args = { ITypedTaskitEngineBuilder.class })
     public void testConstructor() {
         TranslatorContext translatorContext = new TranslatorContext(TestTaskitEngine.builder());
 
@@ -40,7 +44,7 @@ public class AT_TranslatorContext {
 
         // invalid class ref
         ContractException contractException = assertThrows(ContractException.class, () -> {
-            translatorContext.getTaskitEngineBuilder(TaskitEngine.Builder.class);
+            translatorContext.getTaskitEngineBuilder(UnknownBuilder.class);
         });
 
         assertEquals(TaskitError.INVALID_TASKIT_ENGINE_BUILDER_CLASS_REF, contractException.getErrorType());

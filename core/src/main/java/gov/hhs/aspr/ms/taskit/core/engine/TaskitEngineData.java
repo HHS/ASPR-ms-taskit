@@ -67,19 +67,14 @@ public final class TaskitEngineData {
             }
         }
 
-        private void validateTranslatorIsInitialized(Translator translator) {
-            if (!translator.isInitialized()) {
-                throw new ContractException(TaskitError.UNINITIALIZED_TRANSLATORS);
-            }
-        }
-
         /**
          * Builder for the TaskitEngineData
          * 
          * @throws ContractException
          *                           <ul>
-         *                           <li>{@link TaskitError#NULL_TASKIT_ENGINE_ID}
-         *                           if the engine id was not set</li>
+         *                           <li>{@link TaskitError#UNINITIALIZED_TRANSLATORS}
+         *                           if translators were added to the engine but their
+         *                           initialized flag was still set to false</li>
          *                           <li>{@link TaskitError#DUPLICATE_TRANSLATOR}
          *                           if a duplicate translator is found</li>
          *                           <li>{@link TaskitError#MISSING_TRANSLATOR}
@@ -95,7 +90,22 @@ public final class TaskitEngineData {
             // validate the translators that were added
             // they should have an acyclic dependency tree and also all be initialized
             if (!this.translators.isEmpty()) {
-                checkTranslatorGraph();
+                checkTranslatorGraph(true);
+                this.translators.clear();
+            }
+
+            // There should be at least 1 translation spec added
+            validateTranslationSpecsNotEmpty();
+
+            return new TaskitEngineData(classToTranslationSpecMap, translationSpecs);
+        }
+
+        // package access for testing
+        TaskitEngineData buildWithoutInit() {
+            // validate the translators that were added
+            // they should have an acyclic dependency tree
+            if (!this.translators.isEmpty()) {
+                checkTranslatorGraph(false);
                 this.translators.clear();
             }
 
@@ -134,14 +144,10 @@ public final class TaskitEngineData {
          *                           <ul>
          *                           <li>{@linkplain TaskitError#NULL_TRANSLATOR}
          *                           if translator is null</li>
-         *                           <li>{@link TaskitError#UNINITIALIZED_TRANSLATORS}
-         *                           if translators were added to the engine but their
-         *                           initialized flag was still set to false</li>
          *                           </ul>
          */
         public Builder addTranslator(Translator translator) {
             validateTranslatorNotNull(translator);
-            validateTranslatorIsInitialized(translator);
 
             this.translators.add(translator);
 
@@ -152,7 +158,7 @@ public final class TaskitEngineData {
          * Goes through the list of translators and orders them based on their
          * dependencies
          */
-        private void checkTranslatorGraph() {
+        private void checkTranslatorGraph(boolean checkInit) {
             // return this.getOrderedTranslators(new MutableGraph<>(), new
             // LinkedHashMap<>());
 
@@ -162,7 +168,7 @@ public final class TaskitEngineData {
              * Add the nodes to the graph, check for duplicate ids, build the mapping from
              * plugin id back to plugin
              */
-            this.addNodes(mutableGraph, translatorMap);
+            this.addNodes(mutableGraph, translatorMap, checkInit);
 
             // Add the edges to the graph
             this.addEdges(mutableGraph);
@@ -182,9 +188,12 @@ public final class TaskitEngineData {
         }
 
         private void addNodes(MutableGraph<TranslatorId, Object> mutableGraph,
-                Map<TranslatorId, Translator> translatorMap) {
+                Map<TranslatorId, Translator> translatorMap, boolean checkInit) {
             TranslatorId focalTranslatorId = null;
             for (Translator translator : this.translators) {
+                if (checkInit && !translator.isInitialized()) {
+                    throw new ContractException(TaskitError.UNINITIALIZED_TRANSLATORS);
+                }
                 focalTranslatorId = translator.getTranslatorId();
                 translatorMap.put(focalTranslatorId, translator);
                 // ensure that there are no duplicate plugins
@@ -286,14 +295,6 @@ public final class TaskitEngineData {
      */
     public static Builder builder() {
         return new Builder();
-    }
-
-    /**
-     * @return a set of all {@link TranslationSpec}s associated with this
-     *         TaskitEngine
-     */
-    public Set<ITranslationSpec<?>> getTranslationSpecs() {
-        return this.translationSpecs;
     }
 
     @Override

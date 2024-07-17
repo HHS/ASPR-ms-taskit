@@ -4,61 +4,50 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Objects;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 
-import gov.hhs.aspr.ms.taskit.core.engine.ITaskitEngineBuilder;
+import gov.hhs.aspr.ms.taskit.core.engine.ITypedTaskitEngineBuilder;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngineData;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitError;
 import gov.hhs.aspr.ms.taskit.core.translation.ITranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.Translator;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslatorContext;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 // TODO: maybe move this class to the test code exclusively, as it's only purpose is to test the TaskitEngineManager read/write/translate methods
 public final class TestTaskitEngine extends TaskitEngine {
-    private final Data data;
+    private final Gson gson = new Gson();
 
-    private TestTaskitEngine(Data data, TaskitEngineData taskitEngineData) {
+    private TestTaskitEngine(TaskitEngineData taskitEngineData) {
         super(taskitEngineData, TestTaskitEngineId.TEST_ENGINE_ID);
-        this.data = data;
     }
 
-    protected static class Data {
-        protected Gson gson = new Gson();
-
-        protected Data() {
-
-        }
-
-    }
-
-    public static class Builder implements ITaskitEngineBuilder {
-        private Data data;
+    public static class Builder implements ITypedTaskitEngineBuilder<TestTaskitEngine> {
 
         private TaskitEngineData.Builder taskitEngineBuilder = TaskitEngineData.builder();
 
-        private Builder(TestTaskitEngine.Data data) {
-            this.data = data;
+        private Builder() {
         }
 
         public TestTaskitEngine build() {
 
-            TestTaskitEngine testTaskitEngine = new TestTaskitEngine(this.data, this.taskitEngineBuilder.build());
+            TestTaskitEngine testTaskitEngine = new TestTaskitEngine(this.taskitEngineBuilder.build());
             testTaskitEngine.init();
 
             return testTaskitEngine;
         }
 
         public TestTaskitEngine buildWithoutInit() {
-            return new TestTaskitEngine(this.data, this.taskitEngineBuilder.build());
+            return new TestTaskitEngine(this.taskitEngineBuilder.build());
         }
 
         @Override
-        public <E extends TaskitEngine> Builder addTranslationSpec(ITranslationSpec<E> translationSpec) {
+        public Builder addTranslationSpec(ITranslationSpec<TestTaskitEngine> translationSpec) {
             this.taskitEngineBuilder.addTranslationSpec(translationSpec);
 
             return this;
@@ -66,21 +55,24 @@ public final class TestTaskitEngine extends TaskitEngine {
 
         @Override
         public Builder addTranslator(Translator translator) {
-            this.taskitEngineBuilder.addTranslator(translator);
-
+            if (translator == null) {
+                throw new ContractException(TaskitError.NULL_TRANSLATOR);
+            }
             translator.initialize(new TranslatorContext(this));
+
+            this.taskitEngineBuilder.addTranslator(translator);
 
             return this;
         }
     }
 
     public static Builder builder() {
-        return new Builder(new Data());
+        return new Builder();
     }
 
     @Override
     public <M> void write(Path path, M object) throws IOException {
-        String stringToWrite = this.data.gson.toJson(object);
+        String stringToWrite = this.gson.toJson(object);
         FileWriter writer = new FileWriter(path.toFile());
         writer.write(stringToWrite);
         writer.flush();
@@ -102,7 +94,7 @@ public final class TestTaskitEngine extends TaskitEngine {
         JsonObject jsonObject = JsonParser.parseReader(new JsonReader(new FileReader(inputPath.toFile())))
                 .getAsJsonObject();
 
-        return this.data.gson.fromJson(jsonObject.toString(), inputClassRef);
+        return this.gson.fromJson(jsonObject.toString(), inputClassRef);
     }
 
     @Override
@@ -112,25 +104,12 @@ public final class TestTaskitEngine extends TaskitEngine {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + Objects.hash(data);
-        return result;
+        return super.hashCode();
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!super.equals(obj)) {
-            return false;
-        }
-        if (!(obj instanceof TestTaskitEngine)) {
-            return false;
-        }
-        TestTaskitEngine other = (TestTaskitEngine) obj;
-        return Objects.equals(data, other.data);
+        return super.equals(obj);
     }
 
 }

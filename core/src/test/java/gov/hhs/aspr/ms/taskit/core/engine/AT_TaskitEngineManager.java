@@ -366,7 +366,7 @@ public class AT_TaskitEngineManager {
 
     @Test
     @UnitTestMethod(target = TaskitEngineManager.Builder.class, name = "addTaskitEngine", args = {
-            ITaskitEngine.class })
+            TaskitEngine.class })
     public void testAddTaskitEngine() {
         TestTaskitEngine taskitEngine = TestTaskitEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())

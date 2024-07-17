@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.TestObjectTranslator;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.specs.TestObjectTranslationSpec;
-import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.translation.ITranslationSpec;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 
 public class AT_TranslatorTestSupport {
@@ -18,7 +18,7 @@ public class AT_TranslatorTestSupport {
     @Test
     @UnitTestMethod(target = TranslatorTestSupport.class, name = "testGetTranslationSpecs", args = {Class.class, List.class})
     public void testTestGetTranslationSpecs() throws ClassNotFoundException {
-        List<TranslationSpec<?, ?>> translationSpecs = new ArrayList<>();
+        List<ITranslationSpec<?>> translationSpecs = new ArrayList<>();
 
         translationSpecs.add(new TestObjectTranslationSpec());
 

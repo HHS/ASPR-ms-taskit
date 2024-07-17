@@ -117,7 +117,7 @@ public final class Translator {
          * @throws ContractException {@linkplain TaskitError#NULL_INIT_CONSUMER}
          *                           if the initConsumer is null
          */
-        public Builder setInitializer(Consumer<TranslatorContext> initConsumer) {
+        public <E extends TaskitEngine> Builder setInitializer(Consumer<TranslatorContext> initConsumer) {
             if (initConsumer == null) {
                 throw new ContractException(TaskitError.NULL_INIT_CONSUMER);
             }

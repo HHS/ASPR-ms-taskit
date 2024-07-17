@@ -6,12 +6,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.ms.taskit.core.engine.ITaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.testsupport.engine.TestTaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestInputObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.complexobject.specs.TestComplexObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.specs.TestObjectTranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpecContext;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 
@@ -46,15 +46,17 @@ public class AT_TestTranslationSpec {
     }
 
     @Test
-    @UnitTestMethod(target = TestTranslationSpec.class, name = "init", args = { ITaskitEngine.class })
+    @UnitTestMethod(target = TestTranslationSpec.class, name = "init", args = { TranslationSpecContext.class })
     public void testInit() {
         TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder().addTranslationSpec(new TestComplexObjectTranslationSpec()).build();
 
         TestTranslationSpec<TestInputObject, TestAppObject> testTranslationSpec = new TestObjectTranslationSpec();
 
-        testTranslationSpec.init(testTaskitEngine);
+        TranslationSpecContext<TestTaskitEngine> translationSpecContext = new TranslationSpecContext<>(testTaskitEngine);
+
+        testTranslationSpec.init(translationSpecContext);
 
         assertTrue(testTranslationSpec.isInitialized());
-        assertEquals(testTaskitEngine, testTranslationSpec.taskitEngine);
+        assertEquals(testTaskitEngine, testTranslationSpec.getTestTaskitEngine());
     }
 }

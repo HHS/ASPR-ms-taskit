@@ -30,7 +30,7 @@ public abstract class TranslationSpec<I, A, E extends TaskitEngine> implements I
      * 
      */
     @SuppressWarnings("unchecked")
-    public void init(TranslationSpecContext<? extends TaskitEngine> translationSpecContext) {
+    public final void init(TranslationSpecContext<? extends TaskitEngine> translationSpecContext) {
         this.taskitEngine = (E) translationSpecContext.getTaskitEngine();
         this.initialized = true;
     }

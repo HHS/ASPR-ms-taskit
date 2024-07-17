@@ -14,8 +14,7 @@ import java.util.function.Consumer;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitError;
-import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
-import gov.hhs.aspr.ms.taskit.core.testsupport.engine.TestTaskitEngineId;
+import gov.hhs.aspr.ms.taskit.core.testsupport.engine.TestTaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.complexobject.TestComplexObjectTranslatorId;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.TestObjectTranslatorId;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.specs.TestObjectTranslationSpec;
@@ -69,8 +68,7 @@ public class AT_Translator {
                 .setTranslatorId(expectedTranslatorId)
                 .build();
 
-        testTranslator.initialize(new TranslatorContext(TaskitEngine.builder()
-                .setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID)
+        testTranslator.initialize(new TranslatorContext(TestTaskitEngine.builder()
                 .addTranslationSpec(new TestObjectTranslationSpec())));
 
         assertTrue(initBool.getValue());
@@ -92,8 +90,7 @@ public class AT_Translator {
         assertFalse(testTranslator.isInitialized());
 
         // initialize
-        testTranslator.initialize(new TranslatorContext(TaskitEngine.builder()
-                .setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID)
+        testTranslator.initialize(new TranslatorContext(TestTaskitEngine.builder()
                 .addTranslationSpec(new TestObjectTranslationSpec())));
 
         assertTrue(testTranslator.isInitialized());
