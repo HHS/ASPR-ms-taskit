@@ -62,7 +62,7 @@ public class AT_TaskitEngineManager {
             taskitEngineManager.read(null, TestInputObject.class, TestTaskitEngineId.TEST_ENGINE_ID);
         });
 
-        assertEquals(TaskitCoreError.NULL_PATH, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_PATH, contractException.getErrorType());
 
         // filepath is a directory
         contractException = assertThrows(ContractException.class, () -> {
@@ -76,14 +76,14 @@ public class AT_TaskitEngineManager {
             taskitEngineManager.read(filePath.resolve(fileName), null, TestTaskitEngineId.TEST_ENGINE_ID);
         });
 
-        assertEquals(TaskitCoreError.NULL_CLASS_REF, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_CLASS_REF, contractException.getErrorType());
 
         // null taskit engine id
         contractException = assertThrows(ContractException.class, () -> {
             taskitEngineManager.read(filePath.resolve(fileName), TestInputObject.class, null);
         });
 
-        assertEquals(TaskitCoreError.NULL_TASKIT_ENGINE_ID, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_TASKIT_ENGINE_ID, contractException.getErrorType());
 
         // null taskit engine
         contractException = assertThrows(ContractException.class, () -> {
@@ -92,7 +92,7 @@ public class AT_TaskitEngineManager {
             });
         });
 
-        assertEquals(TaskitCoreError.NULL_TASKIT_ENGINE, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_TASKIT_ENGINE, contractException.getErrorType());
 
         // issue reading file
         RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> {
@@ -134,7 +134,7 @@ public class AT_TaskitEngineManager {
             taskitEngineManager.readAndTranslate(null, TestInputObject.class, TestTaskitEngineId.TEST_ENGINE_ID);
         });
 
-        assertEquals(TaskitCoreError.NULL_PATH, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_PATH, contractException.getErrorType());
 
         // filepath is a directory
         contractException = assertThrows(ContractException.class, () -> {
@@ -148,14 +148,14 @@ public class AT_TaskitEngineManager {
             taskitEngineManager.readAndTranslate(filePath.resolve(fileName), null, TestTaskitEngineId.TEST_ENGINE_ID);
         });
 
-        assertEquals(TaskitCoreError.NULL_CLASS_REF, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_CLASS_REF, contractException.getErrorType());
 
         // null taskit engine id
         contractException = assertThrows(ContractException.class, () -> {
             taskitEngineManager.readAndTranslate(filePath.resolve(fileName), TestInputObject.class, null);
         });
 
-        assertEquals(TaskitCoreError.NULL_TASKIT_ENGINE_ID, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_TASKIT_ENGINE_ID, contractException.getErrorType());
 
         // null taskit engine
         contractException = assertThrows(ContractException.class, () -> {
@@ -164,7 +164,7 @@ public class AT_TaskitEngineManager {
             });
         });
 
-        assertEquals(TaskitCoreError.NULL_TASKIT_ENGINE, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_TASKIT_ENGINE, contractException.getErrorType());
 
         // issue reading file
         RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> {
@@ -264,7 +264,7 @@ public class AT_TaskitEngineManager {
                     TestTaskitEngineId.TEST_ENGINE_ID);
         });
 
-        assertEquals(TaskitCoreError.NULL_CLASS_REF, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_CLASS_REF, contractException.getErrorType());
 
         // TaskitCoreError#NULL_PATH is tested by testWrite_Base()
         // ResourceError#FILE_PATH_IS_DIRECTORY is tested by testWrite_Base()
@@ -298,7 +298,7 @@ public class AT_TaskitEngineManager {
                     TestTaskitEngineId.TEST_ENGINE_ID, false);
         });
 
-        assertEquals(TaskitCoreError.NULL_PATH, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_PATH, contractException.getErrorType());
 
         // path points at directory
         contractException = assertThrows(ContractException.class, () -> {
@@ -314,7 +314,7 @@ public class AT_TaskitEngineManager {
                     TestTaskitEngineId.TEST_ENGINE_ID, false);
         });
 
-        assertEquals(TaskitCoreError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
 
         // taskit engine id is null
         contractException = assertThrows(ContractException.class, () -> {
@@ -322,7 +322,7 @@ public class AT_TaskitEngineManager {
                     null, false);
         });
 
-        assertEquals(TaskitCoreError.NULL_TASKIT_ENGINE_ID, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_TASKIT_ENGINE_ID, contractException.getErrorType());
 
         // taskit engine is null
         contractException = assertThrows(ContractException.class, () -> {
@@ -331,7 +331,7 @@ public class AT_TaskitEngineManager {
                     }, false);
         });
 
-        assertEquals(TaskitCoreError.NULL_TASKIT_ENGINE, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_TASKIT_ENGINE, contractException.getErrorType());
 
         // writing the file encounters a IOException
         RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> {
@@ -361,12 +361,12 @@ public class AT_TaskitEngineManager {
             TaskitEngineManager.builder().build();
         });
 
-        assertEquals(TaskitCoreError.NO_TASKIT_ENGINES, contractException.getErrorType());
+        assertEquals(TaskitError.NO_TASKIT_ENGINES, contractException.getErrorType());
     }
 
     @Test
     @UnitTestMethod(target = TaskitEngineManager.Builder.class, name = "addTaskitEngine", args = {
-            ITaskitEngine.class })
+            TaskitEngine.class })
     public void testAddTaskitEngine() {
         TestTaskitEngine taskitEngine = TestTaskitEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
@@ -381,7 +381,7 @@ public class AT_TaskitEngineManager {
             TaskitEngineManager.builder().addTaskitEngine(null);
         });
 
-        assertEquals(TaskitCoreError.NULL_TASKIT_ENGINE, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_TASKIT_ENGINE, contractException.getErrorType());
 
         // taskit engine is not initialized
         contractException = assertThrows(ContractException.class, () -> {
@@ -394,6 +394,6 @@ public class AT_TaskitEngineManager {
                     .addTaskitEngine(taskitEngine2);
         });
 
-        assertEquals(TaskitCoreError.UNINITIALIZED_TASKIT_ENGINE, contractException.getErrorType());
+        assertEquals(TaskitError.UNINITIALIZED_TASKIT_ENGINE, contractException.getErrorType());
     }
 }

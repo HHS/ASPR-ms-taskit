@@ -23,10 +23,11 @@ public class AT_TestProtobufEnumTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertInputObject() {
-        ProtobufJsonTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder().build();
-
         TestProtobufEnumTranslationSpec enumTranslationSpec = new TestProtobufEnumTranslationSpec();
-        enumTranslationSpec.init(protobufTaskitEngine);
+
+        ProtobufJsonTaskitEngine.builder()
+                .addTranslationSpec(enumTranslationSpec)
+                .build();
 
         TestAppEnum expectedValue = TestAppEnum.TEST1;
         TestInputEnum inputValue = TestInputEnum.TEST1;
@@ -39,10 +40,11 @@ public class AT_TestProtobufEnumTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertAppObject() {
-        ProtobufJsonTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder().build();
-
         TestProtobufEnumTranslationSpec enumTranslationSpec = new TestProtobufEnumTranslationSpec();
-        enumTranslationSpec.init(protobufTaskitEngine);
+
+        ProtobufJsonTaskitEngine.builder()
+                .addTranslationSpec(enumTranslationSpec)
+                .build();
 
         TestAppEnum appValue = TestAppEnum.TEST2;
         TestInputEnum expectedValue = TestInputEnum.TEST2;

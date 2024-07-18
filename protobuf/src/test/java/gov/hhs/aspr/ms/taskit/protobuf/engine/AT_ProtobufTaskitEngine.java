@@ -9,8 +9,7 @@ import org.junit.jupiter.api.Test;
 import com.google.protobuf.Any;
 import com.google.protobuf.Int32Value;
 
-import gov.hhs.aspr.ms.taskit.core.engine.TaskitCoreError;
-import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitError;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppChildObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppObject;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.TestObjectUtil;
@@ -22,33 +21,6 @@ import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 
 public class AT_ProtobufTaskitEngine {
-
-    @Test
-    @UnitTestMethod(target = ProtobufTaskitEngine.class, name = "getTaskitEngine", args = {})
-    public void testGetTaskitEngine() {
-
-        ProtobufTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder()
-                .addTranslationSpec(new TestProtobufObjectTranslationSpec())
-                .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec())
-                .build();
-
-        TaskitEngine.Builder taskitEngineBuilder = TaskitEngine.builder();
-
-        ProtobufTaskitEngineHelper.getPrimitiveTranslationSpecs().forEach(
-                (translationSpec) -> taskitEngineBuilder.addTranslationSpec(translationSpec));
-
-        taskitEngineBuilder
-                .addTranslationSpec(new TestProtobufObjectTranslationSpec())
-                .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec())
-                .setTaskitEngineId(ProtobufTaskitEngineId.JSON_ENGINE_ID)
-                .build();
-
-        TaskitEngine taskitEngine = taskitEngineBuilder.build();
-
-        taskitEngine.init(protobufTaskitEngine);
-
-        assertEquals(taskitEngine, protobufTaskitEngine.getTaskitEngine());
-    }
 
     @Test
     @UnitTestMethod(target = ProtobufTaskitEngine.class, name = "getTaskitEngineId", args = {})
@@ -105,7 +77,7 @@ public class AT_ProtobufTaskitEngine {
             protobufTaskitEngine2.getAnyFromObjectAsClassSafe(testAppChildObject2, TestAppObject.class);
         });
 
-        assertEquals(TaskitCoreError.UNKNOWN_TRANSLATION_SPEC, contractException.getErrorType());
+        assertEquals(TaskitError.UNKNOWN_TRANSLATION_SPEC, contractException.getErrorType());
     }
 
     @Test
@@ -184,7 +156,7 @@ public class AT_ProtobufTaskitEngine {
             protobufTaskitEngine.translateObject(null);
         });
 
-        assertEquals(TaskitCoreError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
     }
 
     @Test
@@ -225,7 +197,7 @@ public class AT_ProtobufTaskitEngine {
             protobufTaskitEngine.translateObjectAsClassSafe(null, Object.class);
         });
 
-        assertEquals(TaskitCoreError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
     }
 
     @Test
@@ -264,6 +236,6 @@ public class AT_ProtobufTaskitEngine {
             protobufTaskitEngine.translateObjectAsClassUnsafe(null, Object.class);
         });
 
-        assertEquals(TaskitCoreError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
+        assertEquals(TaskitError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
     }
 }

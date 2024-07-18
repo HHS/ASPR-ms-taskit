@@ -3,14 +3,13 @@ package gov.hhs.aspr.ms.taskit.core.translation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.ms.taskit.core.engine.ITaskitEngine;
-import gov.hhs.aspr.ms.taskit.core.engine.TaskitCoreError;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitError;
 import gov.hhs.aspr.ms.taskit.core.testsupport.TestObjectUtil;
 import gov.hhs.aspr.ms.taskit.core.testsupport.engine.TestTaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppChildObject;
@@ -29,35 +28,11 @@ public class AT_TranslationSpec {
     @Test
     @UnitTestConstructor(target = TranslationSpec.class, args = {})
     public void testConstructor() {
-        TranslationSpec<TestInputObject, TestAppObject> translationSpec = new TranslationSpec<>() {
-
-            @Override
-            protected TestAppObject translateInputObject(TestInputObject inputObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'translateInputObject'");
-            }
-
-            @Override
-            protected TestInputObject translateAppObject(TestAppObject appObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'translateAppObject'");
-            }
-
-            @Override
-            public Class<TestAppObject> getAppObjectClass() {
-                return TestAppObject.class;
-            }
-
-            @Override
-            public Class<TestInputObject> getInputObjectClass() {
-                return TestInputObject.class;
-            }
-
-        };
-
-        assertNotNull(translationSpec);
+        // nothing to test
     }
 
     @Test
-    @UnitTestMethod(target = TranslationSpec.class, name = "init", args = { ITaskitEngine.class })
+    @UnitTestMethod(target = TranslationSpec.class, name = "init", args = { TaskitEngine.class })
     public void testInit() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
@@ -73,10 +48,8 @@ public class AT_TranslationSpec {
     @UnitTestMethod(target = TranslationSpec.class, name = "isInitialized", args = {})
     public void testIsInitialized() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
-        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
+        TestTaskitEngine.builder()
                 .addTranslationSpec(testObjectTranslationSpec).build();
-
-        testObjectTranslationSpec.init(testTaskitEngine);
 
         assertTrue(testObjectTranslationSpec.isInitialized());
 
@@ -85,14 +58,13 @@ public class AT_TranslationSpec {
 
     @Test
     @UnitTestMethod(target = TranslationSpec.class, name = "translate", args = { Object.class })
-    public void testConvert() {
+    public void testTranslate() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
-        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
-                .addTranslationSpec(testObjectTranslationSpec).addTranslationSpec(complexObjectTranslationSpec).build();
-
-        testObjectTranslationSpec.init(testTaskitEngine);
-        complexObjectTranslationSpec.init(testTaskitEngine);
+        TestTaskitEngine.builder()
+                .addTranslationSpec(testObjectTranslationSpec)
+                .addTranslationSpec(complexObjectTranslationSpec)
+                .build();
 
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
         TestInputObject expectedInputObject = TestObjectUtil.getInputFromApp(expectedAppObject);
@@ -119,24 +91,41 @@ public class AT_TranslationSpec {
             testObjectTranslationSpec2.translate(new TestAppObject());
         });
 
-        assertEquals(TaskitCoreError.UNINITIALIZED_TRANSLATION_SPEC, contractException.getErrorType());
+        assertEquals(TaskitError.UNINITIALIZED_TRANSLATION_SPEC, contractException.getErrorType());
 
         // unknown object
+         contractException = assertThrows(ContractException.class, () -> {
+            TestObjectTranslationSpec testObjectTranslationSpec2 = new TestObjectTranslationSpec();
+            TestTaskitEngine.builder()
+                    .addTranslationSpec(testObjectTranslationSpec2)
+                    .build();
+
+            testObjectTranslationSpec2.translate(new Object());
+        });
+
+        assertEquals(TaskitError.UNKNOWN_OBJECT, contractException.getErrorType());
+
+        // unknown object 2
         contractException = assertThrows(ContractException.class, () -> {
             TestObjectTranslationSpec testObjectTranslationSpec2 = new TestObjectTranslationSpec();
-            testObjectTranslationSpec2.init(testTaskitEngine);
+            TestTaskitEngine.builder()
+                    .addTranslationSpec(testObjectTranslationSpec2)
+                    .build();
+
             testObjectTranslationSpec2.translate(new TestComplexInputObject());
         });
 
-        assertEquals(TaskitCoreError.UNKNOWN_OBJECT, contractException.getErrorType());
+        assertEquals(TaskitError.UNKNOWN_OBJECT, contractException.getErrorType());
     }
 
     @Test
     @UnitTestMethod(target = TranslationSpec.class, name = "hashCode", args = {})
     public void testHashCode() {
-        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder().addTranslationSpec(new TestComplexObjectTranslationSpec()).build();
+        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
+                .addTranslationSpec(new TestComplexObjectTranslationSpec()).build();
         // base
-        TranslationSpec<TestInputObject, TestAppObject> translationSpecA = new TranslationSpec<>() {
+        TranslationSpec<TestInputObject, TestAppObject, TestTaskitEngine> translationSpecA = new TranslationSpec<>(
+                TestTaskitEngine.class) {
 
             @Override
             protected TestAppObject translateInputObject(TestInputObject inputObject) {
@@ -161,7 +150,8 @@ public class AT_TranslationSpec {
         };
 
         // same input class, different app class
-        TranslationSpec<TestInputObject, TestAppChildObject> translationSpecB = new TranslationSpec<>() {
+        TranslationSpec<TestInputObject, TestAppChildObject, TestTaskitEngine> translationSpecB = new TranslationSpec<>(
+                TestTaskitEngine.class) {
 
             @Override
             protected TestAppChildObject translateInputObject(TestInputObject inputObject) {
@@ -186,7 +176,8 @@ public class AT_TranslationSpec {
         };
 
         // same app class, different input class
-        TranslationSpec<TestInputChildObject, TestAppObject> translationSpecC = new TranslationSpec<>() {
+        TranslationSpec<TestInputChildObject, TestAppObject, TestTaskitEngine> translationSpecC = new TranslationSpec<>(
+                TestTaskitEngine.class) {
 
             @Override
             protected TestAppObject translateInputObject(TestInputChildObject inputObject) {
@@ -211,7 +202,8 @@ public class AT_TranslationSpec {
         };
 
         // different app and different input class
-        TranslationSpec<TestInputChildObject, TestAppChildObject> translationSpecD = new TranslationSpec<>() {
+        TranslationSpec<TestInputChildObject, TestAppChildObject, TestTaskitEngine> translationSpecD = new TranslationSpec<>(
+                TestTaskitEngine.class) {
 
             @Override
             protected TestAppChildObject translateInputObject(TestInputChildObject inputObject) {
@@ -236,7 +228,8 @@ public class AT_TranslationSpec {
         };
 
         // duplicate of the base
-        TranslationSpec<TestInputObject, TestAppObject> translationSpecE = new TranslationSpec<>() {
+        TranslationSpec<TestInputObject, TestAppObject, TestTaskitEngine> translationSpecE = new TranslationSpec<>(
+                TestTaskitEngine.class) {
 
             @Override
             protected TestAppObject translateInputObject(TestInputObject inputObject) {
@@ -291,9 +284,11 @@ public class AT_TranslationSpec {
     @Test
     @UnitTestMethod(target = TranslationSpec.class, name = "equals", args = { Object.class })
     public void testEquals() {
-        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder().addTranslationSpec(new TestComplexObjectTranslationSpec()).build();
+        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
+                .addTranslationSpec(new TestComplexObjectTranslationSpec()).build();
         // base
-        TranslationSpec<TestInputObject, TestAppObject> translationSpecA = new TranslationSpec<>() {
+        TranslationSpec<TestInputObject, TestAppObject, TestTaskitEngine> translationSpecA = new TranslationSpec<>(
+                TestTaskitEngine.class) {
 
             @Override
             protected TestAppObject translateInputObject(TestInputObject inputObject) {
@@ -318,7 +313,8 @@ public class AT_TranslationSpec {
         };
 
         // same input class, different app class
-        TranslationSpec<TestInputObject, TestAppChildObject> translationSpecB = new TranslationSpec<>() {
+        TranslationSpec<TestInputObject, TestAppChildObject, TestTaskitEngine> translationSpecB = new TranslationSpec<>(
+                TestTaskitEngine.class) {
 
             @Override
             protected TestAppChildObject translateInputObject(TestInputObject inputObject) {
@@ -343,7 +339,8 @@ public class AT_TranslationSpec {
         };
 
         // same app class, different input class
-        TranslationSpec<TestInputChildObject, TestAppObject> translationSpecC = new TranslationSpec<>() {
+        TranslationSpec<TestInputChildObject, TestAppObject, TestTaskitEngine> translationSpecC = new TranslationSpec<>(
+                TestTaskitEngine.class) {
 
             @Override
             protected TestAppObject translateInputObject(TestInputChildObject inputObject) {
@@ -368,7 +365,8 @@ public class AT_TranslationSpec {
         };
 
         // different app and different input class
-        TranslationSpec<TestInputChildObject, TestAppChildObject> translationSpecD = new TranslationSpec<>() {
+        TranslationSpec<TestInputChildObject, TestAppChildObject, TestTaskitEngine> translationSpecD = new TranslationSpec<>(
+                TestTaskitEngine.class) {
 
             @Override
             protected TestAppChildObject translateInputObject(TestInputChildObject inputObject) {
@@ -393,7 +391,8 @@ public class AT_TranslationSpec {
         };
 
         // duplicate of the base
-        TranslationSpec<TestInputObject, TestAppObject> translationSpecE = new TranslationSpec<>() {
+        TranslationSpec<TestInputObject, TestAppObject, TestTaskitEngine> translationSpecE = new TranslationSpec<>(
+                TestTaskitEngine.class) {
 
             @Override
             protected TestAppObject translateInputObject(TestInputObject inputObject) {

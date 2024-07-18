@@ -23,9 +23,9 @@ public class AT_BooleanTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertInputObject() {
+        BooleanTranslationSpec booleanTranslationSpec = new BooleanTranslationSpec();
         ProtobufJsonTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder().build();
 
-        BooleanTranslationSpec booleanTranslationSpec = new BooleanTranslationSpec();
         booleanTranslationSpec.init(protobufTaskitEngine);
 
         Boolean expectedValue = false;

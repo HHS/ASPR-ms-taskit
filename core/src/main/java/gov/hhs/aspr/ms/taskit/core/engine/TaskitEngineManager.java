@@ -11,7 +11,7 @@ import gov.hhs.aspr.ms.util.resourcehelper.ResourceError;
 import gov.hhs.aspr.ms.util.resourcehelper.ResourceHelper;
 
 /**
- * The TaskitEngineManager allows {@link ITaskitEngine}s to be added to it, and
+ * The TaskitEngineManager allows {@link TaskitEngine}s to be added to it, and
  * acts as a wrapper around the TaskitEngine read/write/translate methods.
  */
 public final class TaskitEngineManager {
@@ -22,7 +22,7 @@ public final class TaskitEngineManager {
     }
 
     private final static class Data {
-        private final Map<TaskitEngineId, ITaskitEngine> taskitEngineIdToEngineMap = new LinkedHashMap<>();
+        private final Map<TaskitEngineId, TaskitEngine> taskitEngineIdToEngineMap = new LinkedHashMap<>();
 
         Data() {
         }
@@ -38,19 +38,19 @@ public final class TaskitEngineManager {
             this.data = data;
         }
 
-        private void validateTaskitEngine(ITaskitEngine taskitEngine) {
+        private void validateTaskitEngine(TaskitEngine taskitEngine) {
             if (taskitEngine == null) {
-                throw new ContractException(TaskitCoreError.NULL_TASKIT_ENGINE);
+                throw new ContractException(TaskitError.NULL_TASKIT_ENGINE);
             }
 
-            if (!taskitEngine.getTaskitEngine().isInitialized()) {
-                throw new ContractException(TaskitCoreError.UNINITIALIZED_TASKIT_ENGINE);
+            if (!taskitEngine.isInitialized()) {
+                throw new ContractException(TaskitError.UNINITIALIZED_TASKIT_ENGINE);
             }
         }
 
         private void validateTaskitEngineAdded() {
             if (this.data.taskitEngineIdToEngineMap.isEmpty()) {
-                throw new ContractException(TaskitCoreError.NO_TASKIT_ENGINES);
+                throw new ContractException(TaskitError.NO_TASKIT_ENGINES);
             }
         }
 
@@ -59,11 +59,12 @@ public final class TaskitEngineManager {
          * 
          * @throws ContractException
          *                           <ul>
-         *                           <li>{@linkplain TaskitCoreError#NO_TASKIT_ENGINES}
+         *                           <li>{@linkplain TaskitError#NO_TASKIT_ENGINES}
          *                           if no taskit engines were added</li>
          *                           </ul>
          */
         public TaskitEngineManager build() {
+            // at least 1 engine must be added
             validateTaskitEngineAdded();
 
             return new TaskitEngineManager(this.data);
@@ -77,14 +78,14 @@ public final class TaskitEngineManager {
          * 
          * @throws ContractException
          *                           <ul>
-         *                           <li>{@linkplain TaskitCoreError#NULL_TASKIT_ENGINE}
+         *                           <li>{@linkplain TaskitError#NULL_TASKIT_ENGINE}
          *                           if taskitEngine is null</li>
-         *                           <li>{@linkplain TaskitCoreError#UNINITIALIZED_TASKIT_ENGINE}
+         *                           <li>{@linkplain TaskitError#UNINITIALIZED_TASKIT_ENGINE}
          *                           if the taskit engine was not initialized prior to
          *                           adding it to the manager</li>
          *                           </ul>
          */
-        public Builder addTaskitEngine(ITaskitEngine taskitEngine) {
+        public Builder addTaskitEngine(TaskitEngine taskitEngine) {
             validateTaskitEngine(taskitEngine);
 
             this.data.taskitEngineIdToEngineMap.put(taskitEngine.getTaskitEngineId(), taskitEngine);
@@ -100,15 +101,15 @@ public final class TaskitEngineManager {
         return new Builder(new Data());
     }
 
-    private void validateTaskitEngine(ITaskitEngine taskitEngine) {
+    private void validateTaskitEngine(TaskitEngine taskitEngine) {
         if (taskitEngine == null) {
-            throw new ContractException(TaskitCoreError.NULL_TASKIT_ENGINE);
+            throw new ContractException(TaskitError.NULL_TASKIT_ENGINE);
         }
     }
 
     private void validatePath(Path path) {
         if (path == null) {
-            throw new ContractException(TaskitCoreError.NULL_PATH);
+            throw new ContractException(TaskitError.NULL_PATH);
         }
 
         ResourceHelper.validateFilePath(path);
@@ -116,19 +117,19 @@ public final class TaskitEngineManager {
 
     private void validateClass(Class<?> classRef) {
         if (classRef == null) {
-            throw new ContractException(TaskitCoreError.NULL_CLASS_REF);
+            throw new ContractException(TaskitError.NULL_CLASS_REF);
         }
     }
 
     private void validateObject(Object object) {
         if (object == null) {
-            throw new ContractException(TaskitCoreError.NULL_OBJECT_FOR_TRANSLATION);
+            throw new ContractException(TaskitError.NULL_OBJECT_FOR_TRANSLATION);
         }
     }
 
     private void validateTaskitEngineId(TaskitEngineId taskitEngineId) {
         if (taskitEngineId == null) {
-            throw new ContractException(TaskitCoreError.NULL_TASKIT_ENGINE_ID);
+            throw new ContractException(TaskitError.NULL_TASKIT_ENGINE_ID);
         }
     }
 
@@ -146,16 +147,16 @@ public final class TaskitEngineManager {
      * 
      * @throws ContractException
      *                           <ul>
-     *                           <li>{@linkplain TaskitCoreError#NULL_PATH}
+     *                           <li>{@linkplain TaskitError#NULL_PATH}
      *                           if the path is null</li>
      *                           <li>{@linkplain ResourceError#FILE_PATH_IS_DIRECTORY}
      *                           if the path points to a directory instead of a
      *                           file</li>
-     *                           <li>{@linkplain TaskitCoreError#NULL_CLASS_REF}
+     *                           <li>{@linkplain TaskitError#NULL_CLASS_REF}
      *                           if the classRef is null</li>
-     *                           <li>{@linkplain TaskitCoreError#NULL_TASKIT_ENGINE_ID}
+     *                           <li>{@linkplain TaskitError#NULL_TASKIT_ENGINE_ID}
      *                           if taskitEngineId is null</li>
-     *                           <li>{@linkplain TaskitCoreError#NULL_TASKIT_ENGINE}
+     *                           <li>{@linkplain TaskitError#NULL_TASKIT_ENGINE}
      *                           if taskitEngine is null</li>
      *                           </ul>
      * @throws RuntimeException  if the reading of the file encounters an
@@ -166,7 +167,7 @@ public final class TaskitEngineManager {
         validateClass(classRef);
         validateTaskitEngineId(taskitEngineId);
 
-        ITaskitEngine taskitEngine = this.data.taskitEngineIdToEngineMap.get(taskitEngineId);
+        TaskitEngine taskitEngine = this.data.taskitEngineIdToEngineMap.get(taskitEngineId);
 
         validateTaskitEngine(taskitEngine);
 
@@ -192,16 +193,16 @@ public final class TaskitEngineManager {
      * 
      * @throws ContractException
      *                           <ul>
-     *                           <li>{@linkplain TaskitCoreError#NULL_PATH}
+     *                           <li>{@linkplain TaskitError#NULL_PATH}
      *                           if the path is null</li>
      *                           <li>{@linkplain ResourceError#FILE_PATH_IS_DIRECTORY}
      *                           if the path points to a directory instead of a
      *                           file</li>
-     *                           <li>{@linkplain TaskitCoreError#NULL_CLASS_REF}
+     *                           <li>{@linkplain TaskitError#NULL_CLASS_REF}
      *                           if the classRef is null</li>
-     *                           <li>{@linkplain TaskitCoreError#NULL_TASKIT_ENGINE_ID}
+     *                           <li>{@linkplain TaskitError#NULL_TASKIT_ENGINE_ID}
      *                           if taskitEngineId is null</li>
-     *                           <li>{@linkplain TaskitCoreError#NULL_TASKIT_ENGINE}
+     *                           <li>{@linkplain TaskitError#NULL_TASKIT_ENGINE}
      *                           if taskitEngine is null</li>
      *                           </ul>
      * @throws RuntimeException  if the reading of the file encounters an
@@ -212,7 +213,7 @@ public final class TaskitEngineManager {
         validateClass(classRef);
         validateTaskitEngineId(taskitEngineId);
 
-        ITaskitEngine taskitEngine = this.data.taskitEngineIdToEngineMap.get(taskitEngineId);
+        TaskitEngine taskitEngine = this.data.taskitEngineIdToEngineMap.get(taskitEngineId);
 
         validateTaskitEngine(taskitEngine);
 
@@ -259,16 +260,16 @@ public final class TaskitEngineManager {
      * 
      * @throws ContractException
      *                           <ul>
-     *                           <li>{@linkplain TaskitCoreError#NULL_PATH}
+     *                           <li>{@linkplain TaskitError#NULL_PATH}
      *                           if the path is null</li>
      *                           <li>{@linkplain ResourceError#FILE_PATH_IS_DIRECTORY}
      *                           if the path points to a directory instead of a
      *                           file</li>
-     *                           <li>{@linkplain TaskitCoreError#NULL_OBJECT_FOR_TRANSLATION}
+     *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
      *                           if the object is null</li>
-     *                           <li>{@linkplain TaskitCoreError#NULL_TASKIT_ENGINE_ID}
+     *                           <li>{@linkplain TaskitError#NULL_TASKIT_ENGINE_ID}
      *                           if taskitEngineId is null</li>
-     *                           <li>{@linkplain TaskitCoreError#NULL_TASKIT_ENGINE}
+     *                           <li>{@linkplain TaskitError#NULL_TASKIT_ENGINE}
      *                           if taskitEngine is null</li>
      *                           </ul>
      * @throws RuntimeException  if the writing of the file encounters an
@@ -291,16 +292,16 @@ public final class TaskitEngineManager {
      * 
      * @throws ContractException
      *                           <ul>
-     *                           <li>{@linkplain TaskitCoreError#NULL_PATH}
+     *                           <li>{@linkplain TaskitError#NULL_PATH}
      *                           if the path is null</li>
      *                           <li>{@linkplain ResourceError#FILE_PATH_IS_DIRECTORY}
      *                           if the path points to a directory instead of a
      *                           file</li>
-     *                           <li>{@linkplain TaskitCoreError#NULL_OBJECT_FOR_TRANSLATION}
+     *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
      *                           if the object is null</li>
-     *                           <li>{@linkplain TaskitCoreError#NULL_TASKIT_ENGINE_ID}
+     *                           <li>{@linkplain TaskitError#NULL_TASKIT_ENGINE_ID}
      *                           if taskitEngineId is null</li>
-     *                           <li>{@linkplain TaskitCoreError#NULL_TASKIT_ENGINE}
+     *                           <li>{@linkplain TaskitError#NULL_TASKIT_ENGINE}
      *                           if taskitEngine is null</li>
      *                           </ul>
      * @throws RuntimeException  if the writing of the file encounters an
@@ -327,18 +328,18 @@ public final class TaskitEngineManager {
      * 
      * @throws ContractException
      *                           <ul>
-     *                           <li>{@linkplain TaskitCoreError#NULL_CLASS_REF}
+     *                           <li>{@linkplain TaskitError#NULL_CLASS_REF}
      *                           if the output classref is null</li>
-     *                           <li>{@linkplain TaskitCoreError#NULL_PATH}
+     *                           <li>{@linkplain TaskitError#NULL_PATH}
      *                           if the path is null</li>
      *                           <li>{@linkplain ResourceError#FILE_PATH_IS_DIRECTORY}
      *                           if the path points to a directory instead of a
      *                           file</li>
-     *                           <li>{@linkplain TaskitCoreError#NULL_OBJECT_FOR_TRANSLATION}
+     *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
      *                           if the object is null</li>
-     *                           <li>{@linkplain TaskitCoreError#NULL_TASKIT_ENGINE_ID}
+     *                           <li>{@linkplain TaskitError#NULL_TASKIT_ENGINE_ID}
      *                           if taskitEngineId is null</li>
-     *                           <li>{@linkplain TaskitCoreError#NULL_TASKIT_ENGINE}
+     *                           <li>{@linkplain TaskitError#NULL_TASKIT_ENGINE}
      *                           if taskitEngine is null</li>
      *                           </ul>
      * @throws RuntimeException  if the writing of the file encounters an
@@ -365,7 +366,7 @@ public final class TaskitEngineManager {
         validateObject(object);
         validateTaskitEngineId(taskitEngineId);
 
-        ITaskitEngine taskitEngine = this.data.taskitEngineIdToEngineMap.get(taskitEngineId);
+        TaskitEngine taskitEngine = this.data.taskitEngineIdToEngineMap.get(taskitEngineId);
 
         validateTaskitEngine(taskitEngine);
 

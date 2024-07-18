@@ -6,7 +6,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
-import gov.hhs.aspr.ms.taskit.core.engine.TaskitCoreError;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitError;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
@@ -65,10 +65,10 @@ public final class Translator {
 
         private void validate() {
             if (this.data.translatorId == null) {
-                throw new ContractException(TaskitCoreError.NULL_TRANSLATOR_ID);
+                throw new ContractException(TaskitError.NULL_TRANSLATOR_ID);
             }
             if (this.data.initializer == null) {
-                throw new ContractException(TaskitCoreError.NULL_INIT_CONSUMER);
+                throw new ContractException(TaskitError.NULL_INIT_CONSUMER);
             }
         }
 
@@ -79,9 +79,9 @@ public final class Translator {
          * 
          * @throws ContractException
          *                           <ul>
-         *                           <li>{@linkplain TaskitCoreError#NULL_TRANSLATOR_ID}
+         *                           <li>{@linkplain TaskitError#NULL_TRANSLATOR_ID}
          *                           if the translatorId was not set</li>
-         *                           <li>{@linkplain TaskitCoreError#NULL_INIT_CONSUMER}
+         *                           <li>{@linkplain TaskitError#NULL_INIT_CONSUMER}
          *                           if the initConsumer was not set</li>
          *                           </ul>
          */
@@ -96,12 +96,12 @@ public final class Translator {
          * 
          * @param translatorId the translatorId to set
          * @return the builder instance
-         * @throws ContractException {@linkplain TaskitCoreError#NULL_TRANSLATOR_ID}
+         * @throws ContractException {@linkplain TaskitError#NULL_TRANSLATOR_ID}
          *                           if the translatorId is null
          */
         public Builder setTranslatorId(TranslatorId translatorId) {
             if (translatorId == null) {
-                throw new ContractException(TaskitCoreError.NULL_TRANSLATOR_ID);
+                throw new ContractException(TaskitError.NULL_TRANSLATOR_ID);
             }
 
             this.data.translatorId = translatorId;
@@ -114,12 +114,12 @@ public final class Translator {
          * 
          * @param initConsumer the consumer to use for initialization
          * @return the builder instance
-         * @throws ContractException {@linkplain TaskitCoreError#NULL_INIT_CONSUMER}
+         * @throws ContractException {@linkplain TaskitError#NULL_INIT_CONSUMER}
          *                           if the initConsumer is null
          */
-        public Builder setInitializer(Consumer<TranslatorContext> initConsumer) {
+        public <E extends TaskitEngine> Builder setInitializer(Consumer<TranslatorContext> initConsumer) {
             if (initConsumer == null) {
-                throw new ContractException(TaskitCoreError.NULL_INIT_CONSUMER);
+                throw new ContractException(TaskitError.NULL_INIT_CONSUMER);
             }
 
             this.data.initializer = initConsumer;
@@ -136,19 +136,19 @@ public final class Translator {
          * 
          * @throws ContractException
          *                           <ul>
-         *                           <li>{@linkplain TaskitCoreError#NULL_DEPENDENCY}
+         *                           <li>{@linkplain TaskitError#NULL_DEPENDENCY}
          *                           if the dependency is null</li>
-         *                           <li>{@linkplain TaskitCoreError#DUPLICATE_DEPENDENCY}
+         *                           <li>{@linkplain TaskitError#DUPLICATE_DEPENDENCY}
          *                           if the dependency has already been added</li>
          *                           </ul>
          */
         public Builder addDependency(TranslatorId dependency) {
             if (dependency == null) {
-                throw new ContractException(TaskitCoreError.NULL_DEPENDENCY);
+                throw new ContractException(TaskitError.NULL_DEPENDENCY);
             }
 
             if (this.data.dependencies.contains(dependency)) {
-                throw new ContractException(TaskitCoreError.DUPLICATE_DEPENDENCY);
+                throw new ContractException(TaskitError.DUPLICATE_DEPENDENCY);
             }
 
             this.data.dependencies.add(dependency);

@@ -24,11 +24,12 @@ public class AT_TestProtobufObjectTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertInputObject() {
-        ProtobufJsonTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder()
-                .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
-
         TestProtobufObjectTranslationSpec objectTranslationSpec = new TestProtobufObjectTranslationSpec();
-        objectTranslationSpec.init(protobufTaskitEngine);
+
+        ProtobufJsonTaskitEngine.builder()
+                .addTranslationSpec(objectTranslationSpec)
+                .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec())
+                .build();
 
         TestAppObject expectedValue = TestObjectUtil.generateTestAppObject();
         TestInputObject inputValue = TestObjectUtil.getInputFromApp(expectedValue);
@@ -41,11 +42,12 @@ public class AT_TestProtobufObjectTranslationSpec {
     @Test
     @UnitTestForCoverage
     public void testConvertAppObject() {
-        ProtobufJsonTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder()
-                .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
-
         TestProtobufObjectTranslationSpec objectTranslationSpec = new TestProtobufObjectTranslationSpec();
-        objectTranslationSpec.init(protobufTaskitEngine);
+
+        ProtobufJsonTaskitEngine.builder()
+                .addTranslationSpec(objectTranslationSpec)
+                .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec())
+                .build();
 
         TestAppObject appValue = TestObjectUtil.generateTestAppObject();
         TestInputObject expectedValue = TestObjectUtil.getInputFromApp(appValue);

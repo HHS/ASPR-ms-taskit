@@ -2,11 +2,12 @@ package gov.hhs.aspr.ms.taskit.protobuf.engine;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import com.google.protobuf.Any;
 
-import gov.hhs.aspr.ms.taskit.core.engine.ITaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngineData;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngineId;
 import gov.hhs.aspr.ms.taskit.protobuf.translation.specs.AnyTranslationSpec;
 import gov.hhs.aspr.ms.util.errors.ContractException;
@@ -15,16 +16,16 @@ import gov.hhs.aspr.ms.util.errors.ContractException;
  * Abstract ProtobufTaskitEngine that defines the common methods that are shared
  * between a JSON engine and a Binary Engine
  */
-public abstract class ProtobufTaskitEngine implements ITaskitEngine {
+public abstract class ProtobufTaskitEngine extends TaskitEngine {
 
     // this is used specifically for Any message types to pack and unpack them
-    protected final Map<String, Class<?>> typeUrlToClassMap;
+    protected final Map<String, Class<?>> typeUrlToClassMap = new LinkedHashMap<>();
 
-    protected final TaskitEngine taskitEngine;
+    protected ProtobufTaskitEngine(Map<String, Class<?>> typeUrlToClassMap, TaskitEngineData taskitEngineData,
+            TaskitEngineId taskitEngineId) {
+        super(taskitEngineData, taskitEngineId);
+        this.typeUrlToClassMap.putAll(typeUrlToClassMap);
 
-    protected ProtobufTaskitEngine(Map<String, Class<?>> typeUrlToClassMap, TaskitEngine taskitEngine) {
-        this.typeUrlToClassMap = new LinkedHashMap<>(typeUrlToClassMap);
-        this.taskitEngine = taskitEngine;
     }
 
     /**
@@ -39,7 +40,7 @@ public abstract class ProtobufTaskitEngine implements ITaskitEngine {
      * @return the translate object
      */
     public final <T> T getObjectFromAny(Any anyValue) {
-        return translateObject(anyValue);
+        return this.translateObject(anyValue);
     }
 
     /**
@@ -52,7 +53,7 @@ public abstract class ProtobufTaskitEngine implements ITaskitEngine {
      * @return the resulting Any
      */
     public final Any getAnyFromObject(Object object) {
-        return translateObjectAsClassUnsafe(object, Any.class);
+        return this.translateObjectAsClassUnsafe(object, Any.class);
     }
 
     /**
@@ -76,22 +77,7 @@ public abstract class ProtobufTaskitEngine implements ITaskitEngine {
     public final <C, O extends C> Any getAnyFromObjectAsClassSafe(O object, Class<C> classRef) {
         C translatedObject = translateObjectAsClassSafe(object, classRef);
 
-        return translateObjectAsClassUnsafe(translatedObject, Any.class);
-    }
-
-    @Override
-    public final <T> T translateObject(Object object) {
-        return this.taskitEngine.translateObject(object);
-    }
-
-    @Override
-    public final <T, O extends C, C> T translateObjectAsClassSafe(O object, Class<C> classRef) {
-        return this.taskitEngine.translateObjectAsClassSafe(object, classRef);
-    }
-
-    @Override
-    public final <T, O, C> T translateObjectAsClassUnsafe(O object, Class<C> classRef) {
-        return this.taskitEngine.translateObjectAsClassUnsafe(object, classRef);
+        return this.translateObjectAsClassUnsafe(translatedObject, Any.class);
     }
 
     /**
@@ -116,12 +102,29 @@ public abstract class ProtobufTaskitEngine implements ITaskitEngine {
     }
 
     @Override
-    public final TaskitEngine getTaskitEngine() {
-        return this.taskitEngine;
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + Objects.hash(typeUrlToClassMap);
+        return result;
     }
 
     @Override
-    public final TaskitEngineId getTaskitEngineId() {
-        return this.taskitEngine.getTaskitEngineId();
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (!super.equals(obj)) {
+            return false;
+        }
+
+        if (!(obj instanceof ProtobufTaskitEngine)) {
+            return false;
+        }
+        
+        ProtobufTaskitEngine other = (ProtobufTaskitEngine) obj;
+        return Objects.equals(typeUrlToClassMap, other.typeUrlToClassMap);
     }
+
 }

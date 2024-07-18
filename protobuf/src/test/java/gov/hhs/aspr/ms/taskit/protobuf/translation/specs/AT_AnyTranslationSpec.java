@@ -43,6 +43,7 @@ public class AT_AnyTranslationSpec {
                 .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
 
         AnyTranslationSpec anyTranslationSpec = new AnyTranslationSpec();
+
         anyTranslationSpec.init(protobufTaskitEngine);
 
         Integer expectedValue = 100;
@@ -85,6 +86,7 @@ public class AT_AnyTranslationSpec {
                 .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
 
         AnyTranslationSpec anyTranslationSpec = new AnyTranslationSpec();
+
         anyTranslationSpec.init(protobufTaskitEngine);
 
         Integer expectedValue = 100;
@@ -107,6 +109,7 @@ public class AT_AnyTranslationSpec {
                 .addTranslationSpec(new TestProtobufEnumTranslationSpec()).build();
 
         AnyTranslationSpec anyTranslationSpec = new AnyTranslationSpec();
+
         anyTranslationSpec.init(protobufTaskitEngine);
 
         // app object translateed into any

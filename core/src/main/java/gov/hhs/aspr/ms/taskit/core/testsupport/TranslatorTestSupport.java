@@ -7,10 +7,10 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.translation.ITranslationSpec;
 import gov.hhs.aspr.ms.util.resourcehelper.ResourceHelper;
 
-/** 
+/**
  * Class to help test Translators and their internal list of translation specs
  */
 public class TranslatorTestSupport {
@@ -35,12 +35,12 @@ public class TranslatorTestSupport {
      * 
      */
     public static <T> Set<String> testGetTranslationSpecs(Class<T> translatorClassRef,
-            List<TranslationSpec<?, ?>> translationSpecs) throws ClassNotFoundException {
+            List<ITranslationSpec> translationSpecs) throws ClassNotFoundException {
         Set<String> missingTranslationSpecs = new LinkedHashSet<>();
         List<Class<?>> translationSpecClasses = new ArrayList<>();
 
         // create a list with the translation spec class names
-        for (TranslationSpec<?, ?> translationSpec : translationSpecs) {
+        for (ITranslationSpec translationSpec : translationSpecs) {
             translationSpecClasses.add(translationSpec.getClass());
         }
 
