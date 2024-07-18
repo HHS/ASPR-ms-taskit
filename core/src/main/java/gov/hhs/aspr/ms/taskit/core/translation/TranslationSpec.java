@@ -37,7 +37,7 @@ public abstract class TranslationSpec<I, A, E extends TaskitEngine> implements I
     @Override
     public final void init(TaskitEngine taskitEngine) {
         // make sure assignable from E
-        if(!(taskitEngineClass.isAssignableFrom(taskitEngine.getClass()))) {
+        if (!(taskitEngineClass.isAssignableFrom(taskitEngine.getClass()))) {
             // TODO: throw contract exception
         }
 
@@ -76,12 +76,23 @@ public abstract class TranslationSpec<I, A, E extends TaskitEngine> implements I
     @SuppressWarnings("unchecked")
     public <T> T translate(Object obj) {
         checkInit();
+        
+        Class<?> objClass = obj.getClass();
 
-        if ((this.getAppObjectClass().isAssignableFrom(obj.getClass()))) {
+        boolean isAppObj = this.getAppObjectClass() == objClass;
+        boolean isInObj = this.getInputObjectClass() == objClass;
+
+        boolean isAssignAppObj = this.getAppObjectClass().isAssignableFrom(objClass);
+        boolean isAssignInObj = this.getInputObjectClass().isAssignableFrom(objClass);
+
+        boolean shouldTranslateAsApp = (isAppObj && !isInObj) || (isAssignAppObj && !isAssignInObj);
+        boolean shouldTranslateAsIn = (isInObj && !isAppObj) || (isAssignInObj && !isAssignAppObj);
+
+        if (shouldTranslateAsApp) {
             return (T) this.translateAppObject((A) obj);
         }
 
-        if ((this.getInputObjectClass().isAssignableFrom(obj.getClass()))) {
+        if (shouldTranslateAsIn) {
             return (T) this.translateInputObject((I) obj);
         }
 
@@ -134,6 +145,7 @@ public abstract class TranslationSpec<I, A, E extends TaskitEngine> implements I
 
         return translationSpecClassMap;
     }
+
     /**
      * Translates the given object to its corresponding app type
      * 

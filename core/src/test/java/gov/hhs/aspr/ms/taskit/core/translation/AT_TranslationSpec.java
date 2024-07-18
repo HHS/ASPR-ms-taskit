@@ -58,7 +58,7 @@ public class AT_TranslationSpec {
 
     @Test
     @UnitTestMethod(target = TranslationSpec.class, name = "translate", args = { Object.class })
-    public void testConvert() {
+    public void testTranslate() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
         TestTaskitEngine.builder()
@@ -94,6 +94,18 @@ public class AT_TranslationSpec {
         assertEquals(TaskitError.UNINITIALIZED_TRANSLATION_SPEC, contractException.getErrorType());
 
         // unknown object
+         contractException = assertThrows(ContractException.class, () -> {
+            TestObjectTranslationSpec testObjectTranslationSpec2 = new TestObjectTranslationSpec();
+            TestTaskitEngine.builder()
+                    .addTranslationSpec(testObjectTranslationSpec2)
+                    .build();
+
+            testObjectTranslationSpec2.translate(new Object());
+        });
+
+        assertEquals(TaskitError.UNKNOWN_OBJECT, contractException.getErrorType());
+
+        // unknown object 2
         contractException = assertThrows(ContractException.class, () -> {
             TestObjectTranslationSpec testObjectTranslationSpec2 = new TestObjectTranslationSpec();
             TestTaskitEngine.builder()
