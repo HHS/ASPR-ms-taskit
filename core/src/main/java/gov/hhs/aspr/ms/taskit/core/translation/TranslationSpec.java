@@ -32,13 +32,16 @@ public abstract class TranslationSpec<I, A, E extends TaskitEngine> implements I
      * 
      * @param taskitEngine the taskitEngine the translationSpec should be
      *                     initialized with
-     * 
+     * @throws ContractException {@link TaskitError#INVALID_TASKIT_ENGINE} if the
+     *                           given taskitEngine is of a different type than the
+     *                           one provided in the type parameter.
      */
     @Override
     public final void init(TaskitEngine taskitEngine) {
         // make sure assignable from E
-        if (!(taskitEngineClass.isAssignableFrom(taskitEngine.getClass()))) {
-            // TODO: throw contract exception
+        if (!(this.taskitEngineClass.isAssignableFrom(taskitEngine.getClass()))) {
+            throw new ContractException(TaskitError.INVALID_TASKIT_ENGINE,
+                    "given:" + taskitEngine.getClass().getName() + " but expected " + this.taskitEngineClass.getName());
         }
 
         this.taskitEngine = this.taskitEngineClass.cast(taskitEngine);
@@ -76,7 +79,7 @@ public abstract class TranslationSpec<I, A, E extends TaskitEngine> implements I
     @SuppressWarnings("unchecked")
     public <T> T translate(Object obj) {
         checkInit();
-        
+
         Class<?> objClass = obj.getClass();
 
         boolean isAppObj = this.getAppObjectClass() == objClass;

@@ -28,6 +28,7 @@ import gov.hhs.aspr.ms.taskit.core.translation.ITranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.Translator;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslatorContext;
 import gov.hhs.aspr.ms.taskit.protobuf.translation.ProtobufTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.translation.ProtobufTranslator;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
@@ -97,13 +98,9 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
          */
         public ProtobufJsonTaskitEngine build() {
 
-            this.typeUrlToClassMap.putAll(ProtobufTaskitEngineHelper.getPrimitiveTypeUrlToClassMap());
-
-            ProtobufTaskitEngineHelper.getPrimitiveTranslationSpecs().forEach(
-                    (translationSpec) -> this.taskitEngineDataBuilder.addTranslationSpec(translationSpec));
+            this.addTranslator(ProtobufTranslator.getTranslator());
 
             TypeRegistry.Builder typeRegistryBuilder = TypeRegistry.newBuilder();
-            this.descriptorSet.addAll(ProtobufTaskitEngineHelper.getPrimitiveDescriptors());
 
             this.descriptorSet.forEach((descriptor) -> {
                 typeRegistryBuilder.add(descriptor);
@@ -112,9 +109,11 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
             TypeRegistry registry = typeRegistryBuilder.build();
 
             Parser parser = JsonFormat.parser().usingTypeRegistry(registry);
+
             if (this.ignoringUnknownFields) {
                 parser = parser.ignoringUnknownFields();
             }
+
             this.data.jsonParser = parser;
 
             Printer printer = JsonFormat.printer().usingTypeRegistry(registry);
@@ -126,6 +125,7 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
             if (this.includingDefaultValueFields) {
                 printer = printer.includingDefaultValueFields();
             }
+
             this.data.jsonPrinter = printer;
 
             ProtobufJsonTaskitEngine protoJsonTaskitEngine = new ProtobufJsonTaskitEngine(this.data,
@@ -167,7 +167,6 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
             return this;
         }
 
-        // TODO: add null check for addFieldToIncludeDefaultValue
         /**
          * Contrary to {@link Builder#setIncludingDefaultValueFields(boolean)} which
          * will set the flag globally for all default values, this will set the flag for
@@ -178,8 +177,15 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
          * @param fieldDescriptor the descriptor of the field to print the default value
          *                        for
          * @return the builder instance
+         * 
+         * @throws ContractException {@link ProtobufTaskitError#NULL_FIELD_DESCRIPTOR}
+         *                           if the provided field descriptor is null
          */
         public Builder addFieldToIncludeDefaultValue(FieldDescriptor fieldDescriptor) {
+            if (fieldDescriptor == null) {
+                throw new ContractException(ProtobufTaskitError.NULL_FIELD_DESCRIPTOR);
+            }
+
             this.defaultValueFieldsToPrint.add(fieldDescriptor);
 
             return this;
@@ -194,12 +200,12 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
          *                           <ul>
          *                           <li>{@linkplain TaskitError#NULL_TRANSLATION_SPEC}
          *                           if the given translationSpec is null</li>
-         *                           <li>{@linkplain TaskitError#NULL_TRANSLATION_SPEC_APP_CLASS}
-         *                           if the given translationSpecs getAppClass method
-         *                           returns null</li>
-         *                           <li>{@linkplain TaskitError#NULL_TRANSLATION_SPEC_INPUT_CLASS}
-         *                           if the given translationSpecs getInputClass method
-         *                           returns null</li>
+         *                           <li>{@linkplain TaskitError#NULL_TRANSLATION_SPEC_CLASS_MAP}
+         *                           if the given translationSpec's class map is
+         *                           null</li>
+         *                           <li>{@linkplain TaskitError#EMPTY_TRANSLATION_SPEC_CLASS_MAP}
+         *                           if the given translationSpec's class map is
+         *                           empty</li>
          *                           <li>{@linkplain TaskitError#DUPLICATE_TRANSLATION_SPEC}
          *                           if the given translationSpec is already known</li>
          *                           <li>{@link ProtobufTaskitError#INVALID_TRANSLATION_SPEC}
@@ -215,8 +221,10 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
         public Builder addTranslationSpec(ITranslationSpec translationSpec) {
             this.taskitEngineDataBuilder.addTranslationSpec(translationSpec);
 
-            // TODO: add back contract exception for adding a non protobuf translation spec
-            
+            if (!ProtobufTranslationSpec.class.isAssignableFrom(translationSpec.getClass())) {
+                throw new ContractException(ProtobufTaskitError.INVALID_TRANSLATION_SPEC);
+            }
+
             ProtobufTranslationSpec<?, ?> protobufTranslationSpec = ProtobufTranslationSpec.class.cast(translationSpec);
 
             populate(protobufTranslationSpec.getInputObjectClass());

@@ -19,7 +19,6 @@ import gov.hhs.aspr.ms.taskit.core.translation.Translator;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslatorContext;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 
-// TODO: maybe move this class to the test code exclusively, as it's only purpose is to test the TaskitEngineManager read/write/translate methods
 public final class TestTaskitEngine extends TaskitEngine {
     private final Gson gson = new Gson();
 

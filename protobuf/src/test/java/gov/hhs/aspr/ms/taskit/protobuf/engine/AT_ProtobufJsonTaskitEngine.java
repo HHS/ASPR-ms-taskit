@@ -8,6 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
@@ -35,6 +37,16 @@ import gov.hhs.aspr.ms.taskit.protobuf.testsupport.objects.TestInputEnum;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.objects.TestInputObject;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.translation.specs.TestProtobufComplexObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.translation.specs.TestProtobufObjectTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.translation.ProtobufTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.translation.specs.AnyTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.translation.specs.BooleanTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.translation.specs.DateTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.translation.specs.DoubleTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.translation.specs.EnumTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.translation.specs.FloatTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.translation.specs.IntegerTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.translation.specs.LongTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.translation.specs.StringTranslationSpec;
 import gov.hhs.aspr.ms.util.annotations.UnitTestForCoverage;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 import gov.hhs.aspr.ms.util.errors.ContractException;
@@ -235,6 +247,24 @@ public class AT_ProtobufJsonTaskitEngine {
 
         assertEquals(ProtobufTaskitEngineId.JSON_ENGINE_ID, protobufTaskitEngine.getTaskitEngineId());
         assertTrue(protobufTaskitEngine.isInitialized());
+
+        List<ProtobufTranslationSpec<?, ?>> list = new ArrayList<>();
+
+        list.add(new BooleanTranslationSpec());
+        list.add(new IntegerTranslationSpec());
+        list.add(new LongTranslationSpec());
+        list.add(new StringTranslationSpec());
+        list.add(new FloatTranslationSpec());
+        list.add(new DoubleTranslationSpec());
+        list.add(new DateTranslationSpec());
+        list.add(new EnumTranslationSpec());
+        list.add(new AnyTranslationSpec());
+
+        for (ProtobufTranslationSpec<?, ?> translationSpec : list) {
+            translationSpec.init(protobufTaskitEngine);
+        }
+
+        assertTrue(protobufTaskitEngine.getTranslationSpecs().containsAll(list));
 
         // parser and printer do not have equals contracts, so no way to check for
         // equality

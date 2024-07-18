@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.taskit.core.testsupport.engine.TestTaskitEngine;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.bad.BadTranslationSpecEmptyMap;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.bad.BadTranslationSpecNullMap;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.complexobject.specs.TestComplexObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.TestObjectTranslator;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.specs.TestObjectTranslationSpec;
@@ -21,14 +23,14 @@ public class AT_TaskitEngineData {
     @UnitTestMethod(target = TaskitEngineData.Builder.class, name = "build", args = {})
     public void testBuild() {
         // preconditions:
-        // uninitialized translator 
+        // uninitialized translator
         ContractException contractException = assertThrows(ContractException.class, () -> {
             TaskitEngineData.builder().addTranslator(TestObjectTranslator.getTranslator()).build();
         });
 
         assertEquals(TaskitError.UNINITIALIZED_TRANSLATORS, contractException.getErrorType());
         // duplicate translator
-         contractException = assertThrows(ContractException.class, () -> {
+        contractException = assertThrows(ContractException.class, () -> {
             TaskitEngineData.builder()
                     .addTranslator(TestObjectTranslator.getTranslator())
                     .addTranslator(TestObjectTranslator.getTranslator()).buildWithoutInit();
@@ -72,7 +74,8 @@ public class AT_TaskitEngineData {
     }
 
     @Test
-    @UnitTestMethod(target = TaskitEngineData.Builder.class, name = "addTranslationSpec", args = { TranslationSpec.class })
+    @UnitTestMethod(target = TaskitEngineData.Builder.class, name = "addTranslationSpec", args = {
+            TranslationSpec.class })
     public void testAddTranslationSpec() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
@@ -103,77 +106,23 @@ public class AT_TaskitEngineData {
 
         assertEquals(TaskitError.NULL_TRANSLATION_SPEC, contractException.getErrorType());
 
-        // TODO: this should be testing a null translationSpecToClassMap
-        // the translation spec getAppClass method returns null
-        // contractException = assertThrows(ContractException.class, () -> {
-        // TranslationSpec<TestObjectWrapper, Object> wrapperTranslationSpec = new
-        // TranslationSpec<TestObjectWrapper, Object>() {
+        // null translationSpecToClassMap
+        contractException = assertThrows(ContractException.class, () -> {
+            BadTranslationSpecNullMap badTranslationSpecNullMap = new BadTranslationSpecNullMap();
+            builder.addTranslationSpec(badTranslationSpecNullMap);
+        });
 
-        // @Override
-        // protected Object translateInputObject(TestObjectWrapper inputObject) {
-        // return inputObject.getWrappedObject();
-        // }
+        assertEquals(TaskitError.NULL_TRANSLATION_SPEC_CLASS_MAP,
+                contractException.getErrorType());
 
-        // @Override
-        // protected TestObjectWrapper translateAppObject(Object appObject) {
-        // TestObjectWrapper objectWrapper = new TestObjectWrapper();
+        // empty translationSpecToClassMap
+        contractException = assertThrows(ContractException.class, () -> {
+            BadTranslationSpecEmptyMap badTranslationSpecEmptyMap = new BadTranslationSpecEmptyMap();
+            builder.addTranslationSpec(badTranslationSpecEmptyMap);
+        });
 
-        // objectWrapper.setWrappedObject(appObject);
-
-        // return objectWrapper;
-        // }
-
-        // @Override
-        // public Class<Object> getAppObjectClass() {
-        // return null;
-        // }
-
-        // @Override
-        // public Class<TestObjectWrapper> getInputObjectClass() {
-        // return TestObjectWrapper.class;
-        // }
-        // };
-        // builder.addTranslationSpec(wrapperTranslationSpec);
-        // });
-
-        // assertEquals(TaskitError.NULL_TRANSLATION_SPEC_APP_CLASS,
-        // contractException.getErrorType());
-
-        // TODO: this should be testing an empty translationSpecToClassMap
-        // the translation spec getInputClass method returns null
-        // contractException = assertThrows(ContractException.class, () -> {
-        // TranslationSpec<TestObjectWrapper, Object> wrapperTranslationSpec = new
-        // TranslationSpec<TestObjectWrapper, Object>() {
-
-        // @Override
-        // protected Object translateInputObject(TestObjectWrapper inputObject) {
-        // return inputObject.getWrappedObject();
-        // }
-
-        // @Override
-        // protected TestObjectWrapper translateAppObject(Object appObject) {
-        // TestObjectWrapper objectWrapper = new TestObjectWrapper();
-
-        // objectWrapper.setWrappedObject(appObject);
-
-        // return objectWrapper;
-        // }
-
-        // @Override
-        // public Class<Object> getAppObjectClass() {
-        // return Object.class;
-        // }
-
-        // @Override
-        // public Class<TestObjectWrapper> getInputObjectClass() {
-        // return null;
-        // }
-        // };
-        // builder.addTranslationSpec(wrapperTranslationSpec);
-        // });
-
-        // assertEquals(TaskitError.NULL_TRANSLATION_SPEC_INPUT_CLASS,
-        // contractException.getErrorType());
+        assertEquals(TaskitError.EMPTY_TRANSLATION_SPEC_CLASS_MAP,
+                contractException.getErrorType());
 
         // if the translation spec has already been added (same, but different
         // instances)

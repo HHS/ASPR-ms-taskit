@@ -43,11 +43,11 @@ public final class TaskitEngineData {
             }
 
             if (translationSpec.getTranslationSpecClassMapping() == null) {
-                // TODO: throw exception
+                throw new ContractException(TaskitError.NULL_TRANSLATION_SPEC_CLASS_MAP);
             }
 
             if (translationSpec.getTranslationSpecClassMapping().isEmpty()) {
-                // TODO: throw exception
+                throw new ContractException(TaskitError.EMPTY_TRANSLATION_SPEC_CLASS_MAP);
             }
 
             if (this.translationSpecs.contains(translationSpec)) {
@@ -117,14 +117,17 @@ public final class TaskitEngineData {
 
         /**
          * Adds the given {@link TranslationSpec} to the TaskitEngine
-         * <p>
-         * there is a bidirectional mapping that arises from this. The Engine needs to
-         * know that class A translates to class B and vice versa.
          * 
          * @throws ContractException
          *                           <ul>
          *                           <li>{@linkplain TaskitError#NULL_TRANSLATION_SPEC}
          *                           if the given translationSpec is null</li>
+         *                           <li>{@linkplain TaskitError#NULL_TRANSLATION_SPEC_CLASS_MAP}
+         *                           if the given translationSpec's class map is
+         *                           null</li>
+         *                           <li>{@linkplain TaskitError#EMPTY_TRANSLATION_SPEC_CLASS_MAP}
+         *                           if the given translationSpec's class map is
+         *                           empty</li>
          *                           <li>{@linkplain TaskitError#DUPLICATE_TRANSLATION_SPEC}
          *                           if the given translationSpec is already known</li>
          *                           </ul>
@@ -140,6 +143,13 @@ public final class TaskitEngineData {
         }
 
         /**
+         * Adds the translator to the TaskitEngineData
+         * <p>
+         * It is expected that the added translator will be initialized externally before calling
+         * {@link TaskitEngineData.Builder#build()}.
+         * <p>
+         * If not, the build method will throw an exception.
+         * 
          * @throws ContractException
          *                           <ul>
          *                           <li>{@linkplain TaskitError#NULL_TRANSLATOR}

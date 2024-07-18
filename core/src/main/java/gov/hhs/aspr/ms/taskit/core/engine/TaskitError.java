@@ -12,6 +12,7 @@ public enum TaskitError implements ContractError {
         DUPLICATE_DEPENDENCY("Duplicate Dependency"),
         DUPLICATE_TRANSLATOR("Duplicate Translator"),
         DUPLICATE_TRANSLATION_SPEC("Duplicate TranslationSpec"),
+        EMPTY_TRANSLATION_SPEC_CLASS_MAP("The provided translation spec class map was empty. it must contain at least 1 class to translation spec mapping"),
         INVALID_INPUT_CLASS("The given input class is not of the expected type."),
         INVALID_OUTPUT_CLASS("The given output class is not of the expected type."),
         INVALID_PARENT_OUTPUT_CLASS(
@@ -20,6 +21,7 @@ public enum TaskitError implements ContractError {
                         "The given output file path does not exist. While the file will be created on write, the directory will not."),
         INVALID_TASKIT_ENGINE_BUILDER_CLASS_REF(
                         "The given Taskit Engine Builder classRef does not match the class of the actual Taskit Engine Builder"),
+        INVALID_TASKIT_ENGINE("Init was called on a translationSpec with a TaskitEngine that was not of the expected type."),
         MISSING_TRANSLATOR("Missing Translator: "),
         NO_TASKIT_ENGINES("There are no taskit engines added to this taskit engine manager."),
         NO_TRANSLATION_SPECS("There are no translation specs added to this taskit engine."),
@@ -32,6 +34,7 @@ public enum TaskitError implements ContractError {
         NULL_TASKIT_ENGINE_BUILDER("Null Taskit Engine Builder"),
         NULL_TASKIT_ENGINE_ID("Null Taskit Engine Type"),
         NULL_TRANSLATION_SPEC("Null TranslationSpec"),
+        NULL_TRANSLATION_SPEC_CLASS_MAP("The provided translation spec to class map was null"),
         NULL_TRANSLATION_SPEC_APP_CLASS("Null TranslationSpec App Class"),
         NULL_TRANSLATION_SPEC_INPUT_CLASS("Null TranslationSpec Input Class"),
         NULL_TRANSLATOR("Null Translator"),
