@@ -77,45 +77,45 @@ public abstract class TaskitEngine {
      * Writes the object to the file referenced by the Path
      * 
      * @param <O>    the type of the object to write
-     * @param path   the path of the file to write to
-     * @param object the object to write
+     * @param outputPath   the path of the file to write to
+     * @param outputObject the object to write
      * @throws IOException if there is an issue writing the file
      */
-    public abstract <O> void write(Path path, O object) throws IOException;
+    public abstract <O> void write(Path outputPath, O outputObject) throws IOException;
 
     /**
      * Translates the object and then writes the translated object to the file
      * reference by the Path
      * 
      * @param <O>    the type of the object to write
-     * @param path   the path of the file to write to
-     * @param object the object to write
+     * @param outputPath   the path of the file to write to
+     * @param outputObject the object to write
      * @throws IOException if there is an issue writing the file
      */
-    public abstract <O> void translateAndWrite(Path path, O object) throws IOException;
+    public abstract <O> void translateAndWrite(Path outputPath, O outputObject) throws IOException;
 
     /**
      * Translates the object and then writes the translated object to the file
      * reference by the Path
      * 
      * @param <O>    the type of the object to write
-     * @param path   the path of the file to write to
-     * @param object the object to write
+     * @param outputPath   the path of the file to write to
+     * @param outputObject the object to write
      * @throws IOException if there is an issue writing the file
      */
-    public abstract <C, O extends C> void translateAndWrite(Path path, O object, Class<C> classRef)
+    public abstract <C, O extends C> void translateAndWrite(Path outputPath, O outputObject, Class<C> outputClassRef)
             throws IOException;
 
     /**
      * Reads the given path into the provided class type
      * 
      * @param <I>      the input type
-     * @param path     the path of the file to read
-     * @param classRef the class to read the file as
+     * @param inputPath     the path of the file to read
+     * @param inputClassRef the class to read the file as
      * @return the resulting object from reading the file as the class
      * @throws IOException if there is an issue reading the file
      */
-    public abstract <I> I read(Path path, Class<I> classRef) throws IOException;
+    public abstract <I> I read(Path inputPath, Class<I> inputClassRef) throws IOException;
 
     /**
      * Reads the given path into the provided class type and then translates it to
@@ -123,12 +123,12 @@ public abstract class TaskitEngine {
      * 
      * @param <T>      the translated type
      * @param <I>      the input type
-     * @param path     the path of the file to read
+     * @param inputPath     the path of the file to read
      * @param classRef the class to read the file as
      * @return the resulting translated read in object
      * @throws IOException if there is an issue reading the file
      */
-    public abstract <T, I> T readAndTranslate(Path path, Class<I> inputClassRef) throws IOException;
+    public abstract <T, I> T readAndTranslate(Path inputPath, Class<I> inputClassRef) throws IOException;
 
     private void validateObject(Object object) {
         if (object == null) {
@@ -177,7 +177,7 @@ public abstract class TaskitEngine {
      * @param <O>      the type of the object
      * @param <C>      the type to translate the object as
      * @param object   the object to translate
-     * @param classRef the classRef of the type to translate the object as
+     * @param translateAsClassRef the classRef of the type to translate the object as
      * @return the translated object
      * 
      * @throws ContractException
@@ -191,10 +191,10 @@ public abstract class TaskitEngine {
      *                           objects class</li>
      *                           </ul>
      */
-    public final <T, O extends C, C> T translateObjectAsClassSafe(O object, Class<C> classRef) {
+    public final <T, O extends C, C> T translateObjectAsClassSafe(O object, Class<C> translateAsClassRef) {
         validateObject(object);
 
-        return getTranslationSpecForClass(classRef).translate(object);
+        return getTranslationSpecForClass(translateAsClassRef).translate(object);
     }
 
     /**
@@ -218,7 +218,7 @@ public abstract class TaskitEngine {
      * @param <O>      the type of the object
      * @param <C>      the type to translate the object as
      * @param object   the object to translate
-     * @param classRef the classRef of the type to translate the object as
+     * @param translateAsClassRef the classRef of the type to translate the object as
      * @return the translated object
      * 
      * @throws ContractException
@@ -235,10 +235,10 @@ public abstract class TaskitEngine {
      *                           objects class</li>
      *                           </ul>
      */
-    public final <T, O, C> T translateObjectAsClassUnsafe(O object, Class<C> classRef) {
+    public final <T, O, C> T translateObjectAsClassUnsafe(O object, Class<C> translateAsClassRef) {
         validateObject(object);
 
-        return getTranslationSpecForClass(classRef).translate(object);
+        return getTranslationSpecForClass(translateAsClassRef).translate(object);
     }
 
     /**

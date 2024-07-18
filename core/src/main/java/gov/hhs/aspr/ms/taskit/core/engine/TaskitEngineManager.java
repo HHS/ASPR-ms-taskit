@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 import gov.hhs.aspr.ms.util.resourcehelper.ResourceError;
 import gov.hhs.aspr.ms.util.resourcehelper.ResourceHelper;
@@ -133,15 +134,23 @@ public final class TaskitEngineManager {
         }
     }
 
-    // TODO: add the 3 translate methods from the TaskitEngine
+    private TaskitEngine getTaskitEngine(TaskitEngineId taskitEngineId) {
+        validateTaskitEngineId(taskitEngineId);
+
+        TaskitEngine taskitEngine = this.data.taskitEngineIdToEngineMap.get(taskitEngineId);
+
+        validateTaskitEngine(taskitEngine);
+
+        return taskitEngine;
+    }
 
     /**
      * Using the given {@link TaskitEngineId}'s associated
      * {@link TaskitEngine}, reads the given file into the provided class type
      * 
      * @param <I>            the input type
-     * @param path           the path of the file to read
-     * @param classRef       the to read the file as
+     * @param inputPath      the path of the file to read
+     * @param inputClassRef  the to read the file as
      * @param taskitEngineId the taskitEngineId to use to read the file
      * @return the resulting object from reading the file as the class
      * 
@@ -162,17 +171,14 @@ public final class TaskitEngineManager {
      * @throws RuntimeException  if the reading of the file encounters an
      *                           IOException
      */
-    public <I> I read(Path path, Class<I> classRef, TaskitEngineId taskitEngineId) {
-        validatePath(path);
-        validateClass(classRef);
-        validateTaskitEngineId(taskitEngineId);
+    public <I> I read(Path inputPath, Class<I> inputClassRef, TaskitEngineId taskitEngineId) {
+        validatePath(inputPath);
+        validateClass(inputClassRef);
 
-        TaskitEngine taskitEngine = this.data.taskitEngineIdToEngineMap.get(taskitEngineId);
-
-        validateTaskitEngine(taskitEngine);
+        TaskitEngine taskitEngine = getTaskitEngine(taskitEngineId);
 
         try {
-            return taskitEngine.read(path, classRef);
+            return taskitEngine.read(inputPath, inputClassRef);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -186,8 +192,8 @@ public final class TaskitEngineManager {
      * 
      * @param <I>            the input type
      * @param <T>            the translated type
-     * @param path           the path of the file to read
-     * @param classRef       the to read the file as
+     * @param inputPath      the path of the file to read
+     * @param inputClassRef  the to read the file as
      * @param taskitEngineId the taskitEngineId to use to read the file
      * @return the resulting object from reading the file as the class
      * 
@@ -208,17 +214,14 @@ public final class TaskitEngineManager {
      * @throws RuntimeException  if the reading of the file encounters an
      *                           IOException
      */
-    public <I, T> T readAndTranslate(Path path, Class<I> classRef, TaskitEngineId taskitEngineId) {
-        validatePath(path);
-        validateClass(classRef);
-        validateTaskitEngineId(taskitEngineId);
+    public <I, T> T readAndTranslate(Path inputPath, Class<I> inputClassRef, TaskitEngineId taskitEngineId) {
+        validatePath(inputPath);
+        validateClass(inputClassRef);
 
-        TaskitEngine taskitEngine = this.data.taskitEngineIdToEngineMap.get(taskitEngineId);
-
-        validateTaskitEngine(taskitEngine);
+        TaskitEngine taskitEngine = getTaskitEngine(taskitEngineId);
 
         try {
-            return taskitEngine.readAndTranslate(path, classRef);
+            return taskitEngine.readAndTranslate(inputPath, inputClassRef);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -226,36 +229,11 @@ public final class TaskitEngineManager {
 
     /**
      * Using the given {@link TaskitEngineId}'s associated
-     * {@link TaskitEngine}, Writes the object to the file referenced by the Path.
-     * 
-     * @param <O> the class of the object to write to the outputFile
-     * @param <U> the optional parent class of the object to write to the outputFile
-     * 
-     * @throws ContractException
-     *                           <ul>
-     *                           <li>{@linkplain TaskitCoreError#NULL_PATH}
-     *                           if the path is null</li>
-     *                           <li>{@linkplain ResourceError#FILE_PATH_IS_DIRECTORY}
-     *                           if the path points to a directory instead of a
-     *                           file</li>
-     *                           <li>{@linkplain TaskitCoreError#NULL_OBJECT_FOR_TRANSLATION}
-     *                           if the object is null</li>
-     *                           <li>{@linkplain TaskitCoreError#NULL_TASKIT_ENGINE_ID}
-     *                           if taskitEngineId is null</li>
-     *                           <li>{@linkplain TaskitCoreError#NULL_TASKIT_ENGINE}
-     *                           if taskitEngine is null</li>
-     *                           </ul>
-     * @throws RuntimeException  if the writing of the file encounters an
-     *                           IOException
-     */
-
-    /**
-     * Using the given {@link TaskitEngineId}'s associated
      * {@link TaskitEngine}, writes the object to the file referenced by the Path.
      * 
      * @param <O>            the type of the object to write
-     * @param path           the path of the file to write to
-     * @param object         the object to write
+     * @param outputPath     the path of the file to write to
+     * @param outputObject   the object to write
      * @param taskitEngineId the taskitEngineId to use to write the object
      * 
      * @throws ContractException
@@ -275,8 +253,8 @@ public final class TaskitEngineManager {
      * @throws RuntimeException  if the writing of the file encounters an
      *                           IOException
      */
-    public <O> void write(Path path, O object, TaskitEngineId taskitEngineId) {
-        write(path, object, Optional.empty(), taskitEngineId, false);
+    public <O> void write(Path outputPath, O outputObject, TaskitEngineId taskitEngineId) {
+        write(outputPath, outputObject, Optional.empty(), taskitEngineId, false);
     }
 
     /**
@@ -286,8 +264,8 @@ public final class TaskitEngineManager {
      * reference by the Path
      * 
      * @param <O>            the type of the object to write
-     * @param path           the path of the file to write to
-     * @param object         the object to write
+     * @param outputPath     the path of the file to write to
+     * @param outputObject   the object to write
      * @param taskitEngineId the taskitEngineId to use to write the object
      * 
      * @throws ContractException
@@ -307,8 +285,8 @@ public final class TaskitEngineManager {
      * @throws RuntimeException  if the writing of the file encounters an
      *                           IOException
      */
-    public <O> void translateAndWrite(Path path, O object, TaskitEngineId taskitEngineId) {
-        write(path, object, Optional.empty(), taskitEngineId, true);
+    public <O> void translateAndWrite(Path outputPath, O outputObject, TaskitEngineId taskitEngineId) {
+        write(outputPath, outputObject, Optional.empty(), taskitEngineId, true);
     }
 
     /**
@@ -321,9 +299,9 @@ public final class TaskitEngineManager {
      * 
      * @param <C>            the type to translate the object as
      * @param <O>            the type of the object
-     * @param path           the path of the file to write to
-     * @param object         the object to write
-     * @param classRef       the class to translate the object as
+     * @param outputPath     the path of the file to write to
+     * @param outputObject   the object to write
+     * @param outputClassRef the class to translate the object as
      * @param taskitEngineId the taskitEngineId to use to write the object
      * 
      * @throws ContractException
@@ -345,11 +323,129 @@ public final class TaskitEngineManager {
      * @throws RuntimeException  if the writing of the file encounters an
      *                           IOException
      */
-    public <C, O extends C> void translateAndWrite(Path path, O object, Class<C> classRef,
+    public <C, O extends C> void translateAndWrite(Path outputPath, O outputObject, Class<C> outputClassRef,
             TaskitEngineId taskitEngineId) {
-        validateClass(classRef);
+        validateClass(outputClassRef);
 
-        write(path, object, Optional.of(classRef), taskitEngineId, true);
+        write(outputPath, outputObject, Optional.of(outputClassRef), taskitEngineId, true);
+    }
+
+    /**
+     * Given an object, uses the class of the object to obtain the translationSpec
+     * and then calls {@link TranslationSpec#translate(Object)} to translate the
+     * object
+     * <p>
+     * this conversion method will be used approx ~90% of the time
+     * </p>
+     * 
+     * @param <T>            the translated type
+     * @param object         the object to translate
+     * @param taskitEngineId the taskitEngine to use for translate
+     * @return the translated object
+     * @throws ContractException
+     *                           <ul>
+     *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
+     *                           if the passed in object is null</li>
+     *                           <li>{@linkplain TaskitError#UNKNOWN_TRANSLATION_SPEC}
+     *                           if no translationSpec was provided for the given
+     *                           objects class</li>
+     *                           </ul>
+     */
+    public final <T> T translateObject(Object object, TaskitEngineId taskitEngineId) {
+        validateObject(object);
+
+        TaskitEngine taskitEngine = getTaskitEngine(taskitEngineId);
+
+        return taskitEngine.translateObject(object);
+    }
+
+    /**
+     * Given an object, uses the given classRef to obtain the
+     * translationSpec and then calls {@link TranslationSpec#translate(Object)}
+     * <p>
+     * This method call is safe in the sense that the type parameters ensure that
+     * the passed in object is actually a child of the passed in classRef type
+     * </p>
+     * <p>
+     * this conversion method will be used approx ~7% of the time
+     * </p>
+     * 
+     * @param <T>                 the translated type
+     * @param <O>                 the type of the object
+     * @param <C>                 the type to translate the object as
+     * @param object              the object to translate
+     * @param translateAsClassRef the classRef of the type to translate the object
+     *                            as
+     * @param taskitEngineId      the taskitEngine to use for translate
+     * @return the translated object
+     * 
+     * @throws ContractException
+     *                           <ul>
+     *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
+     *                           if the passed in object is null</li>
+     *                           <li>{@linkplain TaskitError#NULL_CLASS_REF}
+     *                           if the passed in classRef is null</li>
+     *                           <li>{@linkplain TaskitError#UNKNOWN_TRANSLATION_SPEC}
+     *                           if no translationSpec was provided for the given
+     *                           objects class</li>
+     *                           </ul>
+     */
+    public final <T, O extends C, C> T translateObjectAsClassSafe(O object, Class<C> translateAsClassRef,
+            TaskitEngineId taskitEngineId) {
+        validateObject(object);
+
+        TaskitEngine taskitEngine = getTaskitEngine(taskitEngineId);
+
+        return taskitEngine.translateObjectAsClassSafe(object, translateAsClassRef);
+    }
+
+    /**
+     * Given an object, uses the given classRef to obtain the
+     * translationSpec and then calls {@link TranslationSpec#translate(Object)}
+     * <p>
+     * There is no type safety with this method unlike the
+     * {@link ITaskitEngine#translateObjectAsClassSafe(Object, Class)} method.
+     * Therefore it is on the caller of this method to ensure that the given object
+     * can be translated using the given classRef.
+     * <p>
+     * A conventional use case for this would be when you want to wrap an object
+     * into another object type where there is no correlation between the wrapping
+     * object and the object being wrapped.
+     * </p>
+     * <p>
+     * this conversion method will be used approx ~3% of the time
+     * </p>
+     * 
+     * @param <T>                 the translated type
+     * @param <O>                 the type of the object
+     * @param <C>                 the type to translate the object as
+     * @param object              the object to translate
+     * @param translateAsClassRef the classRef of the type to translate the object
+     *                            as
+     * @param taskitEngineId      the taskitEngine to use for translate
+     * @return the translated object
+     * 
+     * @throws ContractException
+     *                           <ul>
+     *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
+     *                           if the passed in object is null</li>
+     *                           <li>{@linkplain TaskitError#NULL_CLASS_REF}
+     *                           if the passed in classRef is null</li>
+     *                           <li>{@linkplain TaskitError#UNINITIALIZED_TASKIT_ENGINE}
+     *                           if this engine was not initialized</li>
+     *                           <li>
+     *                           <li>{@linkplain TaskitError#UNKNOWN_TRANSLATION_SPEC}
+     *                           if no translationSpec was provided for the given
+     *                           objects class</li>
+     *                           </ul>
+     */
+    public final <T, O, C> T translateObjectAsClassUnsafe(O object, Class<C> translateAsClassRef,
+            TaskitEngineId taskitEngineId) {
+        validateObject(object);
+
+        TaskitEngine taskitEngine = getTaskitEngine(taskitEngineId);
+
+        return taskitEngine.translateObjectAsClassUnsafe(object, translateAsClassRef);
     }
 
     /**
@@ -359,27 +455,24 @@ public final class TaskitEngineManager {
      * translate flag is set and whether there is a classRef provided to translate
      * the object as
      */
-    <C, O extends C> void write(Path path, O object, Optional<Class<C>> classRef,
-            TaskitEngineId taskitEngineId, boolean translate) {
+    <C, O extends C> void write(Path outputPath, O outputObject, Optional<Class<C>> outputClassRef,
+            TaskitEngineId taskitEngineId, boolean translateBeforeWrite) {
 
-        validatePath(path);
-        validateObject(object);
-        validateTaskitEngineId(taskitEngineId);
+        validatePath(outputPath);
+        validateObject(outputObject);
 
-        TaskitEngine taskitEngine = this.data.taskitEngineIdToEngineMap.get(taskitEngineId);
-
-        validateTaskitEngine(taskitEngine);
+        TaskitEngine taskitEngine = getTaskitEngine(taskitEngineId);
 
         try {
-            if (!translate) {
-                taskitEngine.write(path, object);
+            if (!translateBeforeWrite) {
+                taskitEngine.write(outputPath, outputObject);
                 return;
             }
-            if (classRef.isEmpty()) {
-                taskitEngine.translateAndWrite(path, object);
+            if (outputClassRef.isEmpty()) {
+                taskitEngine.translateAndWrite(outputPath, outputObject);
                 return;
             }
-            taskitEngine.translateAndWrite(path, object, classRef.get());
+            taskitEngine.translateAndWrite(outputPath, outputObject, outputClassRef.get());
             return;
         } catch (IOException e) {
             throw new RuntimeException(e);
