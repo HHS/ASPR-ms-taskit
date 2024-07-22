@@ -35,10 +35,9 @@ public final class TranslatorContext {
      * @param classRef the classRef of the TaskitEngine type
      * @return the taskitEngineBuilder
      * @throws ContractException {@linkplain TaskitError#INVALID_TASKIT_ENGINE_BUILDER_CLASS_REF}
-     *                           if the given classRef does not match the class or
-     *                           the taskitEngineBuilder is null
+     *                           if the given classRef does not match the class
      */
-    public <T extends ITaskitEngineBuilder> T getTaskitEngineBuilder(final Class<T> classRef) {
+    public <T extends ITaskitEngineBuilder> T getTaskitEngineBuilder(Class<T> classRef) {
         if (classRef.isAssignableFrom(this.builder.getClass())) {
             return classRef.cast(this.builder);
         }

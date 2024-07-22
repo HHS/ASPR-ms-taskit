@@ -1,19 +1,8 @@
 package gov.hhs.aspr.ms.taskit.core.translation;
 
 /**
- * a {@link Translator} identifier
+ * used as an identifier for Translators 
  */
 public interface TranslatorId {
-    /**
-     * Implementation consistent with equals()
-     */
-    @Override
-    public int hashCode();
 
-    /**
-     * Two Translator ids are equal if and only if they represent the same
-     * Translator. Translator ids are generally implemented as static instances.
-     */
-    @Override
-    public boolean equals(Object obj);
 }

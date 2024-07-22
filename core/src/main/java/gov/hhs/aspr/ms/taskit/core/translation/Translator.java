@@ -11,7 +11,7 @@ import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
  * The Translator class serves as a wrapper around one or more
- * {@link ITranslationSpec}(s) and assists in adding those translationSpecs
+ * {@link TranslationSpec}(s) and assists in adding those translationSpecs
  * to the {@link TaskitEngine}
  */
 public final class Translator {
@@ -41,13 +41,17 @@ public final class Translator {
             if (this == obj) {
                 return true;
             }
+
             if (obj == null) {
                 return false;
             }
+
             if (getClass() != obj.getClass()) {
                 return false;
             }
+
             Data other = (Data) obj;
+
             return Objects.equals(translatorId, other.translatorId) && Objects.equals(dependencies, other.dependencies);
         }
 
@@ -117,7 +121,7 @@ public final class Translator {
          * @throws ContractException {@linkplain TaskitError#NULL_INIT_CONSUMER}
          *                           if the initConsumer is null
          */
-        public <E extends TaskitEngine> Builder setInitializer(Consumer<TranslatorContext> initConsumer) {
+        public Builder setInitializer(Consumer<TranslatorContext> initConsumer) {
             if (initConsumer == null) {
                 throw new ContractException(TaskitError.NULL_INIT_CONSUMER);
             }
@@ -155,7 +159,6 @@ public final class Translator {
 
             return this;
         }
-
     }
 
     /**
@@ -223,8 +226,7 @@ public final class Translator {
             return false;
         }
         Translator other = (Translator) obj;
-        // Objects.equals will automatically return if a == b, so not need for check
+
         return Objects.equals(data, other.data);
     }
-
 }

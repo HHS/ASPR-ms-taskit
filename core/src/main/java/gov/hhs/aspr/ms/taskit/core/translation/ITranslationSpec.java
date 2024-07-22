@@ -32,5 +32,8 @@ public interface ITranslationSpec {
      */
     public boolean isInitialized();
 
+    /**
+     * @return a class to TranslationSpec mapping for use in a {@link TaskitEngine}
+     */
     public Map<Class<?>, ITranslationSpec> getTranslationSpecClassMapping();
 }

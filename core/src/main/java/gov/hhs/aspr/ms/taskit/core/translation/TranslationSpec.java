@@ -12,8 +12,8 @@ import gov.hhs.aspr.ms.util.errors.ContractException;
  * Core TranslationSpec that must be
  * implemented by each needed translationSpec.
  * <p>
- * Note: No reference to a {@link TaskitEngine} exists in this class, and
- * must be implemented by the implementing class.
+ * The implementing spec must define the type of the TaskitEngine it intends to
+ * use
  */
 public abstract class TranslationSpec<I, A, E extends TaskitEngine> implements ITranslationSpec {
     private boolean initialized = false;
@@ -48,6 +48,9 @@ public abstract class TranslationSpec<I, A, E extends TaskitEngine> implements I
         this.initialized = true;
     }
 
+    /**
+     * @return the initialized flag
+     */
     public boolean isInitialized() {
         return this.initialized;
     }
@@ -58,49 +61,52 @@ public abstract class TranslationSpec<I, A, E extends TaskitEngine> implements I
      * <p>
      * It first checks if the object class is exactly equal to either the
      * App or
-     * Input Class and if so, calls the related method
+     * Input Class
      * </p>
      * <p>
      * It then checks if the the object class is assignable from either
      * the App or
-     * Input Class and if so, calls the related method
+     * Input Class
      * </p>
      * <p>
-     * If no match can be found, an exception is thrown
+     * after the above checks, calls the appropriate method
+     * </p>
+     * <p>
+     * If the object is not able to be translated by this spec, the exception is
+     * thrown
      * </p>
      * 
      * @param <T>    the translated type
      * @param object the object to translate
      * @return the translated object
-     * @throws ContractException {@linkplain TaskitError#UNKNOWN_OBJECT} if
-     *                           no match can be found between the passed in object
-     *                           and the given appClass and InputClass
+     * @throws ContractException {@linkplain TaskitError#UNKNOWN_OBJECT} if the
+     *                           given object cannot be translated by this
+     *                           translation spec
      */
     @SuppressWarnings("unchecked")
-    public <T> T translate(Object obj) {
-        checkInit();
+    public <T> T translate(Object object) {
+        Class<?> objectClass = object.getClass();
 
-        Class<?> objClass = obj.getClass();
+        boolean isAppObject = this.getAppObjectClass() == objectClass;
+        boolean isInObject = this.getInputObjectClass() == objectClass;
 
-        boolean isAppObj = this.getAppObjectClass() == objClass;
-        boolean isInObj = this.getInputObjectClass() == objClass;
+        boolean isAssignAppObject = this.getAppObjectClass().isAssignableFrom(objectClass);
+        boolean isAssignInObject = this.getInputObjectClass().isAssignableFrom(objectClass);
 
-        boolean isAssignAppObj = this.getAppObjectClass().isAssignableFrom(objClass);
-        boolean isAssignInObj = this.getInputObjectClass().isAssignableFrom(objClass);
-
-        boolean shouldTranslateAsApp = (isAppObj && !isInObj) || (isAssignAppObj && !isAssignInObj);
-        boolean shouldTranslateAsIn = (isInObj && !isAppObj) || (isAssignInObj && !isAssignAppObj);
+        boolean shouldTranslateAsApp = (isAppObject && !isInObject) || (isAssignAppObject && !isAssignInObject);
+        boolean shouldTranslateAsIn = (isInObject && !isAppObject) || (isAssignInObject && !isAssignAppObject);
 
         if (shouldTranslateAsApp) {
-            return (T) this.translateAppObject((A) obj);
+            return (T) this.translateAppObject((A) object);
         }
 
         if (shouldTranslateAsIn) {
-            return (T) this.translateInputObject((I) obj);
+            return (T) this.translateInputObject((I) object);
         }
 
         throw new ContractException(TaskitError.UNKNOWN_OBJECT, "Object is not a "
-                + this.getAppObjectClass().getName() + " and it is not a " + this.getInputObjectClass().getName());
+                + this.getAppObjectClass().getName() + " and it is not a " + this.getInputObjectClass().getName()
+                + ". Given object is of type: " + objectClass.getName());
 
     }
 
@@ -140,7 +146,8 @@ public abstract class TranslationSpec<I, A, E extends TaskitEngine> implements I
         return initialized == other.initialized;
     }
 
-    public Map<Class<?>, ITranslationSpec> getTranslationSpecClassMapping() {
+    @Override
+    public final Map<Class<?>, ITranslationSpec> getTranslationSpecClassMapping() {
         final Map<Class<?>, ITranslationSpec> translationSpecClassMap = new LinkedHashMap<>();
 
         translationSpecClassMap.put(getAppObjectClass(), this);
@@ -174,14 +181,4 @@ public abstract class TranslationSpec<I, A, E extends TaskitEngine> implements I
      * @return the class of the input type
      */
     public abstract Class<I> getInputObjectClass();
-
-    /*
-     * checks the initialized flag on this translation spec and throws an exception
-     * if it has not been initialized
-     */
-    private void checkInit() {
-        if (!this.initialized) {
-            throw new ContractException(TaskitError.UNINITIALIZED_TRANSLATION_SPEC);
-        }
-    }
 }
