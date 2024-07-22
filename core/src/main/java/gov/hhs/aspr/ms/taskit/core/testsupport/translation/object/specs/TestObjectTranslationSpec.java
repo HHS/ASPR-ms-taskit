@@ -4,6 +4,9 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestInputObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.TestTranslationSpec;
 
+/** 
+ * Translation Specification for the TestObject
+ */
 public class TestObjectTranslationSpec extends TestTranslationSpec<TestInputObject, TestAppObject> {
 
     @Override

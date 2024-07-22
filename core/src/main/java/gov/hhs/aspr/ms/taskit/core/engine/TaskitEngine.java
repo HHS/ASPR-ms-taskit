@@ -98,7 +98,7 @@ public abstract class TaskitEngine {
     public abstract <O> void translateAndWrite(Path outputPath, O outputObject) throws IOException;
 
     /**
-     * Translates the object and then writes the translated object to the file
+     * Translates the object using the given classRef and then writes the translated object to the file
      * reference by the Path
      * 
      * @param <O>          the type of the object to write

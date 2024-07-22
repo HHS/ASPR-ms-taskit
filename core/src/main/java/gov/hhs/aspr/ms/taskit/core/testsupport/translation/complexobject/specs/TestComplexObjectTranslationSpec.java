@@ -4,6 +4,9 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestComplexAppObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestComplexInputObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.TestTranslationSpec;
 
+/** 
+ * Translation specifications for TestComplexObject
+ */
 public class TestComplexObjectTranslationSpec
         extends TestTranslationSpec<TestComplexInputObject, TestComplexAppObject> {
 

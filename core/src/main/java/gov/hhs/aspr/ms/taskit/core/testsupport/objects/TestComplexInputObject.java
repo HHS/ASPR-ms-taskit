@@ -2,31 +2,60 @@ package gov.hhs.aspr.ms.taskit.core.testsupport.objects;
 
 import java.util.Objects;
 
+/**
+ * compliment class of {@link TestComplexAppObject}
+ * <p>
+ * <b>Should NOT</b> be used outside of testing
+ */
 public class TestComplexInputObject {
     private String testString;
     private double startTime;
     private int numEntities;
 
+    /**
+     * @return the value of the string variable
+     */
     public String getTestString() {
         return testString;
     }
 
+    /**
+     * sets the value of the string variable
+     * 
+     * @param testString the value to set
+     */
     public void setTestString(String testString) {
         this.testString = testString;
     }
 
+    /**
+     * @return the value of the startTime variable
+     */
     public double getStartTime() {
         return startTime;
     }
 
+    /**
+     * sets the value of the startTime variable
+     * 
+     * @param startTime the value to set
+     */
     public void setStartTime(double startTime) {
         this.startTime = startTime;
     }
 
+    /**
+     * @return the value of the numEntities variable
+     */
     public int getNumEntities() {
         return numEntities;
     }
 
+    /**
+     * sets the value of the numEntities variable
+     * 
+     * @param numEntities the value to set
+     */
     public void setNumEntities(int numEntities) {
         this.numEntities = numEntities;
     }

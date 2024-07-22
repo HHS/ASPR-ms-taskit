@@ -2,6 +2,12 @@ package gov.hhs.aspr.ms.taskit.core.testsupport.objects;
 
 import java.util.Objects;
 
+/**
+ * Test class representing a class with various variables, including a Complex
+ * class
+ * <p>
+ * <b>Should NOT</b> be used outside of testing
+ */
 public class TestAppObject {
     private int integer;
     private boolean bool;
@@ -9,44 +15,84 @@ public class TestAppObject {
     private TestComplexAppObject testComplexAppObject;
     private TestAppEnum testAppEnum;
 
+    /**
+     * @return value of the integer variable
+     */
     public int getInteger() {
         return integer;
     }
 
+    /**
+     * sets the value of the integer variable
+     * 
+     * @param integer the value to set
+     */
     public void setInteger(int integer) {
         this.integer = integer;
     }
 
+    /**
+     * @return value of the bool variable
+     */
     public boolean isBool() {
         return bool;
     }
 
+    /**
+     * sets the value of the bool variable
+     * 
+     * @param bool the value to set
+     */
     public void setBool(boolean bool) {
         this.bool = bool;
     }
 
+    /**
+     * @return the value of the string variable
+     */
     public String getString() {
         return string;
     }
 
+    /**
+     * sets the value of the string variable
+     * 
+     * @param string the value to set
+     */
     public void setString(String string) {
         this.string = string;
     }
 
+    /**
+     * @return the value of the complexAppObject variable
+     */
     public TestComplexAppObject getTestComplexAppObject() {
         return testComplexAppObject;
     }
 
+    /**
+     * sets the value of the complexAppObject variable
+     * 
+     * @param testComplexAppObject the value to set
+     */
     public void setTestComplexAppObject(TestComplexAppObject testComplexAppObject) {
         this.testComplexAppObject = testComplexAppObject;
     }
 
-    public void setTestAppEnum(TestAppEnum testAppEnum) {
-        this.testAppEnum = testAppEnum;
-    }
-
+    /**
+     * @return the value of the enum variable
+     */
     public TestAppEnum getTestAppEnum() {
         return this.testAppEnum;
+    }
+
+    /**
+     * sets the value of the enum variable
+     * 
+     * @param testAppEnum the value to set
+     */
+    public void setTestAppEnum(TestAppEnum testAppEnum) {
+        this.testAppEnum = testAppEnum;
     }
 
     @Override
@@ -69,5 +115,4 @@ public class TestAppObject {
         return integer == other.integer && bool == other.bool && Objects.equals(string, other.string)
                 && Objects.equals(testComplexAppObject, other.testComplexAppObject);
     }
-
 }
