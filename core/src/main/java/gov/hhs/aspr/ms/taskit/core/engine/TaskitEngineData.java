@@ -20,6 +20,12 @@ import gov.hhs.aspr.ms.util.graph.GraphDepthEvaluator;
 import gov.hhs.aspr.ms.util.graph.Graphs;
 import gov.hhs.aspr.ms.util.graph.MutableGraph;
 
+/**
+ * Data class for TaskitEngine
+ * <p>
+ * contains the class to translation spec mapping that resides in the root
+ * TaskitEngine
+ */
 public final class TaskitEngineData {
     // package access for use in TaskitEngine
     final Map<Class<?>, ITranslationSpec> classToTranslationSpecMap = new LinkedHashMap<>();
@@ -31,6 +37,9 @@ public final class TaskitEngineData {
         this.translationSpecs.addAll(translationSpecs);
     }
 
+    /**
+     * Builder class for TaskitEngineData
+     */
     public static class Builder {
         private Map<Class<?>, ITranslationSpec> classToTranslationSpecMap = new LinkedHashMap<>();
         private Set<ITranslationSpec> translationSpecs = new LinkedHashSet<>();
@@ -145,7 +154,8 @@ public final class TaskitEngineData {
         /**
          * Adds the translator to the TaskitEngineData
          * <p>
-         * It is expected that the added translator will be initialized externally before calling
+         * It is expected that the added translator will be initialized externally
+         * before calling
          * {@link TaskitEngineData.Builder#build()}.
          * <p>
          * If not, the build method will throw an exception.
@@ -315,13 +325,17 @@ public final class TaskitEngineData {
             return true;
         }
 
+        if (obj == null) {
+            return false;
+        }
+
         if (!(obj instanceof TaskitEngineData)) {
             return false;
         }
 
         TaskitEngineData other = (TaskitEngineData) obj;
-        return Objects.equals(classToTranslationSpecMap, other.classToTranslationSpecMap)
-                && Objects.equals(translationSpecs, other.translationSpecs);
-    }
 
+        return Objects.equals(translationSpecs, other.translationSpecs)
+                && Objects.equals(classToTranslationSpecMap, other.classToTranslationSpecMap);
+    }
 }

@@ -13,7 +13,9 @@ import gov.hhs.aspr.ms.util.resourcehelper.ResourceHelper;
 
 /**
  * The TaskitEngineManager allows {@link TaskitEngine}s to be added to it, and
- * acts as a wrapper around the TaskitEngine read/write/translate methods.
+ * acts as a wrapper around the TaskitEngine read/write/translate methods, using
+ * the {@link TaskitEngineId} to select which engine to use for the given
+ * operation
  */
 public final class TaskitEngineManager {
     private final Data data;
@@ -35,7 +37,7 @@ public final class TaskitEngineManager {
     public final static class Builder {
         Data data;
 
-        Builder(Data data) {
+        private Builder(Data data) {
             this.data = data;
         }
 
@@ -346,14 +348,16 @@ public final class TaskitEngineManager {
      *                           <ul>
      *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
      *                           if the passed in object is null</li>
+     *                           <li>{@linkplain TaskitError#NULL_TASKIT_ENGINE_ID}
+     *                           if taskitEngineId is null</li>
+     *                           <li>{@linkplain TaskitError#NULL_TASKIT_ENGINE}
+     *                           if taskitEngine is null</li>
      *                           <li>{@linkplain TaskitError#UNKNOWN_TRANSLATION_SPEC}
      *                           if no translationSpec was provided for the given
      *                           objects class</li>
      *                           </ul>
      */
     public final <T> T translateObject(Object object, TaskitEngineId taskitEngineId) {
-        validateObject(object);
-
         TaskitEngine taskitEngine = getTaskitEngine(taskitEngineId);
 
         return taskitEngine.translateObject(object);
@@ -383,6 +387,10 @@ public final class TaskitEngineManager {
      *                           <ul>
      *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
      *                           if the passed in object is null</li>
+     *                           <li>{@linkplain TaskitError#NULL_TASKIT_ENGINE_ID}
+     *                           if taskitEngineId is null</li>
+     *                           <li>{@linkplain TaskitError#NULL_TASKIT_ENGINE}
+     *                           if taskitEngine is null</li>
      *                           <li>{@linkplain TaskitError#NULL_CLASS_REF}
      *                           if the passed in classRef is null</li>
      *                           <li>{@linkplain TaskitError#UNKNOWN_TRANSLATION_SPEC}
@@ -392,7 +400,6 @@ public final class TaskitEngineManager {
      */
     public final <T, O extends C, C> T translateObjectAsClassSafe(O object, Class<C> translateAsClassRef,
             TaskitEngineId taskitEngineId) {
-        validateObject(object);
 
         TaskitEngine taskitEngine = getTaskitEngine(taskitEngineId);
 
@@ -427,13 +434,15 @@ public final class TaskitEngineManager {
      * 
      * @throws ContractException
      *                           <ul>
+     * 
+     *                           <li>{@linkplain TaskitError#NULL_TASKIT_ENGINE_ID}
+     *                           if taskitEngineId is null</li>
+     *                           <li>{@linkplain TaskitError#NULL_TASKIT_ENGINE}
+     *                           if taskitEngine is null</li>
      *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
      *                           if the passed in object is null</li>
      *                           <li>{@linkplain TaskitError#NULL_CLASS_REF}
      *                           if the passed in classRef is null</li>
-     *                           <li>{@linkplain TaskitError#UNINITIALIZED_TASKIT_ENGINE}
-     *                           if this engine was not initialized</li>
-     *                           <li>
      *                           <li>{@linkplain TaskitError#UNKNOWN_TRANSLATION_SPEC}
      *                           if no translationSpec was provided for the given
      *                           objects class</li>
@@ -441,14 +450,12 @@ public final class TaskitEngineManager {
      */
     public final <T, O, C> T translateObjectAsClassUnsafe(O object, Class<C> translateAsClassRef,
             TaskitEngineId taskitEngineId) {
-        validateObject(object);
-
         TaskitEngine taskitEngine = getTaskitEngine(taskitEngineId);
 
         return taskitEngine.translateObjectAsClassUnsafe(object, translateAsClassRef);
     }
 
-    /**
+    /*
      * package access for testing
      * 
      * calls the associated TaskitEngine write method depending on whether the

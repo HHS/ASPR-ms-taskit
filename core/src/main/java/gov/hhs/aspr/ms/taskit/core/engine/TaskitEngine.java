@@ -15,7 +15,7 @@ import gov.hhs.aspr.ms.util.errors.ContractException;
  * TaskitEngine Initializes all {@link TranslationSpec}s and maintains
  * a mapping between the translationSpec and it's respective classes. Each
  * serialization library must implement its own unique Taskit Engine that
- * includes this Engine in its data.
+ * extends this engine
  */
 public abstract class TaskitEngine {
     private final TaskitEngineData data;
@@ -26,10 +26,6 @@ public abstract class TaskitEngine {
     protected TaskitEngine(TaskitEngineData data, TaskitEngineId taskitEngineId) {
         this.data = data;
         this.taskitEngineId = taskitEngineId;
-    }
-
-    public final TaskitEngineId getTaskitEngineId() {
-        return this.taskitEngineId;
     }
 
     /**
@@ -59,6 +55,13 @@ public abstract class TaskitEngine {
     }
 
     /**
+     * @return the taskitEngineId for this taskitEngine
+     */
+    public final TaskitEngineId getTaskitEngineId() {
+        return this.taskitEngineId;
+    }
+
+    /**
      * @return the initialized flag of the TaskitEngine
      */
     public final boolean isInitialized() {
@@ -76,7 +79,7 @@ public abstract class TaskitEngine {
     /**
      * Writes the object to the file referenced by the Path
      * 
-     * @param <O>    the type of the object to write
+     * @param <O>          the type of the object to write
      * @param outputPath   the path of the file to write to
      * @param outputObject the object to write
      * @throws IOException if there is an issue writing the file
@@ -87,7 +90,7 @@ public abstract class TaskitEngine {
      * Translates the object and then writes the translated object to the file
      * reference by the Path
      * 
-     * @param <O>    the type of the object to write
+     * @param <O>          the type of the object to write
      * @param outputPath   the path of the file to write to
      * @param outputObject the object to write
      * @throws IOException if there is an issue writing the file
@@ -98,7 +101,7 @@ public abstract class TaskitEngine {
      * Translates the object and then writes the translated object to the file
      * reference by the Path
      * 
-     * @param <O>    the type of the object to write
+     * @param <O>          the type of the object to write
      * @param outputPath   the path of the file to write to
      * @param outputObject the object to write
      * @throws IOException if there is an issue writing the file
@@ -109,7 +112,7 @@ public abstract class TaskitEngine {
     /**
      * Reads the given path into the provided class type
      * 
-     * @param <I>      the input type
+     * @param <I>           the input type
      * @param inputPath     the path of the file to read
      * @param inputClassRef the class to read the file as
      * @return the resulting object from reading the file as the class
@@ -121,20 +124,14 @@ public abstract class TaskitEngine {
      * Reads the given path into the provided class type and then translates it to
      * the corresponding app type associated with the input type
      * 
-     * @param <T>      the translated type
-     * @param <I>      the input type
-     * @param inputPath     the path of the file to read
-     * @param classRef the class to read the file as
+     * @param <T>       the translated type
+     * @param <I>       the input type
+     * @param inputPath the path of the file to read
+     * @param classRef  the class to read the file as
      * @return the resulting translated read in object
      * @throws IOException if there is an issue reading the file
      */
     public abstract <T, I> T readAndTranslate(Path inputPath, Class<I> inputClassRef) throws IOException;
-
-    private void validateObject(Object object) {
-        if (object == null) {
-            throw new ContractException(TaskitError.NULL_OBJECT_FOR_TRANSLATION);
-        }
-    }
 
     /**
      * Given an object, uses the class of the object to obtain the translationSpec
@@ -173,11 +170,12 @@ public abstract class TaskitEngine {
      * this conversion method will be used approx ~7% of the time
      * </p>
      * 
-     * @param <T>      the translated type
-     * @param <O>      the type of the object
-     * @param <C>      the type to translate the object as
-     * @param object   the object to translate
-     * @param translateAsClassRef the classRef of the type to translate the object as
+     * @param <T>                 the translated type
+     * @param <O>                 the type of the object
+     * @param <C>                 the type to translate the object as
+     * @param object              the object to translate
+     * @param translateAsClassRef the classRef of the type to translate the object
+     *                            as
      * @return the translated object
      * 
      * @throws ContractException
@@ -214,11 +212,12 @@ public abstract class TaskitEngine {
      * this conversion method will be used approx ~3% of the time
      * </p>
      * 
-     * @param <T>      the translated type
-     * @param <O>      the type of the object
-     * @param <C>      the type to translate the object as
-     * @param object   the object to translate
-     * @param translateAsClassRef the classRef of the type to translate the object as
+     * @param <T>                 the translated type
+     * @param <O>                 the type of the object
+     * @param <C>                 the type to translate the object as
+     * @param object              the object to translate
+     * @param translateAsClassRef the classRef of the type to translate the object
+     *                            as
      * @return the translated object
      * 
      * @throws ContractException
@@ -227,9 +226,6 @@ public abstract class TaskitEngine {
      *                           if the passed in object is null</li>
      *                           <li>{@linkplain TaskitError#NULL_CLASS_REF}
      *                           if the passed in classRef is null</li>
-     *                           <li>{@linkplain TaskitError#UNINITIALIZED_TASKIT_ENGINE}
-     *                           if this engine was not initialized</li>
-     *                           <li>
      *                           <li>{@linkplain TaskitError#UNKNOWN_TRANSLATION_SPEC}
      *                           if no translationSpec was provided for the given
      *                           objects class</li>
@@ -279,12 +275,24 @@ public abstract class TaskitEngine {
         if (this == obj) {
             return true;
         }
+
+        if (obj == null) {
+            return false;
+        }
+
         if (!(obj instanceof TaskitEngine)) {
             return false;
         }
+
         TaskitEngine other = (TaskitEngine) obj;
-        return Objects.equals(data, other.data) && Objects.equals(taskitEngineId, other.taskitEngineId)
-                && isInitialized == other.isInitialized;
+
+        return Objects.equals(taskitEngineId, other.taskitEngineId) && isInitialized == other.isInitialized
+                && Objects.equals(data, other.data);
     }
 
+    private void validateObject(Object object) {
+        if (object == null) {
+            throw new ContractException(TaskitError.NULL_OBJECT_FOR_TRANSLATION);
+        }
+    }
 }
