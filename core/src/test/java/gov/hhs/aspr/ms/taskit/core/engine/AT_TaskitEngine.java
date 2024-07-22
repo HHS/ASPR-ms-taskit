@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.taskit.core.testsupport.TestObjectUtil;
 import gov.hhs.aspr.ms.taskit.core.testsupport.engine.TestTaskitEngine;
+import gov.hhs.aspr.ms.taskit.core.testsupport.engine.TestTaskitEngineBuilderBridge;
 import gov.hhs.aspr.ms.taskit.core.testsupport.engine.TestTaskitEngineId;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppChildObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppObject;
@@ -44,9 +45,9 @@ public class AT_TaskitEngine {
     public void testInit() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
-        TaskitEngine taskitEngine = TestTaskitEngine.builder()
+        TaskitEngine taskitEngine = new TestTaskitEngineBuilderBridge(TestTaskitEngine.builder()
                 .addTranslationSpec(testObjectTranslationSpec)
-                .addTranslationSpec(testComplexObjectTranslationSpec)
+                .addTranslationSpec(testComplexObjectTranslationSpec))
                 .buildWithoutInit();
 
         assertFalse(taskitEngine.isInitialized());
@@ -65,9 +66,9 @@ public class AT_TaskitEngine {
     public void testIsInitialized() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
-        TaskitEngine taskitEngine = TestTaskitEngine.builder()
+        TaskitEngine taskitEngine = new TestTaskitEngineBuilderBridge(TestTaskitEngine.builder()
                 .addTranslationSpec(testObjectTranslationSpec)
-                .addTranslationSpec(testComplexObjectTranslationSpec)
+                .addTranslationSpec(testComplexObjectTranslationSpec))
                 .buildWithoutInit();
 
         assertFalse(taskitEngine.isInitialized());
@@ -427,22 +428,22 @@ public class AT_TaskitEngine {
     @Test
     @UnitTestMethod(target = TaskitEngine.class, name = "equals", args = { Object.class })
     public void testEquals() {
-        TaskitEngine taskitEngine1 = TestTaskitEngine.builder()
+        TaskitEngine taskitEngine1 = new TestTaskitEngineBuilderBridge(TestTaskitEngine.builder()
                 .addTranslationSpec(new TestObjectTranslationSpec())
-                .addTranslationSpec(new TestComplexObjectTranslationSpec())
+                .addTranslationSpec(new TestComplexObjectTranslationSpec()))
                 .buildWithoutInit();
 
-        TaskitEngine taskitEngine2 = TestTaskitEngine.builder()
-                .addTranslationSpec(new TestComplexObjectTranslationSpec())
+        TaskitEngine taskitEngine2 = new TestTaskitEngineBuilderBridge(TestTaskitEngine.builder()
+                .addTranslationSpec(new TestComplexObjectTranslationSpec()))
                 .buildWithoutInit();
 
-        TaskitEngine taskitEngine3 = TestTaskitEngine.builder()
-                .addTranslationSpec(new TestObjectTranslationSpec())
+        TaskitEngine taskitEngine3 = new TestTaskitEngineBuilderBridge(TestTaskitEngine.builder()
+                .addTranslationSpec(new TestObjectTranslationSpec()))
                 .buildWithoutInit();
 
-        TaskitEngine taskitEngine4 = TestTaskitEngine.builder()
+        TaskitEngine taskitEngine4 = new TestTaskitEngineBuilderBridge(TestTaskitEngine.builder()
                 .addTranslationSpec(new TestObjectTranslationSpec())
-                .addTranslationSpec(new TestComplexObjectTranslationSpec())
+                .addTranslationSpec(new TestComplexObjectTranslationSpec()))
                 .buildWithoutInit();
 
         TaskitEngine taskitEngine5 = TestTaskitEngine.builder()

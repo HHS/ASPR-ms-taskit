@@ -8,8 +8,4 @@ public abstract class TestTranslationSpec<I, A> extends TranslationSpec<I, A, Te
     protected TestTranslationSpec() {
         super(TestTaskitEngine.class);
     }
-
-    TestTaskitEngine getTestTaskitEngine() {
-        return this.taskitEngine;
-    }
 }

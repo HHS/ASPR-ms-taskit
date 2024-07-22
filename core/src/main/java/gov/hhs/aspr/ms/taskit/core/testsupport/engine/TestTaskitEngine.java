@@ -40,7 +40,7 @@ public final class TestTaskitEngine extends TaskitEngine {
             return testTaskitEngine;
         }
 
-        public TestTaskitEngine buildWithoutInit() {
+        TestTaskitEngine buildWithoutInit() {
             return new TestTaskitEngine(this.taskitEngineDataBuilder.build());
         }
 

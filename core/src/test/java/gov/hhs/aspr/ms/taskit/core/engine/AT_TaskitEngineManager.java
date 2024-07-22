@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.taskit.core.testsupport.TestObjectUtil;
 import gov.hhs.aspr.ms.taskit.core.testsupport.engine.TestTaskitEngine;
+import gov.hhs.aspr.ms.taskit.core.testsupport.engine.TestTaskitEngineBuilderBridge;
 import gov.hhs.aspr.ms.taskit.core.testsupport.engine.TestTaskitEngineId;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppChildObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppObject;
@@ -385,9 +386,9 @@ public class AT_TaskitEngineManager {
 
         // taskit engine is not initialized
         contractException = assertThrows(ContractException.class, () -> {
-            TestTaskitEngine taskitEngine2 = TestTaskitEngine.builder()
+            TestTaskitEngine taskitEngine2 = new TestTaskitEngineBuilderBridge(TestTaskitEngine.builder()
                     .addTranslator(TestObjectTranslator.getTranslator())
-                    .addTranslator(TestComplexObjectTranslator.getTranslator())
+                    .addTranslator(TestComplexObjectTranslator.getTranslator()))
                     .buildWithoutInit();
 
             TaskitEngineManager.builder()
