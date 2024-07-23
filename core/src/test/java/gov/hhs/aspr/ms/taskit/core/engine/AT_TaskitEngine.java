@@ -392,24 +392,22 @@ public class AT_TaskitEngine {
     @Test
     @UnitTestMethod(target = TaskitEngine.class, name = "hashCode", args = {})
     public void testHashCode() {
-        TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
-        TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
         TaskitEngine taskitEngine1 = TestTaskitEngine.builder()
-                .addTranslationSpec(testObjectTranslationSpec)
-                .addTranslationSpec(testComplexObjectTranslationSpec)
+                .addTranslationSpec(new TestObjectTranslationSpec())
+                .addTranslationSpec(new TestComplexObjectTranslationSpec())
                 .build();
 
         TaskitEngine taskitEngine2 = TestTaskitEngine.builder()
-                .addTranslationSpec(testComplexObjectTranslationSpec)
+                .addTranslationSpec(new TestComplexObjectTranslationSpec())
                 .build();
 
         TaskitEngine taskitEngine3 = TestTaskitEngine.builder()
-                .addTranslationSpec(testObjectTranslationSpec)
+                .addTranslationSpec(new TestObjectTranslationSpec())
                 .build();
 
         TaskitEngine taskitEngine4 = TestTaskitEngine.builder()
-                .addTranslationSpec(testObjectTranslationSpec)
-                .addTranslationSpec(testComplexObjectTranslationSpec)
+                .addTranslationSpec(new TestObjectTranslationSpec())
+                .addTranslationSpec(new TestComplexObjectTranslationSpec())
                 .build();
 
         // exact same, same hash code
