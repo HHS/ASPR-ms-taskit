@@ -25,7 +25,7 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.engine.TestTaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.complexobject.TestComplexObjectTranslatorId;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.specs.TestObjectTranslationSpec;
-import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.translation.ITranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.Translator;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.TestObjectUtil;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.objects.BadMessageBadArguments;
@@ -354,11 +354,20 @@ public class AT_ProtobufJsonTaskitEngine {
 
         assertTrue(jsonObject.get("integer").isJsonPrimitive());
         assertEquals(0, jsonObject.get("integer").getAsInt());
+
+        // preconditions
+        // field descriptor is null
+        ContractException contractException = assertThrows(ContractException.class, () -> {
+            ProtobufJsonTaskitEngine.builder()
+                    .addFieldToIncludeDefaultValue(null);
+        });
+
+        assertEquals(ProtobufTaskitError.NULL_FIELD_DESCRIPTOR, contractException.getErrorType());
     }
 
     @Test
     @UnitTestMethod(target = ProtobufJsonTaskitEngine.Builder.class, name = "addTranslationSpec", args = {
-            TranslationSpec.class })
+            ITranslationSpec.class })
     public void testAddTranslationSpec() {
         // base functionality and preconditions tested by core.
         // This test will only test the things specifically and uniquely done by the
@@ -376,6 +385,13 @@ public class AT_ProtobufJsonTaskitEngine {
         // precondition
         // that the inputClass is not a Message nor a
         // ProtocolMessageEnum, and is tested in the testPopulate() test
+        // translation spec is not a protobuf translation spec
+        ContractException contractException = assertThrows(ContractException.class, () -> {
+            ProtobufJsonTaskitEngine.builder()
+                    .addTranslationSpec(new TestObjectTranslationSpec());
+        });
+
+        assertEquals(ProtobufTaskitError.INVALID_TRANSLATION_SPEC, contractException.getErrorType());
     }
 
     @Test

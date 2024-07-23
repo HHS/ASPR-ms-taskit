@@ -10,7 +10,6 @@ import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import com.google.protobuf.Descriptors.Descriptor;
@@ -52,24 +51,6 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
 
         private Data() {
         }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(jsonParser, jsonPrinter);
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (!(obj instanceof Data)) {
-                return false;
-            }
-            Data other = (Data) obj;
-            return Objects.equals(jsonParser, other.jsonParser) && Objects.equals(jsonPrinter, other.jsonPrinter);
-        }
-
     }
 
     /**

@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.google.protobuf.Any;
 
+import gov.hhs.aspr.ms.taskit.core.translation.ITranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.Translator;
 import gov.hhs.aspr.ms.taskit.protobuf.engine.IProtobufTaskitEngineBuilder;
 import gov.hhs.aspr.ms.taskit.protobuf.translation.specs.AnyTranslationSpec;
@@ -21,8 +22,8 @@ public class ProtobufTranslator {
     private ProtobufTranslator() {
     }
 
-    protected static List<ProtobufTranslationSpec<?, ?>> getTranslationSpecs() {
-        List<ProtobufTranslationSpec<?, ?>> list = new ArrayList<>();
+    protected static List<ITranslationSpec> getTranslationSpecs() {
+        List<ITranslationSpec> list = new ArrayList<>();
 
         list.add(new BooleanTranslationSpec());
         list.add(new IntegerTranslationSpec());
@@ -44,7 +45,7 @@ public class ProtobufTranslator {
                     IProtobufTaskitEngineBuilder translationEngineBuilder = translatorContext
                             .getTaskitEngineBuilder(IProtobufTaskitEngineBuilder.class);
 
-                    for (ProtobufTranslationSpec<?, ?> translationSpec : getTranslationSpecs()) {
+                    for (ITranslationSpec translationSpec : getTranslationSpecs()) {
                         translationEngineBuilder.addTranslationSpec(translationSpec);
                     }
                     

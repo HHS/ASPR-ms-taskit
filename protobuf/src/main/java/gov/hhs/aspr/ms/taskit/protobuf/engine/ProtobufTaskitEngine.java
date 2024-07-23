@@ -2,7 +2,6 @@ package gov.hhs.aspr.ms.taskit.protobuf.engine;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import com.google.protobuf.Any;
 
@@ -103,28 +102,45 @@ public abstract class ProtobufTaskitEngine extends TaskitEngine {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + Objects.hash(typeUrlToClassMap);
-        return result;
+        /*
+         * Note that we don't include the type url map as part of the hash code contract because it is
+         * directly linked to the added translationSpecs, which are already part of the
+         * hash code contract.
+         * Meaning that if the specs are the same, so is the map. There is never a case
+         * where the map would be different outside of the specs being different.
+         * However, child classes of this class are free to use the type url map as part
+         * of their hash code contract if they so wish.
+         */
+        return super.hashCode();
     }
 
     @Override
     public boolean equals(Object obj) {
+        /*
+         * Note that we don't include the type url map as part of the equals contract because it is
+         * directly linked to the added translationSpecs, which are already part of the
+         * equals contract.
+         * Meaning that if the specs are the same, so is the map. There is never a case
+         * where the map would be different outside of the specs being different.
+         * However, child classes of this class are free to use the type url map as part
+         * of their equals contract if they so wish.
+         */
         if (this == obj) {
             return true;
         }
 
-        if (!super.equals(obj)) {
+        if (obj == null) {
             return false;
         }
 
         if (!(obj instanceof ProtobufTaskitEngine)) {
             return false;
         }
-        
-        ProtobufTaskitEngine other = (ProtobufTaskitEngine) obj;
-        return Objects.equals(typeUrlToClassMap, other.typeUrlToClassMap);
+
+        if (!super.equals(obj)) {
+            return false;
+        }
+        return true;
     }
 
 }
