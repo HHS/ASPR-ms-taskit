@@ -1,7 +1,6 @@
 package gov.hhs.aspr.ms.taskit.core.engine;
 
 import gov.hhs.aspr.ms.taskit.core.translation.ITranslationSpec;
-import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.Translator;
 
 /**
@@ -10,7 +9,7 @@ import gov.hhs.aspr.ms.taskit.core.translation.Translator;
 public interface ITaskitEngineBuilder {
 
     /**
-     * Adds the given {@link TranslationSpec} to the TaskitEngine
+     * Adds the given {@link ITranslationSpec} to the TaskitEngine
      * 
      * @param translationSpec the translationSpec to add
      * @return the builder instance
