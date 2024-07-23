@@ -305,11 +305,27 @@ public final class TaskitEngineData {
 
     @Override
     public int hashCode() {
-        return Objects.hash(classToTranslationSpecMap, translationSpecs);
+        /*
+         * Note that we do not include the classToSpec map as part of the hash code
+         * contract, as there is never a case where it would differ from the
+         * translationSpec set, since both data structures get populated in the same
+         * addTranslationSpec() method.
+         * The data structure that matters is the list of translation specs, not the
+         * mapping, which only exists as a convenience map for translation purposes
+         */
+        return Objects.hash(translationSpecs);
     }
 
     @Override
     public boolean equals(Object obj) {
+        /*
+         * Note that we do not include the classToSpec map as part of the equals
+         * contract, as there is never a case where it would differ from the
+         * translationSpec set, since both data structures get populated in the same
+         * addTranslationSpec() method.
+         * The data structure that matters is the list of translation specs, not the
+         * mapping, which only exists as a convenience map for translation purposes
+         */
         if (this == obj) {
             return true;
         }
