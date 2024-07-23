@@ -14,6 +14,7 @@ import java.util.Set;
 
 import com.google.protobuf.Descriptors.Descriptor;
 import com.google.protobuf.Descriptors.FieldDescriptor;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
 import com.google.protobuf.ProtocolMessageEnum;
 import com.google.protobuf.util.JsonFormat;
@@ -76,6 +77,22 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
          * returns a new instance of a ProtobufTaskitEngine that has a jsonParser
          * and jsonWriter that include all the typeUrls for all added TranslationSpecs
          * and their respective Protobuf Message types
+         * 
+         * @throws ContractException
+         *                           <ul>
+         *                           <li>{@link TaskitError#UNINITIALIZED_TRANSLATORS}
+         *                           if translators were added to the engine but their
+         *                           initialized flag was still set to false</li>
+         *                           <li>{@link TaskitError#DUPLICATE_TRANSLATOR}
+         *                           if a duplicate translator is found</li>
+         *                           <li>{@link TaskitError#MISSING_TRANSLATOR}
+         *                           if an added translator has a unmet dependency</li>
+         *                           <li>{@link TaskitError#CIRCULAR_TRANSLATOR_DEPENDENCIES}
+         *                           if the added translators have a circular dependency
+         *                           graph</li>
+         *                           <li>{@link TaskitError#NO_TRANSLATION_SPECS} if
+         *                           no translation specs were added to the engine</li>
+         *                           </ul>
          */
         public ProtobufJsonTaskitEngine build() {
 
@@ -173,9 +190,10 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
         }
 
         /**
-         * @implNote populates the type urls for all Protobuf Message types that exist
-         *           within
-         *           the translationSpec
+         * Adds the given {@link ITranslationSpec} to the TaskitEngine
+         * <p>
+         * Additionally will populate typeUrls and field descriptors associated with the
+         * Protobuf types on the given TranslationSpec
          * 
          * @throws ContractException
          *                           <ul>
@@ -213,7 +231,6 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
         }
 
         /**
-         * @implNote initializes the translator with this builder
          * @throws ContractException {@linkplain TaskitError#NULL_TRANSLATOR}
          *                           if translator is null
          */
@@ -298,12 +315,19 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
     }
 
     /**
-     * @implNote object must be of a {@link Message} type
-     *           <p>
-     *           uses a BufferedWriter
-     * @throws ContractException {@link TaskitError#INVALID_OUTPUT_CLASS} if the
-     *                           given object is not assignable from
-     *                           {@link Message}
+     * @throws ContractException
+     *                           <ul>
+     *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
+     *                           if the passed in object is null</li>
+     *                           <li>{@linkplain TaskitError#NULL_CLASS_REF}
+     *                           if the passed in classRef is null</li>
+     *                           <li>{@linkplain TaskitError#UNKNOWN_TRANSLATION_SPEC}
+     *                           if no translationSpec was provided for the given
+     *                           objects class</li>
+     *                           <li>{@link TaskitError#INVALID_OUTPUT_CLASS} if the
+     *                           translated object is not assignable from
+     *                           {@link Message}</li>
+     *                           </ul>
      */
     @Override
     public <O> void write(Path path, O object) throws IOException {
@@ -319,32 +343,53 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
         writer.flush();
     }
 
+    /**
+     * @throws ContractException
+     *                           <ul>
+     *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
+     *                           if the passed in object is null</li>
+     *                           <li>{@linkplain TaskitError#NULL_CLASS_REF}
+     *                           if the passed in classRef is null</li>
+     *                           <li>{@linkplain TaskitError#UNKNOWN_TRANSLATION_SPEC}
+     *                           if no translationSpec was provided for the given
+     *                           objects class</li>
+     *                           <li>{@link TaskitError#INVALID_OUTPUT_CLASS} if the
+     *                           translated object is not assignable from
+     *                           {@link Message}</li>
+     *                           </ul>
+     */
     @Override
     public <O> void translateAndWrite(Path path, O object) throws IOException {
         write(path, translateObject(object));
     }
 
+    /**
+     * @throws ContractException
+     *                           <ul>
+     *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
+     *                           if the passed in object is null</li>
+     *                           <li>{@linkplain TaskitError#NULL_CLASS_REF}
+     *                           if the passed in classRef is null</li>
+     *                           <li>{@linkplain TaskitError#UNKNOWN_TRANSLATION_SPEC}
+     *                           if no translationSpec was provided for the given
+     *                           objects class</li>
+     *                           <li>{@link TaskitError#INVALID_OUTPUT_CLASS} if the
+     *                           translated object is not assignable from
+     *                           {@link Message}</li>
+     *                           </ul>
+     */
     @Override
     public <C, O extends C> void translateAndWrite(Path path, O object, Class<C> classRef) throws IOException {
         write(path, translateObjectAsClassSafe(object, classRef));
     }
 
     /**
-     * @implNote the classRef must be a {@link Message} type
-     *           <p>
-     *           uses a BufferedReader
-     * @throws ContractException {@linkplain TaskitError#INVALID_INPUT_CLASS} if
-     *                           the given inputClassRef is not assignable from
-     *                           {@linkplain Message}
-     * @throws RuntimeException  if there is an issue getting the builder method
-     *                           from the inputClassRef
-     * @throws IOException
-     *                           <ul>
-     *                           <li>if there is an issue merging the file into the
-     *                           resulting Protobuf Message builder
-     *                           </li>
-     *                           <li>if there is an issue reading the file</li>
-     *                           </ul>
+     * @throws ContractException              {@linkplain TaskitError#INVALID_INPUT_CLASS}
+     *                                        if the given inputClassRef is not
+     *                                        assignable from {@linkplain Message}
+     * @throws InvalidProtocolBufferException if the input is not valid proto3
+     *                                        JSON format or there are unknown
+     *                                        fields in the input
      */
     @Override
     public <I> I read(Path path, Class<I> classRef) throws IOException {
@@ -364,21 +409,23 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
     }
 
     /**
-     * @implNote the classRef must be a {@link Message} type
-     *           <p>
-     *           uses a buffered reader
-     * @throws ContractException {@linkplain TaskitError#INVALID_INPUT_CLASS} if
-     *                           the given inputClassRef is not assignable from
-     *                           {@linkplain Message}
-     * @throws RuntimeException  if there is an issue getting the builder method
-     *                           from the inputClassRef
-     * @throws IOException
-     *                           <ul>
-     *                           <li>if there is an issue merging the file into the
-     *                           resulting Protobuf Message builder
-     *                           </li>
-     *                           <li>if there is an issue reading the file</li>
-     *                           </ul>
+     * @throws InvalidProtocolBufferException if the input is not valid proto3
+     *                                        JSON format or there are unknown
+     *                                        fields in the input
+     * @throws ContractException
+     *                                        <ul>
+     *                                        <li>{@linkplain TaskitError#INVALID_INPUT_CLASS}
+     *                                        if the given inputClassRef is not
+     *                                        assignable from
+     *                                        {@linkplain Message}</li>
+     *                                        <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
+     *                                        if the passed in object is null</li>
+     *                                        <li>{@linkplain TaskitError#UNKNOWN_TRANSLATION_SPEC}
+     *                                        if no translationSpec was provided for
+     *                                        the given objects class</li>
+     *                                        </ul>
+     * 
+     * 
      */
     @Override
     public <T, I> T readAndTranslate(Path path, Class<I> classRef) throws IOException {

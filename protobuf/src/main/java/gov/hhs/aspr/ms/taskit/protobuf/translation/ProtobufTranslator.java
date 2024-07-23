@@ -8,6 +8,7 @@ import com.google.protobuf.Any;
 import gov.hhs.aspr.ms.taskit.core.translation.ITranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.Translator;
 import gov.hhs.aspr.ms.taskit.protobuf.engine.IProtobufTaskitEngineBuilder;
+import gov.hhs.aspr.ms.taskit.protobuf.engine.ProtobufTaskitEngine;
 import gov.hhs.aspr.ms.taskit.protobuf.translation.specs.AnyTranslationSpec;
 import gov.hhs.aspr.ms.taskit.protobuf.translation.specs.BooleanTranslationSpec;
 import gov.hhs.aspr.ms.taskit.protobuf.translation.specs.DateTranslationSpec;
@@ -18,6 +19,12 @@ import gov.hhs.aspr.ms.taskit.protobuf.translation.specs.IntegerTranslationSpec;
 import gov.hhs.aspr.ms.taskit.protobuf.translation.specs.LongTranslationSpec;
 import gov.hhs.aspr.ms.taskit.protobuf.translation.specs.StringTranslationSpec;
 
+/**
+ * Translator for the primitive Protobuf Translation Specs
+ * <p>
+ * this is added to every {@link ProtobufTaskitEngine} and the specs are
+ * specifically used in conjunction with the {@link Any} type
+ */
 public class ProtobufTranslator {
     private ProtobufTranslator() {
     }
@@ -48,7 +55,7 @@ public class ProtobufTranslator {
                     for (ITranslationSpec translationSpec : getTranslationSpecs()) {
                         translationEngineBuilder.addTranslationSpec(translationSpec);
                     }
-                    
+
                 });
 
         return builder;

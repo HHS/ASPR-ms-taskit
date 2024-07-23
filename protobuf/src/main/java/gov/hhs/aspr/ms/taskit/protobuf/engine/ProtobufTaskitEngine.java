@@ -8,6 +8,7 @@ import com.google.protobuf.Any;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngineData;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngineId;
+import gov.hhs.aspr.ms.taskit.core.engine.TaskitError;
 import gov.hhs.aspr.ms.taskit.protobuf.translation.specs.AnyTranslationSpec;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 
@@ -34,9 +35,15 @@ public abstract class ProtobufTaskitEngine extends TaskitEngine {
      * this will call {@link AnyTranslationSpec#translate(Object)} via
      * {@link #translateObject(Object)}
      * 
-     * @param <T>      the translated type
-     * @param anyValue the object to translate
-     * @return the translate object
+     * @param <T>      the object type
+     * @param anyValue the any value to get an object from
+     * @return the object that was wrapped in the any
+     * 
+     * @throws ContractException
+     *                           <ul>
+     *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
+     *                           if the passed in object is null</li>
+     *                           </ul>
      */
     public final <T> T getObjectFromAny(Any anyValue) {
         return this.translateObject(anyValue);
@@ -50,6 +57,12 @@ public abstract class ProtobufTaskitEngine extends TaskitEngine {
      * 
      * @param object the object to translate
      * @return the resulting Any
+     * 
+     * @throws ContractException
+     *                           <ul>
+     *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
+     *                           if the passed in object is null</li>
+     *                           </ul>
      */
     public final Any getAnyFromObject(Object object) {
         return this.translateObjectAsClassUnsafe(object, Any.class);
@@ -70,8 +83,18 @@ public abstract class ProtobufTaskitEngine extends TaskitEngine {
      * @param <C>      the type to translate the object as
      * @param object   the object to translate
      * @param classRef the classRef of the type to translate the object as
-     * @return the translated object translated into an Any type
-     *         K
+     * @return the translated object wrapped into an Any type
+     * 
+     * @throws ContractException
+     *                           <ul>
+     *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
+     *                           if the passed in object is null</li>
+     *                           <li>{@linkplain TaskitError#NULL_CLASS_REF}
+     *                           if the passed in classRef is null</li>
+     *                           <li>{@linkplain TaskitError#UNKNOWN_TRANSLATION_SPEC}
+     *                           if no translationSpec was provided for the given
+     *                           objects class</li>
+     *                           </ul>
      */
     public final <C, O extends C> Any getAnyFromObjectAsClassSafe(O object, Class<C> classRef) {
         C translatedObject = translateObjectAsClassSafe(object, classRef);
@@ -103,7 +126,8 @@ public abstract class ProtobufTaskitEngine extends TaskitEngine {
     @Override
     public int hashCode() {
         /*
-         * Note that we don't include the type url map as part of the hash code contract because it is
+         * Note that we don't include the type url map as part of the hash code contract
+         * because it is
          * directly linked to the added translationSpecs, which are already part of the
          * hash code contract.
          * Meaning that if the specs are the same, so is the map. There is never a case
@@ -117,7 +141,8 @@ public abstract class ProtobufTaskitEngine extends TaskitEngine {
     @Override
     public boolean equals(Object obj) {
         /*
-         * Note that we don't include the type url map as part of the equals contract because it is
+         * Note that we don't include the type url map as part of the equals contract
+         * because it is
          * directly linked to the added translationSpecs, which are already part of the
          * equals contract.
          * Meaning that if the specs are the same, so is the map. There is never a case

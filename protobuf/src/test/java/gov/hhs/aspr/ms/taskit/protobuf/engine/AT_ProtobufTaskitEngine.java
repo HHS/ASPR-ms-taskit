@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import com.google.protobuf.Any;
 import com.google.protobuf.Int32Value;
 
-import gov.hhs.aspr.ms.taskit.core.engine.TaskitError;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppChildObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppObject;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.TestObjectUtil;
@@ -26,6 +25,11 @@ public class AT_ProtobufTaskitEngine {
     @Test
     @UnitTestMethod(target = ProtobufTaskitEngine.class, name = "getAnyFromObject", args = { Object.class })
     public void testGetAnyFromObject() {
+        /*
+         * Test Note: because this method internally calls translateObject(), it
+         * necessarily throws the same exceptions as that method. Because those
+         * exceptions are tested in Taskit, we won't additionally test them here.
+         */
         ProtobufJsonTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder().build();
 
         Integer integer = 1500;
@@ -41,6 +45,12 @@ public class AT_ProtobufTaskitEngine {
     @UnitTestMethod(target = ProtobufTaskitEngine.class, name = "getAnyFromObjectAsClassSafe", args = {
             Object.class, Class.class })
     public void testGetAnyFromObjectAsClassSafe() {
+        /*
+         * Test Note: because this method internally calls translateObjectAsClassSafe()
+         * and translateObjectAsClassUnsafe, it
+         * necessarily throws the same exceptions as those methods. Because those
+         * exceptions are tested in Taskit, we won't additionally test them here.
+         */
         ProtobufJsonTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder()
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
                 .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
@@ -55,26 +65,16 @@ public class AT_ProtobufTaskitEngine {
                 TestAppObject.class);
 
         assertEquals(expectedAny, actualAny);
-
-        // preconditions
-
-        // no translationSpec was provided for the parent class
-        ContractException contractException = assertThrows(ContractException.class, () -> {
-            ProtobufJsonTaskitEngine protobufTaskitEngine2 = ProtobufJsonTaskitEngine.builder()
-                    .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
-
-            TestAppObject testAppObject2 = TestObjectUtil.generateTestAppObject();
-            TestAppChildObject testAppChildObject2 = TestObjectUtil.getChildAppFromApp(testAppObject2);
-
-            protobufTaskitEngine2.getAnyFromObjectAsClassSafe(testAppChildObject2, TestAppObject.class);
-        });
-
-        assertEquals(TaskitError.UNKNOWN_TRANSLATION_SPEC, contractException.getErrorType());
     }
 
     @Test
     @UnitTestMethod(target = ProtobufTaskitEngine.class, name = "getObjectFromAny", args = { Any.class })
     public void testGetObjectFromAny() {
+         /*
+         * Test Note: because this method internally calls translateObjectAsClassUnsafe(), it
+         * necessarily throws the same exceptions as that method. Because those
+         * exceptions are tested in Taskit, we won't additionally test them here.
+         */
         ProtobufJsonTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder()
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
                 .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();

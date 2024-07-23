@@ -5,7 +5,11 @@ import gov.hhs.aspr.ms.taskit.protobuf.testsupport.objects.TestComplexInputObjec
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.objects.TestInputObject;
 import gov.hhs.aspr.ms.taskit.protobuf.translation.ProtobufTranslationSpec;
 
+/**
+ * Translation Spec implementation for TestObject
+ */
 public class TestProtobufObjectTranslationSpec extends ProtobufTranslationSpec<TestInputObject, TestAppObject> {
+
     @Override
     protected TestAppObject translateInputObject(TestInputObject inputObject) {
         TestAppObject testAppObject = new TestAppObject();

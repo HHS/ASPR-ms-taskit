@@ -242,6 +242,11 @@ public class AT_ProtobufJsonTaskitEngine {
     @UnitTestMethod(target = ProtobufJsonTaskitEngine.Builder.class, name = "build", args = {})
     public void testBuild() {
 
+        /*
+         * Test Note: build internally calls TaskitEngineData.build(). As such, the
+         * build method will also throw the exceptions from that method. Because that is
+         * already tested in Taskit, the precondition tests will not be tested here
+         */
         ProtobufJsonTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder()
                 .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
 

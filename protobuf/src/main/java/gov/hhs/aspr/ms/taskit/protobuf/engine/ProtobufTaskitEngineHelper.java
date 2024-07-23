@@ -5,15 +5,14 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.protobuf.Any;
 import com.google.protobuf.Message;
 import com.google.protobuf.ProtocolMessageEnum;
 
 /**
- * This is a helper class that encompasses all of the primitive translation
- * specs needed for translating to/from the Protobuf {@link Any} type.
+ * This is a helper class that helps a ProtobufTaskitEngine with various utility
+ * operations
  * <p>
- * package access for testing and use in ProtobufTaskitEngines
+ * package access for testing
  */
 final class ProtobufTaskitEngineHelper {
     private ProtobufTaskitEngineHelper() {
