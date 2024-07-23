@@ -46,6 +46,9 @@ public final class TaskitEngineData {
 
         private List<Translator> translators = new ArrayList<>();
 
+        private Builder() {
+        }
+
         private void validateTranslationSpec(ITranslationSpec translationSpec) {
             if (translationSpec == null) {
                 throw new ContractException(TaskitError.NULL_TRANSLATION_SPEC);
@@ -109,21 +112,6 @@ public final class TaskitEngineData {
             return new TaskitEngineData(classToTranslationSpecMap, translationSpecs);
         }
 
-        // package access for testing
-        TaskitEngineData buildWithoutInit() {
-            // validate the translators that were added
-            // they should have an acyclic dependency tree
-            if (!this.translators.isEmpty()) {
-                checkTranslatorGraph(false);
-                this.translators.clear();
-            }
-
-            // There should be at least 1 translation spec added
-            validateTranslationSpecsNotEmpty();
-
-            return new TaskitEngineData(classToTranslationSpecMap, translationSpecs);
-        }
-
         /**
          * Adds the given {@link TranslationSpec} to the TaskitEngine
          * 
@@ -177,8 +165,9 @@ public final class TaskitEngineData {
         /*
          * Goes through the list of translators and orders them based on their
          * dependencies
+         * package access for testing
          */
-        private void checkTranslatorGraph(boolean checkInit) {
+        void checkTranslatorGraph(boolean checkInit) {
             MutableGraph<TranslatorId, Object> mutableGraph = new MutableGraph<>();
             Map<TranslatorId, Translator> translatorMap = new LinkedHashMap<>();
             /*
@@ -335,7 +324,6 @@ public final class TaskitEngineData {
 
         TaskitEngineData other = (TaskitEngineData) obj;
 
-        return Objects.equals(translationSpecs, other.translationSpecs)
-                && Objects.equals(classToTranslationSpecMap, other.classToTranslationSpecMap);
+        return Objects.equals(translationSpecs, other.translationSpecs);
     }
 }

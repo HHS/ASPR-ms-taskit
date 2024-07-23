@@ -1,7 +1,6 @@
 package gov.hhs.aspr.ms.taskit.core.testsupport.engine;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -25,7 +24,7 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.translation.bad.BadTranslationSpe
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.complexobject.specs.TestComplexObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.TestObjectTranslator;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.specs.TestObjectTranslationSpec;
-import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.translation.ITranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.Translator;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslatorContext;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
@@ -44,18 +43,8 @@ public class AT_TestTaskitEngine {
     }
 
     @Test
-    @UnitTestMethod(target = TestTaskitEngine.Builder.class, name = "buildWithoutInit", args = {})
-    public void testBuildWithoutInit() {
-        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
-                .addTranslationSpec(new TestObjectTranslationSpec()).buildWithoutInit();
-
-        assertEquals(TestTaskitEngineId.TEST_ENGINE_ID, testTaskitEngine.getTaskitEngineId());
-        assertFalse(testTaskitEngine.isInitialized());
-    }
-
-    @Test
     @UnitTestMethod(target = TestTaskitEngine.Builder.class, name = "addTranslationSpec", args = {
-            TranslationSpec.class })
+            ITranslationSpec.class })
     public void testAddTranslationSpec() {
         // see AT_TaskitEngineData.testAddTranslationSpec()
         // code here is strictly for coverage, and coverage alone

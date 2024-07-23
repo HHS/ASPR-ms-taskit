@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
@@ -451,6 +453,39 @@ public class AT_TaskitEngine {
                 .addTranslationSpec(new TestComplexObjectTranslationSpec())
                 .build();
 
+        TaskitEngine taskitEngine6 = new TaskitEngine(
+                TaskitEngineData.builder().addTranslationSpec(new TestObjectTranslationSpec()).build(),
+                new TaskitEngineId() {
+
+                }) {
+
+            @Override
+            public <O> void write(Path outputPath, O outputObject) throws IOException {
+            }
+
+            @Override
+            public <O> void translateAndWrite(Path outputPath, O outputObject)
+                    throws IOException {
+            }
+
+            @Override
+            public <C, O extends C> void translateAndWrite(Path outputPath, O outputObject,
+                    Class<C> outputClassRef) throws IOException {
+            }
+
+            @Override
+            public <I> I read(Path inputPath, Class<I> inputClassRef) throws IOException {
+                return null;
+            }
+
+            @Override
+            public <T, I> T readAndTranslate(Path inputPath, Class<I> inputClassRef)
+                    throws IOException {
+                return null;
+            }
+
+        };
+
         // exact same
         assertEquals(taskitEngine1, taskitEngine1);
 
@@ -460,6 +495,9 @@ public class AT_TaskitEngine {
         // not an instance test
         assertNotEquals(taskitEngine1, new Object());
 
+        // different id
+        assertNotEquals(taskitEngine1, taskitEngine6);
+        
         // different translation specs
         assertNotEquals(taskitEngine1, taskitEngine2);
         assertNotEquals(taskitEngine1, taskitEngine3);

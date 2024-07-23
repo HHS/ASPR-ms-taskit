@@ -346,12 +346,12 @@ public final class TaskitEngineManager {
      * @return the translated object
      * @throws ContractException
      *                           <ul>
-     *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
-     *                           if the passed in object is null</li>
      *                           <li>{@linkplain TaskitError#NULL_TASKIT_ENGINE_ID}
      *                           if taskitEngineId is null</li>
      *                           <li>{@linkplain TaskitError#NULL_TASKIT_ENGINE}
      *                           if taskitEngine is null</li>
+     *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
+     *                           if the passed in object is null</li>
      *                           <li>{@linkplain TaskitError#UNKNOWN_TRANSLATION_SPEC}
      *                           if no translationSpec was provided for the given
      *                           objects class</li>
@@ -385,12 +385,12 @@ public final class TaskitEngineManager {
      * 
      * @throws ContractException
      *                           <ul>
-     *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
-     *                           if the passed in object is null</li>
      *                           <li>{@linkplain TaskitError#NULL_TASKIT_ENGINE_ID}
      *                           if taskitEngineId is null</li>
      *                           <li>{@linkplain TaskitError#NULL_TASKIT_ENGINE}
      *                           if taskitEngine is null</li>
+     *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
+     *                           if the passed in object is null</li>
      *                           <li>{@linkplain TaskitError#NULL_CLASS_REF}
      *                           if the passed in classRef is null</li>
      *                           <li>{@linkplain TaskitError#UNKNOWN_TRANSLATION_SPEC}

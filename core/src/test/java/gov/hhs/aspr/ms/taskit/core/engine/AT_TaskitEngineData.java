@@ -1,6 +1,7 @@
 package gov.hhs.aspr.ms.taskit.core.engine;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
@@ -8,10 +9,11 @@ import org.junit.jupiter.api.Test;
 import gov.hhs.aspr.ms.taskit.core.testsupport.engine.TestTaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.bad.BadTranslationSpecEmptyMap;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.bad.BadTranslationSpecNullMap;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.complexobject.TestComplexObjectTranslatorId;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.complexobject.specs.TestComplexObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.TestObjectTranslator;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.specs.TestObjectTranslationSpec;
-import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.translation.ITranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.Translator;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslatorContext;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslatorId;
@@ -33,7 +35,8 @@ public class AT_TaskitEngineData {
         contractException = assertThrows(ContractException.class, () -> {
             TaskitEngineData.builder()
                     .addTranslator(TestObjectTranslator.getTranslator())
-                    .addTranslator(TestObjectTranslator.getTranslator()).buildWithoutInit();
+                    .addTranslator(TestObjectTranslator.getTranslator())
+                    .checkTranslatorGraph(false);
         });
 
         assertEquals(TaskitError.DUPLICATE_TRANSLATOR, contractException.getErrorType());
@@ -41,7 +44,14 @@ public class AT_TaskitEngineData {
         // missing translator
         contractException = assertThrows(ContractException.class, () -> {
             TaskitEngineData.builder()
-                    .addTranslator(TestObjectTranslator.getTranslator()).buildWithoutInit();
+                    .addTranslator(TestObjectTranslator.getTranslator())
+                    .addTranslator(Translator.builder()
+                            .setTranslatorId(new TranslatorId() {
+                            })
+                            .addDependency(TestComplexObjectTranslatorId.TRANSLATOR_ID)
+                            .setInitializer((c) -> {
+                            }).build())
+                    .checkTranslatorGraph(false);
         });
 
         assertEquals(TaskitError.MISSING_TRANSLATOR, contractException.getErrorType());
@@ -52,15 +62,42 @@ public class AT_TaskitEngineData {
             };
             TranslatorId translatorId2 = new TranslatorId() {
             };
-            Translator translator1 = Translator.builder().setTranslatorId(translatorId1).addDependency(translatorId2)
+            Translator translator1 = Translator.builder()
+                    .setTranslatorId(translatorId1)
+                    .addDependency(translatorId2)
                     .setInitializer((c) -> {
-                    }).build();
-            Translator translator2 = Translator.builder().setTranslatorId(translatorId2).addDependency(translatorId1)
+                    })
+                    .build();
+            Translator translator2 = Translator.builder()
+                    .setTranslatorId(translatorId2)
+                    .addDependency(translatorId1)
                     .setInitializer((c) -> {
-                    }).build();
+                    })
+                    .build();
+
+            TranslatorId translatorId3 = new TranslatorId() {
+            };
+            TranslatorId translatorId4 = new TranslatorId() {
+            };
+            Translator translator3 = Translator.builder()
+                    .setTranslatorId(translatorId3)
+                    .addDependency(translatorId4)
+                    .setInitializer((c) -> {
+                    })
+                    .build();
+            Translator translator4 = Translator.builder()
+                    .setTranslatorId(translatorId4)
+                    .addDependency(translatorId3)
+                    .setInitializer((c) -> {
+                    })
+                    .build();
+
             TaskitEngineData.builder()
                     .addTranslator(translator1)
-                    .addTranslator(translator2).buildWithoutInit();
+                    .addTranslator(translator2)
+                    .addTranslator(translator3)
+                    .addTranslator(translator4)
+                    .checkTranslatorGraph(false);
         });
 
         assertEquals(TaskitError.CIRCULAR_TRANSLATOR_DEPENDENCIES, contractException.getErrorType());
@@ -75,7 +112,7 @@ public class AT_TaskitEngineData {
 
     @Test
     @UnitTestMethod(target = TaskitEngineData.Builder.class, name = "addTranslationSpec", args = {
-            TranslationSpec.class })
+            ITranslationSpec.class })
     public void testAddTranslationSpec() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
@@ -171,5 +208,81 @@ public class AT_TaskitEngineData {
     @UnitTestMethod(target = TaskitEngineData.class, name = "builder", args = {})
     public void testBuilder() {
         // nothing to test
+    }
+
+    // TODO: update test
+    @Test
+    @UnitTestMethod(target = TaskitEngineData.class, name = "hashCode", args = {})
+    public void testHashCode() {
+        TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
+        TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
+
+        TaskitEngineData taskitEngineData1 = TaskitEngineData.builder()
+                .addTranslationSpec(testObjectTranslationSpec)
+                .addTranslationSpec(testComplexObjectTranslationSpec)
+                .build();
+
+        TaskitEngineData taskitEngineData2 = TaskitEngineData.builder()
+                .addTranslationSpec(testObjectTranslationSpec)
+                .addTranslationSpec(testComplexObjectTranslationSpec)
+                .build();
+
+        TaskitEngineData taskitEngineData3 = TaskitEngineData.builder()
+                .addTranslationSpec(testComplexObjectTranslationSpec)
+                .build();
+
+        // same
+        assertEquals(taskitEngineData1.hashCode(), taskitEngineData1.hashCode());
+
+        // same exact specs
+        assertEquals(taskitEngineData1.hashCode(), taskitEngineData2.hashCode());
+        assertEquals(taskitEngineData2.hashCode(), taskitEngineData1.hashCode());
+
+        // different specs
+        assertNotEquals(taskitEngineData1.hashCode(), taskitEngineData3.hashCode());
+        assertNotEquals(taskitEngineData2.hashCode(), taskitEngineData3.hashCode());
+        assertNotEquals(taskitEngineData3.hashCode(), taskitEngineData1.hashCode());
+        assertNotEquals(taskitEngineData3.hashCode(), taskitEngineData2.hashCode());
+    }
+
+    // TODO: update test
+    @Test
+    @UnitTestMethod(target = TaskitEngineData.class, name = "equals", args = { Object.class })
+    public void testEquals() {
+        TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
+        TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
+
+        TaskitEngineData taskitEngineData1 = TaskitEngineData.builder()
+                .addTranslationSpec(testObjectTranslationSpec)
+                .addTranslationSpec(testComplexObjectTranslationSpec)
+                .build();
+
+        TaskitEngineData taskitEngineData2 = TaskitEngineData.builder()
+                .addTranslationSpec(testObjectTranslationSpec)
+                .addTranslationSpec(testComplexObjectTranslationSpec)
+                .build();
+
+        TaskitEngineData taskitEngineData3 = TaskitEngineData.builder()
+                .addTranslationSpec(testComplexObjectTranslationSpec)
+                .build();
+
+        // same
+        assertEquals(taskitEngineData1, taskitEngineData1);
+
+        // not null
+        assertNotEquals(taskitEngineData1, null);
+
+        // not instance of
+        assertNotEquals(taskitEngineData1, new Object());
+
+        // same exact specs
+        assertEquals(taskitEngineData1, taskitEngineData2);
+        assertEquals(taskitEngineData2, taskitEngineData1);
+
+        // different specs
+        assertNotEquals(taskitEngineData1, taskitEngineData3);
+        assertNotEquals(taskitEngineData2, taskitEngineData3);
+        assertNotEquals(taskitEngineData3, taskitEngineData1);
+        assertNotEquals(taskitEngineData3, taskitEngineData2);
     }
 }

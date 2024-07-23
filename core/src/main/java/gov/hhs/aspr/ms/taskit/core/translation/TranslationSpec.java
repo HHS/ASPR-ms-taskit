@@ -25,19 +25,21 @@ public abstract class TranslationSpec<I, A, E extends TaskitEngine> implements I
     }
 
     /**
-     * Initializes the translation spec with the given taskitEngine
-     * All child TranslationSpecs must call
-     * super() otherwise there will be an exception throw in the
-     * TaskitEngine
-     * 
-     * @param taskitEngine the taskitEngine the translationSpec should be
-     *                     initialized with
-     * @throws ContractException {@link TaskitError#INVALID_TASKIT_ENGINE} if the
-     *                           given taskitEngine is of a different type than the
-     *                           one provided in the type parameter.
+     * @throws ContractException
+     *                           <ul>
+     *                           <li>{@link TaskitError#DOUBLE_TRANSLATION_SPEC_INIT}
+     *                           if init on this translation spec has been called
+     *                           more than once</li>
+     *                           <li>{@link TaskitError#INVALID_TASKIT_ENGINE} if
+     *                           the given taskitEngine is of a different type than
+     *                           the one provided in the type parameter.</li>
+     *                           </ul>
      */
     @Override
     public final void init(TaskitEngine taskitEngine) {
+        if (this.initialized) {
+            throw new ContractException(TaskitError.DOUBLE_TRANSLATION_SPEC_INIT);
+        }
         // make sure assignable from E
         if (!(this.taskitEngineClass.isAssignableFrom(taskitEngine.getClass()))) {
             throw new ContractException(TaskitError.INVALID_TASKIT_ENGINE,
@@ -48,10 +50,8 @@ public abstract class TranslationSpec<I, A, E extends TaskitEngine> implements I
         this.initialized = true;
     }
 
-    /**
-     * @return the initialized flag
-     */
-    public boolean isInitialized() {
+    @Override
+    public final boolean isInitialized() {
         return this.initialized;
     }
 
@@ -76,15 +76,33 @@ public abstract class TranslationSpec<I, A, E extends TaskitEngine> implements I
      * thrown
      * </p>
      * 
-     * @param <T>    the translated type
-     * @param object the object to translate
-     * @return the translated object
-     * @throws ContractException {@linkplain TaskitError#UNKNOWN_OBJECT} if the
+     * @throws ContractException
+     *                           <ul>
+     *                           <li>{@linkplain TaskitError#UNINITIALIZED_TRANSLATION_SPEC}
+     *                           if this method was called before initialization.
+     *                           <p>
+     *                           Note that under normal circumstances, this should
+     *                           never happen
+     *                           </p>
+     *                           </li>
+     *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
+     *                           if the given object is null</li>
+     *                           <li>{@linkplain TaskitError#UNKNOWN_OBJECT} if the
      *                           given object cannot be translated by this
-     *                           translation spec
+     *                           translation spec</li>
+     *                           </ul>
      */
     @SuppressWarnings("unchecked")
+    @Override
     public <T> T translate(Object object) {
+        if (!this.initialized) {
+            throw new ContractException(TaskitError.UNINITIALIZED_TRANSLATION_SPEC);
+        }
+
+        if (object == null) {
+            throw new ContractException(TaskitError.NULL_OBJECT_FOR_TRANSLATION);
+        }
+
         Class<?> objectClass = object.getClass();
 
         boolean isAppObject = this.getAppObjectClass() == objectClass;
@@ -93,8 +111,8 @@ public abstract class TranslationSpec<I, A, E extends TaskitEngine> implements I
         boolean isAssignAppObject = this.getAppObjectClass().isAssignableFrom(objectClass);
         boolean isAssignInObject = this.getInputObjectClass().isAssignableFrom(objectClass);
 
-        boolean shouldTranslateAsApp = (isAppObject && !isInObject) || (isAssignAppObject && !isAssignInObject);
-        boolean shouldTranslateAsIn = (isInObject && !isAppObject) || (isAssignInObject && !isAssignAppObject);
+        boolean shouldTranslateAsApp = isAppObject || (isAssignAppObject && !isAssignInObject);
+        boolean shouldTranslateAsIn = isInObject || (isAssignInObject && !isAssignAppObject);
 
         if (shouldTranslateAsApp) {
             return (T) this.translateAppObject((A) object);
