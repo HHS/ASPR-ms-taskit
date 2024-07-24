@@ -1,3 +1,11 @@
+package gov.hhs.aspr.ms.taskit.protobuf;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.protobuf.Descriptors.FileDescriptor;
+
+public class UsefulCode {
     public JsonObject deepMerge(JsonObject source, JsonObject target) {
         for (String key : source.keySet()) {
             JsonElement value = source.get(key);
@@ -54,3 +62,4 @@
             throw new RuntimeException(e);
         }
     }
+}

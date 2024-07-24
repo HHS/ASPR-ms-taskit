@@ -73,6 +73,8 @@ public abstract class TaskitEngine {
 		return this.data.translationSpecs;
 	}
 
+	// TODO: create public version of abstract methods that do validation, and then
+	// internally call the abstract methods
 	/**
 	 * Writes the object to the file referenced by the Path
 	 * 

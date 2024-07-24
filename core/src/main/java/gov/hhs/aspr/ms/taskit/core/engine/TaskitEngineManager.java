@@ -63,7 +63,7 @@ public final class TaskitEngineManager {
 		 * @throws ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain TaskitError#NO_TASKIT_ENGINES} if
-		 *                           no taskit engines were added</li>
+		 *                           no TaskitEngines were added</li>
 		 *                           </ul>
 		 */
 		public TaskitEngineManager build() {
@@ -174,6 +174,7 @@ public final class TaskitEngineManager {
 	 *                           IOException
 	 */
 	public <I> I read(Path inputPath, Class<I> inputClassRef, TaskitEngineId taskitEngineId) {
+		// TODO: validateFile not filePath
 		validatePath(inputPath);
 		validateClass(inputClassRef);
 
