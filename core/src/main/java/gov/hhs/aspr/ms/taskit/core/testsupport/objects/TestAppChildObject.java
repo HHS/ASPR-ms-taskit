@@ -5,6 +5,7 @@ package gov.hhs.aspr.ms.taskit.core.testsupport.objects;
  * class -> child class relationship
  * <p>
  * <b>Should NOT</b> be used outside of testing
+ * </p>
  */
 public class TestAppChildObject extends TestAppObject {
 

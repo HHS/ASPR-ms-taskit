@@ -4,7 +4,7 @@ import gov.hhs.aspr.ms.taskit.core.translation.ITranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.Translator;
 
 /**
- * Interface for TaskitEngine Builders
+ * Interface for TaskitEngine Builders.
  */
 public interface ITaskitEngineBuilder {
 

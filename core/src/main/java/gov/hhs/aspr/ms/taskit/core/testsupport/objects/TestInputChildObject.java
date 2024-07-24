@@ -1,9 +1,10 @@
 package gov.hhs.aspr.ms.taskit.core.testsupport.objects;
 
 /** 
- * compliment class to {@link TestAppChildObject}
+ * Complement class to {@link TestAppChildObject}.
  * <p>
- * <b>Should NOT</b> be used outside of testing
+ * <b>Should NOT</b> be used outside of testing.
+ * </p>
  */
 public class TestInputChildObject extends TestInputObject {
 

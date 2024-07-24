@@ -19,7 +19,7 @@ public class TranslatorTestSupport {
     }
 
     /**
-     * This method is to ensure that every translationSpec that is supposed to be
+     * This method is used to ensure that every translationSpec that is supposed to be
      * tied to a Translator is defined in its list of translationSpecs. If a
      * translationSpec is added and not subsequently added to the list in the
      * Translator, then this test will fail and provide the name of the missing

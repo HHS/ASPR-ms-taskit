@@ -1,9 +1,10 @@
 package gov.hhs.aspr.ms.taskit.core.testsupport.objects;
 
 /** 
- * Test class representing a enum
+ * Test class representing a enum.
  * <p>
- * <b>Should NOT</b> be used outside of testing
+ * <b>Should NOT</b> be used outside of testing.
+ * </p>
  */
 public enum TestAppEnum {
     TEST1,

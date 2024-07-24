@@ -10,7 +10,7 @@ import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
 public interface ITranslationSpec {
 
     /**
-     * Initializes the translation spec with the given taskitEngine
+     * Initializes the translation spec with the given taskitEngine.
      * 
      * @param taskitEngine the taskitEngine the translationSpec should be
      *                     initialized with
