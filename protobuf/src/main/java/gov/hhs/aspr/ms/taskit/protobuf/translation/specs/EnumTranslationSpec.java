@@ -10,14 +10,14 @@ import gov.hhs.aspr.ms.taskit.protobuf.translation.ProtobufTranslationSpec;
 
 /**
  * TranslationSpec that defines how to translate from any Java Enum to a Protobuf
- * {@link WrapperEnumValue} type and vice versa
+ * {@link WrapperEnumValue} type and vice versa.
  * <p>
  * <b>Note: A {@link WrapperEnumValue} is specifically used to wrap a Enum into
- * a Protobuf {@link Any} type</b>
+ * a Protobuf {@link Any} type</b>.
  * </p>
  * <p>
  * The Protobuf {@link Any} type does not natively support enums, only
- * primitives and other Protobuf Messages
+ * primitives and other Protobuf Messages.
  * </p>
  */
 @SuppressWarnings("rawtypes")

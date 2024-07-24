@@ -23,7 +23,8 @@ import gov.hhs.aspr.ms.taskit.protobuf.translation.specs.StringTranslationSpec;
  * Translator for the primitive Protobuf Translation Specs
  * <p>
  * this is added to every {@link ProtobufTaskitEngine} and the specs are
- * specifically used in conjunction with the {@link Any} type
+ * specifically used in conjunction with the {@link Any} type.
+ * </p>
  */
 public class ProtobufTranslator {
     private ProtobufTranslator() {

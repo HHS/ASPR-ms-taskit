@@ -6,7 +6,7 @@ import gov.hhs.aspr.ms.taskit.protobuf.translation.ProtobufTranslationSpec;
 
 /**
  * TranslationSpec that defines how to translate from any Java Float to a Protobuf
- * {@link FloatValue} type and vice versa
+ * {@link FloatValue} type and vice versa.
  */
 public class FloatTranslationSpec extends ProtobufTranslationSpec<FloatValue, Float> {
 

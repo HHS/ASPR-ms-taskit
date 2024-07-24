@@ -8,7 +8,7 @@ import gov.hhs.aspr.ms.taskit.protobuf.translation.ProtobufTranslationSpec;
 
 /**
  * TranslationSpec that defines how to translate from any Java Object to a
- * Protobuf {@link Any} type and vice versa
+ * Protobuf {@link Any} type and vice versa.
  */
 public class AnyTranslationSpec extends ProtobufTranslationSpec<Any, Object> {
 

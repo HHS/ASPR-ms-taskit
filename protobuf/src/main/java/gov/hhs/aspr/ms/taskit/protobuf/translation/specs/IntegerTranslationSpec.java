@@ -6,7 +6,7 @@ import gov.hhs.aspr.ms.taskit.protobuf.translation.ProtobufTranslationSpec;
 
 /**
  * TranslationSpec that defines how to translate from any Java Integer to a
- * Protobuf {@link Int32Value} type and vice versa
+ * Protobuf {@link Int32Value} type and vice versa.
  */
 public class IntegerTranslationSpec extends ProtobufTranslationSpec<Int32Value, Integer> {
 

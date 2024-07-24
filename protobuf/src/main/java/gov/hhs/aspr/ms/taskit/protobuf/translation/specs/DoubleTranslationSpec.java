@@ -6,7 +6,7 @@ import gov.hhs.aspr.ms.taskit.protobuf.translation.ProtobufTranslationSpec;
 
 /**
  * TranslationSpec that defines how to translate from any Java Double to a
- * Protobuf {@link DoubleValue} type and vice versa
+ * Protobuf {@link DoubleValue} type and vice versa.
  */
 public class DoubleTranslationSpec extends ProtobufTranslationSpec<DoubleValue, Double> {
 

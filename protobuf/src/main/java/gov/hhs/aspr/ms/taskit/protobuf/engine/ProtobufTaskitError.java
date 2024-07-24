@@ -3,7 +3,7 @@ package gov.hhs.aspr.ms.taskit.protobuf.engine;
 import gov.hhs.aspr.ms.util.errors.ContractError;
 
 /**
- * Contract Exception Errors exclusive to ProtobufTaskit
+ * Contract Exception Errors exclusive to ProtobufTaskit.
  */
 public enum ProtobufTaskitError implements ContractError {
     INVALID_TRANSLATION_SPEC_INPUT_CLASS("The input class is neither a Protobuf Message, nor a Protobuf Enum"),

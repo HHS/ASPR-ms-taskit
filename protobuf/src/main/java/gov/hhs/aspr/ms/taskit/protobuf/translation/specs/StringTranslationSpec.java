@@ -6,7 +6,7 @@ import gov.hhs.aspr.ms.taskit.protobuf.translation.ProtobufTranslationSpec;
 
 /**
  * TranslationSpec that defines how to translate from any Java String to a
- * Protobuf {@link StringValue} type and vice versa
+ * Protobuf {@link StringValue} type and vice versa.
  */
 public class StringTranslationSpec extends ProtobufTranslationSpec<StringValue, String> {
 

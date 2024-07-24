@@ -6,7 +6,7 @@ import gov.hhs.aspr.ms.taskit.protobuf.translation.ProtobufTranslationSpec;
 
 /**
  * TranslationSpec that defines how to translate from any Java Boolean to a
- * Protobuf {@link BoolValue} type and vice versa
+ * Protobuf {@link BoolValue} type and vice versa.
  */
 public class BooleanTranslationSpec extends ProtobufTranslationSpec<BoolValue, Boolean> {
 

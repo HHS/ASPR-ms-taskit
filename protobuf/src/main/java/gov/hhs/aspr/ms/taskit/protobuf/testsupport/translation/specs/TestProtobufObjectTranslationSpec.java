@@ -6,7 +6,7 @@ import gov.hhs.aspr.ms.taskit.protobuf.testsupport.objects.TestInputObject;
 import gov.hhs.aspr.ms.taskit.protobuf.translation.ProtobufTranslationSpec;
 
 /**
- * Translation Spec implementation for TestObject
+ * Translation Spec implementation for TestObject.
  */
 public class TestProtobufObjectTranslationSpec extends ProtobufTranslationSpec<TestInputObject, TestAppObject> {
 

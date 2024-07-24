@@ -8,7 +8,7 @@ import gov.hhs.aspr.ms.taskit.protobuf.translation.ProtobufTranslationSpec;
 
 /**
  * TranslationSpec that defines how to translate from any Java {@link LocalDate}
- * to a Protobuf {@link Date} type and vice versa
+ * to a Protobuf {@link Date} type and vice versa.
  */
 public class DateTranslationSpec extends ProtobufTranslationSpec<Date, LocalDate> {
 
