@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.io.IOException;
 import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
@@ -147,131 +146,7 @@ public class AT_TestTaskitEngine {
         // nothing to test
     }
 
-    @Test
-    @UnitTestMethod(target = TestTaskitEngine.class, name = "write", args = { Path.class, Object.class })
-    public void testWrite() throws IOException {
-        String fileName = "testEngineWrite_1-testOutput.json";
-        String fileName2 = "testEngineWrite_2-testOutput.json";
-
-        ResourceHelper.createFile(filePath, fileName);
-        ResourceHelper.createFile(filePath, fileName2);
-
-        TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
-        TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
-        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
-                .addTranslationSpec(testObjectTranslationSpec)
-                .addTranslationSpec(complexObjectTranslationSpec).build();
-
-        TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
-        TestInputObject inputObject = TestObjectUtil.getInputFromApp(expectedAppObject);
-
-        testTaskitEngine.write(filePath.resolve(fileName), inputObject);
-        TestAppObject actualAppObject = testTaskitEngine.readAndTranslate(filePath.resolve(fileName),
-                TestInputObject.class);
-        assertEquals(expectedAppObject, actualAppObject);
-    }
-
-    @Test
-    @UnitTestMethod(target = TestTaskitEngine.class, name = "translateAndWrite", args = { Path.class,
-            Object.class })
-    public void testTranslateAndWrite() throws IOException {
-        String fileName = "testEngineTranslateAndWrite_1-testOutput.json";
-        String fileName2 = "testEngineTranslateAndWrite_2-testOutput.json";
-
-        ResourceHelper.createFile(filePath, fileName);
-        ResourceHelper.createFile(filePath, fileName2);
-
-        TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
-        TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
-        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
-                .addTranslationSpec(testObjectTranslationSpec)
-                .addTranslationSpec(complexObjectTranslationSpec).build();
-
-        TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
-
-        testTaskitEngine.translateAndWrite(filePath.resolve(fileName), expectedAppObject);
-        TestAppObject actualAppObject = testTaskitEngine.readAndTranslate(filePath.resolve(fileName),
-                TestInputObject.class);
-        assertEquals(expectedAppObject, actualAppObject);
-
-        testTaskitEngine.translateAndWrite(filePath.resolve(fileName2),
-                TestObjectUtil.getChildAppFromApp(expectedAppObject), TestAppObject.class);
-        TestAppObject actualAppChildObject = testTaskitEngine.readAndTranslate(filePath.resolve(fileName2),
-                TestInputObject.class);
-        assertEquals(expectedAppObject, actualAppChildObject);
-    }
-
-    @Test
-    @UnitTestMethod(target = TestTaskitEngine.class, name = "translateAndWrite", args = { Path.class, Object.class,
-            Class.class })
-    public void testTranslateAndWrite_Class() throws IOException {
-        String fileName = "testEngineTranslateAndWrite_class_1-testOutput.json";
-        String fileName2 = "testEngineTranslateAndWrite_class_2-testOutput.json";
-
-        ResourceHelper.createFile(filePath, fileName);
-        ResourceHelper.createFile(filePath, fileName2);
-
-        TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
-        TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
-        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
-                .addTranslationSpec(testObjectTranslationSpec)
-                .addTranslationSpec(complexObjectTranslationSpec).build();
-
-        TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
-
-        testTaskitEngine.translateAndWrite(filePath.resolve(fileName2),
-                TestObjectUtil.getChildAppFromApp(expectedAppObject), TestAppObject.class);
-        TestAppObject actualAppChildObject = testTaskitEngine.readAndTranslate(filePath.resolve(fileName2),
-                TestInputObject.class);
-        assertEquals(expectedAppObject, actualAppChildObject);
-    }
-
-    @Test
-    @UnitTestMethod(target = TestTaskitEngine.class, name = "read", args = { Path.class, Class.class })
-    public void testRead() throws IOException {
-        String fileName = "testEngineRead_1-testOutput.json";
-        String fileName2 = "testEngineRead_2-testOutput.json";
-
-        ResourceHelper.createFile(filePath, fileName);
-        ResourceHelper.createFile(filePath, fileName2);
-
-        TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
-        TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
-        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
-                .addTranslationSpec(testObjectTranslationSpec)
-                .addTranslationSpec(complexObjectTranslationSpec).build();
-
-        TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
-        TestInputObject expectedInputObject = TestObjectUtil.getInputFromApp(expectedAppObject);
-
-        testTaskitEngine.translateAndWrite(filePath.resolve(fileName), expectedAppObject);
-        TestInputObject actualInputObject = testTaskitEngine.read(filePath.resolve(fileName),
-                TestInputObject.class);
-        assertEquals(expectedInputObject, actualInputObject);
-    }
-
-    @Test
-    @UnitTestMethod(target = TestTaskitEngine.class, name = "readAndTranslate", args = { Path.class, Class.class })
-    public void testReadAndTranslate() throws IOException {
-        String fileName = "testEngineReadAndTranslate_1-testOutput.json";
-        String fileName2 = "testEngineReadAndTranslate_2-testOutput.json";
-
-        ResourceHelper.createFile(filePath, fileName);
-        ResourceHelper.createFile(filePath, fileName2);
-
-        TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
-        TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
-        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
-                .addTranslationSpec(testObjectTranslationSpec)
-                .addTranslationSpec(complexObjectTranslationSpec).build();
-
-        TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
-
-        testTaskitEngine.translateAndWrite(filePath.resolve(fileName), expectedAppObject);
-        TestAppObject actualAppObject = testTaskitEngine.readAndTranslate(filePath.resolve(fileName),
-                TestInputObject.class);
-        assertEquals(expectedAppObject, actualAppObject);
-    }
+    
 
     @Test
     @UnitTestMethod(target = TestTaskitEngine.class, name = "getTaskitEngineId", args = {})

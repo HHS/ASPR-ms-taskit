@@ -1,5 +1,7 @@
 package gov.hhs.aspr.ms.taskit.core.engine;
 
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -10,6 +12,8 @@ import java.util.Set;
 import gov.hhs.aspr.ms.taskit.core.translation.ITranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
 import gov.hhs.aspr.ms.util.errors.ContractException;
+import gov.hhs.aspr.ms.util.resourcehelper.ResourceError;
+import gov.hhs.aspr.ms.util.resourcehelper.ResourceHelper;
 
 /**
  * TaskitEngine initializes all {@link TranslationSpec}s and maintains a mapping
@@ -73,17 +77,36 @@ public abstract class TaskitEngine {
 		return this.data.translationSpecs;
 	}
 
-	// TODO: create public version of abstract methods that do validation, and then
-	// internally call the abstract methods
 	/**
 	 * Writes the object to the file referenced by the Path
 	 * 
 	 * @param <O>          the type of the object to write
 	 * @param outputPath   the path of the file to write to
 	 * @param outputObject the object to write
-	 * @throws IOException if there is an issue writing the file
+	 * 
+	 * @throws ContractException
+	 *                           <ul>
+	 *                           <li>{@linkplain TaskitError#NULL_PATH} if the path
+	 *                           is null</li>
+	 *                           <li>{@linkplain ResourceError#FILE_PATH_IS_DIRECTORY}
+	 *                           if the path points to a directory instead of a
+	 *                           file</li>
+	 *                           <li>{@linkplain ResourceError#DIRECTORY_PATH_IS_FILE}
+	 *                           if path points to a file that doesn't exist and the
+	 *                           parent path points to a file</li>
+	 *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
+	 *                           if the passed in object is null</li>
+	 *                           </ul>
+	 * @throws IOException       if there is an issue writing the file
 	 */
-	public abstract <O> void write(Path outputPath, O outputObject) throws IOException;
+	public final <O> void write(Path outputPath, O outputObject) throws IOException {
+		validateFilePath(outputPath);
+		validateObject(outputObject);
+
+		FileWriter fileWriter = new FileWriter(outputPath.toFile());
+
+		this.writeToFile(fileWriter, outputObject);
+	}
 
 	/**
 	 * Translates the object and then writes the translated object to the file
@@ -92,9 +115,31 @@ public abstract class TaskitEngine {
 	 * @param <O>          the type of the object to write
 	 * @param outputPath   the path of the file to write to
 	 * @param outputObject the object to write
-	 * @throws IOException if there is an issue writing the file
+	 * 
+	 * @throws ContractException
+	 *                           <ul>
+	 *                           <li>{@linkplain TaskitError#NULL_PATH} if the path
+	 *                           is null</li>
+	 *                           <li>{@linkplain ResourceError#FILE_PATH_IS_DIRECTORY}
+	 *                           if the path points to a directory instead of a
+	 *                           file</li>
+	 *                           <li>{@linkplain ResourceError#DIRECTORY_PATH_IS_FILE}
+	 *                           if path points to a file that doesn't exist and the
+	 *                           parent path points to a file</li>
+	 *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
+	 *                           if the passed in object is null</li>
+	 *                           <li>{@linkplain TaskitError#UNKNOWN_TRANSLATION_SPEC}
+	 *                           if no translationSpec was provided for the given
+	 *                           objects class</li>
+	 *                           </ul>
+	 * @throws IOException       if there is an issue writing the file
 	 */
-	public abstract <O> void translateAndWrite(Path outputPath, O outputObject) throws IOException;
+	public final <O> void translateAndWrite(Path outputPath, O outputObject) throws IOException {
+		validateFilePath(outputPath);
+
+		FileWriter fileWriter = new FileWriter(outputPath.toFile());
+		this.writeToFile(fileWriter, this.translateObject(outputObject));
+	}
 
 	/**
 	 * Translates the object using the given classRef and then writes the translated
@@ -103,10 +148,35 @@ public abstract class TaskitEngine {
 	 * @param <O>          the type of the object to write
 	 * @param outputPath   the path of the file to write to
 	 * @param outputObject the object to write
-	 * @throws IOException if there is an issue writing the file
+	 * 
+	 * @throws ContractException
+	 *                           <ul>
+	 *                           <li>{@linkplain TaskitError#NULL_PATH} if the path
+	 *                           is null</li>
+	 *                           <li>{@linkplain ResourceError#FILE_PATH_IS_DIRECTORY}
+	 *                           if the path points to a directory instead of a
+	 *                           file</li>
+	 *                           <li>{@linkplain ResourceError#DIRECTORY_PATH_IS_FILE}
+	 *                           if path points to a file that doesn't exist and the
+	 *                           parent path points to a file</li>
+	 *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
+	 *                           if the passed in object is null</li>
+	 *                           <li>{@linkplain TaskitError#NULL_CLASS_REF} if the
+	 *                           passed in classRef is null</li>
+	 *                           <li>{@linkplain TaskitError#UNKNOWN_TRANSLATION_SPEC}
+	 *                           if no translationSpec was provided for the given
+	 *                           objects class</li>
+	 *                           </ul>
+	 * @throws IOException       if there is an issue writing the file
 	 */
-	public abstract <C, O extends C> void translateAndWrite(Path outputPath, O outputObject, Class<C> outputClassRef)
-			throws IOException;
+	public final <C, O extends C> void translateAndWrite(Path outputPath, O outputObject, Class<C> outputClassRef)
+			throws IOException {
+		validateFilePath(outputPath);
+
+		FileWriter fileWriter = new FileWriter(outputPath.toFile());
+
+		this.writeToFile(fileWriter, this.translateObjectAsClassSafe(outputObject, outputClassRef));
+	}
 
 	/**
 	 * Reads the given path into the provided class type
@@ -115,9 +185,29 @@ public abstract class TaskitEngine {
 	 * @param inputPath     the path of the file to read
 	 * @param inputClassRef the class to read the file as
 	 * @return the resulting object from reading the file as the class
-	 * @throws IOException if there is an issue reading the file
+	 * 
+	 * @throws ContractException
+	 *                           <ul>
+	 *                           <li>{@linkplain TaskitError#NULL_PATH} if the path
+	 *                           is null</li>
+	 *                           <li>{@linkplain ResourceError#FILE_PATH_IS_DIRECTORY}
+	 *                           if the path points to a directory instead of a
+	 *                           file</li>
+	 *                           <li>{@linkplain ResourceError#UNKNOWN_FILE}
+	 *                           if path points to a file that doesn't exist</li>
+	 *                           <li>{@linkplain TaskitError#NULL_CLASS_REF}
+	 *                           if the passed in classRef is null</li>
+	 *                           </ul>
+	 * @throws IOException       if there is an issue reading the file
 	 */
-	public abstract <I> I read(Path inputPath, Class<I> inputClassRef) throws IOException;
+	public final <I> I read(Path inputPath, Class<I> inputClassRef) throws IOException {
+		validateFile(inputPath);
+		validateClass(inputClassRef);
+
+		FileReader fileReader = new FileReader(inputPath.toFile());
+
+		return this.readFile(fileReader, inputClassRef);
+	}
 
 	/**
 	 * Reads the given path into the provided class type and then translates it to
@@ -128,9 +218,35 @@ public abstract class TaskitEngine {
 	 * @param inputPath the path of the file to read
 	 * @param classRef  the class to read the file as
 	 * @return the resulting translated read in object
-	 * @throws IOException if there is an issue reading the file
+	 * 
+	 * @throws ContractException
+	 *                           <ul>
+	 *                           <li>{@linkplain TaskitError#NULL_PATH} if the path
+	 *                           is null</li>
+	 *                           <li>{@linkplain ResourceError#FILE_PATH_IS_DIRECTORY}
+	 *                           if the path points to a directory instead of a
+	 *                           file</li>
+	 *                           <li>{@linkplain ResourceError#UNKNOWN_FILE}
+	 *                           if path points to a file that doesn't exist</li>
+	 *                           <li>{@linkplain TaskitError#NULL_CLASS_REF}
+	 *                           if the passed in classRef is null</li>
+	 *                           <li>{@linkplain TaskitError#UNKNOWN_TRANSLATION_SPEC}
+	 *                           if no translationSpec was provided for the given
+	 *                           objects class</li>
+	 *                           </ul>
+	 * 
+	 * @throws IOException       if there is an issue reading the file
 	 */
-	public abstract <T, I> T readAndTranslate(Path inputPath, Class<I> inputClassRef) throws IOException;
+	public final <T, I> T readAndTranslate(Path inputPath, Class<I> inputClassRef) throws IOException {
+		validateFile(inputPath);
+		validateClass(inputClassRef);
+
+		FileReader fileReader = new FileReader(inputPath.toFile());
+
+		I readObj = this.readFile(fileReader, inputClassRef);
+
+		return this.translateObject(readObj);
+	}
 
 	/**
 	 * Given an object, uses the class of the object to obtain the translationSpec
@@ -143,6 +259,7 @@ public abstract class TaskitEngine {
 	 * @param <T>    the translated type
 	 * @param object the object to translate
 	 * @return the translated object
+	 * 
 	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
@@ -251,9 +368,7 @@ public abstract class TaskitEngine {
 	 *                           </ul>
 	 */
 	public final <T> ITranslationSpec getTranslationSpecForClass(Class<T> classRef) {
-		if (classRef == null) {
-			throw new ContractException(TaskitError.NULL_CLASS_REF);
-		}
+		validateClass(classRef);
 
 		if (this.data.classToTranslationSpecMap.containsKey(classRef)) {
 			return this.data.classToTranslationSpecMap.get(classRef);
@@ -295,9 +410,36 @@ public abstract class TaskitEngine {
 				&& Objects.equals(data, other.data);
 	}
 
+	protected abstract <O> void writeToFile(FileWriter fileWriter, O outputObject) throws IOException;
+
+	protected abstract <I> I readFile(FileReader fileReader, Class<I> inputClassRef) throws IOException;
+
 	private void validateObject(Object object) {
 		if (object == null) {
 			throw new ContractException(TaskitError.NULL_OBJECT_FOR_TRANSLATION);
 		}
 	}
+
+	private void validateClass(Class<?> classRef) {
+		if (classRef == null) {
+			throw new ContractException(TaskitError.NULL_CLASS_REF);
+		}
+	}
+
+	private void validateFilePath(Path path) {
+		if (path == null) {
+			throw new ContractException(TaskitError.NULL_PATH);
+		}
+
+		ResourceHelper.validateFilePath(path);
+	}
+
+	private void validateFile(Path path) {
+		if (path == null) {
+			throw new ContractException(TaskitError.NULL_PATH);
+		}
+
+		ResourceHelper.validateFile(path);
+	}
+
 }

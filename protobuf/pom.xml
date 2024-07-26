@@ -11,7 +11,6 @@
     </parent>
 
     <!-- Artifact -->
-    <groupId>gov.hhs.aspr.ms.taskit</groupId>
     <artifactId>protobuf</artifactId>
     <packaging>jar</packaging>
 

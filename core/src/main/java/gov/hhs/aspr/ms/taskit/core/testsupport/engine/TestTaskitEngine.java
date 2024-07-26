@@ -3,7 +3,6 @@ package gov.hhs.aspr.ms.taskit.core.testsupport.engine;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Path;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -131,36 +130,20 @@ public final class TestTaskitEngine extends TaskitEngine {
 	}
 
 	@Override
-	public <O> void write(Path outputPath, O outputObject) throws IOException {
+	protected <O> void writeToFile(FileWriter fileWriter, O outputObject) throws IOException {
 		String stringToWrite = this.gson.toJson(outputObject);
-		FileWriter writer = new FileWriter(outputPath.toFile());
-		writer.write(stringToWrite);
-		writer.flush();
-		writer.close();
+
+		fileWriter.write(stringToWrite);
+		fileWriter.flush();
+		fileWriter.close();
 	}
 
 	@Override
-	public <O> void translateAndWrite(Path outputPath, O outputObject) throws IOException {
-		write(outputPath, translateObject(outputObject));
-	}
-
-	@Override
-	public <C, O extends C> void translateAndWrite(Path outputPath, O outputObject, Class<C> outputClassRef)
-			throws IOException {
-		write(outputPath, translateObjectAsClassSafe(outputObject, outputClassRef));
-	}
-
-	@Override
-	public <I> I read(Path inputPath, Class<I> inputClassRef) throws IOException {
-		JsonObject jsonObject = JsonParser.parseReader(new JsonReader(new FileReader(inputPath.toFile())))
+	protected <I> I readFile(FileReader fileReader, Class<I> inputClassRef) {
+		JsonObject jsonObject = JsonParser.parseReader(new JsonReader(fileReader))
 				.getAsJsonObject();
 
 		return this.gson.fromJson(jsonObject.toString(), inputClassRef);
-	}
-
-	@Override
-	public <T, I> T readAndTranslate(Path inputPath, Class<I> inputClassRef) throws IOException {
-		return translateObject(read(inputPath, inputClassRef));
 	}
 
 	@Override

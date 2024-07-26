@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Set;
@@ -29,8 +31,12 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.specs.TestObje
 import gov.hhs.aspr.ms.taskit.core.translation.ITranslationSpec;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 import gov.hhs.aspr.ms.util.errors.ContractException;
+import gov.hhs.aspr.ms.util.resourcehelper.ResourceError;
+import gov.hhs.aspr.ms.util.resourcehelper.ResourceHelper;
 
 public class AT_TaskitEngine {
+    Path basePath = ResourceHelper.getResourceDir(this.getClass());
+    Path filePath = ResourceHelper.createDirectory(basePath, "test-output");
 
     @Test
     @UnitTestMethod(target = TaskitEngine.class, name = "getTaskitEngineId", args = {})
@@ -95,119 +101,308 @@ public class AT_TaskitEngine {
         assertTrue(actualTranslationSpecs.contains(testComplexObjectTranslationSpec));
     }
 
-    // @Test
-    // @UnitTestMethod(target = TaskitEngine.class, name = "write", args = {
-    // Path.class, Object.class })
-    // public void testWrite() {
-    // TestObjectTranslationSpec testObjectTranslationSpec = new
-    // TestObjectTranslationSpec();
-    // TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new
-    // TestComplexObjectTranslationSpec();
-    // TaskitEngine taskitEngine = TaskitEngine.builder()
-    // .addTranslationSpec(testObjectTranslationSpec)
-    // .addTranslationSpec(testComplexObjectTranslationSpec)
-    // .setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID)
-    // .build();
+    @Test
+    @UnitTestMethod(target = TaskitEngine.class, name = "write", args = { Path.class, Object.class })
+    public void testWrite() throws IOException {
+        String fileName = "testEngineWrite_1-testOutput.json";
+        String fileName2 = "testEngineWrite_2-testOutput.json";
 
-    // UnsupportedOperationException exception =
-    // assertThrows(UnsupportedOperationException.class, () -> {
-    // taskitEngine.write(null, null);
-    // });
+        ResourceHelper.createFile(filePath, fileName);
+        ResourceHelper.createFile(filePath, fileName2);
 
-    // assertEquals("Called 'write' on TaskitEngine", exception.getMessage());
-    // }
+        TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
+        TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
+        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
+                .addTranslationSpec(testObjectTranslationSpec)
+                .addTranslationSpec(complexObjectTranslationSpec).build();
 
-    // @Test
-    // @UnitTestMethod(target = TaskitEngine.class, name = "translateAndWrite", args
-    // = { Path.class, Object.class })
-    // public void testTranslateAndWrite() {
-    // TestObjectTranslationSpec testObjectTranslationSpec = new
-    // TestObjectTranslationSpec();
-    // TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new
-    // TestComplexObjectTranslationSpec();
-    // TaskitEngine taskitEngine = TaskitEngine.builder()
-    // .addTranslationSpec(testObjectTranslationSpec)
-    // .addTranslationSpec(testComplexObjectTranslationSpec)
-    // .setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID)
-    // .build();
+        TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
+        TestInputObject inputObject = TestObjectUtil.getInputFromApp(expectedAppObject);
 
-    // UnsupportedOperationException exception =
-    // assertThrows(UnsupportedOperationException.class, () -> {
-    // taskitEngine.translateAndWrite(null, null);
-    // });
+        testTaskitEngine.write(filePath.resolve(fileName), inputObject);
+        TestAppObject actualAppObject = testTaskitEngine.readAndTranslate(filePath.resolve(fileName),
+                TestInputObject.class);
+        assertEquals(expectedAppObject, actualAppObject);
 
-    // assertEquals("Called 'translateAndWrite' on TaskitEngine",
-    // exception.getMessage());
-    // }
+        // preconditions
+        // null path
+        ContractException contractException = assertThrows(ContractException.class, () -> {
+            testTaskitEngine.write(null, inputObject);
+        });
 
-    // @Test
-    // @UnitTestMethod(target = TaskitEngine.class, name = "translateAndWrite", args
-    // = { Path.class, Object.class,
-    // Class.class })
-    // public void testTranslateAndWrite_Class() {
-    // TestObjectTranslationSpec testObjectTranslationSpec = new
-    // TestObjectTranslationSpec();
-    // TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new
-    // TestComplexObjectTranslationSpec();
-    // TaskitEngine taskitEngine = TaskitEngine.builder()
-    // .addTranslationSpec(testObjectTranslationSpec)
-    // .addTranslationSpec(testComplexObjectTranslationSpec)
-    // .setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID)
-    // .build();
+        assertEquals(TaskitError.NULL_PATH, contractException.getErrorType());
 
-    // UnsupportedOperationException exception =
-    // assertThrows(UnsupportedOperationException.class, () -> {
-    // taskitEngine.translateAndWrite(null, null, null);
-    // });
+        // file path is directory
+        contractException = assertThrows(ContractException.class, () -> {
+            testTaskitEngine.write(filePath, inputObject);
+        });
 
-    // assertEquals("Called 'translateAndWrite' on TaskitEngine",
-    // exception.getMessage());
-    // }
+        assertEquals(ResourceError.FILE_PATH_IS_DIRECTORY, contractException.getErrorType());
 
-    // @Test
-    // @UnitTestMethod(target = TaskitEngine.class, name = "read", args = {
-    // Path.class, Class.class })
-    // public void testRead() {
-    // TestObjectTranslationSpec testObjectTranslationSpec = new
-    // TestObjectTranslationSpec();
-    // TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new
-    // TestComplexObjectTranslationSpec();
-    // TaskitEngine taskitEngine = TaskitEngine.builder()
-    // .addTranslationSpec(testObjectTranslationSpec)
-    // .addTranslationSpec(testComplexObjectTranslationSpec)
-    // .setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID)
-    // .build();
+        // directory path is file
+        contractException = assertThrows(ContractException.class, () -> {
+            testTaskitEngine.write(filePath.resolve(fileName).resolve(fileName), inputObject);
+        });
 
-    // UnsupportedOperationException exception =
-    // assertThrows(UnsupportedOperationException.class, () -> {
-    // taskitEngine.read(null, null);
-    // });
+        assertEquals(ResourceError.DIRECTORY_PATH_IS_FILE, contractException.getErrorType());
 
-    // assertEquals("Called 'read' on TaskitEngine", exception.getMessage());
-    // }
+        // null object
+        contractException = assertThrows(ContractException.class, () -> {
+            testTaskitEngine.write(filePath.resolve(fileName), null);
+        });
 
-    // @Test
-    // @UnitTestMethod(target = TaskitEngine.class, name = "readAndTranslate", args
-    // = { Path.class, Class.class })
-    // public void testReadAndTranslate() {
-    // TestObjectTranslationSpec testObjectTranslationSpec = new
-    // TestObjectTranslationSpec();
-    // TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new
-    // TestComplexObjectTranslationSpec();
-    // TaskitEngine taskitEngine = TaskitEngine.builder()
-    // .addTranslationSpec(testObjectTranslationSpec)
-    // .addTranslationSpec(testComplexObjectTranslationSpec)
-    // .setTaskitEngineId(TestTaskitEngineId.TEST_ENGINE_ID)
-    // .build();
+        assertEquals(TaskitError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
+    }
 
-    // UnsupportedOperationException exception =
-    // assertThrows(UnsupportedOperationException.class, () -> {
-    // taskitEngine.readAndTranslate(null, null);
-    // });
+    @Test
+    @UnitTestMethod(target = TaskitEngine.class, name = "translateAndWrite", args = { Path.class,
+            Object.class })
+    public void testTranslateAndWrite() throws IOException {
+        String fileName = "testEngineTranslateAndWrite_1-testOutput.json";
+        String fileName2 = "testEngineTranslateAndWrite_2-testOutput.json";
 
-    // assertEquals("Called 'readAndTranslate' on TaskitEngine",
-    // exception.getMessage());
-    // }
+        ResourceHelper.createFile(filePath, fileName);
+        ResourceHelper.createFile(filePath, fileName2);
+
+        TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
+        TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
+        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
+                .addTranslationSpec(testObjectTranslationSpec)
+                .addTranslationSpec(complexObjectTranslationSpec).build();
+
+        TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
+
+        testTaskitEngine.translateAndWrite(filePath.resolve(fileName), expectedAppObject);
+        TestAppObject actualAppObject = testTaskitEngine.readAndTranslate(filePath.resolve(fileName),
+                TestInputObject.class);
+        assertEquals(expectedAppObject, actualAppObject);
+
+        testTaskitEngine.translateAndWrite(filePath.resolve(fileName2),
+                TestObjectUtil.getChildAppFromApp(expectedAppObject), TestAppObject.class);
+        TestAppObject actualAppChildObject = testTaskitEngine.readAndTranslate(filePath.resolve(fileName2),
+                TestInputObject.class);
+        assertEquals(expectedAppObject, actualAppChildObject);
+
+        // preconditions
+        // null path
+        ContractException contractException = assertThrows(ContractException.class, () -> {
+            testTaskitEngine.translateAndWrite(null, expectedAppObject);
+        });
+
+        assertEquals(TaskitError.NULL_PATH, contractException.getErrorType());
+
+        // file path is directory
+        contractException = assertThrows(ContractException.class, () -> {
+            testTaskitEngine.translateAndWrite(filePath, expectedAppObject);
+        });
+
+        assertEquals(ResourceError.FILE_PATH_IS_DIRECTORY, contractException.getErrorType());
+
+        // directory path is file
+        contractException = assertThrows(ContractException.class, () -> {
+            testTaskitEngine.translateAndWrite(filePath.resolve(fileName).resolve(fileName), expectedAppObject);
+        });
+
+        assertEquals(ResourceError.DIRECTORY_PATH_IS_FILE, contractException.getErrorType());
+
+        // null object
+        contractException = assertThrows(ContractException.class, () -> {
+            testTaskitEngine.translateAndWrite(filePath.resolve(fileName), null);
+        });
+
+        assertEquals(TaskitError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
+
+        // unknown translation spec
+        contractException = assertThrows(ContractException.class, () -> {
+            testTaskitEngine.translateAndWrite(filePath.resolve(fileName), new TestAppChildObject());
+        });
+
+        assertEquals(TaskitError.UNKNOWN_TRANSLATION_SPEC, contractException.getErrorType());
+    }
+
+    @Test
+    @UnitTestMethod(target = TaskitEngine.class, name = "translateAndWrite", args = { Path.class, Object.class,
+            Class.class })
+    public void testTranslateAndWrite_Class() throws IOException {
+        String fileName = "testEngineTranslateAndWrite_class_1-testOutput.json";
+        String fileName2 = "testEngineTranslateAndWrite_class_2-testOutput.json";
+
+        ResourceHelper.createFile(filePath, fileName);
+        ResourceHelper.createFile(filePath, fileName2);
+
+        TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
+        TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
+        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
+                .addTranslationSpec(testObjectTranslationSpec)
+                .addTranslationSpec(complexObjectTranslationSpec).build();
+
+        TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
+
+        testTaskitEngine.translateAndWrite(filePath.resolve(fileName2),
+                TestObjectUtil.getChildAppFromApp(expectedAppObject), TestAppObject.class);
+        TestAppObject actualAppChildObject = testTaskitEngine.readAndTranslate(filePath.resolve(fileName2),
+                TestInputObject.class);
+        assertEquals(expectedAppObject, actualAppChildObject);
+
+        // preconditions
+        // null path
+        ContractException contractException = assertThrows(ContractException.class, () -> {
+            testTaskitEngine.translateAndWrite(null, expectedAppObject, TestAppObject.class);
+        });
+
+        assertEquals(TaskitError.NULL_PATH, contractException.getErrorType());
+
+        // file path is directory
+        contractException = assertThrows(ContractException.class, () -> {
+            testTaskitEngine.translateAndWrite(filePath, expectedAppObject, TestAppObject.class);
+        });
+
+        assertEquals(ResourceError.FILE_PATH_IS_DIRECTORY, contractException.getErrorType());
+
+        // directory path is file
+        contractException = assertThrows(ContractException.class, () -> {
+            testTaskitEngine.translateAndWrite(filePath.resolve(fileName).resolve(fileName), expectedAppObject,
+                    TestAppObject.class);
+        });
+
+        assertEquals(ResourceError.DIRECTORY_PATH_IS_FILE, contractException.getErrorType());
+
+        // null object
+        contractException = assertThrows(ContractException.class, () -> {
+            testTaskitEngine.translateAndWrite(filePath.resolve(fileName), null, TestAppObject.class);
+        });
+
+        assertEquals(TaskitError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
+
+        // null class
+        contractException = assertThrows(ContractException.class, () -> {
+            testTaskitEngine.translateAndWrite(filePath.resolve(fileName), expectedAppObject, null);
+        });
+
+        assertEquals(TaskitError.NULL_CLASS_REF, contractException.getErrorType());
+
+        // unknown translation spec
+        contractException = assertThrows(ContractException.class, () -> {
+            testTaskitEngine.translateAndWrite(filePath.resolve(fileName), new TestAppChildObject(),
+                    TestAppChildObject.class);
+        });
+
+        assertEquals(TaskitError.UNKNOWN_TRANSLATION_SPEC, contractException.getErrorType());
+    }
+
+    @Test
+    @UnitTestMethod(target = TaskitEngine.class, name = "read", args = { Path.class, Class.class })
+    public void testRead() throws IOException {
+        String fileName = "testEngineRead_1-testOutput.json";
+        String fileName2 = "testEngineRead_2-testOutput.json";
+
+        ResourceHelper.createFile(filePath, fileName);
+        ResourceHelper.createFile(filePath, fileName2);
+
+        TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
+        TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
+        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
+                .addTranslationSpec(testObjectTranslationSpec)
+                .addTranslationSpec(complexObjectTranslationSpec).build();
+
+        TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
+        TestInputObject expectedInputObject = TestObjectUtil.getInputFromApp(expectedAppObject);
+
+        testTaskitEngine.translateAndWrite(filePath.resolve(fileName), expectedAppObject);
+        TestInputObject actualInputObject = testTaskitEngine.read(filePath.resolve(fileName),
+                TestInputObject.class);
+        assertEquals(expectedInputObject, actualInputObject);
+
+        // preconditions
+        // null path
+        ContractException contractException = assertThrows(ContractException.class, () -> {
+            testTaskitEngine.read(null, TestInputObject.class);
+        });
+
+        assertEquals(TaskitError.NULL_PATH, contractException.getErrorType());
+
+        // file path is a directory
+        contractException = assertThrows(ContractException.class, () -> {
+            testTaskitEngine.read(filePath, TestInputObject.class);
+        });
+
+        assertEquals(ResourceError.FILE_PATH_IS_DIRECTORY, contractException.getErrorType());
+
+        // unknown file
+        contractException = assertThrows(ContractException.class, () -> {
+            testTaskitEngine.read(filePath.resolve("unknownFile.json"), TestInputObject.class);
+        });
+
+        assertEquals(ResourceError.UNKNOWN_FILE, contractException.getErrorType());
+
+        // null classref
+        contractException = assertThrows(ContractException.class, () -> {
+            testTaskitEngine.read(filePath.resolve(fileName), null);
+        });
+
+        assertEquals(TaskitError.NULL_CLASS_REF, contractException.getErrorType());
+    }
+
+    @Test
+    @UnitTestMethod(target = TaskitEngine.class, name = "readAndTranslate", args = { Path.class, Class.class })
+    public void testReadAndTranslate() throws IOException {
+        String fileName = "testEngineReadAndTranslate_1-testOutput.json";
+        String fileName2 = "testEngineReadAndTranslate_2-testOutput.json";
+
+        ResourceHelper.createFile(filePath, fileName);
+        ResourceHelper.createFile(filePath, fileName2);
+
+        TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
+        TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
+        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
+                .addTranslationSpec(testObjectTranslationSpec)
+                .addTranslationSpec(complexObjectTranslationSpec).build();
+
+        TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
+
+        testTaskitEngine.translateAndWrite(filePath.resolve(fileName), expectedAppObject);
+        TestAppObject actualAppObject = testTaskitEngine.readAndTranslate(filePath.resolve(fileName),
+                TestInputObject.class);
+        assertEquals(expectedAppObject, actualAppObject);
+
+        // preconditions
+        // null path
+        ContractException contractException = assertThrows(ContractException.class, () -> {
+            testTaskitEngine.readAndTranslate(null, TestInputObject.class);
+        });
+
+        assertEquals(TaskitError.NULL_PATH, contractException.getErrorType());
+
+        // file path is a directory
+        contractException = assertThrows(ContractException.class, () -> {
+            testTaskitEngine.readAndTranslate(filePath, TestInputObject.class);
+        });
+
+        assertEquals(ResourceError.FILE_PATH_IS_DIRECTORY, contractException.getErrorType());
+
+        // unknown file
+        contractException = assertThrows(ContractException.class, () -> {
+            testTaskitEngine.readAndTranslate(filePath.resolve("unknownFile.json"), TestInputObject.class);
+        });
+
+        assertEquals(ResourceError.UNKNOWN_FILE, contractException.getErrorType());
+
+        // null classref
+        contractException = assertThrows(ContractException.class, () -> {
+            testTaskitEngine.readAndTranslate(filePath.resolve(fileName), null);
+        });
+
+        assertEquals(TaskitError.NULL_CLASS_REF, contractException.getErrorType());
+
+        // unknown translation spec
+        contractException = assertThrows(ContractException.class, () -> {
+
+            TestTaskitEngine.builder().addTranslationSpec(new TestComplexObjectTranslationSpec()).build()
+                    .readAndTranslate(filePath.resolve(fileName), TestInputObject.class);
+        });
+
+        assertEquals(TaskitError.UNKNOWN_TRANSLATION_SPEC, contractException.getErrorType());
+    }
 
     @Test
     @UnitTestMethod(target = TaskitEngine.class, name = "translateObject", args = { Object.class })
@@ -458,27 +653,11 @@ public class AT_TaskitEngine {
                 }) {
 
             @Override
-            public <O> void write(Path outputPath, O outputObject) throws IOException {
+            protected <O> void writeToFile(FileWriter fileWriter, O outputObject) throws IOException {
             }
 
             @Override
-            public <O> void translateAndWrite(Path outputPath, O outputObject)
-                    throws IOException {
-            }
-
-            @Override
-            public <C, O extends C> void translateAndWrite(Path outputPath, O outputObject,
-                    Class<C> outputClassRef) throws IOException {
-            }
-
-            @Override
-            public <I> I read(Path inputPath, Class<I> inputClassRef) throws IOException {
-                return null;
-            }
-
-            @Override
-            public <T, I> T readAndTranslate(Path inputPath, Class<I> inputClassRef)
-                    throws IOException {
+            protected <I> I readFile(FileReader reader, Class<I> inputClassRef) throws IOException {
                 return null;
             }
 
@@ -495,7 +674,7 @@ public class AT_TaskitEngine {
 
         // different id
         assertNotEquals(taskitEngine1, taskitEngine6);
-        
+
         // different translation specs
         assertNotEquals(taskitEngine1, taskitEngine2);
         assertNotEquals(taskitEngine1, taskitEngine3);

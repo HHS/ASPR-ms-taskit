@@ -6,7 +6,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
-import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -14,7 +13,6 @@ import java.util.Set;
 
 import com.google.protobuf.Descriptors.Descriptor;
 import com.google.protobuf.Descriptors.FieldDescriptor;
-import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
 import com.google.protobuf.ProtocolMessageEnum;
 import com.google.protobuf.util.JsonFormat;
@@ -252,7 +250,8 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
 		/**
 		 * Checks the class to determine if it is a ProtocolMessageEnum or a Message.
 		 * <p>
-		 * If it is a Message, gets the Descriptor (which is akin to a class but for a Protobuf
+		 * If it is a Message, gets the Descriptor (which is akin to a class but for a
+		 * Protobuf
 		 * Message) for it to get the full name and add the typeUrl to the internal
 		 * descriptorMap and typeUrlToClassMap.
 		 * </p>
@@ -321,122 +320,36 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
 		return this.data.jsonPrinter;
 	}
 
-	/**
-	 * @throws ContractException
-	 *                           <ul>
-	 *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
-	 *                           if the passed in object is null</li>
-	 *                           <li>{@linkplain TaskitError#NULL_CLASS_REF} if the
-	 *                           passed in classRef is null</li>
-	 *                           <li>{@linkplain TaskitError#UNKNOWN_TRANSLATION_SPEC}
-	 *                           if no translationSpec was provided for the given
-	 *                           objects class</li>
-	 *                           <li>{@link TaskitError#INVALID_OUTPUT_CLASS} if the
-	 *                           translated object is not assignable from
-	 *                           {@link Message}</li>
-	 *                           </ul>
-	 */
 	@Override
-	public <O> void write(Path path, O object) throws IOException {
-		if (!Message.class.isAssignableFrom(object.getClass())) {
+	protected <O> void writeToFile(FileWriter fileWriter, O outputObject) throws IOException {
+		if (!Message.class.isAssignableFrom(outputObject.getClass())) {
 			throw new ContractException(TaskitError.INVALID_OUTPUT_CLASS, Message.class.getName());
 		}
 
-		Message message = Message.class.cast(object);
+		Message message = Message.class.cast(outputObject);
 
-		BufferedWriter writer = new BufferedWriter(new FileWriter(path.toFile()));
+		BufferedWriter writer = new BufferedWriter(fileWriter);
 		this.data.jsonPrinter.appendTo(message, writer);
 
 		writer.flush();
 	}
 
-	/**
-	 * @throws ContractException
-	 *                           <ul>
-	 *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
-	 *                           if the passed in object is null</li>
-	 *                           <li>{@linkplain TaskitError#NULL_CLASS_REF} if the
-	 *                           passed in classRef is null</li>
-	 *                           <li>{@linkplain TaskitError#UNKNOWN_TRANSLATION_SPEC}
-	 *                           if no translationSpec was provided for the given
-	 *                           objects class</li>
-	 *                           <li>{@link TaskitError#INVALID_OUTPUT_CLASS} if the
-	 *                           translated object is not assignable from
-	 *                           {@link Message}</li>
-	 *                           </ul>
-	 */
 	@Override
-	public <O> void translateAndWrite(Path path, O object) throws IOException {
-		write(path, translateObject(object));
-	}
-
-	/**
-	 * @throws ContractException
-	 *                           <ul>
-	 *                           <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
-	 *                           if the passed in object is null</li>
-	 *                           <li>{@linkplain TaskitError#NULL_CLASS_REF} if the
-	 *                           passed in classRef is null</li>
-	 *                           <li>{@linkplain TaskitError#UNKNOWN_TRANSLATION_SPEC}
-	 *                           if no translationSpec was provided for the given
-	 *                           objects class</li>
-	 *                           <li>{@link TaskitError#INVALID_OUTPUT_CLASS} if the
-	 *                           translated object is not assignable from
-	 *                           {@link Message}</li>
-	 *                           </ul>
-	 */
-	@Override
-	public <C, O extends C> void translateAndWrite(Path path, O object, Class<C> classRef) throws IOException {
-		write(path, translateObjectAsClassSafe(object, classRef));
-	}
-
-	/**
-	 * @throws ContractException              {@linkplain TaskitError#INVALID_INPUT_CLASS}
-	 *                                        if the given inputClassRef is not
-	 *                                        assignable from {@linkplain Message}
-	 * @throws InvalidProtocolBufferException if the input is not valid proto3 JSON
-	 *                                        format or there are unknown fields in
-	 *                                        the input
-	 */
-	@Override
-	public <I> I read(Path path, Class<I> classRef) throws IOException {
-		if (!Message.class.isAssignableFrom(classRef)) {
+	protected <I> I readFile(FileReader fileReader, Class<I> inputClassRef) throws IOException {
+		if (!Message.class.isAssignableFrom(inputClassRef)) {
 			throw new ContractException(TaskitError.INVALID_INPUT_CLASS, Message.class.getName());
 		}
 
-		Reader reader = new BufferedReader(new FileReader(path.toFile()));
+		Reader buffReader = new BufferedReader(fileReader);
 
-		Message.Builder builder = ProtobufTaskitEngineHelper.getBuilderForMessage(classRef.asSubclass(Message.class));
+		Message.Builder builder = ProtobufTaskitEngineHelper
+				.getBuilderForMessage(inputClassRef.asSubclass(Message.class));
 
-		this.data.jsonParser.merge(reader, builder);
+		this.data.jsonParser.merge(buffReader, builder);
 
 		Message message = builder.build();
 
-		return classRef.cast(message);
-	}
-
-	/**
-	 * @throws InvalidProtocolBufferException if the input is not valid proto3 JSON
-	 *                                        format or there are unknown fields in
-	 *                                        the input
-	 * @throws ContractException
-	 *                                        <ul>
-	 *                                        <li>{@linkplain TaskitError#INVALID_INPUT_CLASS}
-	 *                                        if the given inputClassRef is not
-	 *                                        assignable from
-	 *                                        {@linkplain Message}</li>
-	 *                                        <li>{@linkplain TaskitError#NULL_OBJECT_FOR_TRANSLATION}
-	 *                                        if the passed in object is null</li>
-	 *                                        <li>{@linkplain TaskitError#UNKNOWN_TRANSLATION_SPEC}
-	 *                                        if no translationSpec was provided for
-	 *                                        the given objects class</li>
-	 *                                        </ul>
-	 * 
-	 * 
-	 */
-	@Override
-	public <T, I> T readAndTranslate(Path path, Class<I> classRef) throws IOException {
-		return translateObject(read(path, classRef));
+		return inputClassRef.cast(message);
 	}
 
 }

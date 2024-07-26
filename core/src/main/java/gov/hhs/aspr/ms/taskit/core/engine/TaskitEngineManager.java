@@ -1,15 +1,12 @@
 package gov.hhs.aspr.ms.taskit.core.engine;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 import gov.hhs.aspr.ms.util.resourcehelper.ResourceError;
-import gov.hhs.aspr.ms.util.resourcehelper.ResourceHelper;
 
 /**
  * The TaskitEngineManager allows {@link TaskitEngine}s to be added to it, and
@@ -110,26 +107,6 @@ public final class TaskitEngineManager {
 		}
 	}
 
-	private void validatePath(Path path) {
-		if (path == null) {
-			throw new ContractException(TaskitError.NULL_PATH);
-		}
-
-		ResourceHelper.validateFilePath(path);
-	}
-
-	private void validateClass(Class<?> classRef) {
-		if (classRef == null) {
-			throw new ContractException(TaskitError.NULL_CLASS_REF);
-		}
-	}
-
-	private void validateObject(Object object) {
-		if (object == null) {
-			throw new ContractException(TaskitError.NULL_OBJECT_FOR_TRANSLATION);
-		}
-	}
-
 	private void validateTaskitEngineId(TaskitEngineId taskitEngineId) {
 		if (taskitEngineId == null) {
 			throw new ContractException(TaskitError.NULL_TASKIT_ENGINE_ID);
@@ -174,15 +151,11 @@ public final class TaskitEngineManager {
 	 *                           IOException
 	 */
 	public <I> I read(Path inputPath, Class<I> inputClassRef, TaskitEngineId taskitEngineId) {
-		// TODO: validateFile not filePath
-		validatePath(inputPath);
-		validateClass(inputClassRef);
-
 		TaskitEngine taskitEngine = getTaskitEngine(taskitEngineId);
 
 		try {
 			return taskitEngine.read(inputPath, inputClassRef);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -217,14 +190,11 @@ public final class TaskitEngineManager {
 	 *                           IOException
 	 */
 	public <I, T> T readAndTranslate(Path inputPath, Class<I> inputClassRef, TaskitEngineId taskitEngineId) {
-		validatePath(inputPath);
-		validateClass(inputClassRef);
-
 		TaskitEngine taskitEngine = getTaskitEngine(taskitEngineId);
 
 		try {
 			return taskitEngine.readAndTranslate(inputPath, inputClassRef);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -256,7 +226,13 @@ public final class TaskitEngineManager {
 	 *                           IOException
 	 */
 	public <O> void write(Path outputPath, O outputObject, TaskitEngineId taskitEngineId) {
-		write(outputPath, outputObject, Optional.empty(), taskitEngineId, false);
+		TaskitEngine taskitEngine = this.getTaskitEngine(taskitEngineId);
+
+		try {
+			taskitEngine.write(outputPath, outputObject);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	/**
@@ -287,7 +263,13 @@ public final class TaskitEngineManager {
 	 *                           IOException
 	 */
 	public <O> void translateAndWrite(Path outputPath, O outputObject, TaskitEngineId taskitEngineId) {
-		write(outputPath, outputObject, Optional.empty(), taskitEngineId, true);
+		TaskitEngine taskitEngine = this.getTaskitEngine(taskitEngineId);
+
+		try {
+			taskitEngine.translateAndWrite(outputPath, outputObject);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	/**
@@ -326,9 +308,13 @@ public final class TaskitEngineManager {
 	 */
 	public <C, O extends C> void translateAndWrite(Path outputPath, O outputObject, Class<C> outputClassRef,
 			TaskitEngineId taskitEngineId) {
-		validateClass(outputClassRef);
+		TaskitEngine taskitEngine = this.getTaskitEngine(taskitEngineId);
 
-		write(outputPath, outputObject, Optional.of(outputClassRef), taskitEngineId, true);
+		try {
+			taskitEngine.translateAndWrite(outputPath, outputObject, outputClassRef);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	/**
@@ -399,7 +385,6 @@ public final class TaskitEngineManager {
 	 */
 	public final <T, O extends C, C> T translateObjectAsClassSafe(O object, Class<C> translateAsClassRef,
 			TaskitEngineId taskitEngineId) {
-
 		TaskitEngine taskitEngine = getTaskitEngine(taskitEngineId);
 
 		return taskitEngine.translateObjectAsClassSafe(object, translateAsClassRef);
@@ -452,36 +437,5 @@ public final class TaskitEngineManager {
 		TaskitEngine taskitEngine = getTaskitEngine(taskitEngineId);
 
 		return taskitEngine.translateObjectAsClassUnsafe(object, translateAsClassRef);
-	}
-
-	/*
-	 * package access for testing
-	 * 
-	 * calls the associated TaskitEngine write method depending on whether the
-	 * translate flag is set and whether there is a classRef provided to translate
-	 * the object as
-	 */
-	<C, O extends C> void write(Path outputPath, O outputObject, Optional<Class<C>> outputClassRef,
-			TaskitEngineId taskitEngineId, boolean translateBeforeWrite) {
-
-		validatePath(outputPath);
-		validateObject(outputObject);
-
-		TaskitEngine taskitEngine = getTaskitEngine(taskitEngineId);
-
-		try {
-			if (!translateBeforeWrite) {
-				taskitEngine.write(outputPath, outputObject);
-				return;
-			}
-			if (outputClassRef.isEmpty()) {
-				taskitEngine.translateAndWrite(outputPath, outputObject);
-				return;
-			}
-			taskitEngine.translateAndWrite(outputPath, outputObject, outputClassRef.get());
-			return;
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
 	}
 }

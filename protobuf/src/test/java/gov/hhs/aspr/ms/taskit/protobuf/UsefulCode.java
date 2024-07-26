@@ -30,7 +30,7 @@ public class UsefulCode {
     }
 
     protected Class<?> getClassFromInfo(FileDescriptor fileDescriptor, String typeName) {
-        boolean javaMultFiles = fileDescriptor.getOptions().getJavaMultipleFiles();
+        boolean javaMultipleFiles = fileDescriptor.getOptions().getJavaMultipleFiles();
         String javaPackage = fileDescriptor.getOptions().getJavaPackage();
         String javaOuterClassName = fileDescriptor.getOptions().getJavaOuterClassname();
         String protoName = fileDescriptor.getName().split("\\.")[0];
@@ -43,7 +43,7 @@ public class UsefulCode {
             sb.append(".")
                     .append(javaOuterClassName)
                     .append("$");
-        } else if (!javaMultFiles) {
+        } else if (!javaMultipleFiles) {
             sb.append(".")
                     .append(protoName.substring(0, 1).toUpperCase())
                     .append(protoName.substring(1))
