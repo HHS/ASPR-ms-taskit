@@ -1,7 +1,6 @@
 package gov.hhs.aspr.ms.taskit.core.engine;
 
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -103,9 +102,7 @@ public abstract class TaskitEngine {
 		validateFilePath(outputPath);
 		validateObject(outputObject);
 
-		FileWriter fileWriter = new FileWriter(outputPath.toFile());
-
-		this.writeToFile(fileWriter, outputObject);
+		this.writeToFile(outputPath.toFile(), outputObject);
 	}
 
 	/**
@@ -137,8 +134,7 @@ public abstract class TaskitEngine {
 	public final <O> void translateAndWrite(Path outputPath, O outputObject) throws IOException {
 		validateFilePath(outputPath);
 
-		FileWriter fileWriter = new FileWriter(outputPath.toFile());
-		this.writeToFile(fileWriter, this.translateObject(outputObject));
+		this.writeToFile(outputPath.toFile(), this.translateObject(outputObject));
 	}
 
 	/**
@@ -173,9 +169,7 @@ public abstract class TaskitEngine {
 			throws IOException {
 		validateFilePath(outputPath);
 
-		FileWriter fileWriter = new FileWriter(outputPath.toFile());
-
-		this.writeToFile(fileWriter, this.translateObjectAsClassSafe(outputObject, outputClassRef));
+		this.writeToFile(outputPath.toFile(), this.translateObjectAsClassSafe(outputObject, outputClassRef));
 	}
 
 	/**
@@ -204,9 +198,7 @@ public abstract class TaskitEngine {
 		validateFile(inputPath);
 		validateClass(inputClassRef);
 
-		FileReader fileReader = new FileReader(inputPath.toFile());
-
-		return this.readFile(fileReader, inputClassRef);
+		return this.readFile(inputPath.toFile(), inputClassRef);
 	}
 
 	/**
@@ -241,9 +233,7 @@ public abstract class TaskitEngine {
 		validateFile(inputPath);
 		validateClass(inputClassRef);
 
-		FileReader fileReader = new FileReader(inputPath.toFile());
-
-		I readObj = this.readFile(fileReader, inputClassRef);
+		I readObj = this.readFile(inputPath.toFile(), inputClassRef);
 
 		return this.translateObject(readObj);
 	}
@@ -410,9 +400,9 @@ public abstract class TaskitEngine {
 				&& Objects.equals(data, other.data);
 	}
 
-	protected abstract <O> void writeToFile(FileWriter fileWriter, O outputObject) throws IOException;
+	protected abstract <O> void writeToFile(File file, O outputObject) throws IOException;
 
-	protected abstract <I> I readFile(FileReader fileReader, Class<I> inputClassRef) throws IOException;
+	protected abstract <I> I readFile(File file, Class<I> inputClassRef) throws IOException;
 
 	private void validateObject(Object object) {
 		if (object == null) {

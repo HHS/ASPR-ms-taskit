@@ -6,8 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Set;
@@ -653,11 +652,11 @@ public class AT_TaskitEngine {
                 }) {
 
             @Override
-            protected <O> void writeToFile(FileWriter fileWriter, O outputObject) throws IOException {
+            protected <O> void writeToFile(File file, O outputObject) throws IOException {
             }
 
             @Override
-            protected <I> I readFile(FileReader reader, Class<I> inputClassRef) throws IOException {
+            protected <I> I readFile(File file, Class<I> inputClassRef) throws IOException {
                 return null;
             }
 

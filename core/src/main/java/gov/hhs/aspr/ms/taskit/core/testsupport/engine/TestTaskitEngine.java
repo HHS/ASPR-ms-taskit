@@ -1,5 +1,6 @@
 package gov.hhs.aspr.ms.taskit.core.testsupport.engine;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -130,8 +131,9 @@ public final class TestTaskitEngine extends TaskitEngine {
 	}
 
 	@Override
-	protected <O> void writeToFile(FileWriter fileWriter, O outputObject) throws IOException {
+	protected <O> void writeToFile(File file, O outputObject) throws IOException {
 		String stringToWrite = this.gson.toJson(outputObject);
+		FileWriter fileWriter = new FileWriter(file);
 
 		fileWriter.write(stringToWrite);
 		fileWriter.flush();
@@ -139,8 +141,8 @@ public final class TestTaskitEngine extends TaskitEngine {
 	}
 
 	@Override
-	protected <I> I readFile(FileReader fileReader, Class<I> inputClassRef) {
-		JsonObject jsonObject = JsonParser.parseReader(new JsonReader(fileReader))
+	protected <I> I readFile(File file, Class<I> inputClassRef) throws IOException {
+		JsonObject jsonObject = JsonParser.parseReader(new JsonReader(new FileReader(file)))
 				.getAsJsonObject();
 
 		return this.gson.fromJson(jsonObject.toString(), inputClassRef);
