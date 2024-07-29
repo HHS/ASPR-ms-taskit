@@ -183,7 +183,8 @@
                         <configuration>
                             <excludes>
                                 <exclude>com/google/type/*.class</exclude>
-                                <exclude>**/input/**/*.class</exclude>
+                                <exclude>gov/hhs/aspr/ms/taskit/protobuf/objects/*.class</exclude>
+                                <exclude>gov/hhs/aspr/ms/taskit/protobuf/testsupport/objects/*.class</exclude>
                             </excludes>
                         </configuration>
                     </plugin>
