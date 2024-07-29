@@ -1,9 +1,12 @@
 package gov.hhs.aspr.ms.taskit.protobuf.engine;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.google.protobuf.Any;
+import com.google.protobuf.Message;
 
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngineData;
@@ -27,6 +30,33 @@ public abstract class ProtobufTaskitEngine extends TaskitEngine {
         this.typeUrlToClassMap.putAll(typeUrlToClassMap);
 
     }
+
+    @Override
+    protected final <O> void writeToFile(File file, O outputObject) throws IOException {
+        if (!Message.class.isAssignableFrom(outputObject.getClass())) {
+            throw new ContractException(TaskitError.INVALID_OUTPUT_CLASS, Message.class.getName());
+        }
+
+        this.writeToFile(file, Message.class.cast(outputObject));
+    }
+
+    @Override
+    protected final <I> I readFile(File file, Class<I> inputClassRef) throws IOException {
+        if (!Message.class.isAssignableFrom(inputClassRef)) {
+            throw new ContractException(TaskitError.INVALID_INPUT_CLASS, Message.class.getName());
+        }
+
+        Message.Builder builder = ProtobufTaskitEngineHelper
+                .getBuilderForMessage(inputClassRef.asSubclass(Message.class));
+
+        Message message = this.readFile(file, builder);
+
+        return inputClassRef.cast(message);
+    }
+
+    protected abstract void writeToFile(File file, Message message) throws IOException;
+
+    protected abstract Message readFile(File file, Message.Builder builder) throws IOException;
 
     /**
      * Translate a object of type {@link Any} to the wrapped object's corresponding
