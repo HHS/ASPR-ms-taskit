@@ -20,7 +20,6 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
 import com.google.protobuf.ProtocolMessageEnum;
 
-import gov.hhs.aspr.ms.taskit.core.engine.TaskitError;
 import gov.hhs.aspr.ms.taskit.core.testsupport.engine.TestTaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.complexobject.TestComplexObjectTranslatorId;
@@ -28,10 +27,6 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.specs.TestObje
 import gov.hhs.aspr.ms.taskit.core.translation.ITranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.Translator;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.TestObjectUtil;
-import gov.hhs.aspr.ms.taskit.protobuf.testsupport.objects.BadMessageBadArguments;
-import gov.hhs.aspr.ms.taskit.protobuf.testsupport.objects.BadMessageIllegalAccess;
-import gov.hhs.aspr.ms.taskit.protobuf.testsupport.objects.BadMessageNoMethod;
-import gov.hhs.aspr.ms.taskit.protobuf.testsupport.objects.BadMessageNonStaticMethod;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.objects.TestComplexInputObject;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.objects.TestInputEnum;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.objects.TestInputObject;
@@ -57,8 +52,8 @@ public class AT_ProtobufJsonTaskitEngine {
     Path filePath = ResourceHelper.createDirectory(basePath, "test-output");
 
     @Test
-    @UnitTestMethod(target = ProtobufJsonTaskitEngine.class, name = "read", args = { Path.class, Class.class })
-    public void testRead() throws IOException {
+    @UnitTestForCoverage
+    public void testReadFile() throws IOException {
         String fileName = "readProtoJsonEngine_1-testOutput.json";
 
         ResourceHelper.createFile(filePath, fileName);
@@ -76,13 +71,6 @@ public class AT_ProtobufJsonTaskitEngine {
         assertEquals(expectedObject, actualObject);
 
         // preconditions
-        // input class is not a Message class
-        ContractException contractException = assertThrows(ContractException.class, () -> {
-            protobufTaskitEngine.read(filePath.resolve(fileName), TestAppObject.class);
-        });
-
-        assertEquals(TaskitError.INVALID_INPUT_CLASS, contractException.getErrorType());
-
         // json has unknown property and the ignoringUnknownFields property is set to
         // false
         ProtobufJsonTaskitEngine protobufTaskitEngine2 = ProtobufJsonTaskitEngine.builder()
@@ -104,61 +92,11 @@ public class AT_ProtobufJsonTaskitEngine {
         assertThrows(InvalidProtocolBufferException.class, () -> {
             protobufTaskitEngine2.read(filePath.resolve("readProtoJsonEngine_3_bad"), TestInputObject.class);
         });
-
-        /*
-         * Note on these preconditions: Because of the type enforced on readInput()
-         * ensuring that the passed in classRef is a child of Message.class, these
-         * preconditions should never be encountered. But for coverage purposes, are
-         * included here.
-         */
-        // class ref does not contain a newBuilder method
-        assertThrows(RuntimeException.class, () -> {
-            ProtobufTaskitEngineHelper.getBuilderForMessage(BadMessageNoMethod.class);
-        });
-
-        // class has a newBuilder method but it is not static
-        assertThrows(RuntimeException.class, () -> {
-            ProtobufTaskitEngineHelper.getBuilderForMessage(BadMessageNonStaticMethod.class);
-        });
-
-        // class has a static newBuilder method but it takes arguments
-        assertThrows(RuntimeException.class, () -> {
-            ProtobufTaskitEngineHelper.getBuilderForMessage(BadMessageBadArguments.class);
-        });
-
-        // class has a newBuilder method but it is not accessible
-        assertThrows(RuntimeException.class, () -> {
-            ProtobufTaskitEngineHelper.getBuilderForMessage(BadMessageIllegalAccess.class);
-        });
     }
 
     @Test
-    @UnitTestMethod(target = ProtobufJsonTaskitEngine.class, name = "readAndTranslate", args = { Path.class,
-            Class.class })
-    public void testReadAndTranslate() throws IOException {
-        String fileName = "readAndTranslateProtoJsonEngine_1-testOutput.json";
-
-        ResourceHelper.createFile(filePath, fileName);
-
-        ProtobufJsonTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder()
-                .addTranslationSpec(new TestProtobufObjectTranslationSpec())
-                .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
-
-        TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
-
-        protobufTaskitEngine.translateAndWrite(filePath.resolve(fileName), expectedAppObject);
-        TestAppObject actualObject = protobufTaskitEngine.readAndTranslate(filePath.resolve(fileName),
-                TestInputObject.class);
-        assertEquals(expectedAppObject, actualObject);
-
-        // preconditions
-        // tested by testRead()
-    }
-
-    @Test
-    @UnitTestMethod(target = ProtobufJsonTaskitEngine.class, name = "write", args = { Path.class,
-            Object.class })
-    public void testWriteOutput() throws IOException {
+    @UnitTestForCoverage
+    public void testWriteFile() throws IOException {
         String fileName = "writeProtoJsonEngine_1-testOutput.json";
 
         ResourceHelper.createFile(filePath, fileName);
@@ -174,62 +112,6 @@ public class AT_ProtobufJsonTaskitEngine {
         TestInputObject actualAppObject = protobufTaskitEngine.read(filePath.resolve(fileName),
                 TestInputObject.class);
         assertEquals(testInputObject, actualAppObject);
-
-        // preconditions
-        // the object to write isn't assignable from Message.class
-        ContractException contractException = assertThrows(ContractException.class, () -> {
-            protobufTaskitEngine.write(filePath.resolve(fileName), expectedAppObject);
-        });
-
-        assertEquals(TaskitError.INVALID_OUTPUT_CLASS, contractException.getErrorType());
-    }
-
-    @Test
-    @UnitTestMethod(target = ProtobufJsonTaskitEngine.class, name = "translateAndWrite", args = { Path.class,
-            Object.class })
-    public void testTranslateAndWriteOutput() throws IOException {
-        String fileName = "translateAndWriteProtoJsonEngine_1-testOutput.json";
-
-        ResourceHelper.createFile(filePath, fileName);
-
-        ProtobufJsonTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder()
-                .addTranslationSpec(new TestProtobufObjectTranslationSpec())
-                .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
-
-        TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
-
-        protobufTaskitEngine.translateAndWrite(filePath.resolve(fileName), expectedAppObject);
-        TestAppObject actualAppObject = protobufTaskitEngine.readAndTranslate(filePath.resolve(fileName),
-                TestInputObject.class);
-        assertEquals(expectedAppObject, actualAppObject);
-
-        // preconditions
-        // tested by testWrite()
-    }
-
-    @Test
-    @UnitTestMethod(target = ProtobufJsonTaskitEngine.class, name = "translateAndWrite", args = { Path.class,
-            Object.class, Class.class })
-    public void testTranslateAndWriteOutput_Class() throws IOException {
-        String fileName = "translateAndWriteProtoJsonEngine_Class_1-testOutput.json";
-
-        ResourceHelper.createFile(filePath, fileName);
-
-        ProtobufJsonTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder()
-                .addTranslationSpec(new TestProtobufObjectTranslationSpec())
-                .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
-
-        TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
-
-        protobufTaskitEngine.translateAndWrite(filePath.resolve(fileName),
-                TestObjectUtil.getChildAppFromApp(expectedAppObject),
-                TestAppObject.class);
-        TestAppObject actualAppChildObject = protobufTaskitEngine.readAndTranslate(filePath.resolve(fileName),
-                TestInputObject.class);
-        assertEquals(expectedAppObject, actualAppChildObject);
-
-        // preconditions
-        // tested by testWrite()
     }
 
     @Test
