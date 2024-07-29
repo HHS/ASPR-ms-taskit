@@ -2,6 +2,7 @@ package gov.hhs.aspr.ms.taskit.protobuf.engine;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -321,35 +322,20 @@ public final class ProtobufJsonTaskitEngine extends ProtobufTaskitEngine {
 	}
 
 	@Override
-	protected <O> void writeToFile(FileWriter fileWriter, O outputObject) throws IOException {
-		if (!Message.class.isAssignableFrom(outputObject.getClass())) {
-			throw new ContractException(TaskitError.INVALID_OUTPUT_CLASS, Message.class.getName());
-		}
-
-		Message message = Message.class.cast(outputObject);
-
-		BufferedWriter writer = new BufferedWriter(fileWriter);
+	protected void writeToFile(File file, Message message) throws IOException {
+		BufferedWriter writer = new BufferedWriter(new FileWriter(file));
 		this.data.jsonPrinter.appendTo(message, writer);
 
 		writer.flush();
 	}
 
 	@Override
-	protected <I> I readFile(FileReader fileReader, Class<I> inputClassRef) throws IOException {
-		if (!Message.class.isAssignableFrom(inputClassRef)) {
-			throw new ContractException(TaskitError.INVALID_INPUT_CLASS, Message.class.getName());
-		}
-
-		Reader buffReader = new BufferedReader(fileReader);
-
-		Message.Builder builder = ProtobufTaskitEngineHelper
-				.getBuilderForMessage(inputClassRef.asSubclass(Message.class));
+	protected Message readFile(File file, Message.Builder builder) throws IOException {
+		Reader buffReader = new BufferedReader(new FileReader(file));
 
 		this.data.jsonParser.merge(buffReader, builder);
 
-		Message message = builder.build();
-
-		return inputClassRef.cast(message);
+		return builder.build();
 	}
 
 }
