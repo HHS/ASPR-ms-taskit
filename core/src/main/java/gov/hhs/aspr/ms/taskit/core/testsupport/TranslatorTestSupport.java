@@ -37,7 +37,7 @@ public class TranslatorTestSupport {
      * 
      */
     public static <T> Set<String> testGetTranslationSpecs(Class<T> translatorClassRef,
-            List<ITranslationSpec> translationSpecs) throws ClassNotFoundException {
+            List<? extends ITranslationSpec> translationSpecs) throws ClassNotFoundException {
         Set<String> missingTranslationSpecs = new LinkedHashSet<>();
         List<Class<?>> translationSpecClasses = new ArrayList<>();
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
