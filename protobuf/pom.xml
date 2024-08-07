@@ -11,7 +11,6 @@
     </parent>
 
     <!-- Artifact -->
-    <groupId>gov.hhs.aspr.ms.taskit</groupId>
     <artifactId>protobuf</artifactId>
     <packaging>jar</packaging>
 
@@ -184,8 +183,24 @@
                         <configuration>
                             <excludes>
                                 <exclude>com/google/type/*.class</exclude>
-                                <exclude>**/input/**/*.class</exclude>
+                                <exclude>gov/hhs/aspr/ms/taskit/protobuf/objects/*.class</exclude>
+                                <exclude>gov/hhs/aspr/ms/taskit/protobuf/testsupport/objects/*.class</exclude>
                             </excludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>javadoc</id>
+            <build>
+                <plugins>
+                    <!--Attaches javadoc jar to project -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <configuration>
+                            <sourcepath>${project.build.sourceDirectory}:${project.build.directory}/generated-sources/protobuf/java</sourcepath>
                         </configuration>
                     </plugin>
                 </plugins>
