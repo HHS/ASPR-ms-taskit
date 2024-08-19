@@ -6,7 +6,7 @@ import java.util.Objects;
  * Test class representing a class that wraps another object in it.
  * <p>
  * <b>Should NOT</b> be used outside of testing.
- * <p>
+ * </p>
  */
 public class TestObjectWrapper {
 	private Object wrappedObject;

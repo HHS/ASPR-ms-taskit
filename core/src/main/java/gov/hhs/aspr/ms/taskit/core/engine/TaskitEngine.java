@@ -208,7 +208,7 @@ public abstract class TaskitEngine {
 	 * @param <T>       the translated type
 	 * @param <I>       the input type
 	 * @param inputPath the path of the file to read
-	 * @param classRef  the class to read the file as
+	 * @param inputClassRef  the class to read the file as
 	 * @return the resulting translated read in object
 	 * 
 	 * @throws ContractException
@@ -305,7 +305,7 @@ public abstract class TaskitEngine {
 	 * then calls {@link TranslationSpec#translate(Object)}
 	 * <p>
 	 * There is no type safety with this method unlike the
-	 * {@link ITaskitEngine#translateObjectAsClassSafe(Object, Class)} method.
+	 * {@link TaskitEngine#translateObjectAsClassSafe(Object, Class)} method.
 	 * Therefore it is on the caller of this method to ensure that the given object
 	 * can be translated using the given classRef.
 	 * <p>

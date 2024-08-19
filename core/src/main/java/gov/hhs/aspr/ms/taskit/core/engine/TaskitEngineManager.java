@@ -395,7 +395,7 @@ public final class TaskitEngineManager {
 	 * then calls {@link TranslationSpec#translate(Object)}.
 	 * <p>
 	 * There is no type safety with this method unlike the
-	 * {@link ITaskitEngine#translateObjectAsClassSafe(Object, Class)} method.
+	 * {@link TaskitEngine#translateObjectAsClassSafe(Object, Class)} method.
 	 * Therefore it is on the caller of this method to ensure that the given object
 	 * can be translated using the given classRef.
 	 * <p>
