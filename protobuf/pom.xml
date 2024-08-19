@@ -11,7 +11,6 @@
     </parent>
 
     <!-- Artifact -->
-    <groupId>gov.hhs.aspr.ms.taskit</groupId>
     <artifactId>protobuf</artifactId>
     <packaging>jar</packaging>
 
@@ -35,8 +34,8 @@
         <maven-replacer-plugin.version>1.4.1</maven-replacer-plugin.version>
 
         <!-- dependency versions -->
-        <protobuf.version>3.25.3</protobuf.version>
-        <protoc.version>3.25.3</protoc.version>
+        <protobuf.version>3.25.4</protobuf.version>
+        <protoc.version>3.25.4</protoc.version>
     </properties>
 
     <!-- Dependencies -->
@@ -167,17 +166,6 @@
             <plugin>
                 <groupId>org.sonatype.central</groupId>
                 <artifactId>central-publishing-maven-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <publishingServerId>central</publishingServerId>
-                    <tokenAuth>true</tokenAuth>
-                    <deploymentName>ASPR MS Taskit Protobuf</deploymentName>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.sonatype.central</groupId>
-                <artifactId>central-publishing-maven-plugin</artifactId>
             </plugin>
 
         </plugins>
@@ -195,8 +183,24 @@
                         <configuration>
                             <excludes>
                                 <exclude>com/google/type/*.class</exclude>
-                                <exclude>**/input/**/*.class</exclude>
+                                <exclude>gov/hhs/aspr/ms/taskit/protobuf/objects/*.class</exclude>
+                                <exclude>gov/hhs/aspr/ms/taskit/protobuf/testsupport/objects/*.class</exclude>
                             </excludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>javadoc</id>
+            <build>
+                <plugins>
+                    <!--Attaches javadoc jar to project -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <configuration>
+                            <sourcepath>${project.build.sourceDirectory}:${project.build.directory}/generated-sources/protobuf/java</sourcepath>
                         </configuration>
                     </plugin>
                 </plugins>

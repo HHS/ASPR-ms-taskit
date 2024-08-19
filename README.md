@@ -5,16 +5,16 @@
 [![GitHub Workflow Status (with event)][build-shield]][build-url]
 
 # Translation And Serialization Toolkit
-The Translation and Serialization Tookkil (Taskit) is a library that was created to faciliate converting from various input files into Java Objects. This is espcially useful for Simulation Models such as [GCM](https://github.com/HHS/ASPR-8).
+The Translation and Serialization Toolkit (Taskit) is a library that was created to facilitate converting from various input files into Java Objects. This is especially useful for Simulation Models such as [GCM](https://github.com/HHS/ASPR-8).
 
-Currently there is only 1 supported serialzation format, and that is protobuf. Other formats such as binary will follow in the future.
+Currently there is only 1 supported serialization format, and that is protobuf. Other formats such as binary will follow in the future.
 
 As of v3.2.0, this project is in Maven Central.
 
 ## License
 Distributed under the GPLv3 License. See [LICENSE](LICENSE) for more information.
 
-Please read the [HHS vulnerability discloure](https://www.hhs.gov/vulnerability-disclosure-policy/index.html).
+Please read the [HHS vulnerability disclosure](https://www.hhs.gov/vulnerability-disclosure-policy/index.html).
 
 ## Usage 
 To use this project in your project, simply add the following dependency to your `dependencies` section of your pom.xml file.
@@ -22,7 +22,7 @@ To use this project in your project, simply add the following dependency to your
 <dependency>
     <groupId>gov.hhs.aspr.ms.taskit</groupId>
     <artifactId>core</artifactId>
-    <version>4.0.0</version>
+    <version>5.0.0</version>
 </dependency>
 ```
 
@@ -31,7 +31,7 @@ To use the protobuf library of taskit, simply add the following dependency to yo
 <dependency>
     <groupId>gov.hhs.aspr.ms.taskit</groupId>
     <artifactId>protobuf</artifactId>
-    <version>4.0.0</version>
+    <version>5.0.0</version>
 </dependency>
 ```
 
@@ -39,21 +39,26 @@ To use the protobuf library of taskit, simply add the following dependency to yo
 Currently Taskit is composed of a Core library and a Protobuf library.
 
 ### Core
-[Core](core) is the base taskit engine and contains the root level functionality that drives the translation and serialization.
-This library contains the base TranslationController class, the base TranslationSpec class and the base TranslationEngine class.
-
-#### TranslationController
-The TranslationController class handles the delgation of reading/writing from/to input/output files.
+[Core](core) contains TranslationSpec, TaskitEngine, TaskitEngineId, TaskitEngineManager, and Translator. These classes define the root level functionality of Taskit.
 
 #### TranslationSpec
-The TranslationSpec class is an abstract class that must be impleneted to define how to convert between two Java Types, generally the input Java type and the application Java Type.
+An abstract class that defines how to translate between two different Java Types. Implementers of this class must define the intricate details on the translation, while the abstract class strictly handles initialization and determining which internal translate method to call based on the given object that needs to be translated.
 
-#### TranslationEngine
-The TranslationEngine class delgates the converting of one type to another via TranslationSpecs as well as doing the actual reading/writing as delegated by the TranslationController.
+#### TaskitEngine
+An abstract class that contains a mapping of classes to TranslationSpecs. It has the sole responsibility of translating/reading/writing. For translating, it will determine which TranslationSpec to use based on the class of the given object to translate. Implementers of this class must define how to read/write files, as that process can vary between serialization libraries.
+
+#### TaskitEngineId
+An identifier for a TaskitEngine, for use in the TaskitEngineManager.
+
+#### TaskitEngineManager
+The TaskitEngineManager can handle multiple TaskitEngines and allows the user to read/write/translate using the TaskitEngineId to determine which TaskitEngine to use. Contains the same methods as TaskitEngine, with an additional parameter for the TaskitEngineId.
+
+#### Translator
+A Translator is simply a class that can wrap a group of TranslationSpecs that should/will often be used together. It also contains a dependency mechanism that allows for Translators to depend on other Translators, which is useful if a given TranslationSpec requires another TranslationSpec that is not provided by the encompassing Translator. Translators must follow a DAG pattern; there cannot be duplicate Translators, missing Translators nor cyclic Translator dependencies.
 
 ### Protobuf
 [Protobuf](protobuf) is a version of taskit made specifically to be used with protobuf.
-This library builds on the Core library described above and adds a distinct TranslationEngine and TranslationSpecs needed to fully support protobuf.
+This library builds on the Core library described above and adds a distinct TaskitEngine and TranslationSpecs needed to fully support protobuf.
 
 #### Supported types
 This library supports the following proto message types:
