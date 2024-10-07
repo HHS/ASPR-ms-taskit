@@ -71,7 +71,7 @@
         <!-- dependency versions -->
         <gson.version>2.11.0</gson.version>
         <util.version>4.3.0</util.version>
-        <junit-jupiter-engine.version>5.11.0</junit-jupiter-engine.version>
+        <junit-jupiter-engine.version>5.11.2</junit-jupiter-engine.version>
         <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
     </properties>
 
