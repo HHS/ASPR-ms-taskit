@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 
-import com.google.protobuf.Any;
-
+import gov.hhs.aspr.ms.taskit.protobuf.engine.TaskitObject;
+import gov.hhs.aspr.ms.taskit.protobuf.objects.TaskitObjectInput;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestForCoverage;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
@@ -36,7 +36,7 @@ public class AT_TaskitObjectTranslationSpec {
     public void testGetAppObjectClass() {
         TaskitObjectTranslationSpec TaskitObjectTranslationSpec = new TaskitObjectTranslationSpec();
 
-        assertEquals(Object.class, TaskitObjectTranslationSpec.getAppObjectClass());
+        assertEquals(TaskitObject.class, TaskitObjectTranslationSpec.getAppObjectClass());
     }
 
     @Test
@@ -44,6 +44,6 @@ public class AT_TaskitObjectTranslationSpec {
     public void testGetInputObjectClass() {
         TaskitObjectTranslationSpec TaskitObjectTranslationSpec = new TaskitObjectTranslationSpec();
 
-        assertEquals(Any.class, TaskitObjectTranslationSpec.getInputObjectClass());
+        assertEquals(TaskitObjectInput.class, TaskitObjectTranslationSpec.getInputObjectClass());
     }
 }
