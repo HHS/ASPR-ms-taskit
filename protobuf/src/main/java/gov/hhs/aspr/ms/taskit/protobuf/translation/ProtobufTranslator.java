@@ -18,6 +18,7 @@ import gov.hhs.aspr.ms.taskit.protobuf.translation.specs.FloatTranslationSpec;
 import gov.hhs.aspr.ms.taskit.protobuf.translation.specs.IntegerTranslationSpec;
 import gov.hhs.aspr.ms.taskit.protobuf.translation.specs.LongTranslationSpec;
 import gov.hhs.aspr.ms.taskit.protobuf.translation.specs.StringTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.translation.specs.TaskitObjectTranslationSpec;
 
 /**
  * Translator for the primitive Protobuf Translation Specs
@@ -42,6 +43,7 @@ public class ProtobufTranslator {
         list.add(new DateTranslationSpec());
         list.add(new EnumTranslationSpec());
         list.add(new AnyTranslationSpec());
+        list.add(new TaskitObjectTranslationSpec());
 
         return list;
     }

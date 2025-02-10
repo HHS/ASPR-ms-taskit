@@ -59,8 +59,8 @@ public class TaskitObjectTranslationSpec extends ProtobufTranslationSpec<TaskitO
 
     @Override
     protected TaskitObjectInput translateAppObject(TaskitObject appObject) {
-        if (appObject.hasIntVal()) {
-            return TaskitObjectInput.newBuilder().setI32Val(appObject.getIntVal()).build();
+        if (appObject.hasIntegerVal()) {
+            return TaskitObjectInput.newBuilder().setI32Val(appObject.getIntegerVal()).build();
         }
 
         if (appObject.hasLongVal()) {

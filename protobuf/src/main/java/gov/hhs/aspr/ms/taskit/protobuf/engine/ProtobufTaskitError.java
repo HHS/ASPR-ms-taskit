@@ -13,6 +13,7 @@ public enum ProtobufTaskitError implements ContractError {
     UNKNOWN_TYPE_URL(
             "The given type url does not have a corresponding classRef. Either the typeUrl was never provided, or the typeUrl is malformed."),
     MALFORMED_TASKIT_OBJECT("The given taskit object does not have any fields set on it"),
+    INVALID_RETRIEVAL("Tried to get value on Taskit Object which was not set"),
     ;
 
     private final String description;

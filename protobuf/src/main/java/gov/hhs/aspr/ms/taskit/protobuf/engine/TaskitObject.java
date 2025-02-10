@@ -3,6 +3,8 @@ package gov.hhs.aspr.ms.taskit.protobuf.engine;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import gov.hhs.aspr.ms.util.errors.ContractException;
+
 public final class TaskitObject {
 
     private final Optional<Object> objectVal;
@@ -84,7 +86,7 @@ public final class TaskitObject {
         return objectVal.isPresent();
     }
 
-    public boolean hasIntVal() {
+    public boolean hasIntegerVal() {
         return intVal.isPresent();
     }
 
@@ -92,7 +94,7 @@ public final class TaskitObject {
         return doubleVal.isPresent();
     }
 
-    public boolean hasBoolVal() {
+    public boolean hasBooleanVal() {
         return booleanVal.isPresent();
     }
 
@@ -117,38 +119,66 @@ public final class TaskitObject {
     }
 
     public Object getObjectVal() {
+        if (!hasObjectVal()) {
+            throw new ContractException(ProtobufTaskitError.INVALID_RETRIEVAL);
+        }
+
         return objectVal.get();
     }
 
-    public Integer getIntVal() {
+    public Integer getIntegerVal() {
+        if (!hasIntegerVal()) {
+            throw new ContractException(ProtobufTaskitError.INVALID_RETRIEVAL);
+        }
         return intVal.get();
     }
 
     public Double getDoubleVal() {
+        if (!hasDoubleVal()) {
+            throw new ContractException(ProtobufTaskitError.INVALID_RETRIEVAL);
+        }
         return doubleVal.get();
     }
 
     public Boolean getBooleanVal() {
+        if (!hasBooleanVal()) {
+            throw new ContractException(ProtobufTaskitError.INVALID_RETRIEVAL);
+        }
         return booleanVal.get();
     }
 
     public Float getFloatVal() {
+        if (!hasFloatVal()) {
+            throw new ContractException(ProtobufTaskitError.INVALID_RETRIEVAL);
+        }
         return floatVal.get();
     }
 
     public Long getLongVal() {
+        if (!hasLongVal()) {
+            throw new ContractException(ProtobufTaskitError.INVALID_RETRIEVAL);
+        }
         return longVal.get();
     }
 
     public String getStringVal() {
+        if (!hasStringVal()) {
+            throw new ContractException(ProtobufTaskitError.INVALID_RETRIEVAL);
+        }
         return stringVal.get();
     }
 
     public LocalDate getDateVal() {
+        if (!hasDateVal()) {
+            throw new ContractException(ProtobufTaskitError.INVALID_RETRIEVAL);
+        }
         return dateVal.get();
     }
 
     public Enum<?> getEnumVal() {
+        if (!hasEnumVal()) {
+            throw new ContractException(ProtobufTaskitError.INVALID_RETRIEVAL);
+        }
         return enumVal.get();
     }
 }
