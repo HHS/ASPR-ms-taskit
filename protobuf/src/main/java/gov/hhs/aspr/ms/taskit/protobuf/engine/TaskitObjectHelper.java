@@ -40,6 +40,40 @@ public final class TaskitObjectHelper {
         }
     }
 
+    public static TaskitObjectInput getTaskitObjectInput(Object value, ProtobufTaskitEngine taskitEngine) {
+        String valClass = value.getClass().getSimpleName();
+
+        if (value instanceof Enum) {
+            valClass = "Enum";
+        }
+
+        switch (valClass) {
+            case "int":
+            case "Integer":
+                return getIntegerTaskitInput((Integer) value);
+            case "long":
+            case "Long":
+                return getLongTaskitInput((Long) value);
+            case "double":
+            case "Double":
+                return getDoubleTaskitInput((Double) value);
+            case "float":
+            case "Float":
+                return getFloatTaskitInput((Float) value);
+            case "boolean":
+            case "Boolean":
+                return getBooleanTaskitInput((Boolean) value);
+            case "String":
+                return getStringTaskitInput((String) value);
+            case "LocalDate":
+                return getDateTaskitInput((Date) taskitEngine.translateObject(value));
+            case "Enum":
+            return getEnumTaskitInput(taskitEngine.translateObjectAsClassSafe(Enum.class.cast(value), Enum.class));
+            default:
+                return getAnyTaskitInput(taskitEngine.getAnyFromObject(value));
+        }
+    }
+
     public static TaskitObjectInput getIntegerTaskitInput(Integer value) {
         return TaskitObjectInput.newBuilder().setI32Val(value).build();
     }
