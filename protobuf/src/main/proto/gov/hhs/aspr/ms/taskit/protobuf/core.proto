@@ -4,8 +4,25 @@ package gov.hhs.aspr.ms.taskit.protobuf;
 option java_multiple_files = true;
 option java_package = "gov.hhs.aspr.ms.taskit.protobuf.objects";
 
+import "google/type/date.proto";
+import "google/protobuf/any.proto";
 
 message WrapperEnumValue {
     string enumTypeUrl = 1;
     string value = 2;
+}
+
+message TaskitObjectInput {
+    oneof value {
+        google.protobuf.Any mVal = 1;
+        int32 i32Val = 2;
+        double dVal = 3;
+        bool bVal = 4;
+        float fVal = 5;
+        int64 i64Val = 6;
+        string sVal = 7;
+        google.type.Date dateVal = 8;
+        WrapperEnumValue enumVal = 9;
+    }
+    
 }
