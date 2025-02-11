@@ -68,45 +68,45 @@ public final class TaskitObjectHelper {
             case "LocalDate":
                 return getDateTaskitInput((Date) taskitEngine.translateObject(value));
             case "Enum":
-            return getEnumTaskitInput(taskitEngine.translateObjectAsClassSafe(Enum.class.cast(value), Enum.class));
+                return getEnumTaskitInput(taskitEngine.translateObjectAsClassSafe(Enum.class.cast(value), Enum.class));
             default:
                 return getAnyTaskitInput(taskitEngine.getAnyFromObject(value));
         }
     }
 
-    public static TaskitObjectInput getIntegerTaskitInput(Integer value) {
+    static TaskitObjectInput getIntegerTaskitInput(Integer value) {
         return TaskitObjectInput.newBuilder().setI32Val(value).build();
     }
 
-    public static TaskitObjectInput getAnyTaskitInput(Any value) {
+    static TaskitObjectInput getAnyTaskitInput(Any value) {
         return TaskitObjectInput.newBuilder().setMVal(value).build();
     }
 
-    public static TaskitObjectInput getLongTaskitInput(Long value) {
+    static TaskitObjectInput getLongTaskitInput(Long value) {
         return TaskitObjectInput.newBuilder().setI64Val(value).build();
     }
 
-    public static TaskitObjectInput getFloatTaskitInput(Float value) {
+    static TaskitObjectInput getFloatTaskitInput(Float value) {
         return TaskitObjectInput.newBuilder().setFVal(value).build();
     }
 
-    public static TaskitObjectInput getDoubleTaskitInput(Double value) {
+    static TaskitObjectInput getDoubleTaskitInput(Double value) {
         return TaskitObjectInput.newBuilder().setDVal(value).build();
     }
 
-    public static TaskitObjectInput getDateTaskitInput(Date value) {
+    static TaskitObjectInput getDateTaskitInput(Date value) {
         return TaskitObjectInput.newBuilder().setDateVal(value).build();
     }
 
-    public static TaskitObjectInput getStringTaskitInput(String value) {
+    static TaskitObjectInput getStringTaskitInput(String value) {
         return TaskitObjectInput.newBuilder().setSVal(value).build();
     }
 
-    public static TaskitObjectInput getEnumTaskitInput(WrapperEnumValue value) {
+    static TaskitObjectInput getEnumTaskitInput(WrapperEnumValue value) {
         return TaskitObjectInput.newBuilder().setEnumVal(value).build();
     }
 
-    public static TaskitObjectInput getBooleanTaskitInput(Boolean value) {
+    static TaskitObjectInput getBooleanTaskitInput(Boolean value) {
         return TaskitObjectInput.newBuilder().setBVal(value).build();
     }
 }
