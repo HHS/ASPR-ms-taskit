@@ -13,13 +13,16 @@ message WrapperEnumValue {
 }
 
 message TaskitObjectInput {
-    optional google.protobuf.Any mVal = 1;
-    optional int32 i32Val = 2;
-    optional double dVal = 3;
-    optional bool bVal = 4;
-    optional float fVal = 5;
-    optional int64 i64Val = 6;
-    optional string sVal = 7;
-    optional google.type.Date dateVal = 8;
-    optional WrapperEnumValue enumVal = 9;
+    oneof value {
+        google.protobuf.Any mVal = 1;
+        int32 i32Val = 2;
+        double dVal = 3;
+        bool bVal = 4;
+        float fVal = 5;
+        int64 i64Val = 6;
+        string sVal = 7;
+        google.type.Date dateVal = 8;
+        WrapperEnumValue enumVal = 9;
+    }
+    
 }
