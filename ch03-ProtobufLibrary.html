@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.43">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>3&nbsp; Protobuf Taskit Library – Taskit-Docs</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./ch02-CoreLibrary.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-d4d76bf8491c20bad77d141916dc28e1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-8da5b4427184b79ecddefad3d342027e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ch03-ProtobufLibrary.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Protobuf Taskit Library</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Taskit-Docs</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">The Translation and Serialization Toolkit (Taskit)</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch01-Introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch02-CoreLibrary.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Core Taskit Library</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch03-ProtobufLibrary.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Protobuf Taskit Library</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="3">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#translation" id="toc-translation" class="nav-link active" data-scroll-target="#translation"><span class="header-section-number">3.1</span> Translation</a>
+  <ul>
+  <li><a href="#sec-translationSpecs" id="toc-sec-translationSpecs" class="nav-link" data-scroll-target="#sec-translationSpecs"><span class="header-section-number">3.1.1</span> TranslationSpecs</a>
+  <ul class="collapse">
+  <li><a href="#anytranslationspec" id="toc-anytranslationspec" class="nav-link" data-scroll-target="#anytranslationspec"><span class="header-section-number">3.1.1.1</span> AnyTranslationSpec</a></li>
+  <li><a href="#sec-WrapperEnumValue" id="toc-sec-WrapperEnumValue" class="nav-link" data-scroll-target="#sec-WrapperEnumValue"><span class="header-section-number">3.1.1.2</span> WrapperEnumValue</a></li>
+  </ul></li>
+  <li><a href="#sec-protobufTranslators" id="toc-sec-protobufTranslators" class="nav-link" data-scroll-target="#sec-protobufTranslators"><span class="header-section-number">3.1.2</span> Translators</a></li>
+  </ul></li>
+  <li><a href="#engines" id="toc-engines" class="nav-link" data-scroll-target="#engines"><span class="header-section-number">3.2</span> Engines</a>
+  <ul>
+  <li><a href="#sec-ProtobufTaskitEngine" id="toc-sec-ProtobufTaskitEngine" class="nav-link" data-scroll-target="#sec-ProtobufTaskitEngine"><span class="header-section-number">3.2.1</span> ProtobufTaskitEngine</a></li>
+  <li><a href="#protobufbinarytaskitengine" id="toc-protobufbinarytaskitengine" class="nav-link" data-scroll-target="#protobufbinarytaskitengine"><span class="header-section-number">3.2.2</span> ProtobufBinaryTaskitEngine</a></li>
+  <li><a href="#protobufjsontaskitengine" id="toc-protobufjsontaskitengine" class="nav-link" data-scroll-target="#protobufjsontaskitengine"><span class="header-section-number">3.2.3</span> ProtobufJsonTaskitEngine</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Protobuf Taskit Library</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>The Protobuf Taskit library is a version of Taskit made specifically to be used with Protobuf. It builds on the Core Taskit library and adds TaskitEngines and TranslationSpecs needed to fully support Protobuf.</p>
+<p>The current iteration provides support for JSON and binary data formats.</p>
+<p>All documentation from this point forward assumes you have read the <a href="https://protobuf.dev/overview/">Protobuf documentation</a> and are, at a minimum, familiar with the topics listed below:</p>
+<ul>
+<li>Message types and their descriptors</li>
+<li>.proto files</li>
+<li>The Protobuf compiler</li>
+</ul>
+<section id="translation" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="translation"><span class="header-section-number">3.1</span> Translation</h2>
+<section id="sec-translationSpecs" class="level3" data-number="3.1.1">
+<h3 data-number="3.1.1" class="anchored" data-anchor-id="sec-translationSpecs"><span class="header-section-number">3.1.1</span> TranslationSpecs</h3>
+<p>The Protobuf Taskit library provides the ProtobufTranslationSpec abstract class and several concrete implementations of it.</p>
+<p>ProtobufTranslationSpec extends TranslationSpec and establishes that it must be initialized with a ProtobufTaskitEngine type.</p>
+<p>The primary concrete implementation is the AnyTranslationSpec. Additional implementations for scalar types and enums are provided to support the Any type. Lastly, we also provided a convenient DateTranslationSpec to translate between a Java LocalDate and a Protobuf Date.</p>
+<section id="anytranslationspec" class="level4" data-number="3.1.1.1">
+<h4 data-number="3.1.1.1" class="anchored" data-anchor-id="anytranslationspec"><span class="header-section-number">3.1.1.1</span> AnyTranslationSpec</h4>
+<p>The AnyTranslationSpec translates between Java objects and a Protobuf Any message type. Protobuf does not support interfaces or inheritance, so to allow a message field to hold different concrete types, we use the Any type. For example, we can define a Food message with a single Any field. This lets us pack either a Burger or a HotDog message into that field. Later, we can unpack the Any to retrieve the original message type, thus enabling polymorphic behavior in an application.</p>
+<p>When translating an Any type, the AnyTranslationSpec grabs the typeUrl from the message and calls the ProtobufTaskitEngine to receive the corresponding class. It then uses the class to unpack the Any type into a Protobuf message. Lastly, it calls the TaskitEngine to translate the Protobuf message into a Java object that the application can use. The diagram below shows how the provided Any type is used to unpack a Protobuf message (InputObject) which is then translated into a Java object (AppObject).</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-TranslateAnyToObject" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-TranslateAnyToObject-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.1: Translating an Any type
+</figcaption>
+<div aria-describedby="fig-TranslateAnyToObject-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="inputimages/TranslateAnyToObject.svg" class="img-fluid figure-img">
+</div>
+</figure>
+</div>
+</div>
+</div>
+<p>To have the AnyTranslationSpec translate a Java object into an Any type, you need to explicitly tell the TaskitEngine to translate the object as an Any.class. This ensures the TaskitEngine routes the request to the AnyTranslationSpec. If you do not specify the class, then the TaskitEngine will route the request to the TranslationSpec that translates it into its corresponding Protobuf message type, not an Any type. ProtobufTaskitEngine provides methods to get an object from an Any type and to get an Any type from an object, which will be discussed in <a href="#sec-ProtobufTaskitEngine" class="quarto-xref"><span>Section 3.2.1</span></a>.</p>
+<p>When translating a Java object, the AnyTranslationSpec has three options based on the type of object it was provided:</p>
+<p>Option 1: The provided object is a Java enum. It first calls the TaskitEngine to translate the object as an Enum.class and receives a WrapperEnumValue message. It then packs the WrapperEnumValue into an Any type and returns it. WrapperEnumValue is detailed below in <a href="#sec-WrapperEnumValue" class="quarto-xref"><span>Section 3.1.1.2</span></a>, but is required for this specific description.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-TranslateObjectToAnyOption1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-TranslateObjectToAnyOption1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.2: Option 1: the provided object is a Java enum
+</figcaption>
+<div aria-describedby="fig-TranslateObjectToAnyOption1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="inputimages/TranslateObjectToAnyOption1.svg" class="img-fluid figure-img">
+</div>
+</figure>
+</div>
+</div>
+</div>
+<p>Option 2: The provided object is a Protobuf message. This may happen if the object was already translated before being sent to the AnyTranslationSpec. In this case, there is no need to translate it again so it simply packs the Protobuf message into an Any type and returns it.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-TranslateObjectToAnyOption2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-TranslateObjectToAnyOption2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.3: Option 2: the provided object is a Protobuf message
+</figcaption>
+<div aria-describedby="fig-TranslateObjectToAnyOption2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="inputimages/TranslateObjectToAnyOption2.svg" class="img-fluid figure-img">
+</div>
+</figure>
+</div>
+</div>
+</div>
+<p>Option 3: The provided object is not a Java enum or a Protobuf message. It first calls the TaskitEngine to translate the object into a Protobuf message. It then packs the Protobuf message into an Any type and returns it.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-TranslateObjectToAnyOption3" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-TranslateObjectToAnyOption3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.4: Option 3: the provided object is not a Java enum or a Protobuf message
+</figcaption>
+<div aria-describedby="fig-TranslateObjectToAnyOption3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="inputimages/TranslateObjectToAnyOption3.svg" class="img-fluid figure-img">
+</div>
+</figure>
+</div>
+</div>
+</div>
+<p>An Any message type can only wrap other Protobuf messages so it is necessary to have a way of translating Protobuf scalars and enums into a message. The Protobuf library provides message wrappers for scalars, such as BoolValue and Int32Value, and we provide convenient ProtobufTranslationSpecs (listed below) to covert between the most common ones and their Java equivalent. They are intuitive and do not require in-depth explanation.</p>
+<ul>
+<li><p>BooleanTranslationSpec</p></li>
+<li><p>IntegerTranslationSpec</p></li>
+<li><p>LongTranslationSpec</p></li>
+<li><p>StringTranslationSpec</p></li>
+<li><p>FloatTranslationSpec</p></li>
+<li><p>DoubleTranslationSpec</p></li>
+</ul>
+<p>The process of wrapping an enum into a message is more complex and requires further explanation.</p>
+</section>
+<section id="sec-WrapperEnumValue" class="level4" data-number="3.1.1.2">
+<h4 data-number="3.1.1.2" class="anchored" data-anchor-id="sec-WrapperEnumValue"><span class="header-section-number">3.1.1.2</span> WrapperEnumValue</h4>
+<p>WrapperEnumValue is a Protobuf message used to wrap enums as messages so they can be packed into an Any type. It contains two strings: enumTypeUrl, which holds the enum’s full descriptor name, and value, which holds the enum’s value. The WrapperEnumValue is basically a clone of the Any message type, but exclusively used for Enums.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource java number-lines code-with-copy"><code class="sourceCode java"><span id="cb1-1"><a href="#cb1-1"></a>message WrapperEnumValue <span class="op">{</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a>  string enumTypeUrl <span class="op">=</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb1-3"><a href="#cb1-3"></a>  string value <span class="op">=</span> <span class="dv">2</span><span class="op">;</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The EnumTranslationSpec handles translation between Java enums and WrapperEnumValue. When translating a WrapperEnumValue, the EnumTranslationSpec grabs the enumTypeUrl from the message and calls the ProtobufTaskitEngine to receive the corresponding class. It then uses the class to create a Protobuf enum. Lastly, it calls the TaskitEngine to translate the Protobuf enum into a Java enum that the application can use. The diagram below shows how the provided WrapperEnumValue is used to create a Protobuf enum (InputEnum) which is then translated into a Java enum (AppEnum).</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-TranslateWrapperEnumValueToEnum" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-TranslateWrapperEnumValueToEnum-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.5: Translating a WrapperEnumValue
+</figcaption>
+<div aria-describedby="fig-TranslateWrapperEnumValueToEnum-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="inputimages/TranslateWrapperEnumValueToEnum.svg" class="img-fluid figure-img">
+</div>
+</figure>
+</div>
+</div>
+</div>
+<p>To have the EnumTranslationSpec translate a Java enum into a WrapperEnumValue, you need to explicitly tell the TaskitEngine to translate the enum as an Enum.class. This ensures the TaskitEngine routes the request to the EnumTranslationSpec. If you do not specify the class, then the TaskitEngine will route the request to the TranslationSpec that translates it into its corresponding Protobuf enum, not a WrapperEnumValue.</p>
+<p>When translating a Java enum, the EnumTranslationSpec first calls the TaskitEngine to translate it into a Protobuf enum. It then uses the Protobuf enum’s value and full descriptor name to create and return a WrapperEnumValue. The diagram below shows how the provided Java enum (AppEnum) is translated into a Protobuf enum (InputEnum) which is then wrapped inside a WrapperEnumValue. Technically, yes, you could in theory wrap the AppEnum instead of wrapping the InputEnum, but to be consistent across the board, we wrap the InputEnum.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-TranslateEnumToWrapperEnumValue" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-TranslateEnumToWrapperEnumValue-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.6: Translating a Java enum
+</figcaption>
+<div aria-describedby="fig-TranslateEnumToWrapperEnumValue-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="inputimages/TranslateEnumToWrapperEnumValue.svg" class="img-fluid figure-img">
+</div>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-protobufTranslators" class="level3" data-number="3.1.2">
+<h3 data-number="3.1.2" class="anchored" data-anchor-id="sec-protobufTranslators"><span class="header-section-number">3.1.2</span> Translators</h3>
+<p>The Protobuf Taskit library provides ProtobufTranslatorId and ProtobufTranslator to add the ProtobufTranslationSpecs mentioned in the previous section to a ProtobufTaskitEngine.</p>
+<p><strong>Developers do not need to and should not add the ProtobufTranslator to the ProtobufTaskitEngines provided in the Protobuf Taskit library because the engines will automatically include it.</strong></p>
+</section>
+</section>
+<section id="engines" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="engines"><span class="header-section-number">3.2</span> Engines</h2>
+<p>The Protobuf Taskit library provides a ProtobufTaskitEngine abstract class and two concrete implementations of it: ProtobufBinaryTaskitEngine and ProtobufJsonTaskitEngine.</p>
+<section id="sec-ProtobufTaskitEngine" class="level3" data-number="3.2.1">
+<h3 data-number="3.2.1" class="anchored" data-anchor-id="sec-ProtobufTaskitEngine"><span class="header-section-number">3.2.1</span> ProtobufTaskitEngine</h3>
+<p>ProtobufTaskitEngine extends TaskitEngine from the Core Taskit library to implement logic that is common to all ProtobufTaskitEngine implementations.</p>
+<p>For write requests, it casts the provided object to a Protobuf message type and then delegates the write to concrete implementations. For read requests, it creates a message builder type for the provided class, passes the builder and file to concrete implementations, and then casts the message to the provided class and returns it.</p>
+<p>ProtobufTaskitEngine also provides support for translating between an Any type and a Java object. To help unpack Any values into the correct class, it has a variable called typeUrlToClassMap which maps Protobuf full descriptor names to their associated classes. It also provides convenience methods to make it more intuitive to translate between an Any and an object:</p>
+<ul>
+<li><p>getObjectFromAny</p></li>
+<li><p>getAnyFromObjectAsClassSafe</p></li>
+<li><p>getAnyFromObject</p></li>
+</ul>
+<p>When getting an object from an Any type, it simply calls translateObject which will call the AnyTranslationSpec.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-GetObjectFromAny" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-GetObjectFromAny-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.7: Getting an Object from an Any type
+</figcaption>
+<div aria-describedby="fig-GetObjectFromAny-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="inputimages/GetObjectFromAny.svg" class="img-fluid figure-img">
+</div>
+</figure>
+</div>
+</div>
+</div>
+<p>When getting an Any type from an object, it provides two options:</p>
+<p>Option 1: First safely translate the object using a class reference that it extends or implements (see TaskitEngine translation option 2: <a href="ch02-CoreLibrary.html#sec-taskitEngines" class="quarto-xref">Chapter 2, Section&nbsp;<span>2.3.1</span></a>). Then translate it as an Any type (see TaskitEngine translation option 3: <a href="ch02-CoreLibrary.html#sec-taskitEngines" class="quarto-xref">Chapter 2, Section&nbsp;<span>2.3.1</span></a>).</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-GetAnyFromObject1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-GetAnyFromObject1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.8: Option 1: Safely getting an Any type from an Object
+</figcaption>
+<div aria-describedby="fig-GetAnyFromObject1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="inputimages/GetAnyFromObject1.svg" class="img-fluid figure-img">
+</div>
+</figure>
+</div>
+</div>
+</div>
+<p>Option 2: Directly translate the object as an Any type (see TaskitEngine translation option 3: <a href="ch02-CoreLibrary.html#sec-taskitEngines" class="quarto-xref">Chapter 2, Section&nbsp;<span>2.3.1</span></a>)</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-GetAnyFromObject2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-GetAnyFromObject2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.9: Option 2: Unsafely getting an Any type from an Object
+</figcaption>
+<div aria-describedby="fig-GetAnyFromObject2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="inputimages/GetAnyFromObject2.svg" class="img-fluid figure-img">
+</div>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="protobufbinarytaskitengine" class="level3" data-number="3.2.2">
+<h3 data-number="3.2.2" class="anchored" data-anchor-id="protobufbinarytaskitengine"><span class="header-section-number">3.2.2</span> ProtobufBinaryTaskitEngine</h3>
+<p>ProtobufBinaryTaskitEngine extends ProtobufTaskitEngine and implements the logic that is unique to reading and writing Protobuf binary data files.</p>
+<p>ProtobufBinaryTaskitEngine follows a builder pattern, taking in Translators and ProtobufTranslationSpecs and does not require additional configuration to read and write files. When adding a Translator, it adds the Translator to a TaskitEngineData builder and then calls initialize on the Translator and passes in a TranslatorContext with a reference to itself. When adding a ProtobufTranslationSpec, it adds the ProtobufTranslationSpec to a TaskitEngineData builder and then grabs the InputObject’s full descriptor name to populate the typeUrlToClassMap.</p>
+<p>During the build process, the builder adds the ProtobufTranslator (<a href="#sec-protobufTranslators" class="quarto-xref"><span>Section 3.1.2</span></a>), creates the TaskitEngineData, creates the ProtobufBinaryTaskitEngine, and initializes the engine before returning it. The engine is automatically built with a unique TaskitEngineId so the developer does not need to and should not manually set it.</p>
+<p>When writing, it uses Java’s BufferedOutputStream to write the message to the file. When reading, it uses Java’s BufferedInputStream to read the file into a message builder and then builds and returns the message.</p>
+</section>
+<section id="protobufjsontaskitengine" class="level3" data-number="3.2.3">
+<h3 data-number="3.2.3" class="anchored" data-anchor-id="protobufjsontaskitengine"><span class="header-section-number">3.2.3</span> ProtobufJsonTaskitEngine</h3>
+<p>ProtobufJsonTaskitEngine extends ProtobufTaskitEngine and implements the logic that is unique to reading and writing JSON data files.</p>
+<p>ProtobufJsonTaskitEngine follows a builder pattern, taking in Translators, ProtobufTranslationSpecs, and configuration settings for Protobuf’s JSON parser and printer. When adding a Translator, it adds the Translator to a TaskitEngineData builder and then calls initialize on the Translator and passes in a TranslatorContext with a reference to itself. When adding a ProtobufTranslationSpec, it adds the ProtobufTranslationSpec to a TaskitEngineData builder and then grabs the InputObject’s full descriptor name to populate the typeUrlToClassMap. If InputObject is a Protobuf message, it additionally grabs the message’s Descriptor and adds it to a Set called descriptorSet.</p>
+<p>The descriptorSet is used to create a TypeRegistry, which the JSON parser and printer require to correctly resolve types stored in Any fields. This happens internally; no action is required from the developer, but it is described here for the sake of completeness.</p>
+<p>Additionally, the parser and printer can be customized:</p>
+<p>The parser’s default configuration ignores fields not defined in the associated Protobuf message schema, enabling forward and backward compatibility by allowing clients to accept messages with fields they do not recognize. If you tell the parser to not ignore these fields, it will throw an error whenever it encounters an unknown field, which is useful when strict adherence to .proto file schema is required.</p>
+<p>The printer’s default configuration does not print scalar fields with default values. This setting can be turned on or off globally via the builder and can also be turned on for individual fields; this is an example of a case where the initializer of Translators would do more than just add TranslationSpecs, as mentioned in <a href="ch02-CoreLibrary.html#sec-translators" class="quarto-xref">Chapter 2, Section&nbsp;<span>2.2.2</span></a>.</p>
+<p>During the build process, the builder adds the ProtobufTranslator (<a href="#sec-protobufTranslators" class="quarto-xref"><span>Section 3.1.2</span></a>), creates the parser and printer, creates the TaskitEngineData, creates the ProtobufJsonTaskitEngine, and initializes the engine before returning it. The engine is automatically built with a unique TaskitEngineId so the developer does not need to and should not manually set it.</p>
+<p>For write requests, it uses Java’s BufferedWriter and the JSON printer to write the message to the file. For read requests, it uses Java’s BufferedReader and the JSON parser to read the file into a message builder and then builds and returns the message.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./ch02-CoreLibrary.html" class="pagination-link" aria-label="Core Taskit Library">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Core Taskit Library</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
