@@ -13,6 +13,8 @@ on:
     paths-ignore:
       - 'README.md'
       - 'LICENSE'
+      - 'docgen'
+      - '.github'
     branches: ["main"]
 
 jobs:
