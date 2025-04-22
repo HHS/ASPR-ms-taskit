@@ -2,7 +2,6 @@ package gov.hhs.aspr.ms.taskit.core.translation;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -11,6 +10,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitError;
@@ -20,6 +20,7 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.TestObjectTran
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.specs.TestObjectTranslationSpec;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 import gov.hhs.aspr.ms.util.errors.ContractException;
+import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
 import gov.hhs.aspr.ms.util.wrappers.MutableBoolean;
 
 public class AT_Translator {
@@ -96,83 +97,127 @@ public class AT_Translator {
         assertTrue(testTranslator.isInitialized());
     }
 
+    private static enum TranslatorIds implements TranslatorId {
+		TRANSLATOR_ID_1, TRANSLATOR_ID_2, TRANSLATOR_ID_3, TRANSLATOR_ID_4, TRANSLATOR_ID_5, TRANSLATOR_ID_6, 
+        TRANSLATOR_ID_7, TRANSLATOR_ID_8, TRANSLATOR_ID_9, TRANSLATOR_ID_10, TRANSLATOR_ID_11, TRANSLATOR_ID_12;
+
+		public static TranslatorIds getRandomTranslatorId(RandomGenerator randomGenerator) {
+			int index = randomGenerator.nextInt(TranslatorIds.values().length);
+			return TranslatorIds.values()[index];
+		}
+
+		public static Set<TranslatorIds> getRandomTranslatorIds(RandomGenerator randomGenerator) {
+			Set<TranslatorIds> result = new LinkedHashSet<>();
+			for (TranslatorIds translatorIds : TranslatorIds.values()) {
+				if (randomGenerator.nextBoolean()) {
+					result.add(translatorIds);
+				}
+			}
+			return result;
+		}
+	}
+
+    private Translator getRandomTranslator(long seed) {
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+
+        Translator.Builder builder = Translator.builder();
+
+        TranslatorIds translatorId = TranslatorIds.getRandomTranslatorId(randomGenerator);
+		builder.setTranslatorId(translatorId);
+
+		Set<TranslatorIds> randomTranslatorIds = TranslatorIds.getRandomTranslatorIds(randomGenerator);
+		for (TranslatorIds translatorIds : randomTranslatorIds) {
+			if (translatorIds != translatorId) {
+				builder.addDependency(translatorIds);
+			}
+		}
+
+        builder.setInitializer((c) -> {});
+
+        return builder.build();
+    }
+
     @Test
     @UnitTestMethod(target = Translator.class, name = "hashCode", args = {})
     public void testHashCode() {
-        TranslatorId translatorIdA = new TranslatorId() {
-        };
-        TranslatorId translatorIdB = new TranslatorId() {
-        };
-        Consumer<TranslatorContext> consumerA = (translatorContext) -> {
-        };
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1717890677700007680L);
 
-        Translator translatorA = Translator.builder().setInitializer(consumerA).setTranslatorId(translatorIdA).build();
+		// equal objects have equal hash codes
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			Translator translator1 = getRandomTranslator(seed);
+			Translator translator2 = getRandomTranslator(seed);
 
-        Translator translatorB = Translator.builder().setInitializer(consumerA).setTranslatorId(translatorIdB).build();
+			assertEquals(translator1, translator2);
+			assertEquals(translator1.hashCode(), translator2.hashCode());
 
-        Translator translatorC = Translator.builder().setInitializer(consumerA).setTranslatorId(translatorIdA)
-                .addDependency(translatorIdB).build();
+            // initialize both translators and show they are still equal with equal hash codes
+            translator1.initialize(new TranslatorContext(TestTaskitEngine.builder()));
+            translator2.initialize(new TranslatorContext(TestTaskitEngine.builder()));
+            assertEquals(translator1, translator2);
+			assertEquals(translator1.hashCode(), translator2.hashCode());
+		}
 
-        Translator translatorD = Translator.builder().setInitializer(consumerA).setTranslatorId(translatorIdA)
-                .addDependency(translatorIdB).build();
+		// hash codes are reasonably distributed
+		Set<Integer> hashCodes = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			Translator translator = getRandomTranslator(randomGenerator.nextLong());
+			hashCodes.add(translator.hashCode());
+		}
 
-        // if same instance, equal
-        assertEquals(translatorA.hashCode(), translatorA.hashCode());
-
-        // if different class, not equal
-        assertNotEquals(translatorA.hashCode(), new Object().hashCode());
-
-        // if different translator id, not equal
-        assertNotEquals(translatorA.hashCode(), translatorB.hashCode());
-
-        // if same id, but different dependencies, not equal
-        assertNotEquals(translatorA.hashCode(), translatorC.hashCode());
-
-        // if same id and dependencies, equal
-        assertEquals(translatorC.hashCode(), translatorD.hashCode());
+		assertEquals(100, hashCodes.size());
     }
 
     @Test
     @UnitTestMethod(target = Translator.class, name = "equals", args = { Object.class })
     public void testEquals() {
-        TranslatorId translatorIdA = new TranslatorId() {
-        };
-        TranslatorId translatorIdB = new TranslatorId() {
-        };
-        Consumer<TranslatorContext> consumerA = (translatorContext) -> {
-        };
-        Translator translatorA = Translator.builder().setInitializer(consumerA).setTranslatorId(translatorIdA).build();
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8964621488877306870L);
 
-        Translator translatorB = Translator.builder().setInitializer(consumerA).setTranslatorId(translatorIdB).build();
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			Translator translator = getRandomTranslator(randomGenerator.nextLong());
+			assertFalse(translator.equals(new Object()));
+		}
 
-        Translator translatorC = Translator.builder().setInitializer(consumerA).setTranslatorId(translatorIdA)
-                .addDependency(translatorIdB).build();
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+			Translator translator = getRandomTranslator(randomGenerator.nextLong());
+			assertFalse(translator.equals(null));
+		}
 
-        Translator translatorD = Translator.builder().setInitializer(consumerA).setTranslatorId(translatorIdA)
-                .addDependency(translatorIdB).build();
+		// reflexive
+		for (int i = 0; i < 30; i++) {
+			Translator translator = getRandomTranslator(randomGenerator.nextLong());
+			assertTrue(translator.equals(translator));
+		}
 
-        // if same instance, equal
-        assertEquals(translatorA, translatorA);
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			Translator translator1 = getRandomTranslator(seed);
+			Translator translator2 = getRandomTranslator(seed);
+			assertFalse(translator1 == translator2);
+			for (int j = 0; j < 10; j++) {
+				assertTrue(translator1.equals(translator2));
+				assertTrue(translator2.equals(translator1));
+			}
 
-        // if null, not equal
-        assertNotEquals(translatorA, null);
+			// initialize both translators and show they are still equal
+			translator1.initialize(new TranslatorContext(TestTaskitEngine.builder()));
+			translator2.initialize(new TranslatorContext(TestTaskitEngine.builder()));
+			for (int j = 0; j < 10; j++) {
+				assertTrue(translator1.equals(translator2));
+				assertTrue(translator2.equals(translator1));
+			}
+		}
 
-        // if different class, not equal
-        assertNotEquals(translatorA, new Object());
-
-        // if different translator id, not equal
-        assertNotEquals(translatorA, translatorB);
-
-        // if same id, but different dependencies, not equal
-        assertNotEquals(translatorA, translatorC);
-
-        // if same id and dependencies, equal
-        assertEquals(translatorC, translatorD);
-
-        Translator.Data data = new Translator.Data();
-        assertEquals(data, data);
-        assertNotEquals(data, null);
-        assertNotEquals(data, new Object());
+		// different inputs yield unequal translators
+		Set<Translator> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			Translator translator = getRandomTranslator(randomGenerator.nextLong());
+			set.add(translator);
+		}
+		assertEquals(100, set.size());
     }
 
     @Test
