@@ -97,7 +97,7 @@ public class TestAppObject {
 	}
 
 	/**
-	 * Hash code implementation consistent with equals()
+	 * Standard implementation consistent with the {@link #equals(Object)} method
 	 */
 	@Override
 	public int hashCode() {
