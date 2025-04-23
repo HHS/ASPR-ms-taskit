@@ -128,7 +128,7 @@ public abstract class TranslationSpec<I, A, E extends TaskitEngine> implements I
 	}
 
 	/**
-	 * Hash code implementation consistent with equals();
+	 * Standard implementation consistent with the {@link #equals(Object)} method
 	 */
 	@Override
 	public int hashCode() {
