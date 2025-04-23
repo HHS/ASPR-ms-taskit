@@ -1,15 +1,21 @@
 package gov.hhs.aspr.ms.taskit.core.testsupport.objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.taskit.core.testsupport.TestObjectUtil;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
 
 public class AT_TestObjectWrapper {
 
@@ -55,60 +61,76 @@ public class AT_TestObjectWrapper {
     @Test
     @UnitTestMethod(target = TestObjectWrapper.class, name = "hashCode", args = {})
     public void testHashCode() {
-        TestAppObject testAppObject = TestObjectUtil.generateTestAppObject();
-        TestObjectWrapper testObjectWrapper = new TestObjectWrapper();
-        testObjectWrapper.setWrappedObject(testAppObject);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2743491444433183354L);
 
-        TestObjectWrapper testObjectWrapper2 = new TestObjectWrapper();
-        testObjectWrapper2.setWrappedObject(testAppObject);
+		// equal objects have equal hash codes
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			TestObjectWrapper testObjectWrapper1 = getRandomTestObjectWrapper(seed);
+			TestObjectWrapper testObjectWrapper2 = getRandomTestObjectWrapper(seed);
 
-        TestInputObject testInputObject = TestObjectUtil.generateTestInputObject();
-        TestObjectWrapper testObjectWrapper3 = new TestObjectWrapper();
+			assertEquals(testObjectWrapper1, testObjectWrapper2);
+			assertEquals(testObjectWrapper1.hashCode(), testObjectWrapper2.hashCode());
+		}
 
-        testObjectWrapper3.setWrappedObject(testInputObject);
+		// hash codes are reasonably distributed
+		Set<Integer> hashCodes = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			TestObjectWrapper testObjectWrapper = getRandomTestObjectWrapper(randomGenerator.nextLong());
+			hashCodes.add(testObjectWrapper.hashCode());
+		}
 
-        // exact same instance is equal
-        assertEquals(testObjectWrapper.hashCode(), testObjectWrapper.hashCode());
-
-        // different objects should not be equal
-        assertNotEquals(testObjectWrapper.hashCode(), new Object().hashCode());
-
-        // different wrapped objects should not be equal
-        assertNotEquals(testObjectWrapper.hashCode(), testObjectWrapper3.hashCode());
-
-        // same wrapped objects should be equal
-        assertEquals(testObjectWrapper.hashCode(), testObjectWrapper2.hashCode());
+		assertEquals(100, hashCodes.size());
     }
 
     @Test
     @UnitTestMethod(target = TestObjectWrapper.class, name = "equals", args = { Object.class })
     public void testEquals() {
-        TestAppObject testAppObject = TestObjectUtil.generateTestAppObject();
-        TestObjectWrapper testObjectWrapper = new TestObjectWrapper();
-        testObjectWrapper.setWrappedObject(testAppObject);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8980322778377306870L);
 
-        TestObjectWrapper testObjectWrapper2 = new TestObjectWrapper();
-        testObjectWrapper2.setWrappedObject(testAppObject);
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			TestObjectWrapper testObjectWrapper = getRandomTestObjectWrapper(randomGenerator.nextLong());
+			assertFalse(testObjectWrapper.equals(new Object()));
+		}
 
-        TestInputObject testInputObject = TestObjectUtil.generateTestInputObject();
-        TestObjectWrapper testObjectWrapper3 = new TestObjectWrapper();
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+			TestObjectWrapper testObjectWrapper = getRandomTestObjectWrapper(randomGenerator.nextLong());
+			assertFalse(testObjectWrapper.equals(null));
+		}
 
-        testObjectWrapper3.setWrappedObject(testInputObject);
+		// reflexive
+		for (int i = 0; i < 30; i++) {
+			TestObjectWrapper testObjectWrapper = getRandomTestObjectWrapper(randomGenerator.nextLong());
+			assertTrue(testObjectWrapper.equals(testObjectWrapper));
+		}
 
-        // exact same instance is equal
-        assertEquals(testObjectWrapper, testObjectWrapper);
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			TestObjectWrapper testObjectWrapper1 = getRandomTestObjectWrapper(seed);
+			TestObjectWrapper testObjectWrapper2 = getRandomTestObjectWrapper(seed);
+			assertFalse(testObjectWrapper1 == testObjectWrapper2);
+			for (int j = 0; j < 10; j++) {
+				assertTrue(testObjectWrapper1.equals(testObjectWrapper2));
+				assertTrue(testObjectWrapper2.equals(testObjectWrapper1));
+			}
+		}
 
-        // null should not be equal
-        assertNotEquals(testObjectWrapper, null);
-
-        // different objects should not be equal
-        assertNotEquals(testObjectWrapper, new Object());
-
-        // different wrapped objects should not be equal
-        assertNotEquals(testObjectWrapper, testObjectWrapper3);
-
-        // same wrapped objects should be equal
-        assertEquals(testObjectWrapper, testObjectWrapper2);
+		// different inputs yield unequal testObjectWrappers
+		Set<TestObjectWrapper> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			TestObjectWrapper testObjectWrapper = getRandomTestObjectWrapper(randomGenerator.nextLong());
+			set.add(testObjectWrapper);
+		}
+		assertEquals(100, set.size());
     }
 
+    private TestObjectWrapper getRandomTestObjectWrapper(long seed) {
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+        TestObjectWrapper testObjectWrapper = new TestObjectWrapper();
+        testObjectWrapper.setWrappedObject(randomGenerator.nextInt());
+        return testObjectWrapper;
+    }
 }
