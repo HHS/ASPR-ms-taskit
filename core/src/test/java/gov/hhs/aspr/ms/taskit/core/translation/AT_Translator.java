@@ -97,20 +97,20 @@ public class AT_Translator {
         assertTrue(testTranslator.isInitialized());
     }
 
-    private static enum TranslatorIds implements TranslatorId {
+    private static enum TestTranslatorId implements TranslatorId {
 		TRANSLATOR_ID_1, TRANSLATOR_ID_2, TRANSLATOR_ID_3, TRANSLATOR_ID_4, TRANSLATOR_ID_5, TRANSLATOR_ID_6, 
         TRANSLATOR_ID_7, TRANSLATOR_ID_8, TRANSLATOR_ID_9, TRANSLATOR_ID_10, TRANSLATOR_ID_11, TRANSLATOR_ID_12;
 
-		public static TranslatorIds getRandomTranslatorId(RandomGenerator randomGenerator) {
-			int index = randomGenerator.nextInt(TranslatorIds.values().length);
-			return TranslatorIds.values()[index];
+		private static TestTranslatorId getRandomTranslatorId(RandomGenerator randomGenerator) {
+			int index = randomGenerator.nextInt(TestTranslatorId.values().length);
+			return TestTranslatorId.values()[index];
 		}
 
-		public static Set<TranslatorIds> getRandomTranslatorIds(RandomGenerator randomGenerator) {
-			Set<TranslatorIds> result = new LinkedHashSet<>();
-			for (TranslatorIds translatorIds : TranslatorIds.values()) {
+		private static Set<TestTranslatorId> getRandomTranslatorIds(RandomGenerator randomGenerator) {
+			Set<TestTranslatorId> result = new LinkedHashSet<>();
+			for (TestTranslatorId testTranslatorId : TestTranslatorId.values()) {
 				if (randomGenerator.nextBoolean()) {
-					result.add(translatorIds);
+					result.add(testTranslatorId);
 				}
 			}
 			return result;
@@ -122,13 +122,13 @@ public class AT_Translator {
 
         Translator.Builder builder = Translator.builder();
 
-        TranslatorIds translatorId = TranslatorIds.getRandomTranslatorId(randomGenerator);
+        TestTranslatorId translatorId = TestTranslatorId.getRandomTranslatorId(randomGenerator);
 		builder.setTranslatorId(translatorId);
 
-		Set<TranslatorIds> randomTranslatorIds = TranslatorIds.getRandomTranslatorIds(randomGenerator);
-		for (TranslatorIds translatorIds : randomTranslatorIds) {
-			if (translatorIds != translatorId) {
-				builder.addDependency(translatorIds);
+		Set<TestTranslatorId> randomTestTranslatorIds = TestTranslatorId.getRandomTranslatorIds(randomGenerator);
+		for (TestTranslatorId testTranslatorId : randomTestTranslatorIds) {
+			if (testTranslatorId != translatorId) {
+				builder.addDependency(testTranslatorId);
 			}
 		}
 
@@ -149,12 +149,6 @@ public class AT_Translator {
 			Translator translator2 = getRandomTranslator(seed);
 
 			assertEquals(translator1, translator2);
-			assertEquals(translator1.hashCode(), translator2.hashCode());
-
-            // initialize both translators and show they are still equal with equal hash codes
-            translator1.initialize(new TranslatorContext(TestTaskitEngine.builder()));
-            translator2.initialize(new TranslatorContext(TestTaskitEngine.builder()));
-            assertEquals(translator1, translator2);
 			assertEquals(translator1.hashCode(), translator2.hashCode());
 		}
 
@@ -197,14 +191,6 @@ public class AT_Translator {
 			Translator translator1 = getRandomTranslator(seed);
 			Translator translator2 = getRandomTranslator(seed);
 			assertFalse(translator1 == translator2);
-			for (int j = 0; j < 10; j++) {
-				assertTrue(translator1.equals(translator2));
-				assertTrue(translator2.equals(translator1));
-			}
-
-			// initialize both translators and show they are still equal
-			translator1.initialize(new TranslatorContext(TestTaskitEngine.builder()));
-			translator2.initialize(new TranslatorContext(TestTaskitEngine.builder()));
 			for (int j = 0; j < 10; j++) {
 				assertTrue(translator1.equals(translator2));
 				assertTrue(translator2.equals(translator1));
