@@ -302,29 +302,31 @@ public final class TaskitEngineData {
 		return new Builder();
 	}
 
+	/**
+	 * Standard implementation consistent with the {@link #equals(Object)} method.
+	 * Note that we do not include the classToSpec map as part of the hash code
+	 * contract, as there is never a case where it would differ from the
+	 * translationSpec set, since both data structures get populated in the same
+	 * addTranslationSpec() method. The data structure that matters is the list of
+	 * translation specs, not the mapping, which only exists as a convenience map
+	 * for translation purposes.
+	 */
 	@Override
 	public int hashCode() {
-		/*
-		 * Note that we do not include the classToSpec map as part of the hash code
-		 * contract, as there is never a case where it would differ from the
-		 * translationSpec set, since both data structures get populated in the same
-		 * addTranslationSpec() method. The data structure that matters is the list of
-		 * translation specs, not the mapping, which only exists as a convenience map
-		 * for translation purposes
-		 */
 		return Objects.hash(translationSpecs);
 	}
 
+	/**
+	 * Two {@link TaskitEngineData} instances are equal if and only if
+	 * their translationSpecs are equal. Note that we do not include the classToSpec 
+	 * map as part of the equals contract, as there is never a case where it would 
+	 * differ from the translationSpec set, since both data structures get populated 
+	 * in the same addTranslationSpec() method. The data structure that matters is 
+	 * the list of translation specs, not the mapping, which only exists as a 
+	 * convenience map for translation purposes.
+	 */
 	@Override
 	public boolean equals(Object obj) {
-		/*
-		 * Note that we do not include the classToSpec map as part of the equals
-		 * contract, as there is never a case where it would differ from the
-		 * translationSpec set, since both data structures get populated in the same
-		 * addTranslationSpec() method. The data structure that matters is the list of
-		 * translation specs, not the mapping, which only exists as a convenience map
-		 * for translation purposes
-		 */
 		if (this == obj) {
 			return true;
 		}
@@ -333,7 +335,7 @@ public final class TaskitEngineData {
 			return false;
 		}
 
-		if (!(obj instanceof TaskitEngineData)) {
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 

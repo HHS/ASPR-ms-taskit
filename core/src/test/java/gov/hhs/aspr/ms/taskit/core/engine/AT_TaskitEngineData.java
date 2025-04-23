@@ -1,12 +1,23 @@
 package gov.hhs.aspr.ms.taskit.core.engine;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.taskit.core.testsupport.engine.TestTaskitEngine;
+import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppChildObject;
+import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppObject;
+import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestInputChildObject;
+import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestInputObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.bad.BadTranslationSpecEmptyMap;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.bad.BadTranslationSpecNullMap;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.complexobject.TestComplexObjectTranslatorId;
@@ -14,11 +25,13 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.translation.complexobject.specs.T
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.TestObjectTranslator;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.specs.TestObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.ITranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.Translator;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslatorContext;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslatorId;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 import gov.hhs.aspr.ms.util.errors.ContractException;
+import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
 
 public class AT_TaskitEngineData {
     @Test
@@ -210,79 +223,144 @@ public class AT_TaskitEngineData {
         // nothing to test
     }
 
-    // TODO: update test
     @Test
     @UnitTestMethod(target = TaskitEngineData.class, name = "hashCode", args = {})
     public void testHashCode() {
-        TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
-        TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2658899674638883354L);
 
-        TaskitEngineData taskitEngineData1 = TaskitEngineData.builder()
-                .addTranslationSpec(testObjectTranslationSpec)
-                .addTranslationSpec(testComplexObjectTranslationSpec)
-                .build();
+		// equal objects have equal hash codes
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			TaskitEngineData taskitEngineData1 = getRandomTaskitEngineData(seed);
+			TaskitEngineData taskitEngineData2 = getRandomTaskitEngineData(seed);
 
-        TaskitEngineData taskitEngineData2 = TaskitEngineData.builder()
-                .addTranslationSpec(testObjectTranslationSpec)
-                .addTranslationSpec(testComplexObjectTranslationSpec)
-                .build();
+			assertEquals(taskitEngineData1, taskitEngineData2);
+			assertEquals(taskitEngineData1.hashCode(), taskitEngineData2.hashCode());
+		}
 
-        TaskitEngineData taskitEngineData3 = TaskitEngineData.builder()
-                .addTranslationSpec(testComplexObjectTranslationSpec)
-                .build();
+		// hash codes are reasonably distributed
+		Set<Integer> hashCodes = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			TaskitEngineData taskitEngineData = getRandomTaskitEngineData(randomGenerator.nextLong());
+			hashCodes.add(taskitEngineData.hashCode());
+		}
 
-        // same
-        assertEquals(taskitEngineData1.hashCode(), taskitEngineData1.hashCode());
-
-        // same exact specs
-        assertEquals(taskitEngineData1.hashCode(), taskitEngineData2.hashCode());
-        assertEquals(taskitEngineData2.hashCode(), taskitEngineData1.hashCode());
-
-        // different specs
-        assertNotEquals(taskitEngineData1.hashCode(), taskitEngineData3.hashCode());
-        assertNotEquals(taskitEngineData2.hashCode(), taskitEngineData3.hashCode());
-        assertNotEquals(taskitEngineData3.hashCode(), taskitEngineData1.hashCode());
-        assertNotEquals(taskitEngineData3.hashCode(), taskitEngineData2.hashCode());
+		assertEquals(100, hashCodes.size());
     }
 
-    // TODO: update test
     @Test
     @UnitTestMethod(target = TaskitEngineData.class, name = "equals", args = { Object.class })
     public void testEquals() {
-        TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
-        TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8999757418377306870L);
 
-        TaskitEngineData taskitEngineData1 = TaskitEngineData.builder()
-                .addTranslationSpec(testObjectTranslationSpec)
-                .addTranslationSpec(testComplexObjectTranslationSpec)
-                .build();
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			TaskitEngineData taskitEngineData = getRandomTaskitEngineData(randomGenerator.nextLong());
+			assertFalse(taskitEngineData.equals(new Object()));
+		}
 
-        TaskitEngineData taskitEngineData2 = TaskitEngineData.builder()
-                .addTranslationSpec(testObjectTranslationSpec)
-                .addTranslationSpec(testComplexObjectTranslationSpec)
-                .build();
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+			TaskitEngineData taskitEngineData = getRandomTaskitEngineData(randomGenerator.nextLong());
+			assertFalse(taskitEngineData.equals(null));
+		}
 
-        TaskitEngineData taskitEngineData3 = TaskitEngineData.builder()
-                .addTranslationSpec(testComplexObjectTranslationSpec)
-                .build();
+		// reflexive
+		for (int i = 0; i < 30; i++) {
+			TaskitEngineData taskitEngineData = getRandomTaskitEngineData(randomGenerator.nextLong());
+			assertTrue(taskitEngineData.equals(taskitEngineData));
+		}
 
-        // same
-        assertEquals(taskitEngineData1, taskitEngineData1);
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			TaskitEngineData taskitEngineData1 = getRandomTaskitEngineData(seed);
+			TaskitEngineData taskitEngineData2 = getRandomTaskitEngineData(seed);
+			assertFalse(taskitEngineData1 == taskitEngineData2);
+			for (int j = 0; j < 10; j++) {
+				assertTrue(taskitEngineData1.equals(taskitEngineData2));
+				assertTrue(taskitEngineData2.equals(taskitEngineData1));
+			}
+		}
 
-        // not null
-        assertNotEquals(taskitEngineData1, null);
-
-        // not instance of
-        assertNotEquals(taskitEngineData1, new Object());
-
-        // same exact specs
-        assertEquals(taskitEngineData1, taskitEngineData2);
-        assertEquals(taskitEngineData2, taskitEngineData1);
-
-        // different specs
-        assertNotEquals(taskitEngineData1, taskitEngineData3);
-        assertNotEquals(taskitEngineData2, taskitEngineData3);
-        assertNotEquals(taskitEngineData3, taskitEngineData1);
-        assertNotEquals(taskitEngineData3, taskitEngineData2);
+		// different inputs yield unequal taskitEngineDatas
+		Set<TaskitEngineData> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			TaskitEngineData taskitEngineData = getRandomTaskitEngineData(randomGenerator.nextLong());
+			set.add(taskitEngineData);
+		}
+		assertEquals(100, set.size());
     }
+
+	private static final List<Class<?>> TYPES = List.of(T1.class, T2.class, T3.class, T4.class,
+			T5.class, T6.class, T7.class, T8.class, T9.class, T10.class, T11.class, T12.class,
+			T13.class, T14.class, T15.class, TestAppObject.class, TestInputObject.class, 
+			TestAppChildObject.class, TestInputChildObject.class);
+
+	private static final class DynamicTranslationSpec<I, A> extends TranslationSpec<I, A, TestTaskitEngine> {
+		private final Class<I> typeI;
+		private final Class<A> typeA;
+
+		public DynamicTranslationSpec(Class<I> typeI, Class<A> typeA) {
+			super(TestTaskitEngine.class);
+			this.typeI = typeI;
+			this.typeA = typeA;
+		}
+
+		@Override
+		protected A translateInputObject(I inputObject) {
+			throw new UnsupportedOperationException("Unimplemented method 'translateInputObject'");
+		}
+
+		@Override
+		protected I translateAppObject(A appObject) {
+			throw new UnsupportedOperationException("Unimplemented method 'translateAppObject'");
+		}
+
+		@Override
+		public Class<A> getAppObjectClass() {
+			return typeA;
+		}
+
+		@Override
+		public Class<I> getInputObjectClass() {
+			return typeI;
+		}
+	}
+
+    private TaskitEngineData getRandomTaskitEngineData(long seed) {
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+		
+		TaskitEngineData.Builder builder = TaskitEngineData.builder();
+
+		Set<DynamicTranslationSpec<?, ?>> set = new HashSet<>();
+		int n = randomGenerator.nextInt(7) + 1;
+		while (set.size() < n) {
+			Class<?> t1 = TYPES.get(randomGenerator.nextInt(TYPES.size()));
+        	Class<?> t2 = TYPES.get(randomGenerator.nextInt(TYPES.size()));
+			set.add(new DynamicTranslationSpec<>(t1, t2));
+		}
+
+		for (DynamicTranslationSpec<?, ?> spec : set) {
+			builder.addTranslationSpec(spec);
+		}
+
+        return builder.build();
+    }
+
+	private static class T1 {}
+    private static class T2 {}
+    private static class T3 {}
+    private static class T4 {}
+    private static class T5 {}
+    private static class T6 {}
+    private static class T7 {}
+    private static class T8 {}
+    private static class T9 {}
+    private static class T10 {}
+	private static class T11 {}
+	private static class T12 {}
+	private static class T13 {}
+	private static class T14 {}
+	private static class T15 {}
 }
