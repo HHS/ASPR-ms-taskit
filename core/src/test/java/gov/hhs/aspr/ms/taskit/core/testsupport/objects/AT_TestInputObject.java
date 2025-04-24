@@ -108,6 +108,26 @@ public class AT_TestInputObject {
     }
 
     @Test
+    @UnitTestMethod(target = TestInputObject.class, name = "setTestInputEnum", args = { TestInputEnum.class })
+    public void testSetTestInputEnum() {
+        TestInputObject testInputObject = new TestInputObject();
+
+        testInputObject.setTestInputEnum(TestInputEnum.TEST1);
+
+        assertEquals(TestInputEnum.TEST1, testInputObject.getTestInputEnum());
+    }
+
+    @Test
+    @UnitTestMethod(target = TestInputObject.class, name = "getTestInputEnum", args = {})
+    public void testGetTestInputEnum() {
+        TestInputObject testInputObject = new TestInputObject();
+
+        testInputObject.setTestInputEnum(TestInputEnum.TEST2);
+
+        assertEquals(TestInputEnum.TEST2, testInputObject.getTestInputEnum());
+    }
+
+    @Test
     @UnitTestMethod(target = TestInputObject.class, name = "hashCode", args = {})
     public void testHashCode() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2653491890433183354L);

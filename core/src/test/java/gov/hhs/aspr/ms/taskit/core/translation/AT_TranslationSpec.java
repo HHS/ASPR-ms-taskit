@@ -32,6 +32,7 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestObjectWrapper;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.TestTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.complexobject.specs.TestComplexObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.specs.TestObjectTranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.testenum.specs.TestEnumTranslationSpec;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
@@ -98,6 +99,7 @@ public class AT_TranslationSpec {
     public void testTranslate() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
+        TestEnumTranslationSpec testEnumTranslationSpec = new TestEnumTranslationSpec();
         TestTranslationSpec<TestObjectWrapper, Object> wrapperTranslationSpec = new TestTranslationSpec<TestObjectWrapper, Object>() {
 
             @Override
@@ -153,6 +155,7 @@ public class AT_TranslationSpec {
         TestTaskitEngine.builder()
                 .addTranslationSpec(testObjectTranslationSpec)
                 .addTranslationSpec(complexObjectTranslationSpec)
+                .addTranslationSpec(testEnumTranslationSpec)
                 .addTranslationSpec(wrapperTranslationSpec)
                 .addTranslationSpec(wrapperTranslationSpec2)
                 .build();

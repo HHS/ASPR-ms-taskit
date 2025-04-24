@@ -4,7 +4,7 @@ import java.util.Objects;
 
 /**
  * Test class representing a class with various variables, including a Complex
- * class.
+ * class, and an enum.
  * <p>
  * <b>Should NOT</b> be used outside of testing.
  * </p>
@@ -101,7 +101,7 @@ public class TestAppObject {
 	 */
 	@Override
 	public int hashCode() {
-		return Objects.hash(integer, bool, string, testComplexAppObject);
+		return Objects.hash(integer, bool, string, testComplexAppObject, testAppEnum);
 	}
 
 	/**
@@ -121,6 +121,6 @@ public class TestAppObject {
 		}
 		TestAppObject other = (TestAppObject) obj;
 		return integer == other.integer && bool == other.bool && Objects.equals(string, other.string)
-				&& Objects.equals(testComplexAppObject, other.testComplexAppObject);
+				&& Objects.equals(testComplexAppObject, other.testComplexAppObject) && testAppEnum == other.testAppEnum;
 	}
 }

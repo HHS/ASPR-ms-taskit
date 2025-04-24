@@ -29,6 +29,7 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestObjectWrapper;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.TestTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.complexobject.specs.TestComplexObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.specs.TestObjectTranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.testenum.specs.TestEnumTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.ITranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
@@ -115,9 +116,12 @@ public class AT_TaskitEngine {
 
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
+        TestEnumTranslationSpec testEnumTranslationSpec = new TestEnumTranslationSpec();
+
         TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
                 .addTranslationSpec(testObjectTranslationSpec)
-                .addTranslationSpec(complexObjectTranslationSpec).build();
+                .addTranslationSpec(complexObjectTranslationSpec)
+                .addTranslationSpec(testEnumTranslationSpec).build();
 
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
         TestInputObject inputObject = TestObjectUtil.getInputFromApp(expectedAppObject);
@@ -169,9 +173,13 @@ public class AT_TaskitEngine {
 
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
+        TestEnumTranslationSpec testEnumTranslationSpec = new TestEnumTranslationSpec();
+
         TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
                 .addTranslationSpec(testObjectTranslationSpec)
-                .addTranslationSpec(complexObjectTranslationSpec).build();
+                .addTranslationSpec(complexObjectTranslationSpec)
+                .addTranslationSpec(testEnumTranslationSpec)
+                .build();
 
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
 
@@ -235,9 +243,13 @@ public class AT_TaskitEngine {
 
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
+        TestEnumTranslationSpec testEnumTranslationSpec = new TestEnumTranslationSpec();
+
         TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
                 .addTranslationSpec(testObjectTranslationSpec)
-                .addTranslationSpec(complexObjectTranslationSpec).build();
+                .addTranslationSpec(complexObjectTranslationSpec)
+                .addTranslationSpec(testEnumTranslationSpec)
+                .build();
 
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
 
@@ -304,9 +316,12 @@ public class AT_TaskitEngine {
 
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
+        TestEnumTranslationSpec testEnumTranslationSpec = new TestEnumTranslationSpec();
         TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
                 .addTranslationSpec(testObjectTranslationSpec)
-                .addTranslationSpec(complexObjectTranslationSpec).build();
+                .addTranslationSpec(complexObjectTranslationSpec)
+                .addTranslationSpec(testEnumTranslationSpec)
+                .build();
 
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
         TestInputObject expectedInputObject = TestObjectUtil.getInputFromApp(expectedAppObject);
@@ -357,9 +372,12 @@ public class AT_TaskitEngine {
 
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
+        TestEnumTranslationSpec testEnumTranslationSpec = new TestEnumTranslationSpec();
         TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
                 .addTranslationSpec(testObjectTranslationSpec)
-                .addTranslationSpec(complexObjectTranslationSpec).build();
+                .addTranslationSpec(complexObjectTranslationSpec)
+                .addTranslationSpec(testEnumTranslationSpec)
+                .build();
 
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
 
@@ -412,9 +430,12 @@ public class AT_TaskitEngine {
     public void testTranslateObject() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
+        TestEnumTranslationSpec testEnumTranslationSpec = new TestEnumTranslationSpec();
+
         TaskitEngine taskitEngine = TestTaskitEngine.builder()
                 .addTranslationSpec(testObjectTranslationSpec)
                 .addTranslationSpec(testComplexObjectTranslationSpec)
+                .addTranslationSpec(testEnumTranslationSpec)
                 .build();
 
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
@@ -444,9 +465,12 @@ public class AT_TaskitEngine {
     public void testTranslateObjectAsSafeClass() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
+        TestEnumTranslationSpec testEnumTranslationSpec = new TestEnumTranslationSpec();
+
         TaskitEngine taskitEngine = TestTaskitEngine.builder()
                 .addTranslationSpec(testObjectTranslationSpec)
                 .addTranslationSpec(testComplexObjectTranslationSpec)
+                .addTranslationSpec(testEnumTranslationSpec)
                 .build();
 
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();

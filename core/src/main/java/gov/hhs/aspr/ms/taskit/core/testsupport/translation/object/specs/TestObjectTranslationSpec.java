@@ -18,6 +18,7 @@ public class TestObjectTranslationSpec extends TestTranslationSpec<TestInputObje
         testAppObject.setString(inputObject.getString());
         testAppObject
                 .setTestComplexAppObject(this.taskitEngine.translateObject(inputObject.getTestComplexInputObject()));
+        testAppObject.setTestAppEnum(this.taskitEngine.translateObject(inputObject.getTestInputEnum()));
 
         return testAppObject;
     }
@@ -31,6 +32,7 @@ public class TestObjectTranslationSpec extends TestTranslationSpec<TestInputObje
         testInputObject.setString(appObject.getString());
         testInputObject
                 .setTestComplexInputObject(this.taskitEngine.translateObject(appObject.getTestComplexAppObject()));
+        testInputObject.setTestInputEnum(this.taskitEngine.translateObject(appObject.getTestAppEnum()));
 
         return testInputObject;
     }

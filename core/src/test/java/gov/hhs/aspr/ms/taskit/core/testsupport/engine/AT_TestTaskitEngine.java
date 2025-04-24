@@ -21,6 +21,7 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.translation.bad.BadTranslationSpe
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.complexobject.specs.TestComplexObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.TestObjectTranslator;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.specs.TestObjectTranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.testenum.specs.TestEnumTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.ITranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.Translator;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslatorContext;
@@ -160,9 +161,11 @@ public class AT_TestTaskitEngine {
         // code here is strictly for coverage, and coverage alone
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
+        TestEnumTranslationSpec testEnumTranslationSpec = new TestEnumTranslationSpec();
         TestTaskitEngine taskitEngine = TestTaskitEngine.builder()
                 .addTranslationSpec(testObjectTranslationSpec)
                 .addTranslationSpec(testComplexObjectTranslationSpec)
+                .addTranslationSpec(testEnumTranslationSpec)
                 .build();
 
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
@@ -184,9 +187,11 @@ public class AT_TestTaskitEngine {
         // code here is strictly for coverage, and coverage alone
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
+        TestEnumTranslationSpec testEnumTranslationSpec = new TestEnumTranslationSpec();
         TestTaskitEngine taskitEngine = TestTaskitEngine.builder()
                 .addTranslationSpec(testObjectTranslationSpec)
                 .addTranslationSpec(testComplexObjectTranslationSpec)
+                .addTranslationSpec(testEnumTranslationSpec)
                 .build();
 
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();

@@ -23,6 +23,7 @@ import gov.hhs.aspr.ms.taskit.protobuf.testsupport.objects.BadMessageNonStaticMe
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.objects.TestComplexInputObject;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.objects.TestInputObject;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.translation.specs.TestProtobufComplexObjectTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.testsupport.translation.specs.TestProtobufEnumTranslationSpec;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.translation.specs.TestProtobufObjectTranslationSpec;
 import gov.hhs.aspr.ms.util.annotations.UnitTestForCoverage;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
@@ -130,7 +131,8 @@ public class AT_ProtobufTaskitEngine {
          */
         ProtobufJsonTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder()
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
-                .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
+                .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec())
+                .addTranslationSpec(new TestProtobufEnumTranslationSpec()).build();
 
         TestAppObject testAppObject = TestObjectUtil.generateTestAppObject();
         TestAppChildObject testAppChildObject = TestObjectUtil.getChildAppFromApp(testAppObject);
@@ -155,7 +157,8 @@ public class AT_ProtobufTaskitEngine {
          */
         ProtobufJsonTaskitEngine protobufTaskitEngine = ProtobufJsonTaskitEngine.builder()
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
-                .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
+                .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec())
+                .addTranslationSpec(new TestProtobufEnumTranslationSpec()).build();
 
         TestAppObject expectedObject = TestObjectUtil.generateTestAppObject();
 

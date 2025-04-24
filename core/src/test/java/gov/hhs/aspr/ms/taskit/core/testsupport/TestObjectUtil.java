@@ -11,6 +11,7 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestComplexAppObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestComplexInputObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestInputChildObject;
+import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestInputEnum;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestInputObject;
 import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
 
@@ -74,11 +75,15 @@ public class TestObjectUtil {
 
         TestComplexInputObject testComplexInputObject = generateTestComplexInputObject(localRG.nextLong());
 
+        TestInputEnum[] enumValues = TestInputEnum.values();
+        TestInputEnum randomEnum = enumValues[localRG.nextInt(enumValues.length)];
+
         TestInputObject testInputObject = new TestInputObject();
         testInputObject.setBool(localRG.nextBoolean());
         testInputObject.setInteger(localRG.nextInt(1500));
         testInputObject.setString("readInput" + localRG.nextInt(25));
         testInputObject.setTestComplexInputObject(testComplexInputObject);
+        testInputObject.setTestInputEnum(randomEnum);
 
         return testInputObject;
     }
@@ -117,6 +122,7 @@ public class TestObjectUtil {
         appObject.setBool(inputObject.isBool());
         appObject.setInteger(inputObject.getInteger());
         appObject.setString(inputObject.getString());
+        appObject.setTestAppEnum(getAppEnumFromInputEnum(inputObject.getTestInputEnum()));
 
         return appObject;
     }
@@ -129,6 +135,7 @@ public class TestObjectUtil {
         inputObject.setBool(appObject.isBool());
         inputObject.setInteger(appObject.getInteger());
         inputObject.setString(appObject.getString());
+        inputObject.setTestInputEnum(getInputEnumFromAppEnum(appObject.getTestAppEnum()));
 
         return inputObject;
     }
@@ -140,6 +147,7 @@ public class TestObjectUtil {
         childAppObject.setBool(appObject.isBool());
         childAppObject.setInteger(appObject.getInteger());
         childAppObject.setString(appObject.getString());
+        childAppObject.setTestAppEnum(appObject.getTestAppEnum());
 
         return childAppObject;
     }
@@ -151,6 +159,7 @@ public class TestObjectUtil {
         childInputObject.setBool(inputObject.isBool());
         childInputObject.setInteger(inputObject.getInteger());
         childInputObject.setString(inputObject.getString());
+        childInputObject.setTestInputEnum(inputObject.getTestInputEnum());
 
         return childInputObject;
     }
@@ -173,5 +182,13 @@ public class TestObjectUtil {
         complexInputObject.setTestString(appObject.getTestString());
 
         return complexInputObject;
+    }
+
+    public static TestAppEnum getAppEnumFromInputEnum(TestInputEnum testInputEnum) {
+        return TestAppEnum.valueOf(testInputEnum.name());
+    }
+
+    public static TestInputEnum getInputEnumFromAppEnum(TestAppEnum testAppEnum) {
+        return TestInputEnum.valueOf(testAppEnum.name());
     }
 }
