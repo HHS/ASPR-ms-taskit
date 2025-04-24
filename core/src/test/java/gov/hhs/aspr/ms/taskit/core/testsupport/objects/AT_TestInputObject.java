@@ -115,8 +115,8 @@ public class AT_TestInputObject {
 		// equal objects have equal hash codes
 		for (int i = 0; i < 30; i++) {
 			long seed = randomGenerator.nextLong();
-			TestInputObject testInputObject1 = getRandomTestInputObject(seed);
-			TestInputObject testInputObject2 = getRandomTestInputObject(seed);
+			TestInputObject testInputObject1 = TestObjectUtil.generateTestInputObject(seed);
+			TestInputObject testInputObject2 = TestObjectUtil.generateTestInputObject(seed);
 
 			assertEquals(testInputObject1, testInputObject2);
 			assertEquals(testInputObject1.hashCode(), testInputObject2.hashCode());
@@ -125,7 +125,7 @@ public class AT_TestInputObject {
 		// hash codes are reasonably distributed
 		Set<Integer> hashCodes = new LinkedHashSet<>();
 		for (int i = 0; i < 100; i++) {
-			TestInputObject testInputObject = getRandomTestInputObject(randomGenerator.nextLong());
+			TestInputObject testInputObject = TestObjectUtil.generateTestInputObject(randomGenerator.nextLong());
 			hashCodes.add(testInputObject.hashCode());
 		}
 
@@ -139,27 +139,27 @@ public class AT_TestInputObject {
 
 		// never equal to another type
 		for (int i = 0; i < 30; i++) {
-			TestInputObject testInputObject = getRandomTestInputObject(randomGenerator.nextLong());
+			TestInputObject testInputObject = TestObjectUtil.generateTestInputObject(randomGenerator.nextLong());
 			assertFalse(testInputObject.equals(new Object()));
 		}
 
 		// never equal to null
 		for (int i = 0; i < 30; i++) {
-			TestInputObject testInputObject = getRandomTestInputObject(randomGenerator.nextLong());
+			TestInputObject testInputObject = TestObjectUtil.generateTestInputObject(randomGenerator.nextLong());
 			assertFalse(testInputObject.equals(null));
 		}
 
 		// reflexive
 		for (int i = 0; i < 30; i++) {
-			TestInputObject testInputObject = getRandomTestInputObject(randomGenerator.nextLong());
+			TestInputObject testInputObject = TestObjectUtil.generateTestInputObject(randomGenerator.nextLong());
 			assertTrue(testInputObject.equals(testInputObject));
 		}
 
 		// symmetric, transitive, consistent
 		for (int i = 0; i < 30; i++) {
 			long seed = randomGenerator.nextLong();
-			TestInputObject testInputObject1 = getRandomTestInputObject(seed);
-			TestInputObject testInputObject2 = getRandomTestInputObject(seed);
+			TestInputObject testInputObject1 = TestObjectUtil.generateTestInputObject(seed);
+			TestInputObject testInputObject2 = TestObjectUtil.generateTestInputObject(seed);
 			assertFalse(testInputObject1 == testInputObject2);
 			for (int j = 0; j < 10; j++) {
 				assertTrue(testInputObject1.equals(testInputObject2));
@@ -170,26 +170,9 @@ public class AT_TestInputObject {
 		// different inputs yield unequal testInputObjects
 		Set<TestInputObject> set = new LinkedHashSet<>();
 		for (int i = 0; i < 100; i++) {
-			TestInputObject testInputObject = getRandomTestInputObject(randomGenerator.nextLong());
+			TestInputObject testInputObject = TestObjectUtil.generateTestInputObject(randomGenerator.nextLong());
 			set.add(testInputObject);
 		}
 		assertEquals(100, set.size());
-    }
-
-    private TestInputObject getRandomTestInputObject(long seed) {
-        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
-
-        TestComplexInputObject testComplexInputObject = new TestComplexInputObject();
-        testComplexInputObject.setNumEntities(randomGenerator.nextInt(100));
-        testComplexInputObject.setStartTime(randomGenerator.nextDouble() * 15);
-        testComplexInputObject.setTestString("readInput" + randomGenerator.nextInt(15));
-
-        TestInputObject testInputObject = new TestInputObject();
-        testInputObject.setBool(randomGenerator.nextBoolean());
-        testInputObject.setInteger(randomGenerator.nextInt(1500));
-        testInputObject.setString("readInput" + randomGenerator.nextInt(25));
-        testInputObject.setTestComplexInputObject(testComplexInputObject);
-
-        return testInputObject;
     }
 }

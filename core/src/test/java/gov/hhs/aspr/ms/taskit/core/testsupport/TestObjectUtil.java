@@ -3,7 +3,10 @@ package gov.hhs.aspr.ms.taskit.core.testsupport;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.math3.random.RandomGenerator;
+
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppChildObject;
+import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppEnum;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestComplexAppObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestComplexInputObject;
@@ -12,27 +15,43 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestInputObject;
 import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
 
 public class TestObjectUtil {
-    static org.apache.commons.math3.random.RandomGenerator randomGenerator = RandomGeneratorProvider
+    static RandomGenerator randomGenerator = RandomGeneratorProvider
             .getRandomGenerator(4444833210967964206L);
 
     public static TestAppObject generateTestAppObject() {
+        return generateTestAppObject(randomGenerator.nextLong());
+    }
 
-        TestAppObject appObject = new TestAppObject();
+    public static TestAppObject generateTestAppObject(long seed) {
+        RandomGenerator localRG = RandomGeneratorProvider.getRandomGenerator(seed);
 
-        appObject.setTestComplexAppObject(generateTestComplexAppObject());
-        appObject.setBool(randomGenerator.nextBoolean());
-        appObject.setInteger(randomGenerator.nextInt(1500));
-        appObject.setString("readInput" + randomGenerator.nextInt(25));
+        TestComplexAppObject testComplexAppObject = generateTestComplexAppObject(localRG.nextLong());
 
-        return appObject;
+        TestAppEnum[] enumValues = TestAppEnum.values();
+        TestAppEnum randomEnum = enumValues[localRG.nextInt(enumValues.length)];
+
+        TestAppObject testAppObject = new TestAppObject();
+        testAppObject.setBool(localRG.nextBoolean());
+        testAppObject.setInteger(localRG.nextInt(1500));
+        testAppObject.setString("readInput" + localRG.nextInt(25));
+        testAppObject.setTestComplexAppObject(testComplexAppObject);
+        testAppObject.setTestAppEnum(randomEnum);
+
+        return testAppObject;
     }
 
     public static TestComplexAppObject generateTestComplexAppObject() {
+        return generateTestComplexAppObject(randomGenerator.nextLong());
+    }
+
+    public static TestComplexAppObject generateTestComplexAppObject(long seed) {
+        RandomGenerator localRG = RandomGeneratorProvider.getRandomGenerator(seed);
+        
         TestComplexAppObject complexAppObject = new TestComplexAppObject();
 
-        complexAppObject.setNumEntities(randomGenerator.nextInt(100));
-        complexAppObject.setStartTime(randomGenerator.nextDouble() * 15);
-        complexAppObject.setTestString("readInput" + randomGenerator.nextInt(15));
+        complexAppObject.setNumEntities(localRG.nextInt(100));
+        complexAppObject.setStartTime(localRG.nextDouble() * 15);
+        complexAppObject.setTestString("readInput" + localRG.nextInt(15));
 
         return complexAppObject;
     }
@@ -48,23 +67,34 @@ public class TestObjectUtil {
     }
 
     public static TestInputObject generateTestInputObject() {
+        return generateTestInputObject(randomGenerator.nextLong());
+    }
+    public static TestInputObject generateTestInputObject(long seed) {
+        RandomGenerator localRG = RandomGeneratorProvider.getRandomGenerator(seed);
 
-        TestInputObject inputObject = new TestInputObject();
+        TestComplexInputObject testComplexInputObject = generateTestComplexInputObject(localRG.nextLong());
 
-        inputObject.setTestComplexInputObject(generateTestComplexInputObject());
-        inputObject.setBool(randomGenerator.nextBoolean());
-        inputObject.setInteger(randomGenerator.nextInt(1500));
-        inputObject.setString("readInput" + randomGenerator.nextInt(25));
+        TestInputObject testInputObject = new TestInputObject();
+        testInputObject.setBool(localRG.nextBoolean());
+        testInputObject.setInteger(localRG.nextInt(1500));
+        testInputObject.setString("readInput" + localRG.nextInt(25));
+        testInputObject.setTestComplexInputObject(testComplexInputObject);
 
-        return inputObject;
+        return testInputObject;
     }
 
     public static TestComplexInputObject generateTestComplexInputObject() {
+        return generateTestComplexInputObject(randomGenerator.nextLong());
+    }
+
+    public static TestComplexInputObject generateTestComplexInputObject(long seed) {
+        RandomGenerator localRG = RandomGeneratorProvider.getRandomGenerator(seed);
+
         TestComplexInputObject complexInputObject = new TestComplexInputObject();
 
-        complexInputObject.setNumEntities(randomGenerator.nextInt(100));
-        complexInputObject.setStartTime(randomGenerator.nextDouble() * 15);
-        complexInputObject.setTestString("readInput" + randomGenerator.nextInt(15));
+        complexInputObject.setNumEntities(localRG.nextInt(100));
+        complexInputObject.setStartTime(localRG.nextDouble() * 15);
+        complexInputObject.setTestString("readInput" + localRG.nextInt(15));
 
         return complexInputObject;
     }

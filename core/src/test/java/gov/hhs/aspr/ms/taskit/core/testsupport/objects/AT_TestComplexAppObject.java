@@ -11,6 +11,7 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
+import gov.hhs.aspr.ms.taskit.core.testsupport.TestObjectUtil;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
@@ -86,81 +87,74 @@ public class AT_TestComplexAppObject {
     @Test
     @UnitTestMethod(target = TestComplexAppObject.class, name = "hashCode", args = {})
     public void testHashCode() {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2653491444433183354L);
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2653491444433183354L);
 
-		// equal objects have equal hash codes
-		for (int i = 0; i < 30; i++) {
-			long seed = randomGenerator.nextLong();
-			TestComplexAppObject testComplexAppObject1 = getRandomTestComplexAppObject(seed);
-			TestComplexAppObject testComplexAppObject2 = getRandomTestComplexAppObject(seed);
+        // equal objects have equal hash codes
+        for (int i = 0; i < 30; i++) {
+            long seed = randomGenerator.nextLong();
+            TestComplexAppObject testComplexAppObject1 = TestObjectUtil.generateTestComplexAppObject(seed);
+            TestComplexAppObject testComplexAppObject2 = TestObjectUtil.generateTestComplexAppObject(seed);
 
-			assertEquals(testComplexAppObject1, testComplexAppObject2);
-			assertEquals(testComplexAppObject1.hashCode(), testComplexAppObject2.hashCode());
-		}
+            assertEquals(testComplexAppObject1, testComplexAppObject2);
+            assertEquals(testComplexAppObject1.hashCode(), testComplexAppObject2.hashCode());
+        }
 
-		// hash codes are reasonably distributed
-		Set<Integer> hashCodes = new LinkedHashSet<>();
-		for (int i = 0; i < 100; i++) {
-			TestComplexAppObject testComplexAppObject = getRandomTestComplexAppObject(randomGenerator.nextLong());
-			hashCodes.add(testComplexAppObject.hashCode());
-		}
+        // hash codes are reasonably distributed
+        Set<Integer> hashCodes = new LinkedHashSet<>();
+        for (int i = 0; i < 100; i++) {
+            TestComplexAppObject testComplexAppObject = TestObjectUtil
+                    .generateTestComplexAppObject(randomGenerator.nextLong());
+            hashCodes.add(testComplexAppObject.hashCode());
+        }
 
-		assertEquals(100, hashCodes.size());
+        assertEquals(100, hashCodes.size());
     }
 
     @Test
     @UnitTestMethod(target = TestComplexAppObject.class, name = "equals", args = { Object.class })
     public void testEquals() {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8980322418377306870L);
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8980322418377306870L);
 
-		// never equal to another type
-		for (int i = 0; i < 30; i++) {
-			TestComplexAppObject testComplexAppObject = getRandomTestComplexAppObject(randomGenerator.nextLong());
-			assertFalse(testComplexAppObject.equals(new Object()));
-		}
+        // never equal to another type
+        for (int i = 0; i < 30; i++) {
+            TestComplexAppObject testComplexAppObject = TestObjectUtil
+                    .generateTestComplexAppObject(randomGenerator.nextLong());
+            assertFalse(testComplexAppObject.equals(new Object()));
+        }
 
-		// never equal to null
-		for (int i = 0; i < 30; i++) {
-			TestComplexAppObject testComplexAppObject = getRandomTestComplexAppObject(randomGenerator.nextLong());
-			assertFalse(testComplexAppObject.equals(null));
-		}
+        // never equal to null
+        for (int i = 0; i < 30; i++) {
+            TestComplexAppObject testComplexAppObject = TestObjectUtil
+                    .generateTestComplexAppObject(randomGenerator.nextLong());
+            assertFalse(testComplexAppObject.equals(null));
+        }
 
-		// reflexive
-		for (int i = 0; i < 30; i++) {
-			TestComplexAppObject testComplexAppObject = getRandomTestComplexAppObject(randomGenerator.nextLong());
-			assertTrue(testComplexAppObject.equals(testComplexAppObject));
-		}
+        // reflexive
+        for (int i = 0; i < 30; i++) {
+            TestComplexAppObject testComplexAppObject = TestObjectUtil
+                    .generateTestComplexAppObject(randomGenerator.nextLong());
+            assertTrue(testComplexAppObject.equals(testComplexAppObject));
+        }
 
-		// symmetric, transitive, consistent
-		for (int i = 0; i < 30; i++) {
-			long seed = randomGenerator.nextLong();
-			TestComplexAppObject testComplexAppObject1 = getRandomTestComplexAppObject(seed);
-			TestComplexAppObject testComplexAppObject2 = getRandomTestComplexAppObject(seed);
-			assertFalse(testComplexAppObject1 == testComplexAppObject2);
-			for (int j = 0; j < 10; j++) {
-				assertTrue(testComplexAppObject1.equals(testComplexAppObject2));
-				assertTrue(testComplexAppObject2.equals(testComplexAppObject1));
-			}
-		}
+        // symmetric, transitive, consistent
+        for (int i = 0; i < 30; i++) {
+            long seed = randomGenerator.nextLong();
+            TestComplexAppObject testComplexAppObject1 = TestObjectUtil.generateTestComplexAppObject(seed);
+            TestComplexAppObject testComplexAppObject2 = TestObjectUtil.generateTestComplexAppObject(seed);
+            assertFalse(testComplexAppObject1 == testComplexAppObject2);
+            for (int j = 0; j < 10; j++) {
+                assertTrue(testComplexAppObject1.equals(testComplexAppObject2));
+                assertTrue(testComplexAppObject2.equals(testComplexAppObject1));
+            }
+        }
 
-		// different inputs yield unequal testComplexAppObjects
-		Set<TestComplexAppObject> set = new LinkedHashSet<>();
-		for (int i = 0; i < 100; i++) {
-			TestComplexAppObject testComplexAppObject = getRandomTestComplexAppObject(randomGenerator.nextLong());
-			set.add(testComplexAppObject);
-		}
-		assertEquals(100, set.size());
-    }
-
-    private TestComplexAppObject getRandomTestComplexAppObject(long seed) {
-        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
-        
-        TestComplexAppObject complexAppObject = new TestComplexAppObject();
-
-        complexAppObject.setNumEntities(randomGenerator.nextInt(100));
-        complexAppObject.setStartTime(randomGenerator.nextDouble() * 15);
-        complexAppObject.setTestString("readInput" + randomGenerator.nextInt(15));
-
-        return complexAppObject;
+        // different inputs yield unequal testComplexAppObjects
+        Set<TestComplexAppObject> set = new LinkedHashSet<>();
+        for (int i = 0; i < 100; i++) {
+            TestComplexAppObject testComplexAppObject = TestObjectUtil
+                    .generateTestComplexAppObject(randomGenerator.nextLong());
+            set.add(testComplexAppObject);
+        }
+        assertEquals(100, set.size());
     }
 }

@@ -135,8 +135,8 @@ public class AT_TestAppObject {
 		// equal objects have equal hash codes
 		for (int i = 0; i < 30; i++) {
 			long seed = randomGenerator.nextLong();
-			TestAppObject testAppObject1 = getRandomTestAppObject(seed);
-			TestAppObject testAppObject2 = getRandomTestAppObject(seed);
+			TestAppObject testAppObject1 = TestObjectUtil.generateTestAppObject(seed);
+			TestAppObject testAppObject2 = TestObjectUtil.generateTestAppObject(seed);
 
 			assertEquals(testAppObject1, testAppObject2);
 			assertEquals(testAppObject1.hashCode(), testAppObject2.hashCode());
@@ -145,7 +145,7 @@ public class AT_TestAppObject {
 		// hash codes are reasonably distributed
 		Set<Integer> hashCodes = new LinkedHashSet<>();
 		for (int i = 0; i < 100; i++) {
-			TestAppObject testAppObject = getRandomTestAppObject(randomGenerator.nextLong());
+			TestAppObject testAppObject = TestObjectUtil.generateTestAppObject(randomGenerator.nextLong());
 			hashCodes.add(testAppObject.hashCode());
 		}
 
@@ -159,27 +159,27 @@ public class AT_TestAppObject {
 
 		// never equal to another type
 		for (int i = 0; i < 30; i++) {
-			TestAppObject testAppObject = getRandomTestAppObject(randomGenerator.nextLong());
+			TestAppObject testAppObject = TestObjectUtil.generateTestAppObject(randomGenerator.nextLong());
 			assertFalse(testAppObject.equals(new Object()));
 		}
 
 		// never equal to null
 		for (int i = 0; i < 30; i++) {
-			TestAppObject testAppObject = getRandomTestAppObject(randomGenerator.nextLong());
+			TestAppObject testAppObject = TestObjectUtil.generateTestAppObject(randomGenerator.nextLong());
 			assertFalse(testAppObject.equals(null));
 		}
 
 		// reflexive
 		for (int i = 0; i < 30; i++) {
-			TestAppObject testAppObject = getRandomTestAppObject(randomGenerator.nextLong());
+			TestAppObject testAppObject = TestObjectUtil.generateTestAppObject(randomGenerator.nextLong());
 			assertTrue(testAppObject.equals(testAppObject));
 		}
 
 		// symmetric, transitive, consistent
 		for (int i = 0; i < 30; i++) {
 			long seed = randomGenerator.nextLong();
-			TestAppObject testAppObject1 = getRandomTestAppObject(seed);
-			TestAppObject testAppObject2 = getRandomTestAppObject(seed);
+			TestAppObject testAppObject1 = TestObjectUtil.generateTestAppObject(seed);
+			TestAppObject testAppObject2 = TestObjectUtil.generateTestAppObject(seed);
 			assertFalse(testAppObject1 == testAppObject2);
 			for (int j = 0; j < 10; j++) {
 				assertTrue(testAppObject1.equals(testAppObject2));
@@ -190,30 +190,9 @@ public class AT_TestAppObject {
 		// different inputs yield unequal testAppObjects
 		Set<TestAppObject> set = new LinkedHashSet<>();
 		for (int i = 0; i < 100; i++) {
-			TestAppObject testAppObject = getRandomTestAppObject(randomGenerator.nextLong());
+			TestAppObject testAppObject = TestObjectUtil.generateTestAppObject(randomGenerator.nextLong());
 			set.add(testAppObject);
 		}
 		assertEquals(100, set.size());
-    }
-
-    private TestAppObject getRandomTestAppObject(long seed) {
-        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
-
-        TestComplexAppObject testComplexAppObject = new TestComplexAppObject();
-        testComplexAppObject.setNumEntities(randomGenerator.nextInt(100));
-        testComplexAppObject.setStartTime(randomGenerator.nextDouble() * 15);
-        testComplexAppObject.setTestString("readInput" + randomGenerator.nextInt(15));
-
-        TestAppEnum[] enumValues = TestAppEnum.values();
-        TestAppEnum randomEnum = enumValues[randomGenerator.nextInt(enumValues.length)];
-
-        TestAppObject testAppObject = new TestAppObject();
-        testAppObject.setBool(randomGenerator.nextBoolean());
-        testAppObject.setInteger(randomGenerator.nextInt(1500));
-        testAppObject.setString("readInput" + randomGenerator.nextInt(25));
-        testAppObject.setTestComplexAppObject(testComplexAppObject);
-        testAppObject.setTestAppEnum(randomEnum);
-
-        return testAppObject;
     }
 }
