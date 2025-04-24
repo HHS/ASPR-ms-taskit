@@ -1,14 +1,12 @@
 package gov.hhs.aspr.ms.taskit.core.testsupport.engine;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngineData;
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitError;
 import gov.hhs.aspr.ms.taskit.core.testsupport.TestObjectUtil;
@@ -265,112 +263,5 @@ public class AT_TestTaskitEngine {
         Object actualAppObject = taskitEngine.translateObject(actualWrapper);
 
         assertEquals(expectedAppObject, actualAppObject);
-    }
-
-    // TODO: update test
-    @Test
-    @UnitTestMethod(target = TestTaskitEngine.class, name = "hashCode", args = {})
-    public void testHashCode() {
-        // see AT_TaskitEngine.testHashCode()
-        // code here is strictly for coverage, and coverage alone
-        TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
-        TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
-        TestTaskitEngine taskitEngine1 = TestTaskitEngine.builder()
-                .addTranslationSpec(testObjectTranslationSpec)
-                .addTranslationSpec(testComplexObjectTranslationSpec)
-                .buildWithoutInit();
-
-        TestTaskitEngine taskitEngine2 = TestTaskitEngine.builder()
-                .addTranslationSpec(testComplexObjectTranslationSpec)
-                .build();
-
-        TestTaskitEngine taskitEngine3 = TestTaskitEngine.builder()
-                .addTranslationSpec(testObjectTranslationSpec)
-                .build();
-
-        TestTaskitEngine taskitEngine4 = TestTaskitEngine.builder()
-                .addTranslationSpec(testObjectTranslationSpec)
-                .addTranslationSpec(testComplexObjectTranslationSpec)
-                .buildWithoutInit();
-
-        // exact same, same hash code
-        assertEquals(taskitEngine1.hashCode(), taskitEngine1.hashCode());
-
-        // different translation specs
-        assertNotEquals(taskitEngine1.hashCode(), taskitEngine2.hashCode());
-        assertNotEquals(taskitEngine1.hashCode(), taskitEngine3.hashCode());
-        assertNotEquals(taskitEngine2.hashCode(), taskitEngine3.hashCode());
-        assertNotEquals(taskitEngine2.hashCode(), taskitEngine4.hashCode());
-        assertNotEquals(taskitEngine3.hashCode(), taskitEngine4.hashCode());
-
-        // same translation specs
-        assertEquals(taskitEngine1.hashCode(), taskitEngine4.hashCode());
-    }
-
-    // TODO: update test
-    @Test
-    @UnitTestMethod(target = TestTaskitEngine.class, name = "equals", args = { Object.class })
-    public void testEquals() {
-        // see AT_TaskitEngine.testEquals()
-        // code here is strictly for coverage, and coverage alone
-        TaskitEngine taskitEngine1 = TestTaskitEngine.builder()
-                .addTranslationSpec(new TestObjectTranslationSpec())
-                .addTranslationSpec(new TestComplexObjectTranslationSpec())
-                .buildWithoutInit();
-
-        TaskitEngine taskitEngine2 = TestTaskitEngine.builder()
-                .addTranslationSpec(new TestComplexObjectTranslationSpec())
-                .buildWithoutInit();
-
-        TaskitEngine taskitEngine3 = TestTaskitEngine.builder()
-                .addTranslationSpec(new TestObjectTranslationSpec())
-                .buildWithoutInit();
-
-        TaskitEngine taskitEngine4 = TestTaskitEngine.builder()
-                .addTranslationSpec(new TestObjectTranslationSpec())
-                .addTranslationSpec(new TestComplexObjectTranslationSpec())
-                .buildWithoutInit();
-
-        TaskitEngine taskitEngine5 = TestTaskitEngine.builder()
-                .addTranslationSpec(new TestObjectTranslationSpec())
-                .addTranslationSpec(new TestComplexObjectTranslationSpec())
-                .build();
-
-        // exact same
-        assertEquals(taskitEngine1, taskitEngine1);
-
-        // null test
-        assertNotEquals(taskitEngine1, null);
-
-        // not an instance test
-        assertNotEquals(taskitEngine1, new Object());
-
-        // different translation specs
-        assertNotEquals(taskitEngine1, taskitEngine2);
-        assertNotEquals(taskitEngine1, taskitEngine3);
-        assertNotEquals(taskitEngine2, taskitEngine3);
-        assertNotEquals(taskitEngine2, taskitEngine4);
-        assertNotEquals(taskitEngine3, taskitEngine4);
-
-        // same translation specs
-        assertEquals(taskitEngine1, taskitEngine4);
-
-        // init vs not init
-        assertNotEquals(taskitEngine1, taskitEngine5);
-
-        taskitEngine1.init();
-        taskitEngine2.init();
-        taskitEngine3.init();
-        taskitEngine4.init();
-
-        // init and same translation specs
-        assertEquals(taskitEngine1, taskitEngine4);
-
-        // init and different translation specs
-        assertNotEquals(taskitEngine1, taskitEngine2);
-        assertNotEquals(taskitEngine1, taskitEngine3);
-        assertNotEquals(taskitEngine2, taskitEngine3);
-        assertNotEquals(taskitEngine2, taskitEngine4);
-        assertNotEquals(taskitEngine3, taskitEngine4);
     }
 }
