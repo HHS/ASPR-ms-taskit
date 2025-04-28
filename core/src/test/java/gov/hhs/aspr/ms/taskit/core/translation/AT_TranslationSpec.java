@@ -28,7 +28,7 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestComplexInputObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestInputChildObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestInputObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestObjectWrapper;
-import gov.hhs.aspr.ms.taskit.core.testsupport.translation.TestClassPair;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.DynamicTestTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.TestTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.complexobject.specs.TestComplexObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.specs.TestObjectTranslationSpec;
@@ -269,9 +269,9 @@ public class AT_TranslationSpec {
 
 		// hash codes are reasonably distributed
 		Set<Integer> hashCodes = new LinkedHashSet<>();
-		for (TestClassPair testClassPair : TestClassPair.values()) {
-            TranslationSpec<?, ?, TestTaskitEngine> translationSpec = testClassPair.createTranslationSpec();
-			hashCodes.add(translationSpec.hashCode());
+		for (DynamicTestTranslationSpec translationSpec : DynamicTestTranslationSpec.values()) {
+            TranslationSpec<?, ?, TestTaskitEngine> testTranslationSpec = translationSpec.getTranslationSpec();
+			hashCodes.add(testTranslationSpec.hashCode());
 		}
 
 		assertEquals(100, hashCodes.size());
@@ -326,9 +326,9 @@ public class AT_TranslationSpec {
 
 		// different inputs yield unequal translationSpecs
 		Set<TranslationSpec<?, ?, TestTaskitEngine>> set = new LinkedHashSet<>();
-        for (TestClassPair testClassPair : TestClassPair.values()) {
-            TranslationSpec<?, ?, TestTaskitEngine> translationSpec = testClassPair.createTranslationSpec();
-			set.add(translationSpec);
+        for (DynamicTestTranslationSpec translationSpec : DynamicTestTranslationSpec.values()) {
+            TestTranslationSpec<?, ?> testTranslationSpec = translationSpec.getTranslationSpec();
+			set.add(testTranslationSpec);
 		}
 
 		assertEquals(100, set.size());
@@ -337,7 +337,7 @@ public class AT_TranslationSpec {
     private TranslationSpec<?, ?, TestTaskitEngine> getRandomTranslationSpec(long seed) {
         RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
-        TestClassPair testClassPair = TestClassPair.getRandomTestClassPair(randomGenerator);
-        return testClassPair.createTranslationSpec();
+        DynamicTestTranslationSpec translationSpec = DynamicTestTranslationSpec.getRandomTranslationSpec(randomGenerator);
+        return translationSpec.getTranslationSpec();
     }
 }

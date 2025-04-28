@@ -7,11 +7,8 @@ import java.util.Random;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import gov.hhs.aspr.ms.taskit.core.testsupport.engine.TestTaskitEngine;
-import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
-
-public enum TestClassPair {
-    T1_T2(T1.class, T2.class), 
+public enum DynamicTestTranslationSpec {
+    T1_T2(T1.class, T2.class),
     T1_T3(T1.class, T3.class),
     T1_T4(T1.class, T4.class),
     T1_T5(T1.class, T5.class),
@@ -114,8 +111,8 @@ public enum TestClassPair {
 
     private final Class<?> typeI;
     private final Class<?> typeA;
-    
-    private <I, A> TestClassPair(Class<I> typeI, Class<A> typeA) {
+
+    private <I, A> DynamicTestTranslationSpec(Class<I> typeI, Class<A> typeA) {
         this.typeI = typeI;
         this.typeA = typeA;
     }
@@ -128,31 +125,30 @@ public enum TestClassPair {
         return typeA;
     }
 
-    public static TestClassPair getRandomTestClassPair(final RandomGenerator randomGenerator) {
-        return TestClassPair.values()[randomGenerator.nextInt(TestClassPair.values().length)];
-    }
-
-    public static List<TestClassPair> getTestClassPairs() {
-        return Arrays.asList(TestClassPair.values());
-    }
-
-    public static List<TestClassPair> getShuffledTestClassPairs(final RandomGenerator randomGenerator) {
-        List<TestClassPair> result = getTestClassPairs();
-        Random random = new Random(randomGenerator.nextLong());
-		Collections.shuffle(result, random);
-		return result;
-    }
-
-    public TranslationSpec<?, ?, TestTaskitEngine> createTranslationSpec() {
+    public TestTranslationSpec<?, ?> getTranslationSpec() {
         return new DynamicTranslationSpec<>(typeI, typeA);
     }
 
-    private static final class DynamicTranslationSpec<I, A> extends TranslationSpec<I, A, TestTaskitEngine> {
+    public static DynamicTestTranslationSpec getRandomTranslationSpec(final RandomGenerator randomGenerator) {
+        return DynamicTestTranslationSpec.values()[randomGenerator.nextInt(DynamicTestTranslationSpec.values().length)];
+    }
+
+    public static List<DynamicTestTranslationSpec> getTranslationSpecs() {
+        return Arrays.asList(DynamicTestTranslationSpec.values());
+    }
+
+    public static List<DynamicTestTranslationSpec> getShuffledTranslationSpecs(final RandomGenerator randomGenerator) {
+        List<DynamicTestTranslationSpec> result = getTranslationSpecs();
+        Random random = new Random(randomGenerator.nextLong());
+        Collections.shuffle(result, random);
+        return result;
+    }
+
+    private static final class DynamicTranslationSpec<I, A> extends TestTranslationSpec<I, A> {
         private final Class<I> typeI;
         private final Class<A> typeA;
 
         private DynamicTranslationSpec(Class<I> typeI, Class<A> typeA) {
-            super(TestTaskitEngine.class);
             this.typeI = typeI;
             this.typeA = typeA;
         }
@@ -178,19 +174,48 @@ public enum TestClassPair {
         }
     }
 
-    private static class T1 {}
-    private static class T2 {}
-    private static class T3 {}
-    private static class T4 {}
-    private static class T5 {}
-    private static class T6 {}
-    private static class T7 {}
-    private static class T8 {}
-    private static class T9 {}
-    private static class T10 {}
-    private static class T11 {}
-    private static class T12 {}
-    private static class T13 {}
-    private static class T14 {}
-    private static class T15 {}
+    private static class T1 {
+    }
+
+    private static class T2 {
+    }
+
+    private static class T3 {
+    }
+
+    private static class T4 {
+    }
+
+    private static class T5 {
+    }
+
+    private static class T6 {
+    }
+
+    private static class T7 {
+    }
+
+    private static class T8 {
+    }
+
+    private static class T9 {
+    }
+
+    private static class T10 {
+    }
+
+    private static class T11 {
+    }
+
+    private static class T12 {
+    }
+
+    private static class T13 {
+    }
+
+    private static class T14 {
+    }
+
+    private static class T15 {
+    }
 }

@@ -13,7 +13,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.taskit.core.testsupport.engine.TestTaskitEngine;
-import gov.hhs.aspr.ms.taskit.core.testsupport.translation.TestClassPair;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.DynamicTestTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.bad.BadTranslationSpecEmptyMap;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.bad.BadTranslationSpecNullMap;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.complexobject.TestComplexObjectTranslatorId;
@@ -294,12 +294,12 @@ public class AT_TaskitEngineData {
 		
 		TaskitEngineData.Builder builder = TaskitEngineData.builder();
 
-        List<TestClassPair> shuffledTestClassPairs = TestClassPair.getShuffledTestClassPairs(randomGenerator);
+        List<DynamicTestTranslationSpec> shuffledTranslationSpecs = DynamicTestTranslationSpec.getShuffledTranslationSpecs(randomGenerator);
 
         int n = randomGenerator.nextInt(10) + 1;
 		for (int i = 0; i < n; i++) {
-            TestClassPair testClassPair = shuffledTestClassPairs.get(i);
-            builder.addTranslationSpec(testClassPair.createTranslationSpec());
+            DynamicTestTranslationSpec translationSpec = shuffledTranslationSpecs.get(i);
+            builder.addTranslationSpec(translationSpec.getTranslationSpec());
         }
 
         return builder.build();

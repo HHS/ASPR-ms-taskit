@@ -25,7 +25,7 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestComplexInputObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestInputChildObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestInputObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestObjectWrapper;
-import gov.hhs.aspr.ms.taskit.core.testsupport.translation.TestClassPair;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.DynamicTestTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.TestTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.complexobject.specs.TestComplexObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.specs.TestObjectTranslationSpec;
@@ -697,12 +697,12 @@ public class AT_TaskitEngine {
 
         TestTaskitEngine.Builder builder = TestTaskitEngine.builder();
 
-        List<TestClassPair> shuffledTestClassPairs = TestClassPair.getShuffledTestClassPairs(randomGenerator);
+        List<DynamicTestTranslationSpec> shuffledTranslationSpecs = DynamicTestTranslationSpec.getShuffledTranslationSpecs(randomGenerator);
 
         int n = randomGenerator.nextInt(10) + 1;
 		for (int i = 0; i < n; i++) {
-            TestClassPair testClassPair = shuffledTestClassPairs.get(i);
-            builder.addTranslationSpec(testClassPair.createTranslationSpec());
+            DynamicTestTranslationSpec translationSpec = shuffledTranslationSpecs.get(i);
+            builder.addTranslationSpec(translationSpec.getTranslationSpec());
         }
 
         return new TestTaskitEngineBuilderBridge(builder).buildWithoutInit();
