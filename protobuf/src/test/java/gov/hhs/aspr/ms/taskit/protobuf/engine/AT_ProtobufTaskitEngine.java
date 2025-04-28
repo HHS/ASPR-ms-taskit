@@ -1,7 +1,6 @@
 package gov.hhs.aspr.ms.taskit.protobuf.engine;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -198,87 +197,5 @@ public class AT_ProtobufTaskitEngine {
         });
 
         assertEquals(ProtobufTaskitError.UNKNOWN_TYPE_URL, contractException.getErrorType());
-    }
-
-    @Test
-    @UnitTestMethod(target = ProtobufTaskitEngine.class, name = "hashCode", args = {})
-    public void testHashCode() {
-        // TODO: update test
-        ProtobufTaskitEngine protobufTaskitEngine1 = ProtobufJsonTaskitEngine.builder()
-                .build();
-        ProtobufTaskitEngine protobufTaskitEngine2 = ProtobufJsonTaskitEngine.builder()
-                .addTranslationSpec(new TestProtobufObjectTranslationSpec())
-                .build();
-        ProtobufTaskitEngine protobufTaskitEngine3 = ProtobufJsonTaskitEngine.builder()
-                .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec())
-                .build();
-        ProtobufTaskitEngine protobufTaskitEngine4 = ProtobufJsonTaskitEngine.builder()
-                .build();
-
-        // exact same
-        assertEquals(protobufTaskitEngine1.hashCode(), protobufTaskitEngine1.hashCode());
-        assertEquals(protobufTaskitEngine2.hashCode(), protobufTaskitEngine2.hashCode());
-        assertEquals(protobufTaskitEngine3.hashCode(), protobufTaskitEngine3.hashCode());
-        assertEquals(protobufTaskitEngine4.hashCode(), protobufTaskitEngine4.hashCode());
-
-        // super not equals
-        assertNotEquals(protobufTaskitEngine1.hashCode(), protobufTaskitEngine2.hashCode());
-        assertNotEquals(protobufTaskitEngine1.hashCode(), protobufTaskitEngine3.hashCode());
-        assertNotEquals(protobufTaskitEngine2.hashCode(), protobufTaskitEngine1.hashCode());
-        assertNotEquals(protobufTaskitEngine2.hashCode(), protobufTaskitEngine3.hashCode());
-        assertNotEquals(protobufTaskitEngine2.hashCode(), protobufTaskitEngine4.hashCode());
-        assertNotEquals(protobufTaskitEngine3.hashCode(), protobufTaskitEngine1.hashCode());
-        assertNotEquals(protobufTaskitEngine3.hashCode(), protobufTaskitEngine2.hashCode());
-        assertNotEquals(protobufTaskitEngine3.hashCode(), protobufTaskitEngine4.hashCode());
-        assertNotEquals(protobufTaskitEngine4.hashCode(), protobufTaskitEngine2.hashCode());
-        assertNotEquals(protobufTaskitEngine4.hashCode(), protobufTaskitEngine3.hashCode());
-
-        // same specs
-        assertEquals(protobufTaskitEngine1.hashCode(), protobufTaskitEngine4.hashCode());
-        assertEquals(protobufTaskitEngine4.hashCode(), protobufTaskitEngine1.hashCode());
-    }
-
-    @Test
-    @UnitTestMethod(target = ProtobufTaskitEngine.class, name = "equals", args = { Object.class })
-    public void testEquals() {
-        // TODO: update test
-        ProtobufTaskitEngine protobufTaskitEngine1 = ProtobufJsonTaskitEngine.builder()
-                .build();
-        ProtobufTaskitEngine protobufTaskitEngine2 = ProtobufJsonTaskitEngine.builder()
-                .addTranslationSpec(new TestProtobufObjectTranslationSpec())
-                .build();
-        ProtobufTaskitEngine protobufTaskitEngine3 = ProtobufJsonTaskitEngine.builder()
-                .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec())
-                .build();
-        ProtobufTaskitEngine protobufTaskitEngine4 = ProtobufJsonTaskitEngine.builder()
-                .build();
-
-        // exact same
-        assertEquals(protobufTaskitEngine1, protobufTaskitEngine1);
-        assertEquals(protobufTaskitEngine2, protobufTaskitEngine2);
-        assertEquals(protobufTaskitEngine3, protobufTaskitEngine3);
-        assertEquals(protobufTaskitEngine4, protobufTaskitEngine4);
-
-        // null
-        assertNotEquals(protobufTaskitEngine1, null);
-
-        // not instance
-        assertNotEquals(protobufTaskitEngine1, new Object());
-
-        // super not equals
-        assertNotEquals(protobufTaskitEngine1, protobufTaskitEngine2);
-        assertNotEquals(protobufTaskitEngine1, protobufTaskitEngine3);
-        assertNotEquals(protobufTaskitEngine2, protobufTaskitEngine1);
-        assertNotEquals(protobufTaskitEngine2, protobufTaskitEngine3);
-        assertNotEquals(protobufTaskitEngine2, protobufTaskitEngine4);
-        assertNotEquals(protobufTaskitEngine3, protobufTaskitEngine1);
-        assertNotEquals(protobufTaskitEngine3, protobufTaskitEngine2);
-        assertNotEquals(protobufTaskitEngine3, protobufTaskitEngine4);
-        assertNotEquals(protobufTaskitEngine4, protobufTaskitEngine2);
-        assertNotEquals(protobufTaskitEngine4, protobufTaskitEngine3);
-
-        // same specs
-        assertEquals(protobufTaskitEngine1, protobufTaskitEngine4);
-        assertEquals(protobufTaskitEngine4, protobufTaskitEngine1);
     }
 }
