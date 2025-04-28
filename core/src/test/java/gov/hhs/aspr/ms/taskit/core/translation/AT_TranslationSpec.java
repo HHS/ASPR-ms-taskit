@@ -10,7 +10,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,6 +28,7 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestComplexInputObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestInputChildObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestInputObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestObjectWrapper;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.TestClassPair;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.TestTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.complexobject.specs.TestComplexObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.specs.TestObjectTranslationSpec;
@@ -250,8 +250,9 @@ public class AT_TranslationSpec {
 		// equal objects have equal hash codes
 		for (int i = 0; i < 30; i++) {
 			long seed = randomGenerator.nextLong();
-			TranslationSpec<?, ?, TestTaskitEngine> translationSpec1 = getRandomTranslationSpec(seed);
-			TranslationSpec<?, ?, TestTaskitEngine> translationSpec2 = getRandomTranslationSpec(seed);
+
+            TranslationSpec<?, ?, TestTaskitEngine> translationSpec1 = getRandomTranslationSpec(seed);
+            TranslationSpec<?, ?, TestTaskitEngine> translationSpec2 = getRandomTranslationSpec(seed);
 
 			assertEquals(translationSpec1, translationSpec2);
 			assertEquals(translationSpec1.hashCode(), translationSpec2.hashCode());
@@ -268,8 +269,8 @@ public class AT_TranslationSpec {
 
 		// hash codes are reasonably distributed
 		Set<Integer> hashCodes = new LinkedHashSet<>();
-		for (int i = 0; i < 100; i++) {
-			TranslationSpec<?, ?, TestTaskitEngine> translationSpec = getRandomTranslationSpec(randomGenerator.nextLong());
+		for (TestClassPair testClassPair : TestClassPair.values()) {
+            TranslationSpec<?, ?, TestTaskitEngine> translationSpec = testClassPair.createTranslationSpec();
 			hashCodes.add(translationSpec.hashCode());
 		}
 
@@ -283,27 +284,28 @@ public class AT_TranslationSpec {
 
 		// never equal to another type
 		for (int i = 0; i < 30; i++) {
-			TranslationSpec<?, ?, TestTaskitEngine> translationSpec = getRandomTranslationSpec(randomGenerator.nextLong());
+            TranslationSpec<?, ?, TestTaskitEngine> translationSpec = getRandomTranslationSpec(randomGenerator.nextLong());
 			assertFalse(translationSpec.equals(new Object()));
 		}
 
 		// never equal to null
 		for (int i = 0; i < 30; i++) {
-			TranslationSpec<?, ?, TestTaskitEngine> translationSpec = getRandomTranslationSpec(randomGenerator.nextLong());
+            TranslationSpec<?, ?, TestTaskitEngine> translationSpec = getRandomTranslationSpec(randomGenerator.nextLong());
 			assertFalse(translationSpec.equals(null));
 		}
 
 		// reflexive
 		for (int i = 0; i < 30; i++) {
-			TranslationSpec<?, ?, TestTaskitEngine> translationSpec = getRandomTranslationSpec(randomGenerator.nextLong());
+            TranslationSpec<?, ?, TestTaskitEngine> translationSpec = getRandomTranslationSpec(randomGenerator.nextLong());
 			assertTrue(translationSpec.equals(translationSpec));
 		}
 
 		// symmetric, transitive, consistent
 		for (int i = 0; i < 30; i++) {
 			long seed = randomGenerator.nextLong();
-			TranslationSpec<?, ?, TestTaskitEngine> translationSpec1 = getRandomTranslationSpec(seed);
-			TranslationSpec<?, ?, TestTaskitEngine> translationSpec2 = getRandomTranslationSpec(seed);
+            TranslationSpec<?, ?, TestTaskitEngine> translationSpec1 = getRandomTranslationSpec(seed);
+            TranslationSpec<?, ?, TestTaskitEngine> translationSpec2 = getRandomTranslationSpec(seed);
+
 			assertFalse(translationSpec1 == translationSpec2);
 			for (int j = 0; j < 10; j++) {
 				assertTrue(translationSpec1.equals(translationSpec2));
@@ -324,110 +326,18 @@ public class AT_TranslationSpec {
 
 		// different inputs yield unequal translationSpecs
 		Set<TranslationSpec<?, ?, TestTaskitEngine>> set = new LinkedHashSet<>();
-		for (int i = 0; i < 100; i++) {
-			TranslationSpec<?, ?, TestTaskitEngine> translationSpec = getRandomTranslationSpec(randomGenerator.nextLong());
+        for (TestClassPair testClassPair : TestClassPair.values()) {
+            TranslationSpec<?, ?, TestTaskitEngine> translationSpec = testClassPair.createTranslationSpec();
 			set.add(translationSpec);
 		}
+
 		assertEquals(100, set.size());
-    }
-
-    private static final List<Class<?>> TYPES = List.of(T1.class, T2.class, T3.class, T4.class,
-            T5.class, T6.class, T7.class, T8.class, T9.class, T10.class,
-            T11.class, T12.class, T13.class, T14.class, T15.class, T16.class,
-            T17.class, T18.class, T19.class, T20.class, T21.class, T22.class,
-            T23.class, T24.class, T25.class, T26.class, T27.class, T28.class,
-            T29.class, T30.class, T31.class, T32.class, T33.class, T34.class,
-            T35.class, T36.class, T37.class, T38.class, T39.class, T40.class,
-            T41.class, T42.class, T43.class, T44.class, T45.class, T46.class,
-            T47.class, T48.class, T49.class, T50.class, TestAppObject.class,
-            TestInputObject.class, TestAppChildObject.class, TestInputChildObject.class);
-
-    private static final class DynamicTranslationSpec<I, A> extends TranslationSpec<I, A, TestTaskitEngine> {
-        private final Class<I> typeI;
-        private final Class<A> typeA;
-
-        public DynamicTranslationSpec(Class<I> typeI, Class<A> typeA) {
-            super(TestTaskitEngine.class);
-            this.typeI = typeI;
-            this.typeA = typeA;
-        }
-
-        @Override
-        protected A translateInputObject(I inputObject) {
-            throw new UnsupportedOperationException("Unimplemented method 'translateInputObject'");
-        }
-
-        @Override
-        protected I translateAppObject(A appObject) {
-            throw new UnsupportedOperationException("Unimplemented method 'translateAppObject'");
-        }
-
-        @Override
-        public Class<A> getAppObjectClass() {
-            return typeA;
-        }
-
-        @Override
-        public Class<I> getInputObjectClass() {
-            return typeI;
-        }
     }
 
     private TranslationSpec<?, ?, TestTaskitEngine> getRandomTranslationSpec(long seed) {
         RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
-        Class<?> t1 = TYPES.get(randomGenerator.nextInt(TYPES.size()));
-        Class<?> t2 = TYPES.get(randomGenerator.nextInt(TYPES.size()));
-        return new DynamicTranslationSpec<>(t1, t2);
-    }
 
-    private static class T1 {}
-    private static class T2 {}
-    private static class T3 {}
-    private static class T4 {}
-    private static class T5 {}
-    private static class T6 {}
-    private static class T7 {}
-    private static class T8 {}
-    private static class T9 {}
-    private static class T10 {}
-    private static class T11 {}
-    private static class T12 {}
-    private static class T13 {}
-    private static class T14 {}
-    private static class T15 {}
-    private static class T16 {}
-    private static class T17 {}
-    private static class T18 {}
-    private static class T19 {}
-    private static class T20 {}
-    private static class T21 {}
-    private static class T22 {}
-    private static class T23 {}
-    private static class T24 {}
-    private static class T25 {}
-    private static class T26 {}
-    private static class T27 {}
-    private static class T28 {}
-    private static class T29 {}
-    private static class T30 {}
-    private static class T31 {}
-    private static class T32 {}
-    private static class T33 {}
-    private static class T34 {}
-    private static class T35 {}
-    private static class T36 {}
-    private static class T37 {}
-    private static class T38 {}
-    private static class T39 {}
-    private static class T40 {}
-    private static class T41 {}
-    private static class T42 {}
-    private static class T43 {}
-    private static class T44 {}
-    private static class T45 {}
-    private static class T46 {}
-    private static class T47 {}
-    private static class T48 {}
-    private static class T49 {}
-    private static class T50 {}
+        TestClassPair testClassPair = TestClassPair.getRandomTestClassPair(randomGenerator);
+        return testClassPair.createTranslationSpec();
+    }
 }

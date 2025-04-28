@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -14,10 +13,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.taskit.core.testsupport.engine.TestTaskitEngine;
-import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppChildObject;
-import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppObject;
-import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestInputChildObject;
-import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestInputObject;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.TestClassPair;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.bad.BadTranslationSpecEmptyMap;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.bad.BadTranslationSpecNullMap;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.complexobject.TestComplexObjectTranslatorId;
@@ -25,7 +21,6 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.translation.complexobject.specs.T
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.TestObjectTranslator;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.specs.TestObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.ITranslationSpec;
-import gov.hhs.aspr.ms.taskit.core.translation.TranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.Translator;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslatorContext;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslatorId;
@@ -292,75 +287,21 @@ public class AT_TaskitEngineData {
 		assertEquals(100, set.size());
     }
 
-	private static final List<Class<?>> TYPES = List.of(T1.class, T2.class, T3.class, T4.class,
-			T5.class, T6.class, T7.class, T8.class, T9.class, T10.class, T11.class, T12.class,
-			T13.class, T14.class, T15.class, TestAppObject.class, TestInputObject.class, 
-			TestAppChildObject.class, TestInputChildObject.class);
 
-	private static final class DynamicTranslationSpec<I, A> extends TranslationSpec<I, A, TestTaskitEngine> {
-		private final Class<I> typeI;
-		private final Class<A> typeA;
-
-		public DynamicTranslationSpec(Class<I> typeI, Class<A> typeA) {
-			super(TestTaskitEngine.class);
-			this.typeI = typeI;
-			this.typeA = typeA;
-		}
-
-		@Override
-		protected A translateInputObject(I inputObject) {
-			throw new UnsupportedOperationException("Unimplemented method 'translateInputObject'");
-		}
-
-		@Override
-		protected I translateAppObject(A appObject) {
-			throw new UnsupportedOperationException("Unimplemented method 'translateAppObject'");
-		}
-
-		@Override
-		public Class<A> getAppObjectClass() {
-			return typeA;
-		}
-
-		@Override
-		public Class<I> getInputObjectClass() {
-			return typeI;
-		}
-	}
 
     private TaskitEngineData getRandomTaskitEngineData(long seed) {
         RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 		
 		TaskitEngineData.Builder builder = TaskitEngineData.builder();
 
-		Set<DynamicTranslationSpec<?, ?>> set = new HashSet<>();
-		int n = randomGenerator.nextInt(7) + 1;
-		while (set.size() < n) {
-			Class<?> t1 = TYPES.get(randomGenerator.nextInt(TYPES.size()));
-        	Class<?> t2 = TYPES.get(randomGenerator.nextInt(TYPES.size()));
-			set.add(new DynamicTranslationSpec<>(t1, t2));
-		}
+        List<TestClassPair> shuffledTestClassPairs = TestClassPair.getShuffledTestClassPairs(randomGenerator);
 
-		for (DynamicTranslationSpec<?, ?> spec : set) {
-			builder.addTranslationSpec(spec);
-		}
+        int n = randomGenerator.nextInt(10) + 1;
+		for (int i = 0; i < n; i++) {
+            TestClassPair testClassPair = shuffledTestClassPairs.get(i);
+            builder.addTranslationSpec(testClassPair.createTranslationSpec());
+        }
 
         return builder.build();
     }
-
-	private static class T1 {}
-    private static class T2 {}
-    private static class T3 {}
-    private static class T4 {}
-    private static class T5 {}
-    private static class T6 {}
-    private static class T7 {}
-    private static class T8 {}
-    private static class T9 {}
-    private static class T10 {}
-	private static class T11 {}
-	private static class T12 {}
-	private static class T13 {}
-	private static class T14 {}
-	private static class T15 {}
 }
