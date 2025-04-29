@@ -20,8 +20,8 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.translation.bad.BadTranslationSpe
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.bad.BadTranslationSpecNullMap;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.complexobject.specs.TestComplexObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.TestObjectTranslator;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.specs.TestEnumTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.specs.TestObjectTranslationSpec;
-import gov.hhs.aspr.ms.taskit.core.testsupport.translation.testenum.specs.TestEnumTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.ITranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.Translator;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslatorContext;

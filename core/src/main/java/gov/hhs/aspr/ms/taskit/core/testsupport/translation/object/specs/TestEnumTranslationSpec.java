@@ -1,4 +1,4 @@
-package gov.hhs.aspr.ms.taskit.core.testsupport.translation.testenum.specs;
+package gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.specs;
 
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestAppEnum;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestInputEnum;

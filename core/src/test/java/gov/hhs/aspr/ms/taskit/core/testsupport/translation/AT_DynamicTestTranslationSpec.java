@@ -41,10 +41,10 @@ public class AT_DynamicTestTranslationSpec {
     @Test
     @UnitTestMethod(target = DynamicTestTranslationSpec.class, name = "getRandomTranslationSpec", args = {
             RandomGenerator.class })
-    public void testGetRandomTestClassPair() {
+    public void testGetRandomTranslationSpec() {
         RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(242770195043563036L);
         Map<DynamicTestTranslationSpec, MutableInteger> idCounter = new LinkedHashMap<>();
-        Set<DynamicTestTranslationSpec> setOfRandomTestClassPairs = new LinkedHashSet<>();
+        Set<DynamicTestTranslationSpec> setOfDynamicTestTranslationSpecs = new LinkedHashSet<>();
 
         for (DynamicTestTranslationSpec translationSpec : DynamicTestTranslationSpec.values()) {
             idCounter.put(translationSpec, new MutableInteger());
@@ -55,7 +55,7 @@ public class AT_DynamicTestTranslationSpec {
         for (int i = 0; i < numIterations; i++) {
             DynamicTestTranslationSpec translationSpec = DynamicTestTranslationSpec
                     .getRandomTranslationSpec(randomGenerator);
-            setOfRandomTestClassPairs.add(translationSpec);
+            setOfDynamicTestTranslationSpecs.add(translationSpec);
             idCounter.get(translationSpec).increment();
         }
 
@@ -67,12 +67,12 @@ public class AT_DynamicTestTranslationSpec {
         }
 
         assertEquals(idCounter.values().stream().mapToInt(a -> a.getValue()).sum(), numIterations);
-        assertEquals(setOfRandomTestClassPairs.size(), DynamicTestTranslationSpec.values().length);
+        assertEquals(setOfDynamicTestTranslationSpecs.size(), DynamicTestTranslationSpec.values().length);
     }
 
     @Test
     @UnitTestMethod(target = DynamicTestTranslationSpec.class, name = "getTranslationSpecs", args = {})
-    public void testGetTestClassPairs() {
+    public void testGetTranslationSpecs() {
         assertEquals(Arrays.asList(DynamicTestTranslationSpec.values()),
                 DynamicTestTranslationSpec.getTranslationSpecs());
     }
@@ -80,18 +80,18 @@ public class AT_DynamicTestTranslationSpec {
     @Test
     @UnitTestMethod(target = DynamicTestTranslationSpec.class, name = "getShuffledTranslationSpecs", args = {
             RandomGenerator.class })
-    public void testGetShuffledTestClassPairs() {
+    public void testGetShuffledTranslationSpecs() {
         RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(503706833466130759L);
-        List<DynamicTestTranslationSpec> testClassPairs = DynamicTestTranslationSpec.getTranslationSpecs();
-        Collections.shuffle(testClassPairs, new Random(randomGenerator.nextLong()));
+        List<DynamicTestTranslationSpec> dynamicTestTranslationSpecs = DynamicTestTranslationSpec.getTranslationSpecs();
+        Collections.shuffle(dynamicTestTranslationSpecs, new Random(randomGenerator.nextLong()));
 
-        assertEquals(testClassPairs, DynamicTestTranslationSpec
+        assertEquals(dynamicTestTranslationSpecs, DynamicTestTranslationSpec
                 .getShuffledTranslationSpecs(RandomGeneratorProvider.getRandomGenerator(503706833466130759L)));
     }
 
     @Test
     @UnitTestMethod(target = DynamicTestTranslationSpec.class, name = "getTranslationSpec", args = {})
-    public void testCreateTranslationSpec() {
+    public void testGetTranslationSpec() {
         for (DynamicTestTranslationSpec translationSpec : DynamicTestTranslationSpec.values()) {
 
             TestTranslationSpec<?, ?> spec = translationSpec.getTranslationSpec();

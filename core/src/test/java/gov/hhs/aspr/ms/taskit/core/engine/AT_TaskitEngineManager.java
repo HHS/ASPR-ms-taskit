@@ -20,7 +20,6 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestObjectWrapper;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.TestTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.complexobject.TestComplexObjectTranslator;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.TestObjectTranslator;
-import gov.hhs.aspr.ms.taskit.core.testsupport.translation.testenum.TestEnumTranslator;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 import gov.hhs.aspr.ms.util.resourcehelper.ResourceHelper;
@@ -37,7 +36,6 @@ public class AT_TaskitEngineManager {
         TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
                 .addTranslator(TestComplexObjectTranslator.getTranslator())
-                .addTranslator(TestEnumTranslator.getTranslator())
                 .build();
 
         TaskitEngineManager taskitEngineManager = TaskitEngineManager.builder()
@@ -94,7 +92,6 @@ public class AT_TaskitEngineManager {
         TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
                 .addTranslator(TestComplexObjectTranslator.getTranslator())
-                .addTranslator(TestEnumTranslator.getTranslator())
                 .build();
 
         TaskitEngineManager taskitEngineManager = TaskitEngineManager.builder()
@@ -195,7 +192,6 @@ public class AT_TaskitEngineManager {
         TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
                 .addTranslator(TestComplexObjectTranslator.getTranslator())
-                .addTranslator(TestEnumTranslator.getTranslator())
                 .addTranslationSpec(wrapperTranslationSpec)
                 .build();
 
@@ -266,7 +262,6 @@ public class AT_TaskitEngineManager {
         TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
                 .addTranslator(TestComplexObjectTranslator.getTranslator())
-                .addTranslator(TestEnumTranslator.getTranslator())
                 .build();
 
         TaskitEngineManager taskitEngineManager = TaskitEngineManager.builder()
@@ -324,7 +319,6 @@ public class AT_TaskitEngineManager {
         TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
                 .addTranslator(TestComplexObjectTranslator.getTranslator())
-                .addTranslator(TestEnumTranslator.getTranslator())
                 .build();
 
         TaskitEngineManager taskitEngineManager = TaskitEngineManager.builder()
@@ -378,7 +372,6 @@ public class AT_TaskitEngineManager {
         TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
                 .addTranslator(TestComplexObjectTranslator.getTranslator())
-                .addTranslator(TestEnumTranslator.getTranslator())
                 .build();
 
         TaskitEngineManager taskitEngineManager = TaskitEngineManager.builder()
@@ -429,7 +422,6 @@ public class AT_TaskitEngineManager {
         TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
                 .addTranslator(TestComplexObjectTranslator.getTranslator())
-                .addTranslator(TestEnumTranslator.getTranslator())
                 .build();
 
         TaskitEngineManager taskitEngineManager = TaskitEngineManager.builder()
@@ -481,7 +473,6 @@ public class AT_TaskitEngineManager {
         TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
                 .addTranslator(TestComplexObjectTranslator.getTranslator())
-                .addTranslator(TestEnumTranslator.getTranslator())
                 .build();
 
         TaskitEngineManager taskitEngineManager = TaskitEngineManager.builder()
@@ -550,7 +541,6 @@ public class AT_TaskitEngineManager {
         TestTaskitEngine taskitEngine = TestTaskitEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
                 .addTranslator(TestComplexObjectTranslator.getTranslator())
-                .addTranslator(TestEnumTranslator.getTranslator())
                 .build();
 
         TaskitEngineManager.builder().addTaskitEngine(taskitEngine).build();
@@ -567,8 +557,7 @@ public class AT_TaskitEngineManager {
         contractException = assertThrows(ContractException.class, () -> {
             TestTaskitEngine taskitEngine2 = new TestTaskitEngineBuilderBridge(TestTaskitEngine.builder()
                     .addTranslator(TestObjectTranslator.getTranslator())
-                    .addTranslator(TestComplexObjectTranslator.getTranslator())
-                    .addTranslator(TestEnumTranslator.getTranslator()))
+                    .addTranslator(TestComplexObjectTranslator.getTranslator()))
                     .buildWithoutInit();
 
             TaskitEngineManager.builder()

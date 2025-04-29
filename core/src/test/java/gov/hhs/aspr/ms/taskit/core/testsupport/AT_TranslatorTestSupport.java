@@ -9,6 +9,7 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.TestObjectTranslator;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.specs.TestEnumTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.specs.TestObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.ITranslationSpec;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
@@ -21,6 +22,7 @@ public class AT_TranslatorTestSupport {
         List<ITranslationSpec> translationSpecs = new ArrayList<>();
 
         translationSpecs.add(new TestObjectTranslationSpec());
+        translationSpecs.add(new TestEnumTranslationSpec());
 
         Set<String> missingSpecs = TranslatorTestSupport.testGetTranslationSpecs(TestObjectTranslator.class, translationSpecs);
 
@@ -28,7 +30,8 @@ public class AT_TranslatorTestSupport {
 
         missingSpecs = TranslatorTestSupport.testGetTranslationSpecs(TestObjectTranslator.class, new ArrayList<>());
 
-        assertTrue(missingSpecs.size() == 1);
+        assertTrue(missingSpecs.size() == 2);
         assertTrue(missingSpecs.contains(TestObjectTranslationSpec.class.getSimpleName()));
+        assertTrue(missingSpecs.contains(TestEnumTranslationSpec.class.getSimpleName()));
     }
 }
