@@ -2,15 +2,16 @@ package gov.hhs.aspr.ms.taskit.core.engine;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.taskit.core.testsupport.TestObjectUtil;
@@ -24,12 +25,15 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestComplexInputObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestInputChildObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestInputObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestObjectWrapper;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.DynamicTestTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.TestTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.complexobject.specs.TestComplexObjectTranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.specs.TestEnumTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.specs.TestObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.translation.ITranslationSpec;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 import gov.hhs.aspr.ms.util.errors.ContractException;
+import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
 import gov.hhs.aspr.ms.util.resourcehelper.ResourceError;
 import gov.hhs.aspr.ms.util.resourcehelper.ResourceHelper;
 
@@ -111,9 +115,12 @@ public class AT_TaskitEngine {
 
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
+        TestEnumTranslationSpec testEnumTranslationSpec = new TestEnumTranslationSpec();
+
         TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
                 .addTranslationSpec(testObjectTranslationSpec)
-                .addTranslationSpec(complexObjectTranslationSpec).build();
+                .addTranslationSpec(complexObjectTranslationSpec)
+                .addTranslationSpec(testEnumTranslationSpec).build();
 
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
         TestInputObject inputObject = TestObjectUtil.getInputFromApp(expectedAppObject);
@@ -165,9 +172,13 @@ public class AT_TaskitEngine {
 
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
+        TestEnumTranslationSpec testEnumTranslationSpec = new TestEnumTranslationSpec();
+
         TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
                 .addTranslationSpec(testObjectTranslationSpec)
-                .addTranslationSpec(complexObjectTranslationSpec).build();
+                .addTranslationSpec(complexObjectTranslationSpec)
+                .addTranslationSpec(testEnumTranslationSpec)
+                .build();
 
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
 
@@ -231,9 +242,13 @@ public class AT_TaskitEngine {
 
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
+        TestEnumTranslationSpec testEnumTranslationSpec = new TestEnumTranslationSpec();
+
         TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
                 .addTranslationSpec(testObjectTranslationSpec)
-                .addTranslationSpec(complexObjectTranslationSpec).build();
+                .addTranslationSpec(complexObjectTranslationSpec)
+                .addTranslationSpec(testEnumTranslationSpec)
+                .build();
 
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
 
@@ -300,9 +315,12 @@ public class AT_TaskitEngine {
 
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
+        TestEnumTranslationSpec testEnumTranslationSpec = new TestEnumTranslationSpec();
         TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
                 .addTranslationSpec(testObjectTranslationSpec)
-                .addTranslationSpec(complexObjectTranslationSpec).build();
+                .addTranslationSpec(complexObjectTranslationSpec)
+                .addTranslationSpec(testEnumTranslationSpec)
+                .build();
 
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
         TestInputObject expectedInputObject = TestObjectUtil.getInputFromApp(expectedAppObject);
@@ -353,9 +371,12 @@ public class AT_TaskitEngine {
 
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
+        TestEnumTranslationSpec testEnumTranslationSpec = new TestEnumTranslationSpec();
         TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
                 .addTranslationSpec(testObjectTranslationSpec)
-                .addTranslationSpec(complexObjectTranslationSpec).build();
+                .addTranslationSpec(complexObjectTranslationSpec)
+                .addTranslationSpec(testEnumTranslationSpec)
+                .build();
 
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
 
@@ -408,9 +429,12 @@ public class AT_TaskitEngine {
     public void testTranslateObject() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
+        TestEnumTranslationSpec testEnumTranslationSpec = new TestEnumTranslationSpec();
+
         TaskitEngine taskitEngine = TestTaskitEngine.builder()
                 .addTranslationSpec(testObjectTranslationSpec)
                 .addTranslationSpec(testComplexObjectTranslationSpec)
+                .addTranslationSpec(testEnumTranslationSpec)
                 .build();
 
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
@@ -440,9 +464,12 @@ public class AT_TaskitEngine {
     public void testTranslateObjectAsSafeClass() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
+        TestEnumTranslationSpec testEnumTranslationSpec = new TestEnumTranslationSpec();
+
         TaskitEngine taskitEngine = TestTaskitEngine.builder()
                 .addTranslationSpec(testObjectTranslationSpec)
                 .addTranslationSpec(testComplexObjectTranslationSpec)
+                .addTranslationSpec(testEnumTranslationSpec)
                 .build();
 
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
@@ -582,125 +609,102 @@ public class AT_TaskitEngine {
         assertEquals(TaskitError.UNKNOWN_TRANSLATION_SPEC, contractException.getErrorType());
     }
 
-    // TODO: update test
     @Test
     @UnitTestMethod(target = TaskitEngine.class, name = "hashCode", args = {})
     public void testHashCode() {
-        TaskitEngine taskitEngine1 = TestTaskitEngine.builder()
-                .addTranslationSpec(new TestObjectTranslationSpec())
-                .addTranslationSpec(new TestComplexObjectTranslationSpec())
-                .build();
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2655488674438883354L);
 
-        TaskitEngine taskitEngine2 = TestTaskitEngine.builder()
-                .addTranslationSpec(new TestComplexObjectTranslationSpec())
-                .build();
+		// equal objects have equal hash codes
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			TaskitEngine taskitEngine1 = getRandomTaskitEngine(seed);
+			TaskitEngine taskitEngine2 = getRandomTaskitEngine(seed);
 
-        TaskitEngine taskitEngine3 = TestTaskitEngine.builder()
-                .addTranslationSpec(new TestObjectTranslationSpec())
-                .build();
+			assertEquals(taskitEngine1, taskitEngine2);
+			assertEquals(taskitEngine1.hashCode(), taskitEngine2.hashCode());
 
-        TaskitEngine taskitEngine4 = TestTaskitEngine.builder()
-                .addTranslationSpec(new TestObjectTranslationSpec())
-                .addTranslationSpec(new TestComplexObjectTranslationSpec())
-                .build();
+            //initialize both taskitEngines and show they are still equal with equal hash codes
+            taskitEngine1.init();
+            taskitEngine2.init();
+            assertEquals(taskitEngine1, taskitEngine2);
+			assertEquals(taskitEngine1.hashCode(), taskitEngine2.hashCode());
+		}
 
-        // exact same, same hash code
-        assertEquals(taskitEngine1.hashCode(), taskitEngine1.hashCode());
+		// hash codes are reasonably distributed
+		Set<Integer> hashCodes = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			TaskitEngine taskitEngine = getRandomTaskitEngine(randomGenerator.nextLong());
+			hashCodes.add(taskitEngine.hashCode());
+		}
 
-        // different translation specs
-        assertNotEquals(taskitEngine1.hashCode(), taskitEngine2.hashCode());
-        assertNotEquals(taskitEngine1.hashCode(), taskitEngine3.hashCode());
-        assertNotEquals(taskitEngine2.hashCode(), taskitEngine3.hashCode());
-        assertNotEquals(taskitEngine2.hashCode(), taskitEngine4.hashCode());
-        assertNotEquals(taskitEngine3.hashCode(), taskitEngine4.hashCode());
-
-        // same translation specs
-        assertEquals(taskitEngine1.hashCode(), taskitEngine4.hashCode());
+		assertEquals(100, hashCodes.size());
     }
 
-    // TODO: update test
     @Test
     @UnitTestMethod(target = TaskitEngine.class, name = "equals", args = { Object.class })
     public void testEquals() {
-        TaskitEngine taskitEngine1 = new TestTaskitEngineBuilderBridge(TestTaskitEngine.builder()
-                .addTranslationSpec(new TestObjectTranslationSpec())
-                .addTranslationSpec(new TestComplexObjectTranslationSpec()))
-                .buildWithoutInit();
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8999922418377306870L);
 
-        TaskitEngine taskitEngine2 = new TestTaskitEngineBuilderBridge(TestTaskitEngine.builder()
-                .addTranslationSpec(new TestComplexObjectTranslationSpec()))
-                .buildWithoutInit();
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			TaskitEngine taskitEngine = getRandomTaskitEngine(randomGenerator.nextLong());
+			assertFalse(taskitEngine.equals(new Object()));
+		}
 
-        TaskitEngine taskitEngine3 = new TestTaskitEngineBuilderBridge(TestTaskitEngine.builder()
-                .addTranslationSpec(new TestObjectTranslationSpec()))
-                .buildWithoutInit();
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+			TaskitEngine taskitEngine = getRandomTaskitEngine(randomGenerator.nextLong());
+			assertFalse(taskitEngine.equals(null));
+		}
 
-        TaskitEngine taskitEngine4 = new TestTaskitEngineBuilderBridge(TestTaskitEngine.builder()
-                .addTranslationSpec(new TestObjectTranslationSpec())
-                .addTranslationSpec(new TestComplexObjectTranslationSpec()))
-                .buildWithoutInit();
+		// reflexive
+		for (int i = 0; i < 30; i++) {
+			TaskitEngine taskitEngine = getRandomTaskitEngine(randomGenerator.nextLong());
+			assertTrue(taskitEngine.equals(taskitEngine));
+		}
 
-        TaskitEngine taskitEngine5 = TestTaskitEngine.builder()
-                .addTranslationSpec(new TestObjectTranslationSpec())
-                .addTranslationSpec(new TestComplexObjectTranslationSpec())
-                .build();
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			TaskitEngine taskitEngine1 = getRandomTaskitEngine(seed);
+			TaskitEngine taskitEngine2 = getRandomTaskitEngine(seed);
+			assertFalse(taskitEngine1 == taskitEngine2);
+			for (int j = 0; j < 10; j++) {
+				assertTrue(taskitEngine1.equals(taskitEngine2));
+				assertTrue(taskitEngine2.equals(taskitEngine1));
+			}
 
-        TaskitEngine taskitEngine6 = new TaskitEngine(
-                TaskitEngineData.builder().addTranslationSpec(new TestObjectTranslationSpec()).build(),
-                new TaskitEngineId() {
+            // initialize both taskitEngines and show they are still equal
+            taskitEngine1.init();
+            taskitEngine2.init();
+			for (int j = 0; j < 10; j++) {
+				assertTrue(taskitEngine1.equals(taskitEngine2));
+				assertTrue(taskitEngine2.equals(taskitEngine1));
+			}
+		}
 
-                }) {
+		// different inputs yield unequal taskitEngines
+		Set<TaskitEngine> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			TaskitEngine taskitEngine = getRandomTaskitEngine(randomGenerator.nextLong());
+			set.add(taskitEngine);
+		}
+		assertEquals(100, set.size());
+    }
 
-            @Override
-            protected <O> void writeToFile(File file, O outputObject) throws IOException {
-            }
+    private TaskitEngine getRandomTaskitEngine(long seed) {
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
-            @Override
-            protected <I> I readFile(File file, Class<I> inputClassRef) throws IOException {
-                return null;
-            }
+        TestTaskitEngine.Builder builder = TestTaskitEngine.builder();
 
-        };
+        List<DynamicTestTranslationSpec> shuffledTranslationSpecs = DynamicTestTranslationSpec.getShuffledTranslationSpecs(randomGenerator);
 
-        // exact same
-        assertEquals(taskitEngine1, taskitEngine1);
+        int n = randomGenerator.nextInt(10) + 1;
+		for (int i = 0; i < n; i++) {
+            DynamicTestTranslationSpec translationSpec = shuffledTranslationSpecs.get(i);
+            builder.addTranslationSpec(translationSpec.getTranslationSpec());
+        }
 
-        // null test
-        assertNotEquals(taskitEngine1, null);
-
-        // not an instance test
-        assertNotEquals(taskitEngine1, new Object());
-
-        // different id
-        assertNotEquals(taskitEngine1, taskitEngine6);
-
-        // different translation specs
-        assertNotEquals(taskitEngine1, taskitEngine2);
-        assertNotEquals(taskitEngine1, taskitEngine3);
-        assertNotEquals(taskitEngine2, taskitEngine3);
-        assertNotEquals(taskitEngine2, taskitEngine4);
-        assertNotEquals(taskitEngine3, taskitEngine4);
-
-        // same translation specs
-        assertEquals(taskitEngine1, taskitEngine4);
-
-        // init vs not init
-        assertNotEquals(taskitEngine1, taskitEngine5);
-
-        taskitEngine1.init();
-        taskitEngine2.init();
-        taskitEngine3.init();
-        taskitEngine4.init();
-
-        // init and same translation specs
-        assertEquals(taskitEngine1, taskitEngine4);
-
-        // init and different translation specs
-        assertNotEquals(taskitEngine1, taskitEngine2);
-        assertNotEquals(taskitEngine1, taskitEngine3);
-        assertNotEquals(taskitEngine2, taskitEngine3);
-        assertNotEquals(taskitEngine2, taskitEngine4);
-        assertNotEquals(taskitEngine3, taskitEngine4);
-
+        return new TestTaskitEngineBuilderBridge(builder).buildWithoutInit();
     }
 }

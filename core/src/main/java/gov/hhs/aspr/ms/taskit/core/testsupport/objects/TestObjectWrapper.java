@@ -35,11 +35,11 @@ public class TestObjectWrapper {
 	}
 
 	/**
-	 * Hash code implementation consistent with equals().
+	 * Standard implementation consistent with the {@link #equals(Object)} method
 	 */
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(wrappedObject);
+		return Objects.hash(wrappedObject);
 	}
 
 	/**

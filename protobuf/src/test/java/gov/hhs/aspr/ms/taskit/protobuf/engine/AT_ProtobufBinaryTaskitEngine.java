@@ -25,6 +25,7 @@ import gov.hhs.aspr.ms.taskit.protobuf.testsupport.objects.TestComplexInputObjec
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.objects.TestInputEnum;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.objects.TestInputObject;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.translation.specs.TestProtobufComplexObjectTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.testsupport.translation.specs.TestProtobufEnumTranslationSpec;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.translation.specs.TestProtobufObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.protobuf.translation.ProtobufTranslationSpec;
 import gov.hhs.aspr.ms.taskit.protobuf.translation.specs.AnyTranslationSpec;
@@ -54,7 +55,8 @@ public class AT_ProtobufBinaryTaskitEngine {
 
         ProtobufBinaryTaskitEngine protobufTaskitEngine = ProtobufBinaryTaskitEngine.builder()
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
-                .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec()).build();
+                .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec())
+                .addTranslationSpec(new TestProtobufEnumTranslationSpec()).build();
 
         TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
         TestInputObject expectedObject = TestObjectUtil.getInputFromApp(expectedAppObject);

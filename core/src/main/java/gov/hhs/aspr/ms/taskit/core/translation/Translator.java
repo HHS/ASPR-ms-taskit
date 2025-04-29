@@ -31,27 +31,30 @@ public final class Translator {
 		Data() {
 		}
 
+		/**
+		 * Standard implementation consistent with the {@link #equals(Object)} method
+		 */
 		@Override
 		public int hashCode() {
 			return Objects.hash(translatorId, dependencies);
 		}
 
+		/**
+    	 * Two {@link Data} instances are equal if and only if
+    	 * they have the same translatorId and dependencies.
+    	 */
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj) {
 				return true;
 			}
-
 			if (obj == null) {
 				return false;
 			}
-
 			if (getClass() != obj.getClass()) {
 				return false;
 			}
-
 			Data other = (Data) obj;
-
 			return Objects.equals(translatorId, other.translatorId) && Objects.equals(dependencies, other.dependencies);
 		}
 
@@ -210,7 +213,7 @@ public final class Translator {
 	}
 
 	/**
-	 * Hash code implementation consistent with equals(). 
+	 * Standard implementation consistent with the {@link #equals(Object)} method
 	 */
 	@Override
 	public int hashCode() {
@@ -218,8 +221,8 @@ public final class Translator {
 	}
 
 	/**
-	 * Two {@link Translator}s are equal if and only if they have the same id and
-	 * dependencies.
+	 * Two {@link Translator} instances are equal if and only if
+	 * they have the same translatorId and dependencies.
 	 */
 	@Override
 	public boolean equals(Object obj) {

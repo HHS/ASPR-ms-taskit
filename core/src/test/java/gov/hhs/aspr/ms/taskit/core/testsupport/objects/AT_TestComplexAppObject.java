@@ -1,14 +1,20 @@
 package gov.hhs.aspr.ms.taskit.core.testsupport.objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.taskit.core.testsupport.TestObjectUtil;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
 
 public class AT_TestComplexAppObject {
 
@@ -81,102 +87,74 @@ public class AT_TestComplexAppObject {
     @Test
     @UnitTestMethod(target = TestComplexAppObject.class, name = "hashCode", args = {})
     public void testHashCode() {
-        TestComplexAppObject testComplexAppObject1 = new TestComplexAppObject();
-        TestComplexAppObject testComplexAppObject2 = new TestComplexAppObject();
-        TestComplexAppObject testComplexAppObject3 = TestObjectUtil.generateTestComplexAppObject();
-        TestComplexAppObject testComplexAppObject4 = TestObjectUtil.generateTestComplexAppObject();
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2653491444433183354L);
 
-        int numEntities = 1000;
-        String testString = "test";
-        double startTime = 0.156789;
+        // equal objects have equal hash codes
+        for (int i = 0; i < 30; i++) {
+            long seed = randomGenerator.nextLong();
+            TestComplexAppObject testComplexAppObject1 = TestObjectUtil.generateTestComplexAppObject(seed);
+            TestComplexAppObject testComplexAppObject2 = TestObjectUtil.generateTestComplexAppObject(seed);
 
-        testComplexAppObject1.setNumEntities(numEntities);
-        testComplexAppObject1.setStartTime(startTime);
-        testComplexAppObject1.setTestString(testString);
+            assertEquals(testComplexAppObject1, testComplexAppObject2);
+            assertEquals(testComplexAppObject1.hashCode(), testComplexAppObject2.hashCode());
+        }
 
-        testComplexAppObject2.setNumEntities(numEntities);
-        testComplexAppObject2.setStartTime(startTime);
-        testComplexAppObject2.setTestString(testString);
+        // hash codes are reasonably distributed
+        Set<Integer> hashCodes = new LinkedHashSet<>();
+        for (int i = 0; i < 100; i++) {
+            TestComplexAppObject testComplexAppObject = TestObjectUtil
+                    .generateTestComplexAppObject(randomGenerator.nextLong());
+            hashCodes.add(testComplexAppObject.hashCode());
+        }
 
-        // exact same instance should be equal
-        assertEquals(testComplexAppObject1.hashCode(), testComplexAppObject1.hashCode());
-
-        // different objects should not be equal
-        assertNotEquals(testComplexAppObject1.hashCode(), new Object().hashCode());
-
-        // different values of integer, bool, string and testComplexInputObject should
-        // not be equal
-        assertNotEquals(testComplexAppObject1.hashCode(), testComplexAppObject3.hashCode());
-        assertNotEquals(testComplexAppObject1.hashCode(), testComplexAppObject4.hashCode());
-        assertNotEquals(testComplexAppObject3.hashCode(), testComplexAppObject4.hashCode());
-
-        testComplexAppObject2.setNumEntities(0);
-        assertNotEquals(testComplexAppObject1.hashCode(), testComplexAppObject2.hashCode());
-        testComplexAppObject2.setNumEntities(numEntities);
-
-        testComplexAppObject2.setStartTime(150.0156);
-        assertNotEquals(testComplexAppObject1.hashCode(), testComplexAppObject2.hashCode());
-        testComplexAppObject2.setStartTime(startTime);
-
-        testComplexAppObject2.setTestString("Test");
-        assertNotEquals(testComplexAppObject1.hashCode(), testComplexAppObject2.hashCode());
-        testComplexAppObject2.setTestString(testString);
-
-        // exact same values of integer, bool, string and testComplexInputObject should
-        // be equal
-        assertEquals(testComplexAppObject1.hashCode(), testComplexAppObject2.hashCode());
+        assertEquals(100, hashCodes.size());
     }
 
     @Test
     @UnitTestMethod(target = TestComplexAppObject.class, name = "equals", args = { Object.class })
     public void testEquals() {
-        TestComplexAppObject testComplexAppObject1 = new TestComplexAppObject();
-        TestComplexAppObject testComplexAppObject2 = new TestComplexAppObject();
-        TestComplexAppObject testComplexAppObject3 = TestObjectUtil.generateTestComplexAppObject();
-        TestComplexAppObject testComplexAppObject4 = TestObjectUtil.generateTestComplexAppObject();
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8980322418377306870L);
 
-        int numEntities = 1000;
-        String testString = "test";
-        double startTime = 0.156789;
+        // never equal to another type
+        for (int i = 0; i < 30; i++) {
+            TestComplexAppObject testComplexAppObject = TestObjectUtil
+                    .generateTestComplexAppObject(randomGenerator.nextLong());
+            assertFalse(testComplexAppObject.equals(new Object()));
+        }
 
-        testComplexAppObject1.setNumEntities(numEntities);
-        testComplexAppObject1.setStartTime(startTime);
-        testComplexAppObject1.setTestString(testString);
+        // never equal to null
+        for (int i = 0; i < 30; i++) {
+            TestComplexAppObject testComplexAppObject = TestObjectUtil
+                    .generateTestComplexAppObject(randomGenerator.nextLong());
+            assertFalse(testComplexAppObject.equals(null));
+        }
 
-        testComplexAppObject2.setNumEntities(numEntities);
-        testComplexAppObject2.setStartTime(startTime);
-        testComplexAppObject2.setTestString(testString);
+        // reflexive
+        for (int i = 0; i < 30; i++) {
+            TestComplexAppObject testComplexAppObject = TestObjectUtil
+                    .generateTestComplexAppObject(randomGenerator.nextLong());
+            assertTrue(testComplexAppObject.equals(testComplexAppObject));
+        }
 
-        // exact same instance should be equal
-        assertEquals(testComplexAppObject1, testComplexAppObject1);
+        // symmetric, transitive, consistent
+        for (int i = 0; i < 30; i++) {
+            long seed = randomGenerator.nextLong();
+            TestComplexAppObject testComplexAppObject1 = TestObjectUtil.generateTestComplexAppObject(seed);
+            TestComplexAppObject testComplexAppObject2 = TestObjectUtil.generateTestComplexAppObject(seed);
+            assertFalse(testComplexAppObject1 == testComplexAppObject2);
+            for (int j = 0; j < 10; j++) {
+                assertTrue(testComplexAppObject1.equals(testComplexAppObject2));
+                assertTrue(testComplexAppObject2.equals(testComplexAppObject1));
+            }
+        }
 
-        // null should not be equal
-        assertNotEquals(testComplexAppObject1, null);
-
-        // different objects should not be equal
-        assertNotEquals(testComplexAppObject1, new Object());
-
-        // different values of integer, bool, string and testComplexAppObject should
-        // not be equal
-        assertNotEquals(testComplexAppObject1, testComplexAppObject3);
-        assertNotEquals(testComplexAppObject1, testComplexAppObject4);
-        assertNotEquals(testComplexAppObject3, testComplexAppObject4);
-
-        testComplexAppObject2.setNumEntities(0);
-        assertNotEquals(testComplexAppObject1, testComplexAppObject2);
-        testComplexAppObject2.setNumEntities(numEntities);
-
-        testComplexAppObject2.setStartTime(150.0156);
-        assertNotEquals(testComplexAppObject1, testComplexAppObject2);
-        testComplexAppObject2.setStartTime(startTime);
-
-        testComplexAppObject2.setTestString("Test");
-        assertNotEquals(testComplexAppObject1, testComplexAppObject2);
-        testComplexAppObject2.setTestString(testString);
-
-        // exact same values of integer, bool, string and testComplexAppObject should
-        // be equal
-        assertEquals(testComplexAppObject1, testComplexAppObject2);
+        // different inputs yield unequal testComplexAppObjects
+        Set<TestComplexAppObject> set = new LinkedHashSet<>();
+        for (int i = 0; i < 100; i++) {
+            TestComplexAppObject testComplexAppObject = TestObjectUtil
+                    .generateTestComplexAppObject(randomGenerator.nextLong());
+            set.add(testComplexAppObject);
+        }
+        assertEquals(100, set.size());
     }
-
 }

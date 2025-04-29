@@ -153,49 +153,14 @@ public abstract class ProtobufTaskitEngine extends TaskitEngine {
                 "Unable to find corresponding class for: " + typeUrl);
     }
 
-    @Override
-    public int hashCode() {
-        /*
-         * Note that we don't include the type url map as part of the hash code contract
-         * because it is
-         * directly linked to the added translationSpecs, which are already part of the
-         * hash code contract.
-         * Meaning that if the specs are the same, so is the map. There is never a case
-         * where the map would be different outside of the specs being different.
-         * However, child classes of this class are free to use the type url map as part
-         * of their hash code contract if they so wish.
-         */
-        return super.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        /*
-         * Note that we don't include the type url map as part of the equals contract
-         * because it is
-         * directly linked to the added translationSpecs, which are already part of the
-         * equals contract.
-         * Meaning that if the specs are the same, so is the map. There is never a case
-         * where the map would be different outside of the specs being different.
-         * However, child classes of this class are free to use the type url map as part
-         * of their equals contract if they so wish.
-         */
-        if (this == obj) {
-            return true;
-        }
-
-        if (obj == null) {
-            return false;
-        }
-
-        if (!(obj instanceof ProtobufTaskitEngine)) {
-            return false;
-        }
-
-        if (!super.equals(obj)) {
-            return false;
-        }
-        return true;
-    }
-
+    /*
+     * Note that we don't include the type url map as part of the hash code contract
+     * or the equals contract because it is
+     * directly linked to the added translationSpecs, which are already part of the
+     * hash code contract and equals contract.
+     * Meaning that if the specs are the same, so is the map. There is never a case
+     * where the map would be different outside of the specs being different.
+     * However, child classes of this class are free to use the type url map as part
+     * of their hash code contract and equals contract if they so wish.
+     */
 }
