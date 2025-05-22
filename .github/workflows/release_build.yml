@@ -13,8 +13,8 @@ on:
     paths-ignore:
       - 'README.md'
       - 'LICENSE'
-      - 'docgen'
-      - .github
+      - 'docgen/**'
+      - '.github/**'
     branches: ["main"]
 
 jobs:
@@ -79,7 +79,7 @@ jobs:
       - name: Update Taskit version
         run : |
           echo "$VERSION"
-          sed -i "0,/<taskit.version>.*<\/taskit.version>/s//<taskit.version>$VERSION<\/taski.version>/g" pom.xml
+          sed -i "0,/<taskit.version>.*<\/taskit.version>/s//<taskit.version>$VERSION<\/taskit.version>/g" pom.xml
 
       - name: Increment GCM Version
         run: |
