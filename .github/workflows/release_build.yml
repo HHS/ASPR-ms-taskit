@@ -14,7 +14,7 @@ on:
       - 'README.md'
       - 'LICENSE'
       - 'docgen/**'
-      - '.github/**'
+      #- '.github/**'
     branches: ["main"]
 
 jobs:
