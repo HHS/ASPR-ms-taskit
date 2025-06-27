@@ -60,7 +60,7 @@
         <readyForAutoVersion>false</readyForAutoVersion>
 
         <!-- plugin versions -->
-        <flatten-maven-plugin.version>1.7.0</flatten-maven-plugin.version>
+        <flatten-maven-plugin.version>1.7.1</flatten-maven-plugin.version>
         <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
         <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
         <maven-install-plugin.version>3.1.4</maven-install-plugin.version>
