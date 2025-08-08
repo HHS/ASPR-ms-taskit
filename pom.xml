@@ -51,6 +51,7 @@
     <!-- Properties -->
     <properties>
         <!-- Version -->
+        
         <revision>5.2.0</revision>
 
         <!-- basic project properties -->
