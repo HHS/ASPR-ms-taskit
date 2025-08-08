@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.LinkedHashSet;
@@ -612,84 +613,121 @@ public class AT_TaskitEngine {
     @Test
     @UnitTestMethod(target = TaskitEngine.class, name = "hashCode", args = {})
     public void testHashCode() {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2655488674438883354L);
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2655488674438883354L);
 
-		// equal objects have equal hash codes
-		for (int i = 0; i < 30; i++) {
-			long seed = randomGenerator.nextLong();
-			TaskitEngine taskitEngine1 = getRandomTaskitEngine(seed);
-			TaskitEngine taskitEngine2 = getRandomTaskitEngine(seed);
+        // equal objects have equal hash codes
+        for (int i = 0; i < 30; i++) {
+            long seed = randomGenerator.nextLong();
+            TaskitEngine taskitEngine1 = getRandomTaskitEngine(seed);
+            TaskitEngine taskitEngine2 = getRandomTaskitEngine(seed);
 
-			assertEquals(taskitEngine1, taskitEngine2);
-			assertEquals(taskitEngine1.hashCode(), taskitEngine2.hashCode());
+            assertEquals(taskitEngine1, taskitEngine2);
+            assertEquals(taskitEngine1.hashCode(), taskitEngine2.hashCode());
 
-            //initialize both taskitEngines and show they are still equal with equal hash codes
+            // initialize both taskitEngines and show they are still equal with equal hash
+            // codes
             taskitEngine1.init();
             taskitEngine2.init();
             assertEquals(taskitEngine1, taskitEngine2);
-			assertEquals(taskitEngine1.hashCode(), taskitEngine2.hashCode());
-		}
+            assertEquals(taskitEngine1.hashCode(), taskitEngine2.hashCode());
+        }
 
-		// hash codes are reasonably distributed
-		Set<Integer> hashCodes = new LinkedHashSet<>();
-		for (int i = 0; i < 100; i++) {
-			TaskitEngine taskitEngine = getRandomTaskitEngine(randomGenerator.nextLong());
-			hashCodes.add(taskitEngine.hashCode());
-		}
+        // hash codes are reasonably distributed
+        Set<Integer> hashCodes = new LinkedHashSet<>();
+        for (int i = 0; i < 100; i++) {
+            TaskitEngine taskitEngine = getRandomTaskitEngine(randomGenerator.nextLong());
+            hashCodes.add(taskitEngine.hashCode());
+        }
 
-		assertEquals(100, hashCodes.size());
+        assertEquals(100, hashCodes.size());
     }
 
     @Test
     @UnitTestMethod(target = TaskitEngine.class, name = "equals", args = { Object.class })
     public void testEquals() {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8999922418377306870L);
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8999922516377306870L);
 
-		// never equal to another type
-		for (int i = 0; i < 30; i++) {
-			TaskitEngine taskitEngine = getRandomTaskitEngine(randomGenerator.nextLong());
-			assertFalse(taskitEngine.equals(new Object()));
-		}
+        // never equal to another type
+        for (int i = 0; i < 30; i++) {
+            TaskitEngine taskitEngine = getRandomTaskitEngine(randomGenerator.nextLong());
+            assertFalse(taskitEngine.equals(new Object()));
+        }
 
-		// never equal to null
-		for (int i = 0; i < 30; i++) {
-			TaskitEngine taskitEngine = getRandomTaskitEngine(randomGenerator.nextLong());
-			assertFalse(taskitEngine.equals(null));
-		}
+        // never equal to null
+        for (int i = 0; i < 30; i++) {
+            TaskitEngine taskitEngine = getRandomTaskitEngine(randomGenerator.nextLong());
+            assertFalse(taskitEngine.equals(null));
+        }
 
-		// reflexive
-		for (int i = 0; i < 30; i++) {
-			TaskitEngine taskitEngine = getRandomTaskitEngine(randomGenerator.nextLong());
-			assertTrue(taskitEngine.equals(taskitEngine));
-		}
+        // reflexive
+        for (int i = 0; i < 30; i++) {
+            TaskitEngine taskitEngine = getRandomTaskitEngine(randomGenerator.nextLong());
+            assertTrue(taskitEngine.equals(taskitEngine));
+        }
 
-		// symmetric, transitive, consistent
-		for (int i = 0; i < 30; i++) {
-			long seed = randomGenerator.nextLong();
-			TaskitEngine taskitEngine1 = getRandomTaskitEngine(seed);
-			TaskitEngine taskitEngine2 = getRandomTaskitEngine(seed);
-			assertFalse(taskitEngine1 == taskitEngine2);
-			for (int j = 0; j < 10; j++) {
-				assertTrue(taskitEngine1.equals(taskitEngine2));
-				assertTrue(taskitEngine2.equals(taskitEngine1));
-			}
+        // symmetric, transitive, consistent
+        for (int i = 0; i < 30; i++) {
+            long seed = randomGenerator.nextLong();
+            TaskitEngine taskitEngine1 = getRandomTaskitEngine(seed);
+            TaskitEngine taskitEngine2 = getRandomTaskitEngine(seed);
+            assertFalse(taskitEngine1 == taskitEngine2);
+            for (int j = 0; j < 10; j++) {
+                assertTrue(taskitEngine1.equals(taskitEngine2));
+                assertTrue(taskitEngine2.equals(taskitEngine1));
+            }
 
             // initialize both taskitEngines and show they are still equal
             taskitEngine1.init();
             taskitEngine2.init();
-			for (int j = 0; j < 10; j++) {
-				assertTrue(taskitEngine1.equals(taskitEngine2));
-				assertTrue(taskitEngine2.equals(taskitEngine1));
-			}
-		}
+            for (int j = 0; j < 10; j++) {
+                assertTrue(taskitEngine1.equals(taskitEngine2));
+                assertTrue(taskitEngine2.equals(taskitEngine1));
+            }
+        }
 
-		// different inputs yield unequal taskitEngines
-		Set<TaskitEngine> set = new LinkedHashSet<>();
-		for (int i = 0; i < 100; i++) {
-			TaskitEngine taskitEngine = getRandomTaskitEngine(randomGenerator.nextLong());
-			set.add(taskitEngine);
-		}
-		assertEquals(100, set.size());
+        // small changes result in different objects
+        for (int i = 0; i < 30; i++) {
+            long seed = randomGenerator.nextLong();
+            TaskitEngine taskitEngine2 = getRandomTaskitEngine(seed);
+
+            for (int j = 0; j < 10; j++) {
+                TaskitEngine taskitEngine1 = new TaskitEngine(null, null) {
+
+                    @Override
+                    protected <O> void writeToFile(File file, O outputObject) throws IOException {
+                    }
+
+                    @Override
+                    protected <I> I readFile(File file, Class<I> inputClassRef) throws IOException {
+                        return null;
+                    }
+                };
+
+                // different ID
+                assertFalse(taskitEngine1.equals(taskitEngine2));
+
+                // different init
+                taskitEngine1 = getRandomTaskitEngine(randomGenerator.nextLong());
+                assertFalse(taskitEngine1.equals(taskitEngine2));
+
+                taskitEngine1.init();
+                
+                // different specs
+                assertFalse(taskitEngine1.equals(taskitEngine2));
+
+                // same
+                taskitEngine1 = getRandomTaskitEngine(seed);
+                assertTrue(taskitEngine1.equals(taskitEngine2));
+            }
+        }
+
+        // different inputs yield unequal taskitEngines
+        Set<TaskitEngine> set = new LinkedHashSet<>();
+        for (int i = 0; i < 100; i++) {
+            TaskitEngine taskitEngine = getRandomTaskitEngine(randomGenerator.nextLong());
+            set.add(taskitEngine);
+        }
+        assertEquals(100, set.size());
     }
 
     private TaskitEngine getRandomTaskitEngine(long seed) {
@@ -697,10 +735,11 @@ public class AT_TaskitEngine {
 
         TestTaskitEngine.Builder builder = TestTaskitEngine.builder();
 
-        List<DynamicTestTranslationSpec> shuffledTranslationSpecs = DynamicTestTranslationSpec.getShuffledTranslationSpecs(randomGenerator);
+        List<DynamicTestTranslationSpec> shuffledTranslationSpecs = DynamicTestTranslationSpec
+                .getShuffledTranslationSpecs(randomGenerator);
 
         int n = randomGenerator.nextInt(10) + 1;
-		for (int i = 0; i < n; i++) {
+        for (int i = 0; i < n; i++) {
             DynamicTestTranslationSpec translationSpec = shuffledTranslationSpecs.get(i);
             builder.addTranslationSpec(translationSpec.getTranslationSpec());
         }

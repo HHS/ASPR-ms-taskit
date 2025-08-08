@@ -148,6 +148,27 @@ public class AT_TestComplexInputObject {
             }
         }
 
+        // small changes result in different objects
+        for (int i = 0; i < 30; i++) {
+            TestComplexInputObject testComplexInputObject2 = TestObjectUtil
+                    .generateTestComplexInputObject(randomGenerator.nextLong());
+
+            for (int j = 0; j < 10; j++) {
+                TestComplexInputObject testComplexInputObject1 = new TestComplexInputObject();
+
+                assertFalse(testComplexInputObject1.equals(testComplexInputObject2));
+
+                testComplexInputObject1.setTestString(testComplexInputObject2.getTestString());
+                assertFalse(testComplexInputObject1.equals(testComplexInputObject2));
+
+                testComplexInputObject1.setStartTime(testComplexInputObject2.getStartTime());
+                assertFalse(testComplexInputObject1.equals(testComplexInputObject2));
+
+                testComplexInputObject1.setNumEntities(testComplexInputObject2.getNumEntities());
+                assertTrue(testComplexInputObject1.equals(testComplexInputObject2));
+            }
+        }
+
         // different inputs yield unequal testComplexInputObjects
         Set<TestComplexInputObject> set = new LinkedHashSet<>();
         for (int i = 0; i < 100; i++) {

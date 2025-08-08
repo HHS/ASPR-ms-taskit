@@ -181,9 +181,38 @@ public class AT_TestInputObject {
 			TestInputObject testInputObject1 = TestObjectUtil.generateTestInputObject(seed);
 			TestInputObject testInputObject2 = TestObjectUtil.generateTestInputObject(seed);
 			assertFalse(testInputObject1 == testInputObject2);
+
 			for (int j = 0; j < 10; j++) {
 				assertTrue(testInputObject1.equals(testInputObject2));
 				assertTrue(testInputObject2.equals(testInputObject1));
+    
+			}
+		}
+
+        // small changes result in different objects
+        for (int i = 0; i < 30; i++) {
+			TestInputObject testInputObject1 = new TestInputObject();
+            TestInputObject testInputObject2 = TestObjectUtil.generateTestInputObject(randomGenerator.nextLong());
+
+			for (int j = 0; j < 10; j++) {
+				assertFalse(testInputObject1.equals(testInputObject2));
+
+                testInputObject1.setInteger(testInputObject2.getInteger());
+                assertFalse(testInputObject1.equals(testInputObject2));
+
+				testInputObject1.setBool(testInputObject2.isBool());
+                assertFalse(testInputObject1.equals(testInputObject2));
+
+                testInputObject1.setString(testInputObject2.getString());
+                 assertFalse(testInputObject1.equals(testInputObject2));
+
+                testInputObject1.setTestComplexInputObject(testInputObject2.getTestComplexInputObject());
+                assertFalse(testInputObject1.equals(testInputObject2));
+
+                testInputObject1.setTestInputEnum(testInputObject2.getTestInputEnum());
+                assertTrue(testInputObject1.equals(testInputObject2));
+
+                testInputObject1 = new TestInputObject();
 			}
 		}
 
