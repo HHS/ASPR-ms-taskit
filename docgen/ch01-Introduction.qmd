@@ -1,0 +1,11 @@
+# Introduction
+
+Taskit is for Java applications that have large and/or complex data requirements. Developers implementing Taskit must adhere to ETL principles and maintain a clear separation between their input layer and application layer. Taskit can serialize/deserialize the input layer and translate it to/from the application layer. 
+
+The current iteration of Taskit is geared towards schema-based serialization libraries.
+
+## Libraries
+
+Taskit is currently composed of two libraries: the Core Taskit library and the Protobuf Taskit library. The Core Taskit library provides the core interfaces, abstract classes, and classes that can be used to implement any serialization library. The Protobuf Taskit library builds upon the Core Taskit library to utilize the Protobuf serialization library.
+
+Support for additional serialization libraries will be added in the future. 
