@@ -87,7 +87,7 @@ public class AT_TestAppObject {
     @Test
     @UnitTestMethod(target = TestAppObject.class, name = "setTestComplexAppObject", args = {
             TestComplexAppObject.class })
-    public void testSetTestComplexInputObject() {
+    public void testSetTestComplexAppObject() {
         TestAppObject testAppObject = new TestAppObject();
         TestComplexAppObject testComplexAppObject = TestObjectUtil.generateTestComplexAppObject();
 
@@ -98,7 +98,7 @@ public class AT_TestAppObject {
 
     @Test
     @UnitTestMethod(target = TestAppObject.class, name = "getTestComplexAppObject", args = {})
-    public void testGetTestComplexInputObject() {
+    public void testGetTestComplexAppObject() {
         TestAppObject testAppObject = new TestAppObject();
         TestComplexAppObject testComplexAppObject = TestObjectUtil.generateTestComplexAppObject();
 
@@ -184,6 +184,33 @@ public class AT_TestAppObject {
 			for (int j = 0; j < 10; j++) {
 				assertTrue(testAppObject1.equals(testAppObject2));
 				assertTrue(testAppObject2.equals(testAppObject1));
+			}
+		}
+
+        // small changes result in different objects
+        for (int i = 0; i < 30; i++) {
+			TestAppObject testAppObject1 = new TestAppObject();
+            TestAppObject testAppObject2 = TestObjectUtil.generateTestAppObject(randomGenerator.nextLong());
+
+			for (int j = 0; j < 10; j++) {
+				assertFalse(testAppObject1.equals(testAppObject2));
+
+                testAppObject1.setInteger(testAppObject2.getInteger());
+                assertFalse(testAppObject1.equals(testAppObject2));
+
+				testAppObject1.setBool(testAppObject2.isBool());
+                assertFalse(testAppObject1.equals(testAppObject2));
+
+                testAppObject1.setString(testAppObject2.getString());
+                 assertFalse(testAppObject1.equals(testAppObject2));
+
+                testAppObject1.setTestComplexAppObject(testAppObject2.getTestComplexAppObject());
+                assertFalse(testAppObject1.equals(testAppObject2));
+
+                testAppObject1.setTestAppEnum(testAppObject2.getTestAppEnum());
+                assertTrue(testAppObject1.equals(testAppObject2));
+
+                testAppObject1 = new TestAppObject();
 			}
 		}
 

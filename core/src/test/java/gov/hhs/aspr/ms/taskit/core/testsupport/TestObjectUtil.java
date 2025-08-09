@@ -50,7 +50,7 @@ public class TestObjectUtil {
         
         TestComplexAppObject complexAppObject = new TestComplexAppObject();
 
-        complexAppObject.setNumEntities(localRG.nextInt(100));
+        complexAppObject.setNumEntities(localRG.nextInt(100) + 1);
         complexAppObject.setStartTime(localRG.nextDouble() * 15);
         complexAppObject.setTestString("readInput" + localRG.nextInt(15));
 
@@ -97,7 +97,7 @@ public class TestObjectUtil {
 
         TestComplexInputObject complexInputObject = new TestComplexInputObject();
 
-        complexInputObject.setNumEntities(localRG.nextInt(100));
+        complexInputObject.setNumEntities(localRG.nextInt(100)+1);
         complexInputObject.setStartTime(localRG.nextDouble() * 15);
         complexInputObject.setTestString("readInput" + localRG.nextInt(15));
 
