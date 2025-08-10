@@ -261,7 +261,8 @@ public class AT_TaskitEngineManager {
 
         TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
-                .addTranslator(TestComplexObjectTranslator.getTranslator()).build();
+                .addTranslator(TestComplexObjectTranslator.getTranslator())
+                .build();
 
         TaskitEngineManager taskitEngineManager = TaskitEngineManager.builder()
                 .addTaskitEngine(testTaskitEngine).build();
@@ -317,7 +318,8 @@ public class AT_TaskitEngineManager {
 
         TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
                 .addTranslator(TestObjectTranslator.getTranslator())
-                .addTranslator(TestComplexObjectTranslator.getTranslator()).build();
+                .addTranslator(TestComplexObjectTranslator.getTranslator())
+                .build();
 
         TaskitEngineManager taskitEngineManager = TaskitEngineManager.builder()
                 .addTaskitEngine(testTaskitEngine).build();

@@ -1,12 +1,19 @@
 package gov.hhs.aspr.ms.taskit.core.engine;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.taskit.core.testsupport.engine.TestTaskitEngine;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.DynamicTestTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.bad.BadTranslationSpecEmptyMap;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.bad.BadTranslationSpecNullMap;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.complexobject.TestComplexObjectTranslatorId;
@@ -19,6 +26,7 @@ import gov.hhs.aspr.ms.taskit.core.translation.TranslatorContext;
 import gov.hhs.aspr.ms.taskit.core.translation.TranslatorId;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 import gov.hhs.aspr.ms.util.errors.ContractException;
+import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
 
 public class AT_TaskitEngineData {
     @Test
@@ -210,79 +218,90 @@ public class AT_TaskitEngineData {
         // nothing to test
     }
 
-    // TODO: update test
     @Test
     @UnitTestMethod(target = TaskitEngineData.class, name = "hashCode", args = {})
     public void testHashCode() {
-        TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
-        TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2658899674638883354L);
 
-        TaskitEngineData taskitEngineData1 = TaskitEngineData.builder()
-                .addTranslationSpec(testObjectTranslationSpec)
-                .addTranslationSpec(testComplexObjectTranslationSpec)
-                .build();
+		// equal objects have equal hash codes
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			TaskitEngineData taskitEngineData1 = getRandomTaskitEngineData(seed);
+			TaskitEngineData taskitEngineData2 = getRandomTaskitEngineData(seed);
 
-        TaskitEngineData taskitEngineData2 = TaskitEngineData.builder()
-                .addTranslationSpec(testObjectTranslationSpec)
-                .addTranslationSpec(testComplexObjectTranslationSpec)
-                .build();
+			assertEquals(taskitEngineData1, taskitEngineData2);
+			assertEquals(taskitEngineData1.hashCode(), taskitEngineData2.hashCode());
+		}
 
-        TaskitEngineData taskitEngineData3 = TaskitEngineData.builder()
-                .addTranslationSpec(testComplexObjectTranslationSpec)
-                .build();
+		// hash codes are reasonably distributed
+		Set<Integer> hashCodes = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			TaskitEngineData taskitEngineData = getRandomTaskitEngineData(randomGenerator.nextLong());
+			hashCodes.add(taskitEngineData.hashCode());
+		}
 
-        // same
-        assertEquals(taskitEngineData1.hashCode(), taskitEngineData1.hashCode());
-
-        // same exact specs
-        assertEquals(taskitEngineData1.hashCode(), taskitEngineData2.hashCode());
-        assertEquals(taskitEngineData2.hashCode(), taskitEngineData1.hashCode());
-
-        // different specs
-        assertNotEquals(taskitEngineData1.hashCode(), taskitEngineData3.hashCode());
-        assertNotEquals(taskitEngineData2.hashCode(), taskitEngineData3.hashCode());
-        assertNotEquals(taskitEngineData3.hashCode(), taskitEngineData1.hashCode());
-        assertNotEquals(taskitEngineData3.hashCode(), taskitEngineData2.hashCode());
+		assertEquals(100, hashCodes.size());
     }
 
-    // TODO: update test
     @Test
     @UnitTestMethod(target = TaskitEngineData.class, name = "equals", args = { Object.class })
     public void testEquals() {
-        TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
-        TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8999757418377306870L);
 
-        TaskitEngineData taskitEngineData1 = TaskitEngineData.builder()
-                .addTranslationSpec(testObjectTranslationSpec)
-                .addTranslationSpec(testComplexObjectTranslationSpec)
-                .build();
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			TaskitEngineData taskitEngineData = getRandomTaskitEngineData(randomGenerator.nextLong());
+			assertFalse(taskitEngineData.equals(new Object()));
+		}
 
-        TaskitEngineData taskitEngineData2 = TaskitEngineData.builder()
-                .addTranslationSpec(testObjectTranslationSpec)
-                .addTranslationSpec(testComplexObjectTranslationSpec)
-                .build();
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+			TaskitEngineData taskitEngineData = getRandomTaskitEngineData(randomGenerator.nextLong());
+			assertFalse(taskitEngineData.equals(null));
+		}
 
-        TaskitEngineData taskitEngineData3 = TaskitEngineData.builder()
-                .addTranslationSpec(testComplexObjectTranslationSpec)
-                .build();
+		// reflexive
+		for (int i = 0; i < 30; i++) {
+			TaskitEngineData taskitEngineData = getRandomTaskitEngineData(randomGenerator.nextLong());
+			assertTrue(taskitEngineData.equals(taskitEngineData));
+		}
 
-        // same
-        assertEquals(taskitEngineData1, taskitEngineData1);
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			TaskitEngineData taskitEngineData1 = getRandomTaskitEngineData(seed);
+			TaskitEngineData taskitEngineData2 = getRandomTaskitEngineData(seed);
+			assertFalse(taskitEngineData1 == taskitEngineData2);
+			for (int j = 0; j < 10; j++) {
+				assertTrue(taskitEngineData1.equals(taskitEngineData2));
+				assertTrue(taskitEngineData2.equals(taskitEngineData1));
+			}
+		}
 
-        // not null
-        assertNotEquals(taskitEngineData1, null);
+		// different inputs yield unequal taskitEngineDatas
+		Set<TaskitEngineData> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			TaskitEngineData taskitEngineData = getRandomTaskitEngineData(randomGenerator.nextLong());
+			set.add(taskitEngineData);
+		}
+		assertEquals(100, set.size());
+    }
 
-        // not instance of
-        assertNotEquals(taskitEngineData1, new Object());
 
-        // same exact specs
-        assertEquals(taskitEngineData1, taskitEngineData2);
-        assertEquals(taskitEngineData2, taskitEngineData1);
 
-        // different specs
-        assertNotEquals(taskitEngineData1, taskitEngineData3);
-        assertNotEquals(taskitEngineData2, taskitEngineData3);
-        assertNotEquals(taskitEngineData3, taskitEngineData1);
-        assertNotEquals(taskitEngineData3, taskitEngineData2);
+    private TaskitEngineData getRandomTaskitEngineData(long seed) {
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+		
+		TaskitEngineData.Builder builder = TaskitEngineData.builder();
+
+        List<DynamicTestTranslationSpec> shuffledTranslationSpecs = DynamicTestTranslationSpec.getShuffledTranslationSpecs(randomGenerator);
+
+        int n = randomGenerator.nextInt(10) + 1;
+		for (int i = 0; i < n; i++) {
+            DynamicTestTranslationSpec translationSpec = shuffledTranslationSpecs.get(i);
+            builder.addTranslationSpec(translationSpec.getTranslationSpec());
+        }
+
+        return builder.build();
     }
 }

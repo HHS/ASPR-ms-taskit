@@ -29,6 +29,7 @@ public class AT_TestProtobufObjectTranslationSpec {
         ProtobufJsonTaskitEngine.builder()
                 .addTranslationSpec(objectTranslationSpec)
                 .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec())
+                .addTranslationSpec(new TestProtobufEnumTranslationSpec())
                 .build();
 
         TestAppObject expectedValue = TestObjectUtil.generateTestAppObject();
@@ -47,6 +48,7 @@ public class AT_TestProtobufObjectTranslationSpec {
         ProtobufJsonTaskitEngine.builder()
                 .addTranslationSpec(objectTranslationSpec)
                 .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec())
+                .addTranslationSpec(new TestProtobufEnumTranslationSpec())
                 .build();
 
         TestAppObject appValue = TestObjectUtil.generateTestAppObject();

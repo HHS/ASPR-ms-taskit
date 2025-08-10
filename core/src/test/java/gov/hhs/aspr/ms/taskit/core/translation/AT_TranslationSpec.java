@@ -2,7 +2,6 @@ package gov.hhs.aspr.ms.taskit.core.translation;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -10,8 +9,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.taskit.core.engine.TaskitEngine;
@@ -26,11 +28,14 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestComplexInputObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestInputChildObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestInputObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.objects.TestObjectWrapper;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.DynamicTestTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.TestTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.complexobject.specs.TestComplexObjectTranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.specs.TestEnumTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.testsupport.translation.object.specs.TestObjectTranslationSpec;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 import gov.hhs.aspr.ms.util.errors.ContractException;
+import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
 
 public class AT_TranslationSpec {
 
@@ -94,6 +99,7 @@ public class AT_TranslationSpec {
     public void testTranslate() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
+        TestEnumTranslationSpec testEnumTranslationSpec = new TestEnumTranslationSpec();
         TestTranslationSpec<TestObjectWrapper, Object> wrapperTranslationSpec = new TestTranslationSpec<TestObjectWrapper, Object>() {
 
             @Override
@@ -149,6 +155,7 @@ public class AT_TranslationSpec {
         TestTaskitEngine.builder()
                 .addTranslationSpec(testObjectTranslationSpec)
                 .addTranslationSpec(complexObjectTranslationSpec)
+                .addTranslationSpec(testEnumTranslationSpec)
                 .addTranslationSpec(wrapperTranslationSpec)
                 .addTranslationSpec(wrapperTranslationSpec2)
                 .build();
@@ -238,329 +245,99 @@ public class AT_TranslationSpec {
     @Test
     @UnitTestMethod(target = TranslationSpec.class, name = "hashCode", args = {})
     public void testHashCode() {
-        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
-                .addTranslationSpec(new TestComplexObjectTranslationSpec()).build();
-        // base
-        TranslationSpec<TestInputObject, TestAppObject, TestTaskitEngine> translationSpecA = new TranslationSpec<>(
-                TestTaskitEngine.class) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2655488674438883354L);
 
-            @Override
-            protected TestAppObject translateInputObject(TestInputObject inputObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'translateInputObject'");
-            }
+		// equal objects have equal hash codes
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
 
-            @Override
-            protected TestInputObject translateAppObject(TestAppObject appObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'translateAppObject'");
-            }
+            TranslationSpec<?, ?, TestTaskitEngine> translationSpec1 = getRandomTranslationSpec(seed);
+            TranslationSpec<?, ?, TestTaskitEngine> translationSpec2 = getRandomTranslationSpec(seed);
 
-            @Override
-            public Class<TestAppObject> getAppObjectClass() {
-                return TestAppObject.class;
-            }
+			assertEquals(translationSpec1, translationSpec2);
+			assertEquals(translationSpec1.hashCode(), translationSpec2.hashCode());
 
-            @Override
-            public Class<TestInputObject> getInputObjectClass() {
-                return TestInputObject.class;
-            }
+            // initialize both translationSpecs and show they are still equal with equal hash codes
+            TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
+                    .addTranslationSpec(new TestComplexObjectTranslationSpec()).build();
 
-        };
+            translationSpec1.init(testTaskitEngine);
+            translationSpec2.init(testTaskitEngine);
+            assertEquals(translationSpec1, translationSpec2);
+			assertEquals(translationSpec1.hashCode(), translationSpec2.hashCode());
+		}
 
-        // same input class, different app class
-        TranslationSpec<TestInputObject, TestAppChildObject, TestTaskitEngine> translationSpecB = new TranslationSpec<>(
-                TestTaskitEngine.class) {
+		// hash codes are reasonably distributed
+		Set<Integer> hashCodes = new LinkedHashSet<>();
+		for (DynamicTestTranslationSpec translationSpec : DynamicTestTranslationSpec.values()) {
+            TranslationSpec<?, ?, TestTaskitEngine> testTranslationSpec = translationSpec.getTranslationSpec();
+			hashCodes.add(testTranslationSpec.hashCode());
+		}
 
-            @Override
-            protected TestAppChildObject translateInputObject(TestInputObject inputObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'translateInputObject'");
-            }
-
-            @Override
-            protected TestInputObject translateAppObject(TestAppChildObject appObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'translateAppObject'");
-            }
-
-            @Override
-            public Class<TestAppChildObject> getAppObjectClass() {
-                return TestAppChildObject.class;
-            }
-
-            @Override
-            public Class<TestInputObject> getInputObjectClass() {
-                return TestInputObject.class;
-            }
-
-        };
-
-        // same app class, different input class
-        TranslationSpec<TestInputChildObject, TestAppObject, TestTaskitEngine> translationSpecC = new TranslationSpec<>(
-                TestTaskitEngine.class) {
-
-            @Override
-            protected TestAppObject translateInputObject(TestInputChildObject inputObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'translateInputObject'");
-            }
-
-            @Override
-            protected TestInputChildObject translateAppObject(TestAppObject appObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'translateAppObject'");
-            }
-
-            @Override
-            public Class<TestAppObject> getAppObjectClass() {
-                return TestAppObject.class;
-            }
-
-            @Override
-            public Class<TestInputChildObject> getInputObjectClass() {
-                return TestInputChildObject.class;
-            }
-
-        };
-
-        // different app and different input class
-        TranslationSpec<TestInputChildObject, TestAppChildObject, TestTaskitEngine> translationSpecD = new TranslationSpec<>(
-                TestTaskitEngine.class) {
-
-            @Override
-            protected TestAppChildObject translateInputObject(TestInputChildObject inputObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'translateInputObject'");
-            }
-
-            @Override
-            protected TestInputChildObject translateAppObject(TestAppChildObject appObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'translateAppObject'");
-            }
-
-            @Override
-            public Class<TestAppChildObject> getAppObjectClass() {
-                return TestAppChildObject.class;
-            }
-
-            @Override
-            public Class<TestInputChildObject> getInputObjectClass() {
-                return TestInputChildObject.class;
-            }
-
-        };
-
-        // duplicate of the base
-        TranslationSpec<TestInputObject, TestAppObject, TestTaskitEngine> translationSpecE = new TranslationSpec<>(
-                TestTaskitEngine.class) {
-
-            @Override
-            protected TestAppObject translateInputObject(TestInputObject inputObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'translateInputObject'");
-            }
-
-            @Override
-            protected TestInputObject translateAppObject(TestAppObject appObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'translateAppObject'");
-            }
-
-            @Override
-            public Class<TestAppObject> getAppObjectClass() {
-                return TestAppObject.class;
-            }
-
-            @Override
-            public Class<TestInputObject> getInputObjectClass() {
-                return TestInputObject.class;
-            }
-
-        };
-
-        // init the duplicate base
-        translationSpecE.init(testTaskitEngine);
-
-        // same exact object should be equal
-        assertEquals(translationSpecA.hashCode(), translationSpecA.hashCode());
-
-        // different types of objects should not be equal
-        assertNotEquals(translationSpecA.hashCode(), new Object().hashCode());
-
-        // different app class should not be equal
-        assertNotEquals(translationSpecA.hashCode(), translationSpecB.hashCode());
-
-        // different input class should not be equal
-        assertNotEquals(translationSpecA.hashCode(), translationSpecC.hashCode());
-
-        // different input and different app class should not be equal
-        assertNotEquals(translationSpecA.hashCode(), translationSpecD.hashCode());
-
-        // if one is initialized and the other is not, they should not be equal
-        assertNotEquals(translationSpecA.hashCode(), translationSpecE.hashCode());
-
-        // init base
-        translationSpecA.init(testTaskitEngine);
-
-        // if all above are equal, then the two specs are equal
-        assertEquals(translationSpecA.hashCode(), translationSpecE.hashCode());
+		assertEquals(100, hashCodes.size());
     }
 
     @Test
     @UnitTestMethod(target = TranslationSpec.class, name = "equals", args = { Object.class })
     public void testEquals() {
-        TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
-                .addTranslationSpec(new TestComplexObjectTranslationSpec()).build();
-        // base
-        TranslationSpec<TestInputObject, TestAppObject, TestTaskitEngine> translationSpecA = new TranslationSpec<>(
-                TestTaskitEngine.class) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8999922418377306870L);
 
-            @Override
-            protected TestAppObject translateInputObject(TestInputObject inputObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'translateInputObject'");
-            }
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+            TranslationSpec<?, ?, TestTaskitEngine> translationSpec = getRandomTranslationSpec(randomGenerator.nextLong());
+			assertFalse(translationSpec.equals(new Object()));
+		}
 
-            @Override
-            protected TestInputObject translateAppObject(TestAppObject appObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'translateAppObject'");
-            }
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+            TranslationSpec<?, ?, TestTaskitEngine> translationSpec = getRandomTranslationSpec(randomGenerator.nextLong());
+			assertFalse(translationSpec.equals(null));
+		}
 
-            @Override
-            public Class<TestAppObject> getAppObjectClass() {
-                return TestAppObject.class;
-            }
+		// reflexive
+		for (int i = 0; i < 30; i++) {
+            TranslationSpec<?, ?, TestTaskitEngine> translationSpec = getRandomTranslationSpec(randomGenerator.nextLong());
+			assertTrue(translationSpec.equals(translationSpec));
+		}
 
-            @Override
-            public Class<TestInputObject> getInputObjectClass() {
-                return TestInputObject.class;
-            }
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+            TranslationSpec<?, ?, TestTaskitEngine> translationSpec1 = getRandomTranslationSpec(seed);
+            TranslationSpec<?, ?, TestTaskitEngine> translationSpec2 = getRandomTranslationSpec(seed);
 
-        };
+			assertFalse(translationSpec1 == translationSpec2);
+			for (int j = 0; j < 10; j++) {
+				assertTrue(translationSpec1.equals(translationSpec2));
+				assertTrue(translationSpec2.equals(translationSpec1));
+			}
 
-        // same input class, different app class
-        TranslationSpec<TestInputObject, TestAppChildObject, TestTaskitEngine> translationSpecB = new TranslationSpec<>(
-                TestTaskitEngine.class) {
+            // initialize both translationSpecs and show they are still equal
+            TestTaskitEngine testTaskitEngine = TestTaskitEngine.builder()
+                    .addTranslationSpec(new TestComplexObjectTranslationSpec()).build();
 
-            @Override
-            protected TestAppChildObject translateInputObject(TestInputObject inputObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'translateInputObject'");
-            }
+            translationSpec1.init(testTaskitEngine);
+            translationSpec2.init(testTaskitEngine);
+			for (int j = 0; j < 10; j++) {
+				assertTrue(translationSpec1.equals(translationSpec2));
+				assertTrue(translationSpec2.equals(translationSpec1));
+			}
+		}
 
-            @Override
-            protected TestInputObject translateAppObject(TestAppChildObject appObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'translateAppObject'");
-            }
+		// different inputs yield unequal translationSpecs
+		Set<TranslationSpec<?, ?, TestTaskitEngine>> set = new LinkedHashSet<>();
+        for (DynamicTestTranslationSpec translationSpec : DynamicTestTranslationSpec.values()) {
+            TestTranslationSpec<?, ?> testTranslationSpec = translationSpec.getTranslationSpec();
+			set.add(testTranslationSpec);
+		}
 
-            @Override
-            public Class<TestAppChildObject> getAppObjectClass() {
-                return TestAppChildObject.class;
-            }
+		assertEquals(100, set.size());
+    }
 
-            @Override
-            public Class<TestInputObject> getInputObjectClass() {
-                return TestInputObject.class;
-            }
+    private TranslationSpec<?, ?, TestTaskitEngine> getRandomTranslationSpec(long seed) {
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
-        };
-
-        // same app class, different input class
-        TranslationSpec<TestInputChildObject, TestAppObject, TestTaskitEngine> translationSpecC = new TranslationSpec<>(
-                TestTaskitEngine.class) {
-
-            @Override
-            protected TestAppObject translateInputObject(TestInputChildObject inputObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'translateInputObject'");
-            }
-
-            @Override
-            protected TestInputChildObject translateAppObject(TestAppObject appObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'translateAppObject'");
-            }
-
-            @Override
-            public Class<TestAppObject> getAppObjectClass() {
-                return TestAppObject.class;
-            }
-
-            @Override
-            public Class<TestInputChildObject> getInputObjectClass() {
-                return TestInputChildObject.class;
-            }
-
-        };
-
-        // different app and different input class
-        TranslationSpec<TestInputChildObject, TestAppChildObject, TestTaskitEngine> translationSpecD = new TranslationSpec<>(
-                TestTaskitEngine.class) {
-
-            @Override
-            protected TestAppChildObject translateInputObject(TestInputChildObject inputObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'translateInputObject'");
-            }
-
-            @Override
-            protected TestInputChildObject translateAppObject(TestAppChildObject appObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'translateAppObject'");
-            }
-
-            @Override
-            public Class<TestAppChildObject> getAppObjectClass() {
-                return TestAppChildObject.class;
-            }
-
-            @Override
-            public Class<TestInputChildObject> getInputObjectClass() {
-                return TestInputChildObject.class;
-            }
-
-        };
-
-        // duplicate of the base
-        TranslationSpec<TestInputObject, TestAppObject, TestTaskitEngine> translationSpecE = new TranslationSpec<>(
-                TestTaskitEngine.class) {
-
-            @Override
-            protected TestAppObject translateInputObject(TestInputObject inputObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'translateInputObject'");
-            }
-
-            @Override
-            protected TestInputObject translateAppObject(TestAppObject appObject) {
-                throw new UnsupportedOperationException("Unimplemented method 'translateAppObject'");
-            }
-
-            @Override
-            public Class<TestAppObject> getAppObjectClass() {
-                return TestAppObject.class;
-            }
-
-            @Override
-            public Class<TestInputObject> getInputObjectClass() {
-                return TestInputObject.class;
-            }
-
-        };
-
-        // init the duplicate base
-        translationSpecE.init(testTaskitEngine);
-
-        // same exact object should be equal
-        assertEquals(translationSpecA, translationSpecA);
-
-        // null object should not be equal
-        assertNotEquals(translationSpecA, null);
-
-        // different types of objects should not be equal
-        assertNotEquals(translationSpecA, new Object());
-
-        // different app class should not be equal
-        assertNotEquals(translationSpecA, translationSpecB);
-
-        // different input class should not be equal
-        assertNotEquals(translationSpecA, translationSpecC);
-
-        // different input and different app class should not be equal
-        assertNotEquals(translationSpecA, translationSpecD);
-
-        // if one is initialized and the other is not, they should not be equal
-        assertNotEquals(translationSpecA, translationSpecE);
-
-        // init base
-        translationSpecA.init(testTaskitEngine);
-
-        // if all above are equal, then the two specs are equal
-        assertEquals(translationSpecA, translationSpecE);
+        DynamicTestTranslationSpec translationSpec = DynamicTestTranslationSpec.getRandomTranslationSpec(randomGenerator);
+        return translationSpec.getTranslationSpec();
     }
 }

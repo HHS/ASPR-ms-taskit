@@ -62,7 +62,7 @@ public class TestComplexInputObject {
 	}
 
 	/**
-	 * Hash code implementation consistent with equals().
+	 * Standard implementation consistent with the {@link #equals(Object)} method
 	 */
 	@Override
 	public int hashCode() {

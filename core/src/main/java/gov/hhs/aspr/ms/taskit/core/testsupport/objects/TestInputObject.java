@@ -5,9 +5,6 @@ import java.util.Objects;
 /**
  * Complement class to {@link TestAppObject}
  * <p>
- * Note this class does not have an enum variable.
- * </p>
- * <p>
  * <b>Should NOT</b> be used outside of testing.
  * </p>
  */
@@ -16,6 +13,7 @@ public class TestInputObject {
 	private boolean bool;
 	private String string;
 	private TestComplexInputObject testComplexInputObject;
+	private TestInputEnum testInputEnum;
 
 	/**
 	 * @return value of the integer variable
@@ -82,16 +80,32 @@ public class TestInputObject {
 	}
 
 	/**
-	 * Hash code implementation consistent with equals().
+	 * @return the value of the enum variable
+	 */
+	public TestInputEnum getTestInputEnum() {
+		return this.testInputEnum;
+	}
+
+	/**
+	 * Sets the value of the enum variable.
+	 * 
+	 * @param testInputEnum the value to set
+	 */
+	public void setTestInputEnum(TestInputEnum testInputEnum) {
+		this.testInputEnum = testInputEnum;
+	}
+
+	/**
+	 * Standard implementation consistent with the {@link #equals(Object)} method
 	 */
 	@Override
 	public int hashCode() {
-		return Objects.hash(integer, bool, string, testComplexInputObject);
+		return Objects.hash(integer, bool, string, testComplexInputObject, testInputEnum);
 	}
 
 	/**
 	 * Two {@link TestInputObject}s are equal if and only if their integers, bools,
-	 * strings, and testComplexInputObjects are equal.
+	 * strings, testComplexInputObjects, and testInputEnums are equal.
 	 */
 	@Override
 	public boolean equals(Object obj) {
@@ -106,7 +120,6 @@ public class TestInputObject {
 		}
 		TestInputObject other = (TestInputObject) obj;
 		return integer == other.integer && bool == other.bool && Objects.equals(string, other.string)
-				&& Objects.equals(testComplexInputObject, other.testComplexInputObject);
+				&& Objects.equals(testComplexInputObject, other.testComplexInputObject) && testInputEnum == other.testInputEnum;
 	}
-
 }
